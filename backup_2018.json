@@ -1,0 +1,3497 @@
+{
+  "matches": [
+    {
+      "id": 201801,
+      "homeTeam": "Russia",
+      "awayTeam": "Saudi Arabia",
+      "utcDate": "2018-06-14T15:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 5,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201802,
+      "homeTeam": "Uruguay",
+      "awayTeam": "Egypt",
+      "utcDate": "2018-06-15T12:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201803,
+      "homeTeam": "Morocco",
+      "awayTeam": "Iran",
+      "utcDate": "2018-06-15T15:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201804,
+      "homeTeam": "Portugal",
+      "awayTeam": "Spain",
+      "utcDate": "2018-06-15T18:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 3,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201805,
+      "homeTeam": "France",
+      "awayTeam": "Australia",
+      "utcDate": "2018-06-16T10:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201806,
+      "homeTeam": "Argentina",
+      "awayTeam": "Iceland",
+      "utcDate": "2018-06-16T13:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201807,
+      "homeTeam": "Peru",
+      "awayTeam": "Denmark",
+      "utcDate": "2018-06-16T16:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201808,
+      "homeTeam": "Croatia",
+      "awayTeam": "Nigeria",
+      "utcDate": "2018-06-16T17:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201809,
+      "homeTeam": "Costa Rica",
+      "awayTeam": "Serbia",
+      "utcDate": "2018-06-17T12:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201810,
+      "homeTeam": "Germany",
+      "awayTeam": "Mexico",
+      "utcDate": "2018-06-17T16:00:00Z",
+      "group": "GROUP_F",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201811,
+      "homeTeam": "Brazil",
+      "awayTeam": "Switzerland",
+      "utcDate": "2018-06-17T18:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201812,
+      "homeTeam": "Sweden",
+      "awayTeam": "South Korea",
+      "utcDate": "2018-06-18T12:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201813,
+      "homeTeam": "Belgium",
+      "awayTeam": "Panama",
+      "utcDate": "2018-06-18T16:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 3,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201814,
+      "homeTeam": "England",
+      "awayTeam": "Tunisia",
+      "utcDate": "2018-06-18T18:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201815,
+      "homeTeam": "Colombia",
+      "awayTeam": "Japan",
+      "utcDate": "2018-06-19T12:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201816,
+      "homeTeam": "Poland",
+      "awayTeam": "Senegal",
+      "utcDate": "2018-06-19T16:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201817,
+      "homeTeam": "Russia",
+      "awayTeam": "Egypt",
+      "utcDate": "2018-06-19T18:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 3,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201818,
+      "homeTeam": "Morocco",
+      "awayTeam": "Portugal",
+      "utcDate": "2018-06-20T12:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201819,
+      "homeTeam": "Uruguay",
+      "awayTeam": "Saudi Arabia",
+      "utcDate": "2018-06-20T16:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201820,
+      "homeTeam": "Spain",
+      "awayTeam": "Iran",
+      "utcDate": "2018-06-20T18:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201821,
+      "homeTeam": "Australia",
+      "awayTeam": "Denmark",
+      "utcDate": "2018-06-21T12:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201822,
+      "homeTeam": "France",
+      "awayTeam": "Peru",
+      "utcDate": "2018-06-21T16:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201823,
+      "homeTeam": "Argentina",
+      "awayTeam": "Croatia",
+      "utcDate": "2018-06-21T18:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201824,
+      "homeTeam": "Brazil",
+      "awayTeam": "Costa Rica",
+      "utcDate": "2018-06-22T12:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201825,
+      "homeTeam": "Nigeria",
+      "awayTeam": "Iceland",
+      "utcDate": "2018-06-22T16:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201826,
+      "homeTeam": "Serbia",
+      "awayTeam": "Switzerland",
+      "utcDate": "2018-06-22T18:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201827,
+      "homeTeam": "Belgium",
+      "awayTeam": "Tunisia",
+      "utcDate": "2018-06-23T12:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 5,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201828,
+      "homeTeam": "Mexico",
+      "awayTeam": "South Korea",
+      "utcDate": "2018-06-23T16:00:00Z",
+      "group": "GROUP_F",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201829,
+      "homeTeam": "Germany",
+      "awayTeam": "Sweden",
+      "utcDate": "2018-06-23T18:00:00Z",
+      "group": "GROUP_F",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201830,
+      "homeTeam": "England",
+      "awayTeam": "Panama",
+      "utcDate": "2018-06-24T12:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 6,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201831,
+      "homeTeam": "Japan",
+      "awayTeam": "Senegal",
+      "utcDate": "2018-06-24T16:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201832,
+      "homeTeam": "Poland",
+      "awayTeam": "Colombia",
+      "utcDate": "2018-06-24T18:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201833,
+      "homeTeam": "Russia",
+      "awayTeam": "Uruguay",
+      "utcDate": "2018-06-25T14:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201834,
+      "homeTeam": "Egypt",
+      "awayTeam": "Saudi Arabia",
+      "utcDate": "2018-06-25T14:00:00Z",
+      "group": "GROUP_A",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201835,
+      "homeTeam": "Portugal",
+      "awayTeam": "Iran",
+      "utcDate": "2018-06-25T18:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201836,
+      "homeTeam": "Morocco",
+      "awayTeam": "Spain",
+      "utcDate": "2018-06-25T18:00:00Z",
+      "group": "GROUP_B",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201837,
+      "homeTeam": "France",
+      "awayTeam": "Denmark",
+      "utcDate": "2018-06-26T14:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201838,
+      "homeTeam": "Peru",
+      "awayTeam": "Australia",
+      "utcDate": "2018-06-26T14:00:00Z",
+      "group": "GROUP_C",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201839,
+      "homeTeam": "Croatia",
+      "awayTeam": "Iceland",
+      "utcDate": "2018-06-26T18:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201840,
+      "homeTeam": "Argentina",
+      "awayTeam": "Nigeria",
+      "utcDate": "2018-06-26T18:00:00Z",
+      "group": "GROUP_D",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201841,
+      "homeTeam": "Mexico",
+      "awayTeam": "Sweden",
+      "utcDate": "2018-06-27T14:00:00Z",
+      "group": "GROUP_F",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201842,
+      "homeTeam": "Germany",
+      "awayTeam": "South Korea",
+      "utcDate": "2018-06-27T14:00:00Z",
+      "group": "GROUP_F",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201843,
+      "homeTeam": "Brazil",
+      "awayTeam": "Serbia",
+      "utcDate": "2018-06-27T18:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201844,
+      "homeTeam": "Switzerland",
+      "awayTeam": "Costa Rica",
+      "utcDate": "2018-06-27T18:00:00Z",
+      "group": "GROUP_E",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "DRAW"
+      }
+    },
+    {
+      "id": 201845,
+      "homeTeam": "Japan",
+      "awayTeam": "Poland",
+      "utcDate": "2018-06-28T14:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201846,
+      "homeTeam": "Senegal",
+      "awayTeam": "Colombia",
+      "utcDate": "2018-06-28T14:00:00Z",
+      "group": "GROUP_H",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201847,
+      "homeTeam": "Belgium",
+      "awayTeam": "England",
+      "utcDate": "2018-06-28T18:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201848,
+      "homeTeam": "Panama",
+      "awayTeam": "Tunisia",
+      "utcDate": "2018-06-28T18:00:00Z",
+      "group": "GROUP_G",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201849,
+      "homeTeam": "France",
+      "awayTeam": "Argentina",
+      "utcDate": "2018-06-30T14:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 4,
+        "awayFT": 3,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201850,
+      "homeTeam": "Uruguay",
+      "awayTeam": "Portugal",
+      "utcDate": "2018-06-30T18:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201851,
+      "homeTeam": "Spain",
+      "awayTeam": "Russia",
+      "utcDate": "2018-07-01T14:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201852,
+      "homeTeam": "Croatia",
+      "awayTeam": "Denmark",
+      "utcDate": "2018-07-01T18:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201853,
+      "homeTeam": "Brazil",
+      "awayTeam": "Mexico",
+      "utcDate": "2018-07-02T14:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201854,
+      "homeTeam": "Belgium",
+      "awayTeam": "Japan",
+      "utcDate": "2018-07-02T18:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 3,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201855,
+      "homeTeam": "Sweden",
+      "awayTeam": "Switzerland",
+      "utcDate": "2018-07-03T14:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201856,
+      "homeTeam": "Colombia",
+      "awayTeam": "England",
+      "utcDate": "2018-07-03T18:00:00Z",
+      "group": "LAST_16",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201857,
+      "homeTeam": "France",
+      "awayTeam": "Uruguay",
+      "utcDate": "2018-07-06T14:00:00Z",
+      "group": "QUARTER_FINAL",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201858,
+      "homeTeam": "Brazil",
+      "awayTeam": "Belgium",
+      "utcDate": "2018-07-06T18:00:00Z",
+      "group": "QUARTER_FINAL",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201859,
+      "homeTeam": "Sweden",
+      "awayTeam": "England",
+      "utcDate": "2018-07-07T14:00:00Z",
+      "group": "QUARTER_FINAL",
+      "score": {
+        "homeFT": 0,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201860,
+      "homeTeam": "Russia",
+      "awayTeam": "Croatia",
+      "utcDate": "2018-07-07T18:00:00Z",
+      "group": "QUARTER_FINAL",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 1,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201861,
+      "homeTeam": "France",
+      "awayTeam": "Belgium",
+      "utcDate": "2018-07-10T18:00:00Z",
+      "group": "SEMI_FINAL",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201862,
+      "homeTeam": "England",
+      "awayTeam": "Croatia",
+      "utcDate": "2018-07-11T18:00:00Z",
+      "group": "SEMI_FINAL",
+      "score": {
+        "homeFT": 1,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "AWAY_TEAM"
+      }
+    },
+    {
+      "id": 201863,
+      "homeTeam": "Belgium",
+      "awayTeam": "England",
+      "utcDate": "2018-07-14T14:00:00Z",
+      "group": "THIRD_POSITION",
+      "score": {
+        "homeFT": 2,
+        "awayFT": 0,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    },
+    {
+      "id": 201864,
+      "homeTeam": "France",
+      "awayTeam": "Croatia",
+      "utcDate": "2018-07-15T15:00:00Z",
+      "group": "FINAL",
+      "score": {
+        "homeFT": 4,
+        "awayFT": 2,
+        "homePT": -1,
+        "awayPT": -1,
+        "winner": "HOME_TEAM"
+      }
+    }
+  ],
+  "users": [
+    {
+      "name": "Татяна",
+      "bets": [
+        {
+          "matchId": 201801,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201802,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201803,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201804,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201805,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201806,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201807,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201808,
+          "homeTeamScore": 0,
+          "awayTeamScore": 0,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201809,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201810,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201811,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201812,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201813,
+          "homeTeamScore": 3,
+          "awayTeamScore": 2,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201814,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201815,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201816,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201817,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201818,
+          "homeTeamScore": 1,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201819,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201820,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201821,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201822,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201823,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201824,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201825,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201826,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201827,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201828,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201829,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201830,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201831,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201832,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201833,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201834,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201835,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201836,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201837,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201838,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201839,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201840,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201841,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201842,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201843,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201844,
+          "homeTeamScore": 0,
+          "awayTeamScore": 0,
+          "winner": "DRAW",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201845,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201846,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201847,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201848,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201849,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201850,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201851,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201852,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201853,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201854,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201855,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201856,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201857,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201858,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201859,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201860,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201861,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201862,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201863,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201864,
+          "homeTeamScore": 2,
+          "awayTeamScore": 2,
+          "winner": "HOME_TEAM",
+          "point": 1.5,
+          "date": "2018-06-14T15:00:00Z"
+        }
+      ],
+      "colorTable": "10",
+      "id": 1
+    },
+    {
+      "name": "Бен",
+      "bets": [
+        {
+          "matchId": 201801,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201802,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201803,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201804,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201805,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201806,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201807,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201808,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201809,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201810,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201811,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201812,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201813,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201814,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201815,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201816,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201817,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201818,
+          "homeTeamScore": 1,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201819,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201820,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201821,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201822,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201823,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201824,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201825,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201826,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201827,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201828,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201829,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201830,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201831,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201832,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201833,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201834,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201835,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201836,
+          "homeTeamScore": 0,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201837,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201838,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201839,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201840,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201841,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201842,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201843,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201844,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201845,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201846,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201847,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201848,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201849,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201850,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201851,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201852,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201853,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201854,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201855,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201856,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201857,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201858,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201859,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201860,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1.25,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201861,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201862,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201863,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 6,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201864,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        }
+      ],
+      "colorTable": "180",
+      "id": 2
+    },
+    {
+      "name": "Бочето",
+      "bets": [
+        {
+          "matchId": 201801,
+          "homeTeamScore": 0,
+          "awayTeamScore": 0,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201802,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201803,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201804,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201805,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201806,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201807,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201808,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201809,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201810,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201811,
+          "homeTeamScore": 4,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201812,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201813,
+          "homeTeamScore": 4,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201814,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201815,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201816,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201817,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201818,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201819,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201820,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201821,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201822,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201823,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201824,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201825,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201826,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201827,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201828,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201829,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201830,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201831,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201832,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201833,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201834,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201835,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201836,
+          "homeTeamScore": 0,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201837,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201838,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201839,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201840,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201841,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201842,
+          "homeTeamScore": 4,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201843,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201844,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201845,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201846,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201847,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201848,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201849,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201850,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201851,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201852,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201853,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 4,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201854,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201855,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201856,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201857,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201858,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201859,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201860,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1.25,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201861,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201862,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201863,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201864,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        }
+      ],
+      "colorTable": "50",
+      "id": 3
+    },
+    {
+      "name": "Ети",
+      "bets": [
+        {
+          "matchId": 201801,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201802,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201803,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201804,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201805,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201806,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201807,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201808,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201809,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201810,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201811,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201812,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201813,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201814,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201815,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201816,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201817,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201818,
+          "homeTeamScore": 0,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201819,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201820,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201821,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201822,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201823,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201824,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201825,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201826,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201827,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201828,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201829,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201830,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201831,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201832,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201833,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201834,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201835,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201836,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201837,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201838,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201839,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201840,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201841,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201842,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201843,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201844,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201845,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201846,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201847,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201848,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201849,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201850,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201851,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201852,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201853,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201854,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201855,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201856,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201857,
+          "homeTeamScore": 3,
+          "awayTeamScore": 2,
+          "winner": "HOME_TEAM",
+          "point": 2.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201858,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201859,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 2.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201860,
+          "homeTeamScore": 2,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 1.25,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201861,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201862,
+          "homeTeamScore": 2,
+          "awayTeamScore": 3,
+          "winner": "AWAY_TEAM",
+          "point": 1.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201863,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201864,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        }
+      ],
+      "colorTable": "203",
+      "id": 4
+    },
+    {
+      "name": "Митко",
+      "bets": [
+        {
+          "matchId": 201801,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201802,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201803,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201804,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201805,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201806,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201807,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201808,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201809,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201810,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201811,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201812,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201813,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201814,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201815,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201816,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201817,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201818,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201819,
+          "homeTeamScore": 3,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201820,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201821,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201822,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201823,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201824,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201825,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201826,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201827,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201828,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201829,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201830,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201831,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201832,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201833,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201834,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201835,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201836,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201837,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201838,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201839,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201840,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201841,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201842,
+          "homeTeamScore": 3,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201843,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201844,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201845,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201846,
+          "homeTeamScore": 0,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201847,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "DRAW",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201848,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201849,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201850,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201851,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201852,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201853,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201854,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 2,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201855,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 4,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201856,
+          "homeTeamScore": 0,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 1,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201857,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201858,
+          "homeTeamScore": 1,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201859,
+          "homeTeamScore": 1,
+          "awayTeamScore": 2,
+          "winner": "AWAY_TEAM",
+          "point": 2.5,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201860,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201861,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 0,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201862,
+          "homeTeamScore": 1,
+          "awayTeamScore": 1,
+          "winner": "AWAY_TEAM",
+          "point": 6,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201863,
+          "homeTeamScore": 2,
+          "awayTeamScore": 1,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        },
+        {
+          "matchId": 201864,
+          "homeTeamScore": 2,
+          "awayTeamScore": 0,
+          "winner": "HOME_TEAM",
+          "point": 3,
+          "date": "2018-06-14T15:00:00Z"
+        }
+      ],
+      "colorTable": "129",
+      "id": 5
+    }
+  ]
+}

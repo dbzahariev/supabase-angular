@@ -1,0 +1,3188 @@
+{
+    "matches": [
+        {
+            "id": 202401,
+            "utcDate": "2024-06-14T19:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Germany",
+            "awayTeam": "Scotland",
+            "score": {
+                "homeFT": 5,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202402,
+            "utcDate": "2024-06-15T13:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Hungary",
+            "awayTeam": "Switzerland",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 3,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202403,
+            "utcDate": "2024-06-15T16:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Spain",
+            "awayTeam": "Croatia",
+            "score": {
+                "homeFT": 3,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202404,
+            "utcDate": "2024-06-15T19:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Italy",
+            "awayTeam": "Albania",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202405,
+            "utcDate": "2024-06-16T13:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "Poland",
+            "awayTeam": "Netherlands",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202406,
+            "utcDate": "2024-06-16T16:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "Slovenia",
+            "awayTeam": "Denmark",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202407,
+            "utcDate": "2024-06-16T19:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "Serbia",
+            "awayTeam": "England",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202408,
+            "utcDate": "2024-06-17T13:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Romania",
+            "awayTeam": "Ukraine",
+            "score": {
+                "homeFT": 3,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202409,
+            "utcDate": "2024-06-17T16:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Belgium",
+            "awayTeam": "Slovakia",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202410,
+            "utcDate": "2024-06-17T19:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "Austria",
+            "awayTeam": "France",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202411,
+            "utcDate": "2024-06-18T16:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Turkey",
+            "awayTeam": "Georgia",
+            "score": {
+                "homeFT": 3,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202412,
+            "utcDate": "2024-06-18T19:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Portugal",
+            "awayTeam": "Czechia",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202413,
+            "utcDate": "2024-06-19T13:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Croatia",
+            "awayTeam": "Albania",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202414,
+            "utcDate": "2024-06-19T16:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Germany",
+            "awayTeam": "Hungary",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202415,
+            "utcDate": "2024-06-19T19:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Scotland",
+            "awayTeam": "Switzerland",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202416,
+            "utcDate": "2024-06-20T13:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "Slovenia",
+            "awayTeam": "Serbia",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202417,
+            "utcDate": "2024-06-20T16:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "Denmark",
+            "awayTeam": "England",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202418,
+            "utcDate": "2024-06-20T19:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Spain",
+            "awayTeam": "Italy",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202419,
+            "utcDate": "2024-06-21T13:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Slovakia",
+            "awayTeam": "Ukraine",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202420,
+            "utcDate": "2024-06-21T16:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "Poland",
+            "awayTeam": "Austria",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 3,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202421,
+            "utcDate": "2024-06-21T19:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "Netherlands",
+            "awayTeam": "France",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202422,
+            "utcDate": "2024-06-22T13:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Georgia",
+            "awayTeam": "Czechia",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202423,
+            "utcDate": "2024-06-22T16:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Turkey",
+            "awayTeam": "Portugal",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 3,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202424,
+            "utcDate": "2024-06-22T19:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Belgium",
+            "awayTeam": "Romania",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202425,
+            "utcDate": "2024-06-23T19:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Scotland",
+            "awayTeam": "Hungary",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202426,
+            "utcDate": "2024-06-23T19:00:00Z",
+            "group": "GROUP_A",
+            "homeTeam": "Switzerland",
+            "awayTeam": "Germany",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202427,
+            "utcDate": "2024-06-24T19:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Albania",
+            "awayTeam": "Spain",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202428,
+            "utcDate": "2024-06-24T19:00:00Z",
+            "group": "GROUP_B",
+            "homeTeam": "Croatia",
+            "awayTeam": "Italy",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202429,
+            "utcDate": "2024-06-25T16:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "France",
+            "awayTeam": "Poland",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202430,
+            "utcDate": "2024-06-25T16:00:00Z",
+            "group": "GROUP_D",
+            "homeTeam": "Netherlands",
+            "awayTeam": "Austria",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 3,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202431,
+            "utcDate": "2024-06-25T19:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "Denmark",
+            "awayTeam": "Serbia",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202432,
+            "utcDate": "2024-06-25T19:00:00Z",
+            "group": "GROUP_C",
+            "homeTeam": "England",
+            "awayTeam": "Slovenia",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202433,
+            "utcDate": "2024-06-26T16:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Ukraine",
+            "awayTeam": "Belgium",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202434,
+            "utcDate": "2024-06-26T16:00:00Z",
+            "group": "GROUP_E",
+            "homeTeam": "Slovakia",
+            "awayTeam": "Romania",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "DRAW"
+            }
+        },
+        {
+            "id": 202435,
+            "utcDate": "2024-06-26T19:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Czechia",
+            "awayTeam": "Turkey",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202436,
+            "utcDate": "2024-06-26T19:00:00Z",
+            "group": "GROUP_F",
+            "homeTeam": "Georgia",
+            "awayTeam": "Portugal",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202437,
+            "utcDate": "2024-06-29T16:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Switzerland",
+            "awayTeam": "Italy",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202438,
+            "utcDate": "2024-06-29T19:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Germany",
+            "awayTeam": "Denmark",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202439,
+            "utcDate": "2024-06-30T16:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "England",
+            "awayTeam": "Slovakia",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202440,
+            "utcDate": "2024-06-30T19:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Spain",
+            "awayTeam": "Georgia",
+            "score": {
+                "homeFT": 4,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202441,
+            "utcDate": "2024-07-01T16:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "France",
+            "awayTeam": "Belgium",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202442,
+            "utcDate": "2024-07-01T19:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Portugal",
+            "awayTeam": "Slovenia",
+            "score": {
+                "homePT": 3,
+                "awayPT": 0,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202443,
+            "utcDate": "2024-07-02T16:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Romania",
+            "awayTeam": "Netherlands",
+            "score": {
+                "homeFT": 0,
+                "awayFT": 3,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202444,
+            "utcDate": "2024-07-02T19:00:00Z",
+            "group": "LAST_16",
+            "homeTeam": "Austria",
+            "awayTeam": "Turkey",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202445,
+            "utcDate": "2024-07-05T16:00:00Z",
+            "group": "QUARTER_FINALS",
+            "homeTeam": "Spain",
+            "awayTeam": "Germany",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 0,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202446,
+            "utcDate": "2024-07-05T19:00:00Z",
+            "group": "QUARTER_FINALS",
+            "homeTeam": "Portugal",
+            "awayTeam": "France",
+            "score": {
+                "homePT": 3,
+                "awayPT": 5,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202447,
+            "utcDate": "2024-07-06T16:00:00Z",
+            "group": "QUARTER_FINALS",
+            "homeTeam": "England",
+            "awayTeam": "Switzerland",
+            "score": {
+                "homePT": 5,
+                "awayPT": 3,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202448,
+            "utcDate": "2024-07-06T19:00:00Z",
+            "group": "QUARTER_FINALS",
+            "homeTeam": "Netherlands",
+            "awayTeam": "Turkey",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202449,
+            "utcDate": "2024-07-09T19:00:00Z",
+            "group": "SEMI_FINALS",
+            "homeTeam": "Spain",
+            "awayTeam": "France",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        },
+        {
+            "id": 202450,
+            "utcDate": "2024-07-10T19:00:00Z",
+            "group": "SEMI_FINALS",
+            "homeTeam": "Netherlands",
+            "awayTeam": "England",
+            "score": {
+                "homeFT": 1,
+                "awayFT": 2,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "AWAY_TEAM"
+            }
+        },
+        {
+            "id": 202451,
+            "utcDate": "2024-07-14T19:00:00Z",
+            "group": "FINAL",
+            "homeTeam": "Spain",
+            "awayTeam": "England",
+            "score": {
+                "homeFT": 2,
+                "awayFT": 1,
+                "homePT": -1,
+                "awayPT": -1,
+                "winner": "HOME_TEAM"
+            }
+        }
+    ],
+    "users": [
+        {
+            "name": "Татяна",
+            "colorTable": "10",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-12T19:37:13.866Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-12T19:38:38.498Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-12T19:39:56.846Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-12T19:40:53.503Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-12T19:41:50.337Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-12T19:43:37.386Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-12T19:45:13.520Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-12T19:45:25.681Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T11:48:24.993Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-17T11:49:28.170Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-12T19:46:14.157Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T18:46:19.175Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T06:04:20.068Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-15T20:41:05.106Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T20:41:18.815Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T11:51:42.712Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T11:53:19.624Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-15T20:41:58.924Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-21T07:13:24.650Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-18T18:46:58.859Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-18T18:48:02.822Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-18T18:48:24.792Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T18:48:38.531Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T18:49:21.761Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-23T07:30:38.975Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-23T07:30:47.521Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-24T16:50:39.378Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-24T16:50:46.872Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T08:53:15.662Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T08:53:28.439Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T08:53:41.512Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T08:53:59.856Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T15:21:50.636Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-26T15:21:52.648Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-26T18:06:25.424Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T18:06:36.393Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-28T08:29:35.202Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-28T08:29:42.021Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-28T08:30:00.638Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-28T08:30:22.005Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-28T08:30:33.595Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-28T08:31:39.224Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-28T08:32:14.567Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-28T08:32:22.568Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-05T12:19:30.768Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 4.5,
+                    "date": "2024-07-05T12:19:40.144Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-05T12:19:48.857Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-05T12:19:56.792Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-08T16:18:58.054Z"
+                },
+                {
+                    "matchId": 202450,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-08T16:19:07.537Z"
+                },
+                {
+                    "matchId": 202451,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-14T16:34:21.605Z"
+                }
+            ],
+            "id": 1
+        },
+        {
+            "name": "Бочето",
+            "colorTable": "50",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-14T16:12:30.292Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-15T08:44:14.649Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T13:36:21.807Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 4,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T13:36:28.974Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T12:40:29.333Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T15:49:31.180Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-16T18:19:12.787Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-17T12:09:44.891Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T12:11:36.289Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 4,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-17T12:11:48.452Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-18T15:01:39.505Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T15:01:52.028Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-19T11:37:21.768Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 4,
+                    "awayTeamScore": 2,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-19T11:37:37.216Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-19T11:37:44.233Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T12:14:58.547Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-20T14:51:58.076Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-20T17:53:18.373Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T07:42:47.797Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-21T15:05:55.297Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-21T18:24:48.840Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-22T10:09:40.255Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-22T14:20:13.505Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-22T17:54:01.732Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T17:36:19.313Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T17:36:26.139Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-24T17:46:12.301Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-24T17:46:15.630Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T17:58:34.244Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-25T17:58:40.014Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 4,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T15:14:15.151Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T15:14:34.043Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-26T18:28:14.443Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T18:28:25.609Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-29T13:16:17.389Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-29T13:16:28.292Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-29T17:41:09.262Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 4,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-29T13:16:48.293Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-29T17:41:23.416Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-29T13:17:00.186Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-29T17:41:32.820Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-02T10:12:53.793Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-07-05T11:15:57.151Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 4.5,
+                    "date": "2024-07-05T11:16:19.001Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-06T11:49:41.798Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "HOME_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-06T11:49:52.798Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 8,
+                    "date": "2024-07-09T18:03:49.153Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-10T18:15:14.629Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-14T10:46:22.911Z"
+                }
+            ],
+            "id": 3
+        },
+        {
+            "name": "Лори",
+            "colorTable": "80",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-14T16:08:27.071Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T04:57:54.916Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-15T04:57:58.460Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T04:58:00.891Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-15T04:58:55.064Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T04:58:57.139Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T04:58:58.993Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-15T05:00:01.235Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T05:00:05.873Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-15T05:00:12.488Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-15T05:00:41.633Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T05:00:44.662Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-15T05:00:49.629Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T05:00:52.988Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T05:01:08.934Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-16T18:28:29.029Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T18:28:44.033Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T18:29:08.543Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-16T18:29:25.764Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T18:29:39.335Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-16T18:30:51.901Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T18:31:16.174Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-16T18:31:30.418Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-16T18:32:01.534Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-23T06:22:06.729Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T06:22:13.213Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-23T06:22:15.902Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T06:23:12.305Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T06:23:14.911Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T06:23:17.789Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:09.436Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:13.680Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:17.898Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:21.532Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:25.540Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T11:40:27.844Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-29T16:30:34.515Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-27T06:57:26.882Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-29T16:21:48.539Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T06:58:37.452Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T06:59:34.613Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T06:59:37.523Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-01T17:29:59.270Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-07-01T17:30:17.889Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-01T17:30:49.703Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-02T19:40:11.351Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-01T17:35:05.102Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-05T19:35:24.433Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-07T18:20:28.937Z"
+                },
+                {
+                    "matchId": 202450,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-07T18:20:31.197Z"
+                },
+                {
+                    "matchId": 202451,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-11T18:43:01.097Z"
+                }
+            ],
+            "id": 8
+        },
+        {
+            "name": "Ети",
+            "colorTable": "203",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-08T16:48:41.854Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T12:17:05.301Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T15:46:21.613Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T18:40:53.230Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T09:21:20.556Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T09:21:49.289Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T09:22:01.281Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T12:51:48.399Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T12:51:58.698Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-17T12:52:08.892Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T12:36:29.737Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-18T18:55:16.178Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-19T11:20:27.075Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-19T15:15:04.472Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-19T15:15:29.211Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T09:43:21.590Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T09:42:59.644Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T18:41:36.304Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T12:51:42.712Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-21T12:35:30.529Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-21T12:52:10.347Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-22T12:39:35.772Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-22T12:42:26.633Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-21T12:24:09.486Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T18:54:42.206Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T18:56:00.322Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-24T16:20:04.307Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-24T16:20:18.589Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T11:58:28.200Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 2,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-25T12:04:16.024Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T12:17:38.782Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T12:17:44.251Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T14:37:33.965Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T14:37:53.050Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T16:55:15.871Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T18:11:53.273Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T12:43:10.165Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-27T12:42:49.791Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-27T12:42:29.933Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-27T12:42:08.428Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-27T12:41:58.589Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-27T12:41:51.550Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-27T12:40:14.139Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T12:39:27.686Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-05T10:58:10.950Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-05T18:57:04.965Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-05T10:58:25.858Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-05T10:58:37.187Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-07-07T07:36:44.709Z"
+                },
+                {
+                    "matchId": 202450,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-07T07:36:24.596Z"
+                },
+                {
+                    "matchId": 202451,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-14T14:14:16.548Z"
+                }
+            ],
+            "id": 4
+        },
+        {
+            "name": "Слави",
+            "colorTable": "284",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-14T17:22:10.106Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T12:16:47.922Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-15T15:45:30.343Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T18:40:35.105Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-16T09:20:59.050Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-16T09:22:33.460Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T09:22:45.966Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T12:51:16.321Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T13:41:05.594Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-17T13:41:09.761Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-18T12:35:01.616Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T12:36:05.161Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-19T11:20:48.556Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-19T15:14:47.561Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-19T15:15:48.581Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T09:33:33.617Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T09:51:17.872Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T09:51:29.862Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T12:25:58.416Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-21T12:35:09.574Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T12:52:30.959Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-22T12:39:16.834Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-22T12:40:18.381Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-22T12:44:31.834Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T18:33:36.971Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-23T18:33:52.227Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-24T16:18:36.488Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-24T16:19:22.912Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T14:30:32.330Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-25T14:30:42.519Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T14:31:12.289Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T18:19:05.687Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T13:28:24.835Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-26T13:28:33.915Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T13:28:45.062Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T13:28:55.101Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-27T14:19:28.412Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-06-27T14:19:44.552Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-30T13:44:01.708Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-30T13:45:55.269Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-07-01T15:52:13.367Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-07-01T15:52:50.047Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-07-02T13:07:38.841Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-02T13:11:06.338Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-05T15:44:35.752Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-05T15:44:53.092Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 4.5,
+                    "date": "2024-07-06T13:38:59.444Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-06T13:41:14.297Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-07-09T18:23:24.875Z"
+                },
+                {
+                    "matchId": 202450,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 6,
+                    "date": "2024-07-10T18:18:55.181Z"
+                },
+                {
+                    "matchId": 202451,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-14T18:32:40.990Z"
+                }
+            ],
+            "id": 9
+        },
+        {
+            "name": "Митко",
+            "colorTable": "129",
+            "bets": [
+                {
+                    "matchId": 202401,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-14T10:22:25.559Z"
+                },
+                {
+                    "matchId": 202402,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-15T05:15:52.277Z"
+                },
+                {
+                    "matchId": 202403,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T10:12:34.884Z"
+                },
+                {
+                    "matchId": 202404,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-15T05:27:15.672Z"
+                },
+                {
+                    "matchId": 202405,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-16T07:15:15.111Z"
+                },
+                {
+                    "matchId": 202406,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-16T07:15:58.851Z"
+                },
+                {
+                    "matchId": 202407,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-16T07:16:19.300Z"
+                },
+                {
+                    "matchId": 202408,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T06:39:54.758Z"
+                },
+                {
+                    "matchId": 202409,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-17T15:42:26.492Z"
+                },
+                {
+                    "matchId": 202410,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-17T06:41:02.640Z"
+                },
+                {
+                    "matchId": 202411,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T15:50:26.304Z"
+                },
+                {
+                    "matchId": 202412,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-18T15:51:06.752Z"
+                },
+                {
+                    "matchId": 202413,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-19T12:23:28.812Z"
+                },
+                {
+                    "matchId": 202414,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-19T15:06:38.869Z"
+                },
+                {
+                    "matchId": 202415,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-19T15:07:10.209Z"
+                },
+                {
+                    "matchId": 202416,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T05:29:36.221Z"
+                },
+                {
+                    "matchId": 202417,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-20T15:39:42.568Z"
+                },
+                {
+                    "matchId": 202418,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-20T05:30:09.723Z"
+                },
+                {
+                    "matchId": 202419,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-21T12:11:36.794Z"
+                },
+                {
+                    "matchId": 202420,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1,
+                    "date": "2024-06-21T12:12:02.442Z"
+                },
+                {
+                    "matchId": 202421,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T12:12:22.348Z"
+                },
+                {
+                    "matchId": 202422,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-21T23:08:42.615Z"
+                },
+                {
+                    "matchId": 202423,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-21T23:14:14.397Z"
+                },
+                {
+                    "matchId": 202424,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-06-21T23:16:07.000Z"
+                },
+                {
+                    "matchId": 202425,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-23T10:04:25.143Z"
+                },
+                {
+                    "matchId": 202426,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 3,
+                    "date": "2024-06-23T10:04:48.070Z"
+                },
+                {
+                    "matchId": 202427,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-06-24T15:27:41.128Z"
+                },
+                {
+                    "matchId": 202428,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-24T15:28:07.183Z"
+                },
+                {
+                    "matchId": 202429,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T15:35:11.455Z"
+                },
+                {
+                    "matchId": 202430,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T15:35:37.424Z"
+                },
+                {
+                    "matchId": 202431,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-25T15:35:57.057Z"
+                },
+                {
+                    "matchId": 202432,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-06-25T15:36:27.492Z"
+                },
+                {
+                    "matchId": 202433,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 3,
+                    "winner": "AWAY_TEAM",
+                    "point": 0,
+                    "date": "2024-06-26T15:35:50.371Z"
+                },
+                {
+                    "matchId": 202434,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "DRAW",
+                    "point": 2,
+                    "date": "2024-06-26T15:35:20.422Z"
+                },
+                {
+                    "matchId": 202435,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 3,
+                    "date": "2024-06-26T15:36:30.429Z"
+                },
+                {
+                    "matchId": 202436,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 0,
+                    "winner": "DRAW",
+                    "point": 0,
+                    "date": "2024-06-26T15:36:54.925Z"
+                },
+                {
+                    "matchId": 202437,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-29T09:14:57.215Z"
+                },
+                {
+                    "matchId": 202438,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-29T09:16:35.445Z"
+                },
+                {
+                    "matchId": 202439,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-06-30T12:32:05.477Z"
+                },
+                {
+                    "matchId": 202440,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-06-30T12:32:17.613Z"
+                },
+                {
+                    "matchId": 202441,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 4,
+                    "date": "2024-07-01T15:32:51.398Z"
+                },
+                {
+                    "matchId": 202442,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 0,
+                    "winner": "HOME_TEAM",
+                    "point": 1,
+                    "date": "2024-07-01T15:33:18.571Z"
+                },
+                {
+                    "matchId": 202443,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-02T08:34:58.390Z"
+                },
+                {
+                    "matchId": 202444,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-02T08:35:22.630Z"
+                },
+                {
+                    "matchId": 202445,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 6,
+                    "date": "2024-07-05T15:22:23.353Z"
+                },
+                {
+                    "matchId": 202446,
+                    "homeTeamScore": 0,
+                    "awayTeamScore": 2,
+                    "winner": "AWAY_TEAM",
+                    "point": 1.5,
+                    "date": "2024-07-05T15:24:44.982Z"
+                },
+                {
+                    "matchId": 202447,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 4.5,
+                    "date": "2024-07-06T15:45:52.123Z"
+                },
+                {
+                    "matchId": 202448,
+                    "homeTeamScore": 3,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 3,
+                    "date": "2024-07-06T15:45:39.865Z"
+                },
+                {
+                    "matchId": 202449,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 2,
+                    "date": "2024-07-09T15:31:28.740Z"
+                },
+                {
+                    "matchId": 202450,
+                    "homeTeamScore": 1,
+                    "awayTeamScore": 1,
+                    "winner": "AWAY_TEAM",
+                    "point": 2,
+                    "date": "2024-07-10T16:58:16.974Z"
+                },
+                {
+                    "matchId": 202451,
+                    "homeTeamScore": 2,
+                    "awayTeamScore": 1,
+                    "winner": "HOME_TEAM",
+                    "point": 0,
+                    "date": "2024-07-14T04:38:29.204Z"
+                }
+            ],
+            "id": 5
+        }
+    ]
+}
