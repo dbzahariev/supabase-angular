@@ -34,7 +34,7 @@ export class AddPrediction implements OnInit {
   }
 
   async ngOnInit() {
-    await this.changeJson()
+    // await this.changeJson()
   }
 
   checkTeamName(teamName: string) {
