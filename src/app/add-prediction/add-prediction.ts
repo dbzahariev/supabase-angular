@@ -7,6 +7,10 @@ import backup2018 from '../../../backup_2018.json'
 import backup2020 from '../../../backup_2020.json'
 import backup2022 from '../../../backup_2022.json'
 import backup2024 from '../../../backup_2024.json'
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 const supabaseUrl = environment.supabaseUrl;
@@ -17,7 +21,8 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: 
   selector: 'app-add-prediction',
   standalone: true,
   templateUrl: './add-prediction.html',
-  styleUrls: ['./add-prediction.css']
+  styleUrls: ['./add-prediction.css'],
+  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule]
 })
 export class AddPrediction implements OnInit {
   private socket: Socket;
@@ -52,6 +57,10 @@ export class AddPrediction implements OnInit {
 
   }
 
+  checkPrediction() {
+    debugger;
+  }
+
   checkTeamName(teamName: string) {
     let newName = teamName;
     newName = newName.replace('Швеция', 'Sweden');
@@ -69,5 +78,18 @@ export class AddPrediction implements OnInit {
     newName = newName.replace('Тунис', 'Tunisia');
 
     return newName;
+  }
+
+  themeOptions = [
+    { label: 'Material (зелени бутони)', value: 'material' },
+    { label: 'Aura (тъмна)', value: 'aura' },
+    { label: 'Lara (светла)', value: 'lara' },
+    { label: 'Nora (светла)', value: 'nora' }
+  ];
+  selectedTheme = localStorage.getItem('primeng-theme') || 'material';
+
+  async onThemeChange(event: any) {
+    localStorage.setItem('primeng-theme', event.value);
+    window.location.reload();
   }
 }

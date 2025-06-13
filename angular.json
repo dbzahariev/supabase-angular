@@ -23,6 +23,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/supabase-angular",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -35,6 +37,7 @@
               }
             ],
             "styles": [
+              "primeicons/primeicons.css",
               "src/styles.css"
             ]
           },
