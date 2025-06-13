@@ -2,8 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core'
 import { SupabaseService } from '../app/supabase'
 @Component({
   selector: 'app-root',
-  templateUrl: './app.html',
   standalone: false,
+  templateUrl: './app.html',
   styleUrls: ['./app.css'],
   providers: [SupabaseService]
 })

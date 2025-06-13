@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-auth',
+  standalone: true,
   templateUrl: './auth.component.html',
   imports: [
     CommonModule,

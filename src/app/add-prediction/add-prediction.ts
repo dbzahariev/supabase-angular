@@ -15,9 +15,9 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: 
 
 @Component({
   selector: 'app-add-prediction',
-  standalone: false,
+  standalone: true,
   templateUrl: './add-prediction.html',
-  styleUrl: './add-prediction.css'
+  styleUrls: ['./add-prediction.css']
 })
 export class AddPrediction implements OnInit {
   private socket: Socket;

@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AddPrediction } from './add-prediction';
 
 describe('AddPrediction', () => {
@@ -8,9 +7,8 @@ describe('AddPrediction', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddPrediction]
-    })
-    .compileComponents();
+      imports: [AddPrediction]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AddPrediction);
     component = fixture.componentInstance;
