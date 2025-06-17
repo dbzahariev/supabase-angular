@@ -1,23 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 import { App } from '../app';
+import { SelectModule } from 'primeng/select';
+
+type Color = {
+  name: string;
+  code: string;
+};
 
 @Component({
   selector: 'app-header',
   standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [BrowserModule, ButtonModule, DropdownModule, FormsModule, TranslateModule]
+  imports: [BrowserModule, ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule]
 })
 export class HeaderComponent implements OnInit {
-  public currentThemeColor = localStorage.getItem('theme-color') || 'green';
+  isDark = localStorage.getItem('dark-mode') === 'enabled';
+  currentColor = signal<Color>({ name: '', code: '' });
 
-  realOptionsColors: { label: string, value: string }[] = [];
+  realOptionsColors: Color[] = [];
 
   constructor(private translateService: TranslateService) { }
 
@@ -26,20 +34,22 @@ export class HeaderComponent implements OnInit {
   }
 
   fixLang() {
-    const colorOptions: { label: { en: string, bg: string }, value: string }[] = [
-      { label: { en: 'Green', bg: 'Зелено' }, value: 'green' },
-      { label: { en: 'Red', bg: 'Червено' }, value: 'red' },
-      { label: { en: 'Blue', bg: 'Синьо' }, value: 'blue' },
-      { label: { en: 'Yellow', bg: 'Жълто' }, value: 'yellow' }
+    const colorOptions: { label: { en: string, bg: string }, code: string }[] = [
+      { label: { en: 'Green', bg: 'Зелено' }, code: 'green' },
+      { label: { en: 'Red', bg: 'Червено' }, code: 'red' },
+      { label: { en: 'Blue', bg: 'Синьо' }, code: 'blue' },
+      { label: { en: 'Yellow', bg: 'Жълто' }, code: 'yellow' }
     ];
 
     const browserLang = localStorage.getItem('lang') ?? 'bg';
     if (browserLang === 'bg') {
-      this.realOptionsColors = colorOptions.map(label => ({ label: label.label.bg, value: label.value }));
+      this.realOptionsColors = colorOptions.map(label => ({ name: label.label.bg, code: label.code }));
     }
     else if (browserLang === 'en') {
-      this.realOptionsColors = colorOptions.map(label => ({ label: label.label.en, value: label.value }));
+      this.realOptionsColors = colorOptions.map(label => ({ name: label.label.en, code: label.code }));
     }
+    let previousThemeColorCode = localStorage.getItem('theme-color') ?? this.realOptionsColors[0].code;
+    this.currentColor.set(this.realOptionsColors.find(color => color.code === previousThemeColorCode) ?? this.realOptionsColors[0]);
   }
 
   public changeLanguage(lang: string) {
@@ -51,10 +61,12 @@ export class HeaderComponent implements OnInit {
 
   toggleDarkMode() {
     App.prototype.toggleDarkMode.call(this);
+    this.isDark = !this.isDark;
   }
 
   public async setThemeColor(event: any) {
-    localStorage.setItem('theme-color', event.value);
+    this.currentColor.set(event);
+    localStorage.setItem('theme-color', event.code);
     window.location.reload();
   }
 }

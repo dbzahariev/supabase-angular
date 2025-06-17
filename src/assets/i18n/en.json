@@ -2,6 +2,7 @@
   "HELLO": "Hello!",
   "WELCOME": "Welcome, {{name}}!",
   "DARK_MODE_TOGGLE": "Dark Mode",
+  "CHOSE_COLOR": "Choose a color",
   "colors": {
     "green": "Green",
     "red": "Red",

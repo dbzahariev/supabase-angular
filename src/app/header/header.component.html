@@ -1,8 +1,12 @@
 <div class="header-container">
-    <p-button label="{{'DARK_MODE_TOGGLE' | translate}}" (onClick)="toggleDarkMode()" />
-    <p-dropdown #themeDropdown [options]="realOptionsColors" [(ngModel)]="currentThemeColor"
-        (onChange)="setThemeColor($event)" placeholder="{{ 'chose-theme' | translate }}">
-    </p-dropdown>
+    <p-button variant="outlined" [raised]="true" (onClick)="toggleDarkMode()">
+        <i [class]="`pi pi-${isDark ? 'moon' : 'sun'}`"></i>
+    </p-button>
+    <p-floatlabel class="fl-color" variant="in">
+        <p-select (ngModelChange)="setThemeColor($event)" [(ngModel)]="currentColor" inputId="in_label"
+            [options]="realOptionsColors" optionLabel="name" styleClass="w-full" variant="filled" />
+        <label class="label-color" for="in_label">{{"CHOSE_COLOR" | translate}}</label>
+    </p-floatlabel>
     <button class="lang-button" (click)="changeLanguage('bg')">
         <span class="fi fi-bg fis"></span>
     </button>

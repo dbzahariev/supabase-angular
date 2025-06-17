@@ -1,3 +1,23 @@
+@import "primeicons/primeicons.css";
+
+
+.pi-check {
+    color: var(--p-primary-400);
+}
+
+.label-color {
+    color: var(--p-primary-600) !important;
+}
+
+p-select {
+    border-color: var(--p-primary-800) !important;
+    width: 100% !important;
+}
+
+.fl-color {
+    width: 6% !important;
+}
+
 .header-container {
     display: flex;
     align-items: center;

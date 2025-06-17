@@ -2,6 +2,7 @@
   "HELLO": "Здрасти!",
   "WELCOME": "Добре дошъл, {{name}}!",
   "DARK_MODE_TOGGLE": "Тъмен режим",
+  "CHOSE_COLOR": "Изберете цвят",
   "colors": {
     "green": "Зелен",
     "red": "Червен",
