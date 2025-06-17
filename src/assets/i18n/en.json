@@ -1,0 +1,11 @@
+{
+  "HELLO": "Hello!",
+  "WELCOME": "Welcome, {{name}}!",
+  "DARK_MODE_TOGGLE": "Dark Mode",
+  "colors": {
+    "green": "Green",
+    "red": "Red",
+    "blue": "Blue",
+    "yellow": "Yellow"
+  }
+}
