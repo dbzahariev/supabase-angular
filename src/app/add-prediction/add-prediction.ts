@@ -107,13 +107,6 @@ export class AddPrediction implements OnInit {
     return newName;
   }
 
-  themeOptions = [
-    { label: 'Material (зелени бутони)', value: 'material' },
-    { label: 'Aura (тъмна)', value: 'aura' },
-    { label: 'Lara (светла)', value: 'lara' },
-    { label: 'Nora (светла)', value: 'nora' }
-  ];
-  selectedTheme = localStorage.getItem('primeng-theme') || 'material';
 
   async onThemeChange(event: any) {
     localStorage.setItem('primeng-theme', event.value);

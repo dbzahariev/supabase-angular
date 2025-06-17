@@ -12,24 +12,12 @@ import { App } from '../app';
   standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [
-    BrowserModule,
-    ButtonModule,
-    DropdownModule,
-    FormsModule,
-    TranslateModule
-  ]
+  imports: [BrowserModule, ButtonModule, DropdownModule, FormsModule, TranslateModule]
 })
 export class HeaderComponent implements OnInit {
-  public selectedTheme = localStorage.getItem('theme-color') || 'green';
+  public currentThemeColor = localStorage.getItem('theme-color') || 'green';
 
-  labels: { label: { en: string, bg: string }, value: string }[] = [
-    { label: { en: 'Green', bg: 'Зелено' }, value: 'green' },
-    { label: { en: 'Red', bg: 'Червено' }, value: 'red' },
-    { label: { en: 'Blue', bg: 'Синьо' }, value: 'blue' },
-    { label: { en: 'Yellow', bg: 'Жълто' }, value: 'yellow' }
-  ];
-  realOptions: { label: string, value: string }[] = [];
+  realOptionsColors: { label: string, value: string }[] = [];
 
   constructor(private translateService: TranslateService) { }
 
@@ -38,12 +26,19 @@ export class HeaderComponent implements OnInit {
   }
 
   fixLang() {
+    const colorOptions: { label: { en: string, bg: string }, value: string }[] = [
+      { label: { en: 'Green', bg: 'Зелено' }, value: 'green' },
+      { label: { en: 'Red', bg: 'Червено' }, value: 'red' },
+      { label: { en: 'Blue', bg: 'Синьо' }, value: 'blue' },
+      { label: { en: 'Yellow', bg: 'Жълто' }, value: 'yellow' }
+    ];
+
     const browserLang = localStorage.getItem('lang') ?? 'bg';
     if (browserLang === 'bg') {
-      this.realOptions = this.labels.map(label => ({ label: label.label.bg, value: label.value }));
+      this.realOptionsColors = colorOptions.map(label => ({ label: label.label.bg, value: label.value }));
     }
     else if (browserLang === 'en') {
-      this.realOptions = this.labels.map(label => ({ label: label.label.en, value: label.value }));
+      this.realOptionsColors = colorOptions.map(label => ({ label: label.label.en, value: label.value }));
     }
   }
 
@@ -58,7 +53,7 @@ export class HeaderComponent implements OnInit {
     App.prototype.toggleDarkMode.call(this);
   }
 
-  public async onThemeChange(event: any) {
+  public async setThemeColor(event: any) {
     localStorage.setItem('theme-color', event.value);
     window.location.reload();
   }
