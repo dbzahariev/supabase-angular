@@ -15,7 +15,7 @@ p-select {
 }
 
 .fl-color {
-    width: 6% !important;
+    width: max-content !important;
 }
 
 .header-container {
