@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
-import countries from '../../../node_modules/flag-icons/country.json'
 
 import { App } from '../app';
 
