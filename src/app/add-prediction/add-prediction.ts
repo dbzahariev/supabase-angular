@@ -54,11 +54,38 @@ export class AddPrediction implements OnInit {
   }
 
   async ngOnInit() {
-
+    let foo = await this.getAllPredictions();
   }
 
-  checkPrediction() {
-    debugger;
+  async getAllPredictions() {
+    const pageSize: number = 1000
+    const table = 'predictions';
+    let dateFirstPage = await supabase.from(table).select('*', { count: 'exact' }).range(0, pageSize);
+    let countPages = Math.ceil((dateFirstPage.count ?? 0) / pageSize);
+    if (countPages === 1) {
+      return dateFirstPage.data;
+    }
+    let allRows: any[] = []
+    for (let i = 0; i < countPages; i++) {
+      let page = await this.fetchDataByPage(i, pageSize, table);
+      allRows = allRows.concat(page.data);
+    }
+    return allRows;
+  }
+
+  async fetchDataByPage(page: number, pageSize: number, table: string) {
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+    const { data, count, error } = await supabase
+      .from(table)
+      .select('*', { count: 'exact' })
+      .range(from, to);
+
+    if (error) {
+      console.error('Error fetching predictions:', error);
+      return { data: [], count: 0 };
+    }
+    return { data, count };
   }
 
   checkTeamName(teamName: string) {

@@ -1,6 +1,13 @@
 <div class="header-container">
-    <p-button label="{{'dark-mode-toggle' | translate}}" (onClick)="toggleDarkMode()" />
-    <p-dropdown [options]="themeOptions" [(ngModel)]="selectedTheme" (onChange)="onThemeChange($event)"
+    <p-button label="{{'DARK_MODE_TOGGLE' | translate}}" (onClick)="toggleDarkMode()" />
+    <p-dropdown #themeDropdown [options]="realOptions" [(ngModel)]="selectedTheme" (onChange)="onThemeChange($event)"
         placeholder="{{ 'chose-theme' | translate }}">
     </p-dropdown>
+    <button class="lang-button" (click)="changeLanguage('bg')">
+        <span class="fi fi-bg fis"></span>
+    </button>
+
+    <button class="lang-button" (click)="changeLanguage('en')">
+        <span class="fi fi-gb fis"></span>
+    </button>
 </div>

@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import countries from '../../../node_modules/flag-icons/country.json'
+
+import { App } from '../app';
 
 @Component({
   selector: 'app-header',
@@ -18,32 +21,46 @@ import { DropdownModule } from 'primeng/dropdown';
     TranslateModule
   ]
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   public selectedTheme = localStorage.getItem('theme-color') || 'green';
-  themeOptions = [
-    { label: 'Green', value: 'green' },
-    { label: 'Red', value: 'red' },
-    { label: 'Blue', value: 'blue' },
-    { label: 'Yellow', value: 'yellow' }
-  ];
 
-  constructor(private translate: TranslateService) {
-    translate.addLangs(['en', 'bg']);
-    translate.setDefaultLang(localStorage.getItem('lang') || 'bg');
-    const browserLang = translate.getBrowserLang();
-    const langToUse = (browserLang && browserLang.match(/en|bg/)) ? browserLang : 'bg';
-    translate.use(langToUse);
-    localStorage.getItem('dark-mode') === 'enabled' && this.toggleDarkMode();
+  labels: { label: { en: string, bg: string }, value: string }[] = [
+    { label: { en: 'Green', bg: 'Зелено' }, value: 'green' },
+    { label: { en: 'Red', bg: 'Червено' }, value: 'red' },
+    { label: { en: 'Blue', bg: 'Синьо' }, value: 'blue' },
+    { label: { en: 'Yellow', bg: 'Жълто' }, value: 'yellow' }
+  ];
+  realOptions: { label: string, value: string }[] = [];
+
+  constructor(private translateService: TranslateService) { }
+
+  ngOnInit() {
+    this.fixLang();
   }
 
-  async onThemeChange(event: any) {
-    localStorage.setItem('theme-color', event.value);
-    window.location.reload();
+  fixLang() {
+    const browserLang = localStorage.getItem('lang') ?? 'bg';
+    if (browserLang === 'bg') {
+      this.realOptions = this.labels.map(label => ({ label: label.label.bg, value: label.value }));
+    }
+    else if (browserLang === 'en') {
+      this.realOptions = this.labels.map(label => ({ label: label.label.en, value: label.value }));
+    }
+  }
+
+  public changeLanguage(lang: string) {
+    this.translateService.use(lang);
+    localStorage.setItem('lang', lang);
+
+    this.fixLang();
   }
 
   toggleDarkMode() {
-    const element = document.querySelector('html');
-    element?.classList.toggle('my-app-dark');
-    localStorage.setItem('dark-mode', element?.classList.contains('my-app-dark') ? 'enabled' : 'disabled');
+    App.prototype.toggleDarkMode.call(this);
+  }
+
+  public async onThemeChange(event: any) {
+    localStorage.setItem('theme-color', event.value);
+    window.location.reload();
   }
 }

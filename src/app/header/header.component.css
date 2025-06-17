@@ -5,3 +5,17 @@
     gap: 1rem;
     padding-left: 1rem;
 }
+
+.fi {
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.lang-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}

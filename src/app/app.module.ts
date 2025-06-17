@@ -15,7 +15,9 @@ import { AccountComponent } from './account/account';
 import { AddPrediction } from "./add-prediction/add-prediction";
 import { definePreset } from '@primeng/themes';
 import { DropdownModule } from 'primeng/dropdown';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 const mainColor = localStorage.getItem('theme-color') || 'green'
 
@@ -44,7 +46,11 @@ const themeMap: Record<string, any> = {
     nora: Nora,
     myPreset: MyPreset
 };
-const selectedTheme = 'myPreset'// localStorage.getItem('primeng-theme') || 'material';
+const selectedTheme = 'myPreset'
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [
@@ -59,10 +65,17 @@ const selectedTheme = 'myPreset'// localStorage.getItem('primeng-theme') || 'mat
         AddPrediction,
         ButtonModule,
         DropdownModule,
-        TranslateModule.forRoot(),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            }
+        }),
     ],
     bootstrap: [App],
     providers: [
+        provideHttpClient(),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
