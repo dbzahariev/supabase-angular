@@ -1,0 +1,19 @@
+<div class="chat-container">
+    <div class="chat-users">
+        <label>Потребител:
+            <select [(ngModel)]="selectedUserId">
+                <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
+            </select>
+        </label>
+    </div>
+    <div class="chat-messages">
+        <div *ngFor="let msg of messages" class="chat-message">
+            <span class="chat-date">{{msg.created_at | date:'dd.MM.yy (HH:mm)'}}</span>
+            <b>{{msg.user_name}}:</b> {{msg.content}}
+        </div>
+    </div>
+    <div class="chat-input">
+        <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Въведи съобщение..." />
+        <button (click)="sendMessage()">Изпрати</button>
+    </div>
+</div>

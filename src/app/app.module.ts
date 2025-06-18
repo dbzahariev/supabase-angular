@@ -9,15 +9,16 @@ import Aura from '@primeng/themes/aura';
 import Lara from '@primeng/themes/lara';
 import Nora from '@primeng/themes/nora';
 import { App } from './app';
-import { HeaderComponent } from './header/header.component';
 import { AuthComponent } from './auth/auth';
 import { AccountComponent } from './account/account';
-import { AddPrediction } from "./add-prediction/add-prediction";
+import { AddPrediction } from './add-prediction/add-prediction';
 import { definePreset } from '@primeng/themes';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ChatComponent } from './chat/chat.component';
+import { HeaderComponent } from './header/header.component';
 
 const mainColor = localStorage.getItem('theme-color') || 'green'
 
@@ -57,14 +58,15 @@ export function HttpLoaderFactory(http: HttpClient) {
         App,
     ],
     imports: [
-        HeaderComponent,
         BrowserModule,
         FormsModule,
+        ButtonModule,
+        DropdownModule,
+        ChatComponent,
+        HeaderComponent,
         AuthComponent,
         AccountComponent,
         AddPrediction,
-        ButtonModule,
-        DropdownModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
