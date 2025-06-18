@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-chat',
+    standalone: true,
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
-    standalone: true,
     imports: [FormsModule, CommonModule]
 })
 export class ChatComponent implements OnInit {
