@@ -8,5 +8,13 @@
     "red": "Red",
     "blue": "Blue",
     "yellow": "Yellow"
+  },
+  "CHAT": {
+    "TITLE": "New Messages",
+    "DETAIL": "You have new messages",
+    "INPUT_PLACEHOLDER": "Insert your message here",
+    "SEND_BUTTON": "Send",
+    "USER_LABEL": "User",
+    "FONT_SIZE_LABEL": "Font Size"
   }
 }

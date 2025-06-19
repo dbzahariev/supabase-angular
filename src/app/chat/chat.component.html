@@ -1,11 +1,10 @@
 <div class="chat-container">
-    <p-toast />
     <div class="font-size-controls">
-        <span>Размер на шрифта: </span>
+        <span>{{'CHAT.FONT_SIZE_LABEL' | translate}}: </span>
         <p-slider [(ngModel)]="fontSize" (ngModelChange)="updateFontSize($event)" min="10" max="30" class="test" />
     </div>
     <div class="chat-users">
-        <label>Потребител:
+        <label>{{'CHAT.USER_LABEL' | translate}}:
             <select [(ngModel)]="selectedUserId" (ngModelChange)="onUserChange($event)">
                 <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
             </select>
@@ -18,7 +17,8 @@
         </div>
     </div>
     <div class="chat-input">
-        <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Въведи съобщение..." />
-        <button (click)="sendMessage()">Изпрати</button>
+        <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()"
+            [placeholder]="'CHAT.INPUT_PLACEHOLDER' | translate" />
+        <button (click)="sendMessage()">{{'CHAT.SEND_BUTTON' | translate}}</button>
     </div>
 </div>

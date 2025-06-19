@@ -19,6 +19,8 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ChatComponent } from './chat/chat.component';
 import { HeaderComponent } from './header/header.component';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 const mainColor = localStorage.getItem('theme-color') || 'green'
 
@@ -67,6 +69,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AuthComponent,
         AccountComponent,
         AddPrediction,
+        ToastModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -86,7 +89,8 @@ export function HttpLoaderFactory(http: HttpClient) {
                     darkModeSelector: '.my-app-dark',
                 }
             }
-        })
+        }),
+        MessageService
     ],
 })
 export class AppModule { }

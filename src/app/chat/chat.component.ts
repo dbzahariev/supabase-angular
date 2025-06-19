@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Slider, } from 'primeng/slider';
 import { ToastModule } from 'primeng/toast';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -11,8 +12,7 @@ import { MessageService } from 'primeng/api';
     standalone: true,
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
-    imports: [FormsModule, CommonModule, Slider, ToastModule],
-    providers: [MessageService]
+    imports: [FormsModule, CommonModule, Slider, ToastModule, TranslateModule]
 })
 export class ChatComponent implements OnInit {
     messages: Message[] = [];
@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit {
     newMessage = '';
     fontSize!: number;
 
-    constructor(private chatService: SupabaseChatService, private messageService: MessageService) { }
+    constructor(private chatService: SupabaseChatService, private messageService: MessageService, private translateService: TranslateService) { }
 
     ngOnInit() {
         this.chatService.messages$.subscribe(msgs => {
@@ -29,9 +29,13 @@ export class ChatComponent implements OnInit {
             let oldMessagesStr = JSON.stringify(oldMessagesArr);
             let newMessagesStr = JSON.stringify(msgs);
             if (oldMessagesArr.length > 0 && oldMessagesStr !== newMessagesStr) {
-                this.messageService.add({
-                    summary: 'New Messages',
-                    detail: 'You have new messages'
+                setTimeout(() => {
+                    this.messageService.add({
+                        summary: this.translateService.instant('CHAT.TITLE'),
+                        detail: this.translateService.instant('CHAT.DETAIL'),
+                        key: 'tl',
+                        severity: 'info',
+                    });
                 });
             }
             this.messages = msgs;

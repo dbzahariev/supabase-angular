@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 const supabaseUrl = environment.supabaseUrl;
@@ -22,7 +23,7 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: 
   standalone: true,
   templateUrl: './add-prediction.html',
   styleUrls: ['./add-prediction.css'],
-  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule]
+  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule]
 })
 export class AddPrediction implements OnInit {
   private socket: Socket;
