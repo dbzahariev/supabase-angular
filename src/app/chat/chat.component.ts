@@ -3,13 +3,16 @@ import { SupabaseChatService, Message } from '../supabase-chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Slider, } from 'primeng/slider';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-chat',
     standalone: true,
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
-    imports: [FormsModule, CommonModule, Slider]
+    imports: [FormsModule, CommonModule, Slider, ToastModule],
+    providers: [MessageService]
 })
 export class ChatComponent implements OnInit {
     messages: Message[] = [];
@@ -18,10 +21,19 @@ export class ChatComponent implements OnInit {
     newMessage = '';
     fontSize!: number;
 
-    constructor(private chatService: SupabaseChatService) { }
+    constructor(private chatService: SupabaseChatService, private messageService: MessageService) { }
 
     ngOnInit() {
         this.chatService.messages$.subscribe(msgs => {
+            const oldMessagesArr = this.messages;
+            let oldMessagesStr = JSON.stringify(oldMessagesArr);
+            let newMessagesStr = JSON.stringify(msgs);
+            if (oldMessagesArr.length > 0 && oldMessagesStr !== newMessagesStr) {
+                this.messageService.add({
+                    summary: 'New Messages',
+                    detail: 'You have new messages'
+                });
+            }
             this.messages = msgs;
         });
         this.fetchUsers();
