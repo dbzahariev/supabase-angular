@@ -1,20 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { SupabaseChatService, Message } from '../supabase-chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Slider, } from 'primeng/slider';
 
 @Component({
     selector: 'app-chat',
     standalone: true,
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
-    imports: [FormsModule, CommonModule]
+    imports: [FormsModule, CommonModule, Slider]
 })
 export class ChatComponent implements OnInit {
     messages: Message[] = [];
     users: { id: number; name: string }[] = [];
     selectedUserId: number | null = null;
     newMessage = '';
+    fontSize!: number;
 
     constructor(private chatService: SupabaseChatService) { }
 
@@ -23,13 +25,32 @@ export class ChatComponent implements OnInit {
             this.messages = msgs;
         });
         this.fetchUsers();
+        this.fontSize = Number(localStorage.getItem('chat-font-size') ?? 16);
+    }
+
+    updateFontSize(event: any) {
+        let savedFontSize = Number(localStorage.getItem('chat-font-size') ?? 0);
+        if (event && Number(event) !== savedFontSize) {
+            localStorage.setItem('chat-font-size', event.toString());
+        }
+    }
+
+    onUserChange(event: any) {
+        localStorage.setItem('chat-selected-user-id', (event ?? "").toString());
+        this.fetchUsers().then(() => { });
     }
 
     async fetchUsers() {
         let uniqueUsers = await this.fetchUsersWithLastBackupYear() ?? [{ id: 1, name: '' }];
         this.users = uniqueUsers;
+        let savedUserId = localStorage.getItem('chat-selected-user-id');
+        if (savedUserId === null) {
+            localStorage.setItem('chat-selected-user-id', this.users[0].id.toString());
+            savedUserId = this.users[0].id.toString();
+        }
         if (this.users.length > 0) {
-            this.selectedUserId = this.users[0].id;
+            let savedUserId = localStorage.getItem('chat-selected-user-id');
+            this.selectedUserId = this.users.find(user => user.id === Number(savedUserId))?.id ?? this.users[0].id;
         }
     }
 

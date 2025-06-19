@@ -47,3 +47,17 @@
     color: #fff;
     cursor: pointer;
 }
+
+.test {
+    width: 15%;
+}
+
+.font-size-controls {
+    display: flex;
+    align-items: baseline;
+}
+
+.font-size-controls span {
+    display: block;
+    margin-right: 10px;
+}

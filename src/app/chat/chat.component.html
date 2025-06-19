@@ -1,13 +1,17 @@
 <div class="chat-container">
+    <div class="font-size-controls">
+        <span>Размер на шрифта: </span>
+        <p-slider [(ngModel)]="fontSize" (ngModelChange)="updateFontSize($event)" min="10" max="30" class="test" />
+    </div>
     <div class="chat-users">
         <label>Потребител:
-            <select [(ngModel)]="selectedUserId">
+            <select [(ngModel)]="selectedUserId" (ngModelChange)="onUserChange($event)">
                 <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
             </select>
         </label>
     </div>
     <div class="chat-messages">
-        <div *ngFor="let msg of messages" class="chat-message">
+        <div *ngFor="let msg of messages" class="chat-message" [ngStyle]="{'font-size.px': fontSize}">
             <span class="chat-date">{{msg.created_at | date:'dd.MM.yy (HH:mm)'}}</span>
             <b>{{msg.user_name}}:</b> {{msg.content}}
         </div>
