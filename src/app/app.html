@@ -2,11 +2,6 @@
   <p-toast position="top-left" key="tl" />
   <p-toast position="bottom-left" key="bl" />
   <p-toast position="bottom-right" key="br" />
-  <app-account *ngIf="session; else auth" [session]="session"></app-account>
-  <ng-template #auth>
-    <!-- <app-auth></app-auth> -->
-    <app-header></app-header>
-    <app-add-prediction></app-add-prediction>
-    <app-chat></app-chat>
-  </ng-template>
+  <app-header></app-header>
+  <router-outlet></router-outlet>
 </div>

@@ -1,13 +1,16 @@
 import { Component, OnInit, Inject } from '@angular/core'
 import { SupabaseService } from '../app/supabase'
 import { TranslateService } from '@ngx-translate/core'
+import { ToastModule } from 'primeng/toast'
+import { HeaderComponent } from "./header/header.component";
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: false,
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
-  providers: [SupabaseService]
+  providers: [SupabaseService],
 })
 export class App implements OnInit {
   session: typeof this.supabase.session

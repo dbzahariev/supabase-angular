@@ -10,7 +10,6 @@ import Lara from '@primeng/themes/lara';
 import Nora from '@primeng/themes/nora';
 import { App } from './app';
 import { AuthComponent } from './auth/auth';
-import { AccountComponent } from './account/account';
 import { AddPrediction } from './add-prediction/add-prediction';
 import { definePreset } from '@primeng/themes';
 import { DropdownModule } from 'primeng/dropdown';
@@ -21,6 +20,7 @@ import { ChatComponent } from './chat/chat.component';
 import { HeaderComponent } from './header/header.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { AppRoutingModule } from './app-routing.module';
 
 const mainColor = localStorage.getItem('theme-color') || 'green'
 
@@ -67,7 +67,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         ChatComponent,
         HeaderComponent,
         AuthComponent,
-        AccountComponent,
         AddPrediction,
         ToastModule,
         TranslateModule.forRoot({
@@ -77,6 +76,7 @@ export function HttpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient],
             }
         }),
+        AppRoutingModule,
     ],
     bootstrap: [App],
     providers: [

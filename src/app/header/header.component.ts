@@ -19,7 +19,7 @@ type Color = {
   standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [BrowserModule, ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule]
+  imports: [ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule]
 })
 export class HeaderComponent implements OnInit {
   isDark = localStorage.getItem('dark-mode') === 'enabled';
