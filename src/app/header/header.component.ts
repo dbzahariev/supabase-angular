@@ -63,17 +63,17 @@ export class HeaderComponent implements OnInit {
     let previousThemeColorCode = localStorage.getItem('theme-color') ?? this.realOptionsColors[0].code;
     this.currentColor.set(this.realOptionsColors.find(color => color.code === previousThemeColorCode) ?? this.realOptionsColors[0]);
 
-    setTimeout(() => {
-      this.tabs = this.tabs.map((tab) => {
-        let newLabel: string = this.translateService.instant("ROUTE." + tab.key);
-        if (newLabel.includes("ROUTE.")) {
-          tab.label = "";
-        } else {
-          tab.label = newLabel;
-        }
-        return tab;
-      })
-    }, 1)
+    // setTimeout(() => {
+    //   this.tabs = this.tabs.map((tab) => {
+    //     let newLabel: string = this.translateService.instant("ROUTE." + tab.key);
+    //     if (newLabel.includes("ROUTE.")) {
+    //       tab.label = "";
+    //     } else {
+    //       tab.label = newLabel;
+    //     }
+    //     return tab;
+    //   })
+    // }, 1)
   }
 
   public changeLanguage(lang: string) {
