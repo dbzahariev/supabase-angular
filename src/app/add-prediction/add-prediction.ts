@@ -18,6 +18,18 @@ const supabaseUrl = environment.supabaseUrl;
 const supabaseKey = environment.supabaseKey;
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: true } });
 
+interface PredictionType {
+  away_team_score: number;
+  backup_year: string;
+  date: string;
+  home_team_score: number;
+  id: number;
+  match_id: number;
+  points: number;
+  user_id: number;
+  winner: string;
+}
+
 @Component({
   selector: 'app-add-prediction',
   standalone: true,
@@ -33,11 +45,16 @@ export class AddPrediction implements OnInit, OnDestroy {
   constructor() {
     this.socket = io(this.url);
 
-    this.socket.on('connect', () => { });
+    if (!this.socket.hasListeners('connect')) {
+      this.socket.on('connect', () => { });
+    }
 
-    this.socket.on('matchesUpdate', (data) => {
-      console.log('Matches updated', data);
-    });
+    // Avoid duplicate event listeners
+    if (!this.socket.hasListeners('matchesUpdate')) {
+      this.socket.on('matchesUpdate', (data) => {
+        console.log('Matches updated', data);
+      });
+    }
 
     // Съхраняваме канала като член-променлива
     this.predictionChannel = supabase
@@ -57,18 +74,20 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    let foo = await this.getAllPredictions();
+    let foo: PredictionType[] = await this.getAllPredictions() as PredictionType[];
   }
 
+
   async getAllPredictions() {
-    const pageSize: number = 1000
     const table = 'predictions';
-    let dateFirstPage = await supabase.from(table).select('*', { count: 'exact' }).range(0, pageSize);
+    const pageSize: number = 1000
+    let lastYear: string = (await supabase.from(table).select('backup_year', { count: 'exact' }).order('backup_year', { ascending: false }).limit(1).single()).data?.backup_year;
+    let dateFirstPage = await supabase.from(table).select('*', { count: 'exact' }).eq("backup_year", lastYear).range(0, pageSize);
     let countPages = Math.ceil((dateFirstPage.count ?? 0) / pageSize);
     if (countPages === 1) {
-      return dateFirstPage.data;
+      return dateFirstPage.data as PredictionType[];
     }
-    let allRows: any[] = []
+    let allRows: PredictionType[] = []
     for (let i = 0; i < countPages; i++) {
       let page = await this.fetchDataByPage(i, pageSize, table);
       allRows = allRows.concat(page.data);
@@ -88,7 +107,7 @@ export class AddPrediction implements OnInit, OnDestroy {
       console.error('Error fetching predictions:', error);
       return { data: [], count: 0 };
     }
-    return { data, count };
+    return { data: data as PredictionType[], count };
   }
 
   checkTeamName(teamName: string) {
