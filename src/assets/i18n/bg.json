@@ -16,5 +16,11 @@
     "SEND_BUTTON": "Изпрати",
     "USER_LABEL": "Потребител",
     "FONT_SIZE_LABEL": "Размер на шрифта"
+  },
+  "ROUTE": {
+    "ADD_PREDICTION": "Добавяне на прогноза",
+    "CHAT": "Чат",
+    "PRODUCTS": "Продукти",
+    "MESSAGES": "Съобщения"
   }
 }

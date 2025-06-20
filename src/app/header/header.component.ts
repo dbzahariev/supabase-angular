@@ -1,13 +1,15 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
-
+import { TabsModule } from 'primeng/tabs';
 import { App } from '../app';
 import { SelectModule } from 'primeng/select';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 type Color = {
   name: string;
@@ -19,15 +21,25 @@ type Color = {
   standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule]
+  imports: [ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule, TabsModule, RouterModule, CommonModule]
 })
 export class HeaderComponent implements OnInit {
+  tabs = [
+    { route: '', label: 'Add prediction', icon: 'pi pi-chart-line' },
+    { route: 'chat', label: 'Chat', icon: 'pi pi-home' },
+    { route: 'products', label: 'Products', icon: 'pi pi-list' },
+    { route: 'messages', label: 'Messages', icon: 'pi pi-inbox' }
+  ];
   isDark = localStorage.getItem('dark-mode') === 'enabled';
   currentColor = signal<Color>({ name: '', code: '' });
-
+  currentRoute: string = '';
   realOptionsColors: Color[] = [];
 
-  constructor(private translateService: TranslateService) { }
+  constructor(private translateService: TranslateService, private router: Router) {
+    this.router.events.subscribe(() => {
+      this.currentRoute = this.router.url.slice(1);
+    });
+  }
 
   ngOnInit() {
     this.fixLang();
@@ -50,6 +62,19 @@ export class HeaderComponent implements OnInit {
     }
     let previousThemeColorCode = localStorage.getItem('theme-color') ?? this.realOptionsColors[0].code;
     this.currentColor.set(this.realOptionsColors.find(color => color.code === previousThemeColorCode) ?? this.realOptionsColors[0]);
+
+    setTimeout(() => {
+      this.tabs = this.tabs.map((tab) => {
+        let newLabel: string = this.translateService.instant("ROUTE." + tab.label.toUpperCase().replaceAll(" ", "_"));
+        console.log(newLabel);
+        if (newLabel.includes("ROUTE.")) {
+          tab.label = "";
+        } else {
+          tab.label = newLabel;
+        }
+        return tab;
+      })
+    }, 1)
   }
 
   public changeLanguage(lang: string) {
@@ -57,6 +82,7 @@ export class HeaderComponent implements OnInit {
     localStorage.setItem('lang', lang);
 
     this.fixLang();
+    window.location.reload();
   }
 
   toggleDarkMode() {

@@ -16,5 +16,11 @@
     "SEND_BUTTON": "Send",
     "USER_LABEL": "User",
     "FONT_SIZE_LABEL": "Font Size"
+  },
+  "ROUTE": {
+    "ADD_PREDICTION": "Add Prediction",
+    "CHAT": "Chat",
+    "PRODUCTS": "Products",
+    "MESSAGES": "Messages"
   }
 }

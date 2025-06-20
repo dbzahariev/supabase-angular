@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
@@ -25,10 +25,11 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: 
   styleUrls: ['./add-prediction.css'],
   imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule]
 })
-export class AddPrediction implements OnInit {
+export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
   url = this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com';
+  predictionChannel: any;
   constructor() {
     this.socket = io(this.url);
 
@@ -38,7 +39,8 @@ export class AddPrediction implements OnInit {
       console.log('Matches updated', data);
     });
 
-    supabase
+    // Съхраняваме канала като член-променлива
+    this.predictionChannel = supabase
       .channel('custom-update-channel')
       .on(
         'postgres_changes',
@@ -112,5 +114,12 @@ export class AddPrediction implements OnInit {
   async onThemeChange(event: any) {
     localStorage.setItem('primeng-theme', event.value);
     window.location.reload();
+  }
+
+  // Добавяме ngOnDestroy за отписване
+  ngOnDestroy() {
+    if (this.predictionChannel) {
+      this.predictionChannel.unsubscribe();
+    }
   }
 }

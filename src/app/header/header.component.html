@@ -14,4 +14,15 @@
     <button class="lang-button" (click)="changeLanguage('en')">
         <span class="fi fi-gb fis"></span>
     </button>
+
+    <p-tabs value="{{currentRoute}}">
+        <p-tablist>
+            @for(tab of tabs; track tab.route){
+            <p-tab [value]="tab.route" [routerLink]="tab.route" class="flex items-center !gap-2 text-inherit">
+                <i [class]="tab.icon"></i>
+                <span>{{ tab.label }}</span>
+            </p-tab>
+            }
+        </p-tablist>
+    </p-tabs>
 </div>
