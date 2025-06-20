@@ -25,10 +25,10 @@ type Color = {
 })
 export class HeaderComponent implements OnInit {
   tabs = [
-    { route: '', label: 'Add prediction', icon: 'pi pi-chart-line' },
-    { route: 'chat', label: 'Chat', icon: 'pi pi-home' },
-    { route: 'products', label: 'Products', icon: 'pi pi-list' },
-    { route: 'messages', label: 'Messages', icon: 'pi pi-inbox' }
+    { route: '', key: 'ADD_PREDICTION', label: 'Add prediction', icon: 'pi pi-chart-line' },
+    { route: 'chat', key: 'CHAT', label: 'Chat', icon: 'pi pi-home' },
+    { route: 'products', key: 'PRODUCTS', label: 'Products', icon: 'pi pi-list' },
+    { route: 'messages', key: 'MESSAGES', label: 'Messages', icon: 'pi pi-inbox' }
   ];
   isDark = localStorage.getItem('dark-mode') === 'enabled';
   currentColor = signal<Color>({ name: '', code: '' });
@@ -65,8 +65,7 @@ export class HeaderComponent implements OnInit {
 
     setTimeout(() => {
       this.tabs = this.tabs.map((tab) => {
-        let newLabel: string = this.translateService.instant("ROUTE." + tab.label.toUpperCase().replaceAll(" ", "_"));
-        console.log(newLabel);
+        let newLabel: string = this.translateService.instant("ROUTE." + tab.key);
         if (newLabel.includes("ROUTE.")) {
           tab.label = "";
         } else {
