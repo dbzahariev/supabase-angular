@@ -9,6 +9,7 @@ import backup2022 from '../../../backup_2022.json'
 import backup2024 from '../../../backup_2024.json'
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,18 +31,32 @@ interface PredictionType {
   winner: string;
 }
 
+interface Product {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  category: string;
+  quantity: number;
+  inventoryStatus: string;
+  rating: number;
+}
+
 @Component({
   selector: 'app-add-prediction',
   standalone: true,
   templateUrl: './add-prediction.html',
   styleUrls: ['./add-prediction.css'],
-  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule]
+  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule]
 })
 export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
   url = this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com';
   predictionChannel: any;
+  products!: Product[];
   constructor() {
     this.socket = io(this.url);
 
@@ -75,6 +90,7 @@ export class AddPrediction implements OnInit, OnDestroy {
 
   async ngOnInit() {
     let foo: PredictionType[] = await this.getAllPredictions() as PredictionType[];
+    this.products = this.getProducts();
   }
 
 
@@ -140,5 +156,22 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (this.predictionChannel) {
       this.predictionChannel.unsubscribe();
     }
+  }
+
+
+  getProducts() {
+    let oneProduct: Product = {
+      id: '1000',
+      code: 'f230fh0g3',
+      name: 'Bamboo Watch',
+      description: 'Product Description',
+      image: 'bamboo-watch.jpg',
+      price: 65,
+      category: 'Accessories',
+      quantity: 24,
+      inventoryStatus: 'INSTOCK',
+      rating: 5
+    };
+    return [oneProduct];
   }
 }

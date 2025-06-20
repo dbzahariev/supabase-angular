@@ -22,5 +22,11 @@
     "CHAT": "Chat",
     "PRODUCTS": "Products",
     "MESSAGES": "Messages"
+  },
+  "TABLE": {
+    "CODE": "Code",
+    "NAME": "Name",
+    "CATEGORY": "Category",
+    "QUANTITY": "Quantity"
   }
 }

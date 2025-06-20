@@ -1,6 +1,33 @@
 <div class="card flex justify-center" style="margin-bottom: 2rem;">
-    
+
 </div>
 <div class="card flex justify-center">
     <p-button badgeSeverity="secondary" label="Check" />
+</div>
+
+<div class="card">
+    <p-table [value]="products" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #caption>
+            <div class="flex items-center justify-between ">
+                <span class="text-xl font-bold">Products</span>
+                <p-button icon="pi pi-refresh" rounded raised />
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th>{{ 'TABLE.CODE' | translate }}</th>
+                <th>{{ 'TABLE.NAME' | translate }}</th>
+                <th>{{ 'TABLE.CATEGORY' | translate }}</th>
+                <th>{{ 'TABLE.QUANTITY' | translate }}</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-product>
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.quantity }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
 </div>
