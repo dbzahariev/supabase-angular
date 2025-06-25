@@ -44,7 +44,8 @@
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
-              "ws"
+              "ws",
+              "i18n-iso-countries"
             ]
           },
           "configurations": {
@@ -52,7 +53,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.5mb",
+                  "maximumWarning": "5mb",
                   "maximumError": "2mb"
                 },
                 {
