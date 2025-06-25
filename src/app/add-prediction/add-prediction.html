@@ -1,6 +1,7 @@
-<div class="">
+<div class="overflow-x-auto">
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
         [scrollable]="true" scrollHeight="40rem"
+        [responsiveLayout]="'scroll'"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small">
         <ng-template #caption>
