@@ -24,9 +24,28 @@
     "MESSAGES": "Съобщения"
   },
   "TABLE": {
-    "CODE": "Код",
+    "ID": "Код",
     "NAME": "Име",
     "CATEGORY": "Категория",
-    "QUANTITY": "Количество"
+    "QUANTITY": "Количество",
+    "ROW_INDEX": "Индекс",
+    "GROUP": "Група",
+    "ROUND_1": "Кръг 1",
+    "ROUND_2": "Кръг 2",
+    "ROUND_3": "Кръг 3",
+    "ROUND_4": "Кръг 4",
+    "ROUND_5": "Кръг 5",
+    "GROUP_A": "Група A",
+    "GROUP_B": "Група B",
+    "GROUP_C": "Група C",
+    "GROUP_D": "Група D",
+    "GROUP_E": "Група E",
+    "GROUP_F": "Група F",
+    "GROUP_G": "Група G",
+    "GROUP_H": "Група H",
+    "LAST_16": "Последни 16",
+    "QUARTER_FINALS": "Четвъртфинали",
+    "SEMI_FINALS": "Полуфинали",
+    "FINAL": "Финал"
   }
 }

@@ -11,9 +11,22 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { TagModule } from 'primeng/tag';
+import { IconFieldModule } from 'primeng/iconfield';
+import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { HttpClientModule } from '@angular/common/http';
+import localeBg from '@angular/common/locales/bg';
+import localeEn from '@angular/common/locales/en';
+import { registerLocaleData } from '@angular/common';
+import { CountryTranslateService } from '../services/country-translate.service';
 
+registerLocaleData(localeBg, 'bg-BG');
+registerLocaleData(localeEn, 'en-US');
 
 const supabaseUrl = environment.supabaseUrl;
 const supabaseKey = environment.supabaseKey;
@@ -36,7 +49,6 @@ interface Product {
   code: string;
   name: string;
   description: string;
-  image: string;
   price: number;
   category: string;
   quantity: number;
@@ -49,16 +61,23 @@ interface Product {
   standalone: true,
   templateUrl: './add-prediction.html',
   styleUrls: ['./add-prediction.css'],
-  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule]
+  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
 })
 export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
-  url = this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com';
   predictionChannel: any;
-  products!: Product[];
-  constructor() {
-    this.socket = io(this.url);
+  bets: any[] = [];
+  betsToShow: any[] = [];
+  onlyMatches: any[] = [];
+  oldBets: string = "";
+  loading: boolean = true;
+  allUsersNames: any[] = [];
+  expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
+  rowIndexes: number[] = [];
+
+  constructor(private countryService: CountryTranslateService) {
+    this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
     if (!this.socket.hasListeners('connect')) {
       this.socket.on('connect', () => { });
@@ -82,6 +101,7 @@ export class AddPrediction implements OnInit, OnDestroy {
           table: '*',
         },
         (payload) => {
+          this.getPredictionFromView();
           console.log('Update received!', payload)
         }
       )
@@ -89,89 +109,116 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    let foo: PredictionType[] = await this.getAllPredictions() as PredictionType[];
-    this.products = this.getProducts();
+    await this.getPredictionFromView();
   }
 
+  async getPredictionFromView() {
+    this.loading = true;
+    try {
+      const { data = [] } = await supabase
+        .from('predictions_view')
+        .select('*');
 
-  async getAllPredictions() {
-    const table = 'predictions';
-    const pageSize: number = 1000
-    let lastYear: string = (await supabase.from(table).select('backup_year', { count: 'exact' }).order('backup_year', { ascending: false }).limit(1).single()).data?.backup_year;
-    let dateFirstPage = await supabase.from(table).select('*', { count: 'exact' }).eq("backup_year", lastYear).range(0, pageSize);
-    let countPages = Math.ceil((dateFirstPage.count ?? 0) / pageSize);
-    if (countPages === 1) {
-      return dateFirstPage.data as PredictionType[];
-    }
-    let allRows: PredictionType[] = []
-    for (let i = 0; i < countPages; i++) {
-      let page = await this.fetchDataByPage(i, pageSize, table);
-      allRows = allRows.concat(page.data);
-    }
-    return allRows;
-  }
+      this.bets = (data ?? []).map(item => {
+        let newItem = { ...item, row_index: Number(item.match_id.toString().slice(-2)), group_row: "" };
+        let groupStringUppercase = item.group.toString().toUpperCase();
+        if (groupStringUppercase.startsWith('GROUP')) {
+          newItem.group_row = "ROUND_1";
+        } else if (groupStringUppercase === 'LAST_16') {
+          newItem.group_row = 'ROUND_2';
+        } else if (groupStringUppercase === 'QUARTER_FINALS') {
+          newItem.group_row = 'ROUND_3';
+        } else if (groupStringUppercase === 'SEMI_FINALS') {
+          newItem.group_row = 'ROUND_4';
+        } else if (groupStringUppercase === 'FINAL') {
+          newItem.group_row = 'ROUND_5';
+        }
+        return newItem;
+      });
 
-  async fetchDataByPage(page: number, pageSize: number, table: string) {
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
-    const { data, count, error } = await supabase
-      .from(table)
-      .select('*', { count: 'exact' })
-      .range(from, to);
+      this.oldBets = JSON.stringify(this.bets);
 
-    if (error) {
+      this.bets.forEach(bet => {
+        if (!this.onlyMatches.some(match => match.row_index === bet.row_index)) {
+          this.getRowFromDbByMatchNumber(bet.match_id);
+        }
+      });
+
+      this.betsToShow = this.onlyMatches.map(match => {
+        const filteredBets = this.bets.filter(bet => bet.row_index === match.row_index);
+
+        const allUsers = filteredBets.map(bet => ({
+          name: bet.user_name,
+          home_score: bet.home_team_predict_score,
+          away_score: bet.away_team_predict_score,
+          winner_predict: bet.winner_predict,
+          points_predict: bet.points_predict
+        }));
+
+        return { ...match, all_users: allUsers };
+      });
+      this.allUsersNames = this.betsToShow.flatMap(match => match.all_users.map((user: { name: any; }) => { return { name: user.name, total_points: this.getUserTotalPoints(user.name) } }))
+        .filter((val, i, self) => self.findIndex(v => v.name === val.name) === i);
+
+      this.rowIndexes = new Array(this.allUsersNames.length).fill(0).map((_, i) => i);
+    } catch (error) {
       console.error('Error fetching predictions:', error);
-      return { data: [], count: 0 };
-    }
-    return { data: data as PredictionType[], count };
+      this.bets = [];
+      this.betsToShow = [];
+    } finally {
+      this.loading = false;
+    };
   }
 
-  checkTeamName(teamName: string) {
-    let newName = teamName;
-    newName = newName.replace('Швеция', 'Sweden');
-    newName = newName.replace('Чехия', 'Czechia');
-    newName = newName.replace('Белгия', 'Belgium');
-    newName = newName.replace('Еире', 'Ireland');
-    newName = newName.replace('Австрия', 'Austria');
-    newName = newName.replace('Египет', 'Egypt');
-    newName = newName.replace('Колумбия', 'Colombia');
-    newName = newName.replace('Перу', 'Peru');
-    newName = newName.replace('Сърбия', 'Serbia');
-    newName = newName.replace('Мексико', 'Mexico');
-    newName = newName.replace('Нигерия', 'Nigeria');
-    newName = newName.replace('Япония', 'Japan');
-    newName = newName.replace('Тунис', 'Tunisia');
-
-    return newName;
+  toggleGroup() {
+    localStorage.setItem('expandedGroups', JSON.stringify(this.expandedRows));
   }
 
+  getUserPredictionValue(idx: number, product: any, columnIndex: number) {
+    let selectedUserName = this.allUsersNames[idx]?.name;
+    let selectedUser = product.all_users.find((user: { name: any; }) => user.name === selectedUserName);
 
-  async onThemeChange(event: any) {
-    localStorage.setItem('primeng-theme', event.value);
-    window.location.reload();
+    if (columnIndex === 0) return selectedUser?.home_score;
+    if (columnIndex === 1) return selectedUser?.away_score;
+    if (columnIndex === 2) return selectedUser?.winner_predict.slice(0, 1);
+    if (columnIndex === 3) return selectedUser?.points_predict || 0;
+    return "";
   }
 
-  // Добавяме ngOnDestroy за отписване
+  getUserTotalPoints(user: string): number {
+    return this.betsToShow.reduce((total, match) => {
+      const foundUser = match.all_users.find((u: { name: string }) => u.name === user);
+      return total + (foundUser?.points_predict || 0);
+    }, 0);
+  }
+
+  getColName(index: number) {
+    const colNames = ['H', 'A', 'W', 'P'];
+    return colNames[index % colNames.length];
+  }
+
+  getRowFromDbByMatchNumber(matchId: number) {
+    let lng: "en" | "bg" = navigator.language === 'bg-BG' ? 'bg' : 'en';
+    let row = this.bets.filter(bet => bet.match_id === matchId)[0];
+    let dateTime = new Date(row.match_date_utc);
+    let formattedDate = formatDate(dateTime, 'dd.MM.yyyy', navigator.language);
+    let formattedTime = formatDate(dateTime, 'HH:mm', navigator.language);
+    let oneMatch = {
+      row_index: row.row_index, match_day: formattedDate, match_time: formattedTime, group: row.group,
+      home_team: this.countryService.translateCountryNameFromEnToBg(row.home_team_name, lng),
+      home_team_score: row.home_team_score,
+      away_team: this.countryService.translateCountryNameFromEnToBg(row.away_team_name, lng),
+      away_team_score: row.away_team_score,
+      group_row: row.group_row
+    };
+
+    this.onlyMatches.push(oneMatch);
+    return row;
+  }
+
   ngOnDestroy() {
     if (this.predictionChannel) {
       this.predictionChannel.unsubscribe();
     }
-  }
-
-
-  getProducts() {
-    let oneProduct: Product = {
-      id: '1000',
-      code: 'f230fh0g3',
-      name: 'Bamboo Watch',
-      description: 'Product Description',
-      image: 'bamboo-watch.jpg',
-      price: 65,
-      category: 'Accessories',
-      quantity: 24,
-      inventoryStatus: 'INSTOCK',
-      rating: 5
-    };
-    return [oneProduct];
   }
 }

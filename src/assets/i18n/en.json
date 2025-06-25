@@ -24,9 +24,28 @@
     "MESSAGES": "Messages"
   },
   "TABLE": {
-    "CODE": "Code",
+    "ID": "ID",
     "NAME": "Name",
     "CATEGORY": "Category",
-    "QUANTITY": "Quantity"
+    "QUANTITY": "Quantity",
+    "ROW_INDEX": "Index",
+    "GROUP": "Group",
+    "ROUND_1": "Round 1",
+    "ROUND_2": "Round 2",
+    "ROUND_3": "Round 3",
+    "ROUND_4": "Round 4",
+    "ROUND_5": "Round 5",
+    "GROUP_A": "Group A",
+    "GROUP_B": "Group B",
+    "GROUP_C": "Group C",
+    "GROUP_D": "Group D",
+    "GROUP_E": "Group E",
+    "GROUP_F": "Group F",
+    "GROUP_G": "Group G",
+    "GROUP_H": "Group H",
+    "LAST_16": "Last 16",
+    "QUARTER_FINALS": "Quarter Finals",
+    "SEMI_FINALS": "Semi Finals",
+    "FINAL": "Final"
   }
 }

@@ -6,27 +6,63 @@
 </div>
 
 <div class="card">
-    <p-table [value]="products" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table #dt [value]="betsToShow" [tableStyle]="{ 'min-width': '50rem' }" showGridlines [loading]="loading"
+        rowGroupMode="subheader" groupRowsBy="group_row" [scrollable]="true" scrollHeight="400px"
+        [globalFilterFields]="['id', 'country.name', 'representative.name', 'status']" [resizableColumns]="true"
+        [expandedRowKeys]="expandedRows" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between ">
-                <span class="text-xl font-bold">Products</span>
+                <span class="text-xl font-bold">Bets</span>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input id="searchInput" #searchInput pInputText type="text"
+                        (input)="dt.filterGlobal(searchInput.value, 'contains')" placeholder="Search keyword" />
+                </p-iconfield>
                 <p-button icon="pi pi-refresh" rounded raised />
             </div>
         </ng-template>
         <ng-template #header>
             <tr>
-                <th>{{ 'TABLE.CODE' | translate }}</th>
-                <th>{{ 'TABLE.NAME' | translate }}</th>
-                <th>{{ 'TABLE.CATEGORY' | translate }}</th>
-                <th>{{ 'TABLE.QUANTITY' | translate }}</th>
+                <th rowspan="2" style="width:0px">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+                <th rowspan="2" pResizableColumn style="width:0px">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="2" pResizableColumn pSortableColumn="name">{{ 'TABLE.NAME' | translate }} <p-sortIcon
+                        field="name" />
+                <th rowspan="2" pResizableColumn>{{ 'TABLE.CATEGORY' | translate }}</th>
+                <th rowspan="2" pResizableColumn>{{ 'TABLE.QUANTITY' | translate }}</th>
+                <th colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
+                    user.total_points }})</th>
+            </tr>
+            <tr>
+                <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
+                    {{getColName(idx)}}</th>
             </tr>
         </ng-template>
-        <ng-template #body let-product>
+        <ng-template #groupheader let-product let-expanded="expanded">
+            <tr pRowGroupHeader>
+                <td colspan="10000">
+                    <button id="toggler_{{product.group_row}}" type="button" pButton pRipple [pRowToggler]="product"
+                        text rounded plain class="mr-2" (click)="toggleGroup()"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">{{'TABLE.' + product.group_row
+                        | translate}}
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #expandedrow let-product>
             <tr>
-                <td>{{ product.code }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.category }}</td>
-                <td>{{ product.quantity }}</td>
+                <td>{{ product?.row_index}}</td>
+                <td>{{ 'TABLE.' + product?.group | translate }}</td>
+                <td>{{ product?.name }}</td>
+                <td>{{ product?.category }}</td>
+                <td>{{ product?.quantity }}</td>
+                <ng-container *ngFor="let i of rowIndexes">
+                    <ng-container *ngFor="let j of [0, 1, 2, 3]">
+                        <td>{{ getUserPredictionValue(i, product, j) }}</td>
+                    </ng-container>
+                </ng-container>
             </tr>
         </ng-template>
     </p-table>
