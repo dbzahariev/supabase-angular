@@ -1,11 +1,4 @@
-<div class="card flex justify-center" style="margin-bottom: 2rem;">
-
-</div>
-<div class="card flex justify-center">
-    <p-button badgeSeverity="secondary" label="Check" />
-</div>
-
-<div class="card" style="width: 50rem;">
+<div class="">
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
         [scrollable]="true" scrollHeight="40rem"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
