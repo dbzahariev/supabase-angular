@@ -5,9 +5,9 @@
     <p-button badgeSeverity="secondary" label="Check" />
 </div>
 
-<div class="card">
+<div class="card" style="width: 50rem;">
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
-        [scrollable]="true" scrollHeight="75vh"
+        [scrollable]="true" scrollHeight="40rem"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small">
         <ng-template #caption>
