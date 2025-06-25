@@ -6,10 +6,10 @@
 </div>
 
 <div class="card">
-    <p-table #dt [value]="betsToShow" [tableStyle]="{ 'min-width': '50rem' }" showGridlines [loading]="loading"
-        rowGroupMode="subheader" groupRowsBy="group_row" [scrollable]="true" scrollHeight="400px"
-        [globalFilterFields]="['id', 'country.name', 'representative.name', 'status']" [resizableColumns]="true"
-        [expandedRowKeys]="expandedRows" size="small">
+    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
+        [scrollable]="true" scrollHeight="75vh"
+        [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
+        [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between ">
                 <span class="text-xl font-bold">Bets</span>
@@ -25,10 +25,10 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="2" style="width:0px">{{ 'TABLE.ROW_INDEX' | translate }}</th>
-                <th rowspan="2" pResizableColumn style="width:0px">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" pResizableColumn pSortableColumn="name">{{ 'TABLE.NAME' | translate }} <p-sortIcon
-                        field="name" />
+                <th pFrozenColumn rowspan="2">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+                <th pFrozenColumn rowspan="2" pResizableColumn>{{ 'TABLE.GROUP' | translate }}</th>
+                <th pFrozenColumn rowspan="2" pResizableColumn pSortableColumn="name">{{ 'TABLE.NAME' | translate }}
+                    <p-sortIcon field="name" />
                 <th rowspan="2" pResizableColumn>{{ 'TABLE.CATEGORY' | translate }}</th>
                 <th rowspan="2" pResizableColumn>{{ 'TABLE.QUANTITY' | translate }}</th>
                 <th colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
@@ -53,9 +53,9 @@
 
         <ng-template #expandedrow let-product>
             <tr>
-                <td>{{ product?.row_index}}</td>
-                <td>{{ 'TABLE.' + product?.group | translate }}</td>
-                <td>{{ product?.name }}</td>
+                <td pFrozenColumn>{{ product?.row_index}}</td>
+                <td pFrozenColumn>{{ product?.group }}</td>
+                <td pFrozenColumn>{{ product?.name }}</td>
                 <td>{{ product?.category }}</td>
                 <td>{{ product?.quantity }}</td>
                 <ng-container *ngFor="let i of rowIndexes">

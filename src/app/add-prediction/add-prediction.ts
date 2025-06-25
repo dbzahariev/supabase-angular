@@ -12,7 +12,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
@@ -76,7 +76,7 @@ export class AddPrediction implements OnInit, OnDestroy {
   expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
   rowIndexes: number[] = [];
 
-  constructor(private countryService: CountryTranslateService) {
+  constructor(private countryService: CountryTranslateService, private translate: TranslateService) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
     if (!this.socket.hasListeners('connect')) {
@@ -204,7 +204,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     let formattedDate = formatDate(dateTime, 'dd.MM.yyyy', navigator.language);
     let formattedTime = formatDate(dateTime, 'HH:mm', navigator.language);
     let oneMatch = {
-      row_index: row.row_index, match_day: formattedDate, match_time: formattedTime, group: row.group,
+      row_index: row.row_index, match_day: formattedDate, match_time: formattedTime, group: this.translate.instant('TABLE.' + row.group),
       home_team: this.countryService.translateCountryNameFromEnToBg(row.home_team_name, lng),
       home_team_score: row.home_team_score,
       away_team: this.countryService.translateCountryNameFromEnToBg(row.away_team_name, lng),
