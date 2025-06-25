@@ -28,7 +28,7 @@
     "NAME": "Name",
     "CATEGORY": "Category",
     "QUANTITY": "Quantity",
-    "ROW_INDEX": "Index",
+    "ROW_INDEX": "#",
     "GROUP": "Group",
     "ROUND_1": "Round 1",
     "ROUND_2": "Round 2",

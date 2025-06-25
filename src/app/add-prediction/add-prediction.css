@@ -1,0 +1,14 @@
+.prediction-table-root {
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .prediction-table-root {
+    font-size: 10px;
+  }
+}
+
+.prediction-table-root .p-table,
+.prediction-table-root .p-table * {
+  font-size: inherit !important;
+}
