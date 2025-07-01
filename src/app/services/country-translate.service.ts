@@ -18,26 +18,16 @@ export class CountryTranslateService {
             'England': 'Англия',
             'Wales': 'Уелс',
             'Northern Ireland': 'Северна Ирландия',
-
-
-            "HOME_TEAM": "Домакин",
-            "AWAY_TEAM": "Гост",
-            "DRAW": "Равенство",
-            "WINNER": "Победител",
-            "POINTS": "Точки"
         };
 
         if (manualOverrides[enName]) {
-            return manualOverrides[enName];
+            return lng === 'bg' ? manualOverrides[enName] : enName;
         }
-
-        const entries = Object.entries(countries.getNames('en'));
-        const found = entries.find(([_, name]) => name.toLowerCase() === enName.toLowerCase());
-        if (!found) {
+        const alpha2Code = countries.getAlpha2Code(enName, 'en') ?? "";
+        if (alpha2Code === '') {
             return 'Непозната държава';
         }
 
-        const code = found[0];
-        return countries.getName(code, lng) || 'Непозната държава';
+        return countries.getName(alpha2Code, lng) || 'Непозната държава';
     }
 }

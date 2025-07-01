@@ -25,10 +25,8 @@ type Color = {
 })
 export class HeaderComponent implements OnInit {
   tabs = [
-    { route: '', key: 'ADD_PREDICTION', label: 'Add prediction', icon: 'pi pi-chart-line' },
-    { route: 'chat', key: 'CHAT', label: 'Chat', icon: 'pi pi-home' },
-    { route: 'products', key: 'PRODUCTS', label: 'Products', icon: 'pi pi-list' },
-    { route: 'messages', key: 'MESSAGES', label: 'Messages', icon: 'pi pi-inbox' }
+    { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
+    { route: 'chat', key: 'CHAT', icon: 'pi pi-home' },
   ];
   isDark = localStorage.getItem('dark-mode') === 'enabled';
   currentColor = signal<Color>({ name: '', code: '' });

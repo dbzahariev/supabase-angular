@@ -18,6 +18,7 @@
     "FONT_SIZE_LABEL": "Font Size"
   },
   "ROUTE": {
+    "ALL_PREDICTIONS": "All Predictions",
     "ADD_PREDICTION": "Add Prediction",
     "CHAT": "Chat",
     "PRODUCTS": "Products",

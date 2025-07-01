@@ -18,6 +18,7 @@
     "FONT_SIZE_LABEL": "Размер на шрифта"
   },
   "ROUTE": {
+    "ALL_PREDICTIONS": "Всички прогнози",
     "ADD_PREDICTION": "Добавяне на прогноза",
     "CHAT": "Чат",
     "PRODUCTS": "Продукти",

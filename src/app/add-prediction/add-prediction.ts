@@ -70,13 +70,11 @@ export class AddPrediction implements OnInit {
   loading: boolean = true;
   allUsersNames: any[] = [];
   expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
-  lng: 'en' | 'bg' = 'bg';
   rowIndexes: number[] = [];
   trls: { name: string, translation: string }[] = [];
 
   constructor(private countryService: CountryTranslateService, private translate: TranslateService) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
-    this.lng = navigator.language === 'bg-BG' ? 'bg' : 'en';
 
     setTimeout(() => {
       Object.entries(this.translate.instant(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW'])).forEach((el: [string, any]) => {
@@ -186,6 +184,8 @@ export class AddPrediction implements OnInit {
   }
 
   updateBetsDisplay(data: any[]): void {
+    let lng: "bg" | "en" = localStorage.getItem('lang') === 'bg' ? 'bg' : 'en';
+
     const grouped = data.reduce<Record<number, any[]>>((acc, item) => {
       const id = +item.match_id;
       (acc[id] ||= []).push(item);
@@ -201,9 +201,9 @@ export class AddPrediction implements OnInit {
         match_day: formatDate(date, 'dd.MM.yyyy', navigator.language),
         match_time: formatDate(date, 'HH:mm', navigator.language),
         group: this.translate.instant('TABLE.' + bet.group),
-        home_team: this.countryService.translateCountryNameFromEnToLng(bet.home_team_name, this.lng),
+        home_team: this.countryService.translateCountryNameFromEnToLng(bet.home_team_name, lng),
         home_team_score: bet.home_team_score,
-        away_team: this.countryService.translateCountryNameFromEnToLng(bet.away_team_name, this.lng),
+        away_team: this.countryService.translateCountryNameFromEnToLng(bet.away_team_name, lng),
         away_team_score: bet.away_team_score,
         group_row: this.getRoundByGroup(bet.group.toUpperCase()),
         all_users: group.map(b => {
