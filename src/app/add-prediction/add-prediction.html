@@ -18,16 +18,20 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th pFrozenColumn rowspan="2">{{ 'TABLE.ROW_INDEX' | translate }}</th>
-                <th rowspan="2" pResizableColumn>{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" pResizableColumn pSortableColumn="name">{{ 'TABLE.NAME' | translate }}
-                    <p-sortIcon field="name" />
-                <th rowspan="2" pResizableColumn>{{ 'TABLE.CATEGORY' | translate }}</th>
-                <th rowspan="2" pResizableColumn>{{ 'TABLE.QUANTITY' | translate }}</th>
-                <th colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
+                <th rowspan="2" colspan="1" pFrozenColumn style="width: 0px;">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
+                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
+                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="1" colspan="3" pResizableColumn style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
+                <th rowspan="2" colspan="1" pResizableColumn pSortableColumn="name">{{ 'TABLE.NAME' | translate }}
+                    <p-sortIcon field="name" /> </th>
+                <th rowspan="2" colspan="1" pResizableColumn>{{ 'TABLE.CATEGORY' | translate }}</th>
+                <th rowspan="2" colspan="1" pResizableColumn>{{ 'TABLE.QUANTITY' | translate }}</th>
+                <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
                     user.total_points }})</th>
             </tr>
             <tr>
+                <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th>
                 <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
                     {{getColName(idx)}}</th>
             </tr>
@@ -47,7 +51,12 @@
         <ng-template #expandedrow let-product>
             <tr>
                 <td pFrozenColumn>{{ product?.row_index}}</td>
+                <td>{{ product?.match_day }}</td>
+                <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group }}</td>
+                <ng-container *ngFor="let j of [0, 1, 2]">
+                    <td>{{getProductResultRow(product, j)}}</td>
+                </ng-container>
                 <td>{{ product?.name }}</td>
                 <td>{{ product?.category }}</td>
                 <td>{{ product?.quantity }}</td>

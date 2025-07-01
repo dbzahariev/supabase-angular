@@ -12,12 +12,19 @@ export class CountryTranslateService {
         countries.registerLocale(bgLocale);
     }
 
-    translateCountryNameFromEnToBg(enName: string, lng: "bg" | "en"): string {
+    translateCountryNameFromEnToLng(enName: string, lng: "bg" | "en"): string {
         const manualOverrides: Record<string, string> = {
             'Scotland': 'Шотландия',
             'England': 'Англия',
             'Wales': 'Уелс',
-            'Northern Ireland': 'Северна Ирландия'
+            'Northern Ireland': 'Северна Ирландия',
+
+
+            "HOME_TEAM": "Домакин",
+            "AWAY_TEAM": "Гост",
+            "DRAW": "Равенство",
+            "WINNER": "Победител",
+            "POINTS": "Точки"
         };
 
         if (manualOverrides[enName]) {
