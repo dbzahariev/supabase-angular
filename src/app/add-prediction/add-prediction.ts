@@ -76,12 +76,12 @@ export class AddPrediction implements OnInit {
   constructor(private countryService: CountryTranslateService, private translate: TranslateService) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
-    setTimeout(() => {
-      Object.entries(this.translate.instant(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW'])).forEach((el: [string, any]) => {
+    this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
+      Object.entries(translations).forEach((el: [string, any]) => {
         let [key, value] = el;
         this.trls.push({ name: key, translation: value });
       })
-    }, 0);
+    });
 
     if (!this.socket.hasListeners('connect')) {
       this.socket.on('connect', () => { });
