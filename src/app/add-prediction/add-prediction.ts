@@ -144,9 +144,13 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   private updateRe_home_teamLeft() {
-    let widthNumberCol = this.elRef.nativeElement.querySelector('.col_row_number').offsetWidth;
+    let numberColumnWidth = this.elRef.nativeElement.querySelector('.col_row_number').offsetWidth;
+    let homeTeamOffsetWidth = this.elRef.nativeElement.querySelector('.re_home_team').offsetWidth;
     this.elRef.nativeElement.querySelectorAll('.re_home_team').forEach((el: any) => {
-      el.style.left = `${widthNumberCol - 2}px`;
+      el.style.left = `${numberColumnWidth - 2}px`;
+    });
+    this.elRef.nativeElement.querySelectorAll('.re_away_team').forEach((el: any) => {
+      el.style.left = `${homeTeamOffsetWidth + 5}px`;
     });
   }
 

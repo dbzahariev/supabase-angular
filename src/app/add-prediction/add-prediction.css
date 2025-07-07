@@ -40,7 +40,8 @@
   font-size: inherit !important;
 }
 
-.re_home_team {
+.re_home_team,
+.re_away_team {
   position: sticky !important;
   z-index: 1;
   background: var(--p-datatable-header-cell-background);

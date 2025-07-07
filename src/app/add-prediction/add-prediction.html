@@ -28,7 +28,7 @@
                     translate }}
                 </th>
                 <th rowspan="1" colspan="3" pResizableColumn style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
-                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
+                <th rowspan="2" colspan="1" class="re_away_team"  pResizableColumn style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
                 <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
@@ -62,7 +62,7 @@
                 <ng-container *ngFor="let j of [0, 1, 2]">
                     <td>{{getProductResultRow(product, j)}}</td>
                 </ng-container>
-                <td>{{ product?.away_team }}</td>
+                <td class="re_away_team">{{ product?.away_team }}</td>
                 <ng-container *ngFor="let i of rowIndexes">
                     <ng-container *ngFor="let j of [0, 1, 2, 3]">
                         <td>{{ getUserPredictionValue(i, product, j) }}</td>
