@@ -5,6 +5,33 @@
 @media (max-width: 600px) {
   .prediction-table-root {
     font-size: 10px;
+    width: 100vw;
+    /* margin-left: -16px; */
+    /* компенсира падингите на body/контейнера, ако има */
+    /* margin-right: -16px; */
+    padding: 0;
+  }
+
+  .prediction-table-root .p-table,
+  .prediction-table-root .p-datatable,
+  .prediction-table-root .p-datatable-wrapper,
+  .prediction-table-root .p-datatable-scrollable,
+  .prediction-table-root .p-datatable-scrollable-wrapper,
+  .prediction-table-root .p-datatable-table {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+    overflow-x: auto !important;
+    display: block !important;
+  }
+
+  .prediction-table-root .p-datatable-scrollable-body {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+    display: block !important;
   }
 }
 

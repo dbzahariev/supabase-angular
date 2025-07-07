@@ -78,9 +78,8 @@ export class AddPrediction implements OnInit {
 
     this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
       Object.entries(translations).forEach((el: [string, any]) => {
-        let [key, value] = el;
-        this.trls.push({ name: key, translation: value });
-      })
+        this.trls.push({ name: el[0], translation: el[1] });
+      });
     });
 
     if (!this.socket.hasListeners('connect')) {
