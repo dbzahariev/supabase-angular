@@ -30,21 +30,11 @@ export class App implements OnInit {
     this.translateService.use(browserLang);
 
     this.supabase.authChanges((_, session) => (this.session = session))
-
-    this.loadTranslations();
   }
 
   toggleDarkMode() {
     const element = document.querySelector('html');
     element?.classList.toggle('my-app-dark');
     localStorage.setItem('dark-mode', element?.classList.contains('my-app-dark') ? 'enabled' : 'disabled');
-
-
-  }
-
-  loadTranslations() {
-    this.translateService.get("TABLE.HOME_TEAM").subscribe((foo: string) => {
-      console.log("New translation:", foo);
-    });
   }
 }

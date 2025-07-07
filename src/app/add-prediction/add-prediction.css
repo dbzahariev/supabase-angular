@@ -40,9 +40,16 @@
   font-size: inherit !important;
 }
 
-.foo {
+.re_home_team {
   position: sticky !important;
-
   z-index: 1;
-  background: white;
+  background: var(--p-datatable-header-cell-background);
+}
+
+.col_row_number {
+  width: 20px !important;
+  position: sticky !important;
+  z-index: 1;
+  background: var(--p-datatable-header-cell-background);
+  left: 0;
 }

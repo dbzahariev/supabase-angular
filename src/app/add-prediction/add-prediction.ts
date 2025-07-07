@@ -73,7 +73,7 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
   rowIndexes: number[] = [];
   trls: { name: string, translation: string }[] = [];
 
-  private fooElements: NodeListOf<HTMLElement> | null = null;
+  private re_home_teamElements: NodeListOf<HTMLElement> | null = null;
   private tableRoot: HTMLElement | null = null;
   private scrollHandler: (() => void) | null = null;
 
@@ -126,8 +126,8 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
-    this.updateFooLeft();
-    this.scrollHandler = () => this.updateFooLeft();
+    this.updateRe_home_teamLeft();
+    this.scrollHandler = () => this.updateRe_home_teamLeft();
     if (this.tableRoot) {
       this.tableRoot.addEventListener('scroll', this.scrollHandler, true);
     }
@@ -143,13 +143,12 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private updateFooLeft() {
-    this.fooElements = this.elRef.nativeElement.querySelectorAll('.foo');
-    if (!this.fooElements) return;
-    let scrollLeft = this.tableRoot ? this.tableRoot.scrollLeft : 0;
-    let left = Math.max(window.innerWidth / 8 - scrollLeft, 0);
-    this.fooElements.forEach(el => {
-      this.renderer.setStyle(el, 'left', `${left}px`);
+  private updateRe_home_teamLeft() {
+    this.re_home_teamElements = this.elRef.nativeElement.querySelectorAll('.re_home_team');
+    let widthNumberCol = this.elRef.nativeElement.querySelector('.col_row_number').offsetWidth;
+    if (!this.re_home_teamElements) return;
+    this.re_home_teamElements.forEach(el => {
+      this.renderer.setStyle(el, 'left', `${widthNumberCol - 2}px`);
     });
   }
 
