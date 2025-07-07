@@ -39,3 +39,10 @@
 .prediction-table-root .p-table * {
   font-size: inherit !important;
 }
+
+.foo {
+  position: sticky !important;
+
+  z-index: 1;
+  background: white;
+}

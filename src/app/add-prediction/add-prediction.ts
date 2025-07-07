@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
@@ -63,7 +63,7 @@ interface Product {
   styleUrls: ['./add-prediction.css'],
   imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
 })
-export class AddPrediction implements OnInit {
+export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
   betsToShow: any[] = [];
@@ -73,7 +73,16 @@ export class AddPrediction implements OnInit {
   rowIndexes: number[] = [];
   trls: { name: string, translation: string }[] = [];
 
-  constructor(private countryService: CountryTranslateService, private translate: TranslateService) {
+  private fooElements: NodeListOf<HTMLElement> | null = null;
+  private tableRoot: HTMLElement | null = null;
+  private scrollHandler: (() => void) | null = null;
+
+  constructor(
+    private countryService: CountryTranslateService,
+    private translate: TranslateService,
+    private renderer: Renderer2,
+    private elRef: ElementRef
+  ) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
     this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
@@ -113,6 +122,35 @@ export class AddPrediction implements OnInit {
           console.log('Supabase channel status:', status);
         }
       });
+  }
+
+  ngAfterViewInit() {
+    this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
+    this.updateFooLeft();
+    this.scrollHandler = () => this.updateFooLeft();
+    if (this.tableRoot) {
+      this.tableRoot.addEventListener('scroll', this.scrollHandler, true);
+    }
+    window.addEventListener('resize', this.scrollHandler, true);
+  }
+
+  ngOnDestroy() {
+    if (this.scrollHandler) {
+      if (this.tableRoot) {
+        this.tableRoot.removeEventListener('scroll', this.scrollHandler, true);
+      }
+      window.removeEventListener('resize', this.scrollHandler, true);
+    }
+  }
+
+  private updateFooLeft() {
+    this.fooElements = this.elRef.nativeElement.querySelectorAll('.foo');
+    if (!this.fooElements) return;
+    let scrollLeft = this.tableRoot ? this.tableRoot.scrollLeft : 0;
+    let left = Math.max(window.innerWidth / 8 - scrollLeft, 0);
+    this.fooElements.forEach(el => {
+      this.renderer.setStyle(el, 'left', `${left}px`);
+    });
   }
 
   async ngOnInit() {

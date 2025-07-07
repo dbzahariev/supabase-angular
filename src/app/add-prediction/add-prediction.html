@@ -22,7 +22,7 @@
                 <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
                 <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
                 <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.HOME_TEAM' |
+                <th rowspan="2" colspan="1" class="foo" pResizableColumn style="width: 0px;">{{ 'TABLE.HOME_TEAM' |
                     translate }}
                 </th>
                 <th rowspan="1" colspan="3" pResizableColumn style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
@@ -56,7 +56,7 @@
                 <td>{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group }}</td>
-                <td>{{ product?.home_team }}</td>
+                <td  class="foo">{{ product?.home_team }}</td>
                 <ng-container *ngFor="let j of [0, 1, 2]">
                     <td>{{getProductResultRow(product, j)}}</td>
                 </ng-container>
