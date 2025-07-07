@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
@@ -63,7 +63,7 @@ interface Product {
   styleUrls: ['./add-prediction.css'],
   imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
 })
-export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
+export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
   betsToShow: any[] = [];
@@ -73,14 +73,12 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
   rowIndexes: number[] = [];
   trls: { name: string, translation: string }[] = [];
 
-  private re_home_teamElements: NodeListOf<HTMLElement> | null = null;
   private tableRoot: HTMLElement | null = null;
   private scrollHandler: (() => void) | null = null;
 
   constructor(
     private countryService: CountryTranslateService,
     private translate: TranslateService,
-    private renderer: Renderer2,
     private elRef: ElementRef
   ) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
@@ -124,9 +122,11 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  ngAfterViewInit() {
+
+  async ngOnInit() {
+    await this.getPredictionFromView();
+
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
-    this.updateRe_home_teamLeft();
     this.scrollHandler = () => this.updateRe_home_teamLeft();
     if (this.tableRoot) {
       this.tableRoot.addEventListener('scroll', this.scrollHandler, true);
@@ -144,16 +144,10 @@ export class AddPrediction implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateRe_home_teamLeft() {
-    this.re_home_teamElements = this.elRef.nativeElement.querySelectorAll('.re_home_team');
     let widthNumberCol = this.elRef.nativeElement.querySelector('.col_row_number').offsetWidth;
-    if (!this.re_home_teamElements) return;
-    this.re_home_teamElements.forEach(el => {
-      this.renderer.setStyle(el, 'left', `${widthNumberCol - 2}px`);
+    this.elRef.nativeElement.querySelectorAll('.re_home_team').forEach((el: any) => {
+      el.style.left = `${widthNumberCol - 2}px`;
     });
-  }
-
-  async ngOnInit() {
-    await this.getPredictionFromView();
   }
 
   async getPredictionFromView() {
