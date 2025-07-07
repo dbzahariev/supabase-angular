@@ -110,7 +110,9 @@ export class AddPrediction implements OnInit {
         }
       )
       .subscribe((status) => {
-        console.log('Supabase channel status:', status);
+        if (status !== 'CHANNEL_ERROR') {
+          console.log('Supabase channel status:', status);
+        }
       });
   }
 

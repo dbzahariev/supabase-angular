@@ -43,9 +43,8 @@ export class App implements OnInit {
   }
 
   loadTranslations() {
-    setTimeout(() => {
-      let foo = this.translateService.instant("TABLE.HOME_TEAM");
+    this.translateService.get("TABLE.HOME_TEAM").subscribe((foo: string) => {
       console.log("New translation:", foo);
-    }, 1);
+    });
   }
 }
