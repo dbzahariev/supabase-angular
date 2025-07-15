@@ -1,4 +1,4 @@
-.prediction-table-root {
+/* .prediction-table-root {
   font-size: 14px;
 }
 
@@ -6,9 +6,6 @@
   .prediction-table-root {
     font-size: 10px;
     width: 100vw;
-    /* margin-left: -16px; */
-    /* компенсира падингите на body/контейнера, ако има */
-    /* margin-right: -16px; */
     padding: 0;
   }
 
@@ -53,4 +50,4 @@
   z-index: 1;
   background: var(--p-datatable-header-cell-background);
   left: 0;
-}
+} */

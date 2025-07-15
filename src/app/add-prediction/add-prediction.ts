@@ -123,9 +123,8 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
 
-  async ngOnInit() {
-    await this.getPredictionFromView();
-
+  ngOnInit() {
+    this.getPredictionFromView();
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
     this.scrollHandler = () => this.updateRe_home_teamLeft();
     if (this.tableRoot) {
@@ -154,14 +153,15 @@ export class AddPrediction implements OnInit, OnDestroy {
     });
   }
 
-  async getPredictionFromView() {
+  getPredictionFromView() {
     this.loading = true;
     try {
-      const { data = [] } = await supabase
-        .from('predictions_view')
-        .select('*');
-
-      this.updateBetsDisplay(data ?? []);
+      supabase
+        .from('predictions_view').select('*')
+        .then(({ data, error }) => {
+          if (error) throw error;
+          this.updateBetsDisplay(data ?? []);
+        });
     } catch (error) {
       console.error('Error fetching predictions:', error);
       this.betsToShow = [];
@@ -220,13 +220,9 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   updateBetsDisplay(data: any[]): void {
-    let lng: "bg" | "en" = localStorage.getItem('lang') === 'bg' ? 'bg' : 'en';
+    let lng: "bg" | "en" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg' : 'en';
 
-    const grouped = data.reduce<Record<number, any[]>>((acc, item) => {
-      const id = +item.match_id;
-      (acc[id] ||= []).push(item);
-      return acc;
-    }, {});
+    const grouped = data.reduce<Record<number, any[]>>((acc, item) => { (acc[item.match_id] ||= []).push(item); return acc; }, {});
 
     this.betsToShow = Object.values(grouped).map((group) => {
       const bet = group[0];

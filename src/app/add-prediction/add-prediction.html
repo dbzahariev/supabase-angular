@@ -20,19 +20,19 @@
             <tr>
                 <th rowspan="2" colspan="1" class="col_row_number" style="width: 0px;">{{ 'TABLE.ROW_INDEX' | translate
                     }}</th>
-                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
-                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
-                <th rowspan="2" colspan="1" pResizableColumn style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_home_team" pResizableColumn style="width: 0px;">{{
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_home_team" style="width: 0px;">{{
                     'TABLE.HOME_TEAM' |
                     translate }}
                 </th>
-                <th rowspan="1" colspan="3" pResizableColumn style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_away_team"  pResizableColumn style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
+                <th rowspan="1" colspan="3" class="re_result" style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
-                <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames" pResizableColumn>{{ user.name }} ({{
-                    user.total_points }})</th>
+                <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
+                </th>
             </tr>
             <tr>
                 <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th>
