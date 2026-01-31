@@ -1,4 +1,17 @@
 <div class="overflow-x-auto prediction-table-root">
+    <!-- Тест бутон за Predictions -->
+    <div class="p-4 bg-blue-100 border border-blue-300 rounded mb-4">
+        <h3 class="font-bold mb-2">🧪 Тест Realtime</h3>
+        <button pButton (click)="testAddPrediction()" label="Добави Prediction" class="p-button-success mr-2"></button>
+        <button pButton (click)="loadTestPredictions()" label="Зареди Predictions" class="p-button-info"></button>
+        <div class="mt-2">
+            <strong>Predictions в таблицата: {{ testPredictions.length }}</strong>
+            <div *ngFor="let p of testPredictions" class="text-sm">
+                {{ p.id }} - {{ p.title }} - {{ p.created_at | date:'short' }}
+            </div>
+        </div>
+    </div>
+
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
         [scrollable]="true" scrollHeight="400rem" [responsiveLayout]="'scroll'"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"

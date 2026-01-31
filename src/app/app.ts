@@ -13,12 +13,12 @@ import { RouterModule } from '@angular/router';
   providers: [SupabaseService],
 })
 export class App implements OnInit {
-  session: typeof this.supabase.session
+  // session: typeof this.supabase.session
 
   constructor(
     @Inject(SupabaseService) private readonly supabase: SupabaseService,
     private translateService: TranslateService) {
-    this.session = this.supabase.session
+    // this.session = this.supabase.session
   }
 
   ngOnInit() {
@@ -29,7 +29,7 @@ export class App implements OnInit {
     this.translateService.setDefaultLang(browserLang);
     this.translateService.use(browserLang);
 
-    this.supabase.authChanges((_, session) => (this.session = session))
+    // this.supabase.authChanges((_, session) => (this.session = session))
   }
 
   toggleDarkMode() {

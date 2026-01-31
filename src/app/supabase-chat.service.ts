@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
+import { SupabaseService } from './supabase';
 
 export interface Message {
     id: number;
@@ -17,11 +17,8 @@ export class SupabaseChatService {
     private messagesSubject = new BehaviorSubject<Message[]>([]);
     messages$ = this.messagesSubject.asObservable();
 
-    constructor() {
-        this.supabase = createClient(
-            environment.supabaseUrl,
-            environment.supabaseKey
-        );
+    constructor(private supabaseService: SupabaseService) {
+        this.supabase = this.supabaseService.client;
         this.fetchMessages();
         this.listenForNewMessages();
     }

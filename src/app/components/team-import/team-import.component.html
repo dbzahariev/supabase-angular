@@ -1,0 +1,81 @@
+<div class="p-4">
+  <p-card header="Импортиране на отбори" styleClass="mb-4">
+    <div class="flex gap-3 mb-4">
+      <p-button 
+        label="Импортирай отбори" 
+        icon="pi pi-upload" 
+        (onClick)="importAllTeams()"
+        [disabled]="importing"
+        [loading]="importing">
+      </p-button>
+
+      <p-button 
+        label="Опресни списък" 
+        icon="pi pi-refresh" 
+        (onClick)="loadTeams()"
+        [disabled]="importing || loading"
+        [loading]="loading"
+        severity="secondary">
+      </p-button>
+
+      <p-button 
+        label="Изтрий всички" 
+        icon="pi pi-trash" 
+        (onClick)="clearAllTeams()"
+        [disabled]="importing || teams.length === 0"
+        severity="danger">
+      </p-button>
+    </div>
+
+    <div *ngIf="importing" class="mb-4">
+      <p-progressBar mode="indeterminate"></p-progressBar>
+      <p class="text-center mt-2">Импортиране на отбори...</p>
+    </div>
+
+    <div *ngIf="importResult" class="mb-4">
+      <p-message 
+        *ngIf="importResult.success" 
+        severity="success" 
+        [text]="'Успешно импортирани ' + importResult.inserted + ' от ' + importResult.total + ' отбора'">
+      </p-message>
+      
+      <p-message 
+        *ngIf="!importResult.success" 
+        severity="error" 
+        text="Грешка при импортиране на отбори">
+      </p-message>
+    </div>
+
+    <div class="mb-3">
+      <h3>Общо отбори: {{ teams.length }}</h3>
+    </div>
+
+    <p-table 
+      [value]="teams" 
+      [paginator]="true" 
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Английско име</th>
+          <th>Българско име</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-team>
+        <tr>
+          <td>{{ team.id }}</td>
+          <td>{{ team.name_en }}</td>
+          <td>{{ team.name_bg }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center">Няма налични отбори</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

@@ -1,0 +1,104 @@
+<div class="match-import-container p-4">
+  <p-card header="Импортиране на мачове от backup файлове">
+    <div class="grid">
+      <!-- Бутони за импортиране -->
+      <div class="col-12 md:col-6">
+        <h3>Импортиране</h3>
+        <div class="flex flex-column gap-2">
+          <button 
+            pButton 
+            label="Импортирай всички години" 
+            icon="pi pi-download" 
+            [disabled]="importing"
+            (click)="importAll()"
+            class="p-button-success">
+          </button>
+
+          <div class="flex flex-column gap-2">
+            <h4>Импортирай по години:</h4>
+            <button 
+              pButton 
+              label="Euro 2016" 
+              [disabled]="importing"
+              (click)="importYear('2016')"
+              class="p-button-outlined">
+            </button>
+            <button 
+              pButton 
+              label="Euro 2018" 
+              [disabled]="importing"
+              (click)="importYear('2018')"
+              class="p-button-outlined">
+            </button>
+            <button 
+              pButton 
+              label="Euro 2020" 
+              [disabled]="importing"
+              (click)="importYear('2020')"
+              class="p-button-outlined">
+            </button>
+            <button 
+              pButton 
+              label="Euro 2022" 
+              [disabled]="importing"
+              (click)="importYear('2022')"
+              class="p-button-outlined">
+            </button>
+            <button 
+              pButton 
+              label="Euro 2024" 
+              [disabled]="importing"
+              (click)="importYear('2024')"
+              class="p-button-outlined">
+            </button>
+          </div>
+
+          <button 
+            pButton 
+            label="Изтрий всички мачове" 
+            icon="pi pi-trash" 
+            [disabled]="importing"
+            (click)="clearAll()"
+            class="p-button-danger">
+          </button>
+        </div>
+      </div>
+
+      <!-- Статистика -->
+      <div class="col-12 md:col-6">
+        <h3>Статистика</h3>
+        <div *ngIf="stats">
+          <p><strong>Общо мачове:</strong> {{ stats.total }}</p>
+          
+          <h4>По години:</h4>
+          <ul>
+            <li *ngFor="let year of stats.byYear | keyvalue">
+              {{ year.key }}: {{ year.value }} мача
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="!stats">
+          <p>Зареждане на статистика...</p>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="col-12" *ngIf="importing">
+        <p-progressBar mode="indeterminate"></p-progressBar>
+        <p class="text-center mt-2">Импортиране...</p>
+      </div>
+
+      <!-- Резултати -->
+      <div class="col-12" *ngIf="importResults.length > 0">
+        <h3>Резултати от импортирането</h3>
+        <div class="flex flex-column gap-2">
+          <p-message 
+            *ngFor="let result of importResults"
+            [severity]="result.success ? 'success' : 'error'"
+            [text]="result.year + ': ' + (result.success ? result.count + ' мача импортирани' : 'Грешка при импортиране')">
+          </p-message>
+        </div>
+      </div>
+    </div>
+  </p-card>
+</div>

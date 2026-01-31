@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { io, Socket } from 'socket.io-client';
-import { environment } from '../../../environments/environment';
 import backup2016 from '../../../backup_2016.json'
 import backup2018 from '../../../backup_2018.json'
 import backup2020 from '../../../backup_2020.json'
@@ -24,13 +22,10 @@ import localeBg from '@angular/common/locales/bg';
 import localeEn from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
 import { CountryTranslateService } from '../services/country-translate.service';
+import { SupabaseService } from '../supabase';
 
 registerLocaleData(localeBg, 'bg-BG');
 registerLocaleData(localeEn, 'en-US');
-
-const supabaseUrl = environment.supabaseUrl;
-const supabaseKey = environment.supabaseKey;
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: true } });
 
 interface PredictionType {
   away_team_score: number;
@@ -64,7 +59,7 @@ interface Product {
   imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
 })
 export class AddPrediction implements OnInit, OnDestroy {
-  private socket: Socket;
+  // private socket: Socket;
   isLocal = false;
   betsToShow: any[] = [];
   loading: boolean = true;
@@ -76,50 +71,56 @@ export class AddPrediction implements OnInit, OnDestroy {
   private tableRoot: HTMLElement | null = null;
   private scrollHandler: (() => void) | null = null;
 
+  // Тест променливи за predictions таблицата
+  testPredictions: any[] = [];
+  private predictionsChannel: any;
+  private pollingInterval: any;
+
   constructor(
     private countryService: CountryTranslateService,
     private translate: TranslateService,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private supabaseService: SupabaseService
   ) {
-    this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
+    // this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
-    this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
-      Object.entries(translations).forEach((el: [string, any]) => {
-        this.trls.push({ name: el[0], translation: el[1] });
-      });
-    });
+    // this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
+    //   Object.entries(translations).forEach((el: [string, any]) => {
+    //     this.trls.push({ name: el[0], translation: el[1] });
+    //   });
+    // });
 
-    if (!this.socket.hasListeners('connect')) {
-      this.socket.on('connect', () => { });
-    }
+    // if (!this.socket.hasListeners('connect')) {
+    //   this.socket.on('connect', () => { });
+    // }
 
-    // Avoid duplicate event listeners
-    if (!this.socket.hasListeners('matchesUpdate')) {
-      this.socket.on('matchesUpdate', (data) => {
-        console.log('Matches updated', data);
-      });
-    }
+    // // Avoid duplicate event listeners
+    // if (!this.socket.hasListeners('matchesUpdate')) {
+    //   this.socket.on('matchesUpdate', (data) => {
+    //     console.log('Matches updated', data);
+    //   });
+    // }
 
-    // Съхраняваме канала като член-променлива
-    supabase
-      .channel('custom-update-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: '*',
-        },
-        (payload) => {
-          this.getPredictionFromView();
-          console.log('Update received!', payload)
-        }
-      )
-      .subscribe((status) => {
-        if (status !== 'CHANNEL_ERROR') {
-          console.log('Supabase channel status:', status);
-        }
-      });
+    // // Съхраняваме канала като член-променлива
+    // supabase
+    //   .channel('custom-update-channel')
+    //   .on(
+    //     'postgres_changes',
+    //     {
+    //       event: '*',
+    //       schema: 'public',
+    //       table: '*',
+    //     },
+    //     (payload) => {
+    //       this.getPredictionFromView();
+    //       console.log('Update received!', payload)
+    //     }
+    //   )
+    //   .subscribe((status) => {
+    //     if (status !== 'CHANNEL_ERROR') {
+    //       console.log('Supabase channel status:', status);
+    //     }
+    //   });
   }
 
 
@@ -131,6 +132,10 @@ export class AddPrediction implements OnInit, OnDestroy {
       this.tableRoot.addEventListener('scroll', this.scrollHandler, true);
     }
     window.addEventListener('resize', this.scrollHandler, true);
+
+    // Зареди predictions
+    this.loadTestPredictions();
+    this.subscribeToTestPredictions();
   }
 
   ngOnDestroy() {
@@ -139,6 +144,16 @@ export class AddPrediction implements OnInit, OnDestroy {
         this.tableRoot.removeEventListener('scroll', this.scrollHandler, true);
       }
       window.removeEventListener('resize', this.scrollHandler, true);
+    }
+
+    // Unsubscribe от predictions канала
+    if (this.predictionsChannel) {
+      this.predictionsChannel.unsubscribe();
+    }
+
+    // Спри polling
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
     }
   }
 
@@ -153,15 +168,12 @@ export class AddPrediction implements OnInit, OnDestroy {
     });
   }
 
-  getPredictionFromView() {
+  async getPredictionFromView() {
     this.loading = true;
     try {
-      supabase
-        .from('predictions_view').select('*')
-        .then(({ data, error }) => {
-          if (error) throw error;
-          this.updateBetsDisplay(data ?? []);
-        });
+      const { data, error } = await this.supabaseService.getPredictions();
+      if (error) throw error;
+      this.updateBetsDisplay(data ?? []);
     } catch (error) {
       console.error('Error fetching predictions:', error);
       this.betsToShow = [];
@@ -221,11 +233,14 @@ export class AddPrediction implements OnInit, OnDestroy {
 
   updateBetsDisplay(data: any[]): void {
     let lng: "bg" | "en" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg' : 'en';
+    this.loadTestPredictions();
 
     const grouped = data.reduce<Record<number, any[]>>((acc, item) => { (acc[item.match_id] ||= []).push(item); return acc; }, {});
 
     this.betsToShow = Object.values(grouped).map((group) => {
       const bet = group[0];
+      let foo = bet.match_id;
+      
       const date = new Date(bet.match_date_utc);
       return {
         winner: bet.winner,
@@ -256,5 +271,46 @@ export class AddPrediction implements OnInit, OnDestroy {
         })
       };
     });
+  }
+
+  // ТЕСТ МЕТОДИ за predictions таблицата
+  async loadTestPredictions() {
+    console.log('🔄 Зареждам predictions...');
+    const { data, error } = await this.supabaseService.getPredictions();
+    if (error) {
+      console.error('❌ Грешка при зареждане:', error);
+    } else {
+      this.testPredictions = data || [];
+      console.log('✅ Заредени predictions:', this.testPredictions);
+    }
+  }
+
+  subscribeToTestPredictions() {
+    console.log('👂 Започвам да слушам за промени в predictions...');
+    this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', (payload) => {
+      console.log('🔔 REALTIME ПРОМЯНА:', payload.eventType, payload);
+
+      // При всяка промяна, презареди данните и обнови визуализацията
+      this.getPredictionFromView();
+
+    });
+  }
+
+  async testAddPrediction() {
+    const newPrediction = {
+      title: 'Тест ' + new Date().toLocaleTimeString('bg-BG'),
+      description: 'Тестова prediction от Angular'
+    };
+
+    console.log('➕ Добавям prediction:', newPrediction);
+    const { data, error } = await this.supabaseService.addPrediction(newPrediction);
+
+    if (error) {
+      console.error('❌ Грешка при добавяне:', error);
+    } else {
+      console.log('✅ Успешно добавен:', data[0]);
+      // Презареди данните след успешно добавяне
+      await this.loadTestPredictions();
+    }
   }
 }

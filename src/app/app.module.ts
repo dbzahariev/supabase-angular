@@ -16,7 +16,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { ChatComponent } from './chat/chat.component';
+// import { ChatComponent } from './chat/chat.component';
 import { HeaderComponent } from './header/header.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -64,7 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         FormsModule,
         ButtonModule,
         DropdownModule,
-        ChatComponent,
+        // ChatComponent,
         HeaderComponent,
         AuthComponent,
         AddPrediction,
