@@ -581,6 +581,8 @@
             "homeTeam": "Portugal",
             "awayTeam": "Slovenia",
             "score": {
+                "homeFT": 0,
+                "awayFT": 0,
                 "homePT": 3,
                 "awayPT": 0,
                 "winner": "HOME_TEAM"
@@ -635,6 +637,8 @@
             "homeTeam": "Portugal",
             "awayTeam": "France",
             "score": {
+                "homeFT": 0,
+                "awayFT": 0,
                 "homePT": 3,
                 "awayPT": 5,
                 "winner": "AWAY_TEAM"
@@ -647,6 +651,8 @@
             "homeTeam": "England",
             "awayTeam": "Switzerland",
             "score": {
+                "homeFT": 1,
+                "awayFT": 1,
                 "homePT": 5,
                 "awayPT": 3,
                 "winner": "HOME_TEAM"
