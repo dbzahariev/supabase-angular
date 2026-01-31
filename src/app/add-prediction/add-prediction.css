@@ -1,4 +1,4 @@
-/* .prediction-table-root {
+.prediction-table-root {
   font-size: 14px;
 }
 
@@ -50,4 +50,4 @@
   z-index: 1;
   background: var(--p-datatable-header-cell-background);
   left: 0;
-} */
+}
