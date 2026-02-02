@@ -899,10 +899,8 @@
   ],
   "users": [
     {
-      "id": 1,
       "name": "Татяна",
-      "colorTable": "10",
-      "totalPoints": 50.5,
+      "id": 3,
       "bets": [
         {
           "matchId": 202201,
@@ -1419,10 +1417,8 @@
       ]
     },
     {
-      "id": 2,
       "name": "Бен",
-      "colorTable": "180",
-      "totalPoints": 84.5,
+      "id": 6,
       "bets": [
         {
           "matchId": 202201,
@@ -1939,10 +1935,8 @@
       ]
     },
     {
-      "id": 3,
       "name": "Бочето",
-      "colorTable": "50",
-      "totalPoints": 58.5,
+      "id": 7,
       "bets": [
         {
           "matchId": 202201,
@@ -2451,10 +2445,8 @@
       ]
     },
     {
-      "id": 4,
       "name": "Ети",
-      "colorTable": "203",
-      "totalPoints": 76,
+      "id": 2,
       "bets": [
         {
           "matchId": 202201,
@@ -2971,10 +2963,8 @@
       ]
     },
     {
-      "id": 5,
       "name": "Митко",
-      "colorTable": "129",
-      "totalPoints": 70.5,
+      "id": 1,
       "bets": [
         {
           "matchId": 202201,
@@ -3491,10 +3481,8 @@
       ]
     },
     {
-      "id": 8,
       "name": "Лори",
-      "colorTable": "80",
-      "totalPoints": 76.5,
+      "id": 8,
       "bets": [
         {
           "matchId": 202201,
@@ -3987,10 +3975,8 @@
       ]
     },
     {
-      "id": 9,
       "name": "Слави",
-      "colorTable": "284",
-      "totalPoints": 60,
+      "id": 9,
       "bets": [
         {
           "matchId": 202201,
