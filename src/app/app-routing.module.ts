@@ -6,6 +6,7 @@ import { MatchImportComponent } from './components/match-import/match-import.com
 import { TeamImportComponent } from './components/team-import/team-import.component';
 
 const routes: Routes = [
+    {path: 'add-prediction', component: AddPrediction},
     { path: '', component: AddPrediction },
     // { path: 'chat', component: ChatComponent }
     { path: 'import-matches', component: MatchImportComponent },

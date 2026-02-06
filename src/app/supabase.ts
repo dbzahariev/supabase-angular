@@ -8,7 +8,7 @@ import {
   User,
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
-import { Match } from './models/match.model'
+import { Match, Prediction, PredictionWithUser } from './models/match.model'
 
 export interface Profile {
   id?: string
@@ -96,7 +96,33 @@ export class SupabaseService {
     return this.supabase
       .from('predictions')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('utc_date', { ascending: false })
+  }
+
+  // Метод за четене на predictions с името на потребителя (от view)
+  getPredictionsWithUsers() {
+    return this.supabase
+      .from('predictions_with_users')
+      .select('*')
+      .order('utc_date', { ascending: false })
+  }
+
+  // Метод за четене на predictions с името на потребителя за конкретен мач
+  getPredictionsByMatchId(matchId: number) {
+    return this.supabase
+      .from('predictions_with_users')
+      .select('*')
+      .eq('match_id', matchId)
+      .order('name_bg', { ascending: true })
+  }
+
+  // Метод за четене на predictions на конкретен потребител
+  getPredictionsByUserId(userId: number) {
+    return this.supabase
+      .from('predictions_with_users')
+      .select('*')
+      .eq('user_id', userId)
+      .order('utc_date', { ascending: false })
   }
 
   // Метод за добавяне на prediction

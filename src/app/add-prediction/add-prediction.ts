@@ -59,7 +59,7 @@ interface Product {
   imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
 })
 export class AddPrediction implements OnInit, OnDestroy {
-  // private socket: Socket;
+  private socket: Socket;
   isLocal = false;
   betsToShow: any[] = [];
   loading: boolean = true;
@@ -82,7 +82,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     private elRef: ElementRef,
     private supabaseService: SupabaseService
   ) {
-    // this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
+    this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
     // this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
     //   Object.entries(translations).forEach((el: [string, any]) => {
@@ -90,16 +90,17 @@ export class AddPrediction implements OnInit, OnDestroy {
     //   });
     // });
 
-    // if (!this.socket.hasListeners('connect')) {
-    //   this.socket.on('connect', () => { });
-    // }
 
-    // // Avoid duplicate event listeners
-    // if (!this.socket.hasListeners('matchesUpdate')) {
-    //   this.socket.on('matchesUpdate', (data) => {
-    //     console.log('Matches updated', data);
-    //   });
-    // }
+    if (!this.socket.hasListeners('connect')) {
+      this.socket.on('connect', () => { });
+    }
+
+    // Avoid duplicate event listeners
+    if (!this.socket.hasListeners('matchesUpdate')) {
+      this.socket.on('matchesUpdate', (data) => {
+        console.log('Matches updated', data);
+      });
+    }
 
     // // Съхраняваме канала като член-променлива
     // supabase
@@ -125,6 +126,8 @@ export class AddPrediction implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    // this.updateBetsDisplay([]);
+    // this.getUserTotalPoints('Митко');
     this.getPredictionFromView();
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
     this.scrollHandler = () => this.updateRe_home_teamLeft();
@@ -171,9 +174,9 @@ export class AddPrediction implements OnInit, OnDestroy {
   async getPredictionFromView() {
     this.loading = true;
     try {
-      const { data, error } = await this.supabaseService.getPredictions();
+      const { data, error } = await this.supabaseService.getPredictionsWithUsers();
       if (error) throw error;
-      this.updateBetsDisplay(data ?? []);
+      this.updateBetsDisplay(data ?? [], 1);
     } catch (error) {
       console.error('Error fetching predictions:', error);
       this.betsToShow = [];
@@ -197,7 +200,14 @@ export class AddPrediction implements OnInit, OnDestroy {
     return "";
   }
 
-  returnTranslatedWinner(winner: string, sliceLength?: number): string {
+  returnTranslatedWinner(product: any, foo2?: number): string {
+    let lng = this.getLng();
+    let foo = product.winner.toLowerCase() + '_' + lng;
+    let result = product[foo];
+    return result;
+  }
+
+  returnTranslatedWinner2(winner: string, sliceLength?: number): string {
     if (this.trls.length === 0) return ""
     let str = this.trls.find(trl => trl.name === 'TABLE.' + winner)?.translation ?? ""
     if (sliceLength) return str.slice(0, sliceLength)
@@ -205,15 +215,15 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   getProductResultRow(product: any, columnIndex: number): string {
-    if (columnIndex === 0) return product.home_team_score
-    if (columnIndex === 1) return product.away_team_score
-    if (columnIndex === 2) return this.returnTranslatedWinner(product.winner, 1)
+    if (columnIndex === 0) return product.home_team_score ?? product.home_ft
+    if (columnIndex === 1) return product.away_team_score ?? product.away_ft
+    if (columnIndex === 2) return this.returnTranslatedWinner(product)
     return "";
   }
 
-  getUserTotalPoints(user: string): number {
+  getUserTotalPoints(userName: string): number {
     return this.betsToShow.reduce((total, match) => {
-      const foundUser = match.all_users.find((u: { name: string }) => u.name === user);
+      const foundUser = match.all_users.find((u: { name: string }) => u.name === userName);
       return total + (foundUser?.points_predict || 0);
     }, 0);
   }
@@ -231,7 +241,38 @@ export class AddPrediction implements OnInit, OnDestroy {
     return "";
   }
 
-  updateBetsDisplay(data: any[]): void {
+  getLng(full = false) {
+    let lng: "bg-BG" | "en-US" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
+    if (full === false) return lng.slice(0, 2) as "bg" | "en";
+    return lng as "bg-BG" | "en-US";
+  }
+
+  updateBetsDisplay(data: any[], userId: number) {
+    let lng = this.getLng(true);
+    let lngMini = this.getLng(false);
+    this.supabaseService.getPredictionsByUserId(userId).then(({ data: userPredictions, error }) => {
+      let newData = [...data]
+      newData = newData.map((bet, index) => {
+        let match_day = formatDate(new Date(bet.utc_date), 'dd.MM.yyyy', lng);
+        let match_time = formatDate(new Date(bet.utc_date), 'HH:mm', lng);
+        let group = this.translate.instant('TABLE.' + bet.match_group);
+        let home_team = bet['home_team_' + lngMini];
+        let away_team = bet['away_team_' + lngMini];
+        return {
+          ...bet,
+          row_index: index + 1,
+          match_day: match_day,
+          match_time: match_time,
+          group: group,
+          home_team: home_team,
+          away_team: away_team,
+        }
+      })
+      this.betsToShow = newData
+    })
+  }
+
+  updateBetsDisplay2(data: any[]): void {
     let lng: "bg" | "en" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg' : 'en';
     this.loadTestPredictions();
 
@@ -240,7 +281,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     this.betsToShow = Object.values(grouped).map((group) => {
       const bet = group[0];
       let foo = bet.match_id;
-      
+
       const date = new Date(bet.match_date_utc);
       return {
         winner: bet.winner,

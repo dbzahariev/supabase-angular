@@ -14,3 +14,21 @@ export interface Match {
   group: string;
   score: MatchScore;
 }
+
+export interface Prediction {
+  id: number;
+  user_id: number;
+  match_id: number;
+  utc_date: string;
+  match_group: string;
+  home_ft: number;
+  away_ft: number;
+  home_pt: number;
+  away_pt: number;
+  winner: string;
+}
+
+export interface PredictionWithUser extends Prediction {
+  name_bg: string;
+  name_en: string;
+}

@@ -12,8 +12,8 @@
         </div>
     </div>
 
-    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="group_row"
-        [scrollable]="true" scrollHeight="400rem" [responsiveLayout]="'scroll'"
+    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
+        groupRowsBy="match_group" [scrollable]="true" scrollHeight="400rem" [responsiveLayout]="'scroll'"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small" styleClass="!p-0 !m-0">
         <ng-template #caption>
@@ -47,19 +47,19 @@
                 <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
                 </th>
             </tr>
-            <tr>
-                <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th>
-                <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
-                    {{getColName(idx)}}</th>
-            </tr>
+            <!-- <tr>
+                 <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th> 
+                 <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
+                    {{getColName(idx)}}</th> 
+            </tr> -->
         </ng-template>
         <ng-template #groupheader let-product let-expanded="expanded">
             <tr pRowGroupHeader>
                 <td colspan="10000">
-                    <button id="toggler_{{product.group_row}}" type="button" pButton pRipple [pRowToggler]="product"
+                    <button id="toggler_{{product.match_group}}" type="button" pButton pRipple [pRowToggler]="product"
                         text rounded plain class="mr-2" (click)="toggleGroup()"
-                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">{{'TABLE.' + product.group_row
-                        | translate}}
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                        {{'TABLE.' + product.match_group | translate}}
                     </button>
                 </td>
             </tr>
