@@ -621,7 +621,7 @@
             "homeTeam": "Poland",
             "awayTeam": "Portugal",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "QUARTER_FINAL",
+            "group": "QUARTER_FINALS",
             "score": {
                 "homeFT": 1,
                 "awayFT": 2,
@@ -635,7 +635,7 @@
             "homeTeam": "Wales",
             "awayTeam": "Belgium",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "QUARTER_FINAL",
+            "group": "QUARTER_FINALS",
             "score": {
                 "homeFT": 3,
                 "awayFT": 1,
@@ -649,7 +649,7 @@
             "homeTeam": "Germany",
             "awayTeam": "Italy",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "QUARTER_FINAL",
+            "group": "QUARTER_FINALS",
             "score": {
                 "homeFT": 2,
                 "awayFT": 1,
@@ -663,7 +663,7 @@
             "homeTeam": "France",
             "awayTeam": "Iceland",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "QUARTER_FINAL",
+            "group": "QUARTER_FINALS",
             "score": {
                 "homeFT": 5,
                 "awayFT": 2,
@@ -677,7 +677,7 @@
             "homeTeam": "Portugal",
             "awayTeam": "Wales",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "SEMI_FINAL",
+            "group": "SEMI_FINALS",
             "score": {
                 "homeFT": 2,
                 "awayFT": 0,
@@ -691,7 +691,7 @@
             "homeTeam": "Germany",
             "awayTeam": "France",
             "utcDate": "2016-06-14T15:00:00Z",
-            "group": "SEMI_FINAL",
+            "group": "SEMI_FINALS",
             "score": {
                 "homeFT": 0,
                 "awayFT": 2,

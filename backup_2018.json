@@ -789,7 +789,7 @@
       "homeTeam": "France",
       "awayTeam": "Uruguay",
       "utcDate": "2018-07-06T14:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 2,
         "awayFT": 0,
@@ -803,7 +803,7 @@
       "homeTeam": "Brazil",
       "awayTeam": "Belgium",
       "utcDate": "2018-07-06T18:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 2,
@@ -817,7 +817,7 @@
       "homeTeam": "Sweden",
       "awayTeam": "England",
       "utcDate": "2018-07-07T14:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 0,
         "awayFT": 2,
@@ -831,7 +831,7 @@
       "homeTeam": "Russia",
       "awayTeam": "Croatia",
       "utcDate": "2018-07-07T18:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 1,
@@ -845,7 +845,7 @@
       "homeTeam": "France",
       "awayTeam": "Belgium",
       "utcDate": "2018-07-10T18:00:00Z",
-      "group": "SEMI_FINAL",
+      "group": "SEMI_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 0,
@@ -859,7 +859,7 @@
       "homeTeam": "England",
       "awayTeam": "Croatia",
       "utcDate": "2018-07-11T18:00:00Z",
-      "group": "SEMI_FINAL",
+      "group": "SEMI_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 2,

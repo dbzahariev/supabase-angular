@@ -621,7 +621,7 @@
       "homeTeam": "Switzerland",
       "awayTeam": "Spain",
       "utcDate": "2021-07-02T16:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 1,
@@ -635,7 +635,7 @@
       "homeTeam": "Belgium",
       "awayTeam": "Italy",
       "utcDate": "2021-07-02T19:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 2,
@@ -649,7 +649,7 @@
       "homeTeam": "Czech Republic",
       "awayTeam": "Denmark",
       "utcDate": "2021-07-03T16:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 2,
@@ -663,7 +663,7 @@
       "homeTeam": "Ukraine",
       "awayTeam": "England",
       "utcDate": "2021-07-03T19:00:00Z",
-      "group": "QUARTER_FINAL",
+      "group": "QUARTER_FINALS",
       "score": {
         "homeFT": 0,
         "awayFT": 4,
@@ -677,7 +677,7 @@
       "homeTeam": "Italy",
       "awayTeam": "Spain",
       "utcDate": "2021-07-06T19:00:00Z",
-      "group": "SEMI_FINAL",
+      "group": "SEMI_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 1,
@@ -691,7 +691,7 @@
       "homeTeam": "England",
       "awayTeam": "Denmark",
       "utcDate": "2021-07-07T19:00:00Z",
-      "group": "SEMI_FINAL",
+      "group": "SEMI_FINALS",
       "score": {
         "homeFT": 1,
         "awayFT": 0,

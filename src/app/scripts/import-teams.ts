@@ -60,7 +60,7 @@ const teamTranslations: { [key: string]: string } = {
   'Republic of Ireland': 'Ирландия',
   'Romania': 'Румъния',
   'Russia': 'Русия',
-  'Saudi Arabia': 'Саудитска Arabia',
+  'Saudi Arabia': 'Саудитска Арабия',
   'Scotland': 'Шотландия',
   'Senegal': 'Сенегал',
   'Serbia': 'Сърбия',
