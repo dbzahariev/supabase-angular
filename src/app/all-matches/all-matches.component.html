@@ -1,0 +1,80 @@
+<div class="all-matches-container">
+    <h2>All Matches</h2>
+    <!-- Add your matches content here -->
+
+    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
+        groupRowsBy="match_group" [scrollable]="true" scrollHeight="400rem" [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
+        [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small" styleClass="!p-0 !m-0">
+        <ng-template #caption>
+            <div class="flex items-center justify-between ">
+                <span class="text-xl font-bold">Bets</span>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input id="searchInput" #searchInput pInputText type="text"
+                        (input)="dt.filterGlobal(searchInput.value, 'contains')" placeholder="Search keyword" />
+                </p-iconfield>
+                <p-button icon="pi pi-refresh" rounded raised />
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th rowspan="2" colspan="1" class="col_row_number" style="width: 0px;">{{ 'TABLE.ROW_INDEX' | translate
+                    }}</th>
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
+                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_home_team" style="width: 0px;">{{
+                    'TABLE.HOME_TEAM' |
+                    translate }}
+                </th>
+                <th rowspan="1" colspan="3" class="re_result" style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
+                    translate }}
+                </th>
+                @for (user of allUsersNames; track user.name) {
+                <th rowspan="1" colspan="4">{{ user.name }} ({{ user.total_points }})</th>
+                }
+                <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
+                </th> -->
+            </tr>
+            <!-- <tr>
+                 <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th> 
+                 <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
+                    {{getColName(idx)}}</th> 
+            </tr> -->
+        </ng-template>
+        <ng-template #groupheader let-product let-expanded="expanded">
+            <tr pRowGroupHeader>
+                <td colspan="10000">
+                    <button id="toggler_{{product.match_group}}" type="button" pButton pRipple [pRowToggler]="product"
+                        text rounded plain class="mr-2" (click)="toggleGroup()"
+                        [attr.icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                        {{'TABLE.' + product.match_group | translate}}
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #expandedrow let-product>
+            <tr>
+                <td class="col_row_number">{{ product?.row_index}}</td>
+                <td>{{ product?.match_day }}</td>
+                <td>{{ product?.match_time }}</td>
+                <td>{{ product?.group }}</td>
+                <td class="re_home_team">{{ product?.home_team }}</td>
+                @for (j of [0, 1, 2]; track j) {
+                <td>{{getProductResultRow(product, j)}}</td>
+                }
+                <td class="re_away_team">{{ product?.away_team }}</td>
+                @for (i of rowIndexes; track i) {
+                @for (j of [0, 1, 2, 3]; track j) {
+                <td>{{ getUserPredictionValue(i, product, j) }}</td>
+                }
+                }
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

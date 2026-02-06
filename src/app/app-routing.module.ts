@@ -4,13 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { AddPrediction } from './add-prediction/add-prediction';
 import { MatchImportComponent } from './components/match-import/match-import.component';
 import { TeamImportComponent } from './components/team-import/team-import.component';
+import { AllMatchesComponent } from './all-matches/all-matches.component';
 
 const routes: Routes = [
     {path: 'add-prediction', component: AddPrediction},
-    { path: '', component: AddPrediction },
+    { path: '', component: AllMatchesComponent },
     // { path: 'chat', component: ChatComponent }
     { path: 'import-matches', component: MatchImportComponent },
-    { path: 'import-teams', component: TeamImportComponent }
+    { path: 'import-teams', component: TeamImportComponent },
 ];
 
 @NgModule({
