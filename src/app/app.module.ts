@@ -11,6 +11,7 @@ import Nora from '@primeng/themes/nora';
 import { App } from './app';
 import { AuthComponent } from './auth/auth';
 import { AddPrediction } from './add-prediction/add-prediction';
+import { AllMatchesComponent } from './all-matches/all-matches.component';
 import { definePreset } from '@primeng/themes';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -68,6 +69,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         HeaderComponent,
         AuthComponent,
         AddPrediction,
+        AllMatchesComponent,
         ToastModule,
         TranslateModule.forRoot({
             loader: {

@@ -91,6 +91,12 @@ export class SupabaseService {
     // return this.supabase.storage.from('avatars').upload(filePath, file)
   }
 
+  getAllTeams() {
+    return this.supabase
+      .from('teams')
+      .select('*')
+  }
+
   // Метод за четене на predictions
   getPredictions() {
     return this.supabase
@@ -116,6 +122,14 @@ export class SupabaseService {
       .order('name_bg', { ascending: true })
   }
 
+  getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
+    return this.supabase
+      .from('matches')
+      .select('*')
+      .gt('id', `${year}00`)
+      .lt('id', `${year}99`)
+  }
+
   // Метод за четене на predictions на конкретен потребител
   getPredictionsByUserId(userId: number) {
     return this.supabase
@@ -139,10 +153,10 @@ export class SupabaseService {
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: table 
+        {
+          event: '*',
+          schema: 'public',
+          table: table
         },
         (payload) => {
           console.log('🔔 Change received!', payload)
@@ -155,7 +169,7 @@ export class SupabaseService {
   }
 
   // Методи за работа с matches таблицата
-  
+
   // Получаване на всички мачове
   getMatches() {
     return this.supabase
@@ -196,7 +210,7 @@ export class SupabaseService {
       away_pt: match.score.awayPT,
       winner: match.score.winner
     }
-    
+
     return this.supabase
       .from('matches')
       .insert(matchData)
@@ -217,7 +231,7 @@ export class SupabaseService {
       away_pt: match.score.awayPT,
       winner: match.score.winner
     }))
-    
+
     return this.supabase
       .from('matches')
       .insert(matchesData)
@@ -227,7 +241,7 @@ export class SupabaseService {
   // Актуализиране на мач
   updateMatch(id: number, match: Partial<Match>) {
     const updateData: any = {}
-    
+
     if (match.homeTeam) updateData.home_team = match.homeTeam
     if (match.awayTeam) updateData.away_team = match.awayTeam
     if (match.utcDate) updateData.utc_date = match.utcDate
@@ -239,7 +253,7 @@ export class SupabaseService {
       if (match.score.awayPT !== undefined) updateData.away_pt = match.score.awayPT
       if (match.score.winner) updateData.winner = match.score.winner
     }
-    
+
     return this.supabase
       .from('matches')
       .update(updateData)
