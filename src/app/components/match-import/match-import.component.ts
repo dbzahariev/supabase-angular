@@ -37,11 +37,11 @@ export class MatchImportComponent {
       ]);
 
       this.backups = [
-        { year: '2016', data: backup2016.default || backup2016 },
-        { year: '2018', data: backup2018.default || backup2018 },
-        { year: '2020', data: backup2020.default || backup2020 },
-        { year: '2022', data: backup2022.default || backup2022 },
-        { year: '2024', data: backup2024.default || backup2024 }
+        { year: '2016', data: backup2016 },
+        { year: '2018', data: backup2018 },
+        { year: '2020', data: backup2020 },
+        { year: '2022', data: backup2022 },
+        { year: '2024', data: backup2024 }
       ];
     } catch (error) {
       console.error('Грешка при зареждане на backup файлове:', error);

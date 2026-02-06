@@ -12,19 +12,19 @@ interface BackupData {
 })
 export class MatchImportService {
   private teamsMap: Map<string, number> = new Map();
-  
-  constructor(private supabase: SupabaseService) {}
+
+  constructor(private supabase: SupabaseService) { }
 
   /**
    * Зарежда отборите от базата данни и създава map от име към ID
    */
   private async loadTeamsMap(): Promise<void> {
     console.log('📋 Зареждане на отбори от базата данни...');
-    
+
     const { data: teams, error } = await this.supabase.client
       .from('teams')
       .select('id, name_en');
-    
+
     if (error) {
       console.error('❌ Грешка при зареждане на отбори:', error);
       throw new Error('Не могат да се заредят отборите. Моля първо импортирайте отборите.');
@@ -86,7 +86,7 @@ export class MatchImportService {
         .from('matches')
         .insert(matchesData)
         .select();
-      
+
       if (error) {
         console.error('❌ Грешка при импортиране:', error);
         return { success: false, count: 0, errors: [error] };
@@ -105,12 +105,12 @@ export class MatchImportService {
    */
   async importAllBackups(backups: { year: string; data: BackupData }[]): Promise<any> {
     const results = [];
-    
+
     for (const backup of backups) {
       console.log(`\n📅 Импортиране на мачове от ${backup.year}...`);
       const result = await this.importMatchesFromBackup(backup.data);
       results.push({ year: backup.year, ...result });
-      
+
       // Малка пауза между импортите
       await new Promise(resolve => setTimeout(resolve, 500));
     }
@@ -131,14 +131,14 @@ export class MatchImportService {
    */
   async clearAllMatches(): Promise<void> {
     const { data: matches } = await this.supabase.getMatches();
-    
+
     if (matches && matches.length > 0) {
       console.log(`🗑️ Изтриване на ${matches.length} мача...`);
-      
+
       for (const match of matches) {
         await this.supabase.deleteMatch(match.id);
       }
-      
+
       console.log('✅ Всички мачове са изтрити');
     }
   }
@@ -148,7 +148,7 @@ export class MatchImportService {
    */
   async getImportStats(): Promise<any> {
     const { data: matches } = await this.supabase.getMatches();
-    
+
     if (!matches || matches.length === 0) {
       return { total: 0, byGroup: {}, byYear: {} };
     }

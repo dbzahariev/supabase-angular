@@ -21,7 +21,7 @@ export class TeamImportComponent {
   importResult: any = null;
   loading = false;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) { }
 
   async ngOnInit() {
     await this.loadTeams();
@@ -34,7 +34,7 @@ export class TeamImportComponent {
     try {
       const result = await importTeams(this.supabaseService);
       this.importResult = result;
-      
+
       if (result.success) {
         await this.loadTeams();
       }
@@ -48,10 +48,10 @@ export class TeamImportComponent {
 
   async loadTeams() {
     this.loading = true;
-    
+
     try {
       const result = await listAllTeams(this.supabaseService);
-      
+
       if (result.success) {
         this.teams = result.teams || [];
       }
@@ -65,10 +65,9 @@ export class TeamImportComponent {
   async clearAllTeams() {
     if (confirm('Сигурни ли сте, че искате да изтриете всички отбори?')) {
       this.importing = true;
-      
+
       try {
         const result = await deleteAllTeams(this.supabaseService);
-        
         if (result.success) {
           this.teams = [];
           this.importResult = null;

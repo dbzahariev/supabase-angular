@@ -17,6 +17,7 @@ import backup2024 from '../../../backup_2024.json';
 // Речник за превод на имената на отборите от английски на български
 const teamTranslations: { [key: string]: string } = {
   'Albania': 'Албания',
+  'Algeria': 'Алжир',
   'Argentina': 'Аржентина',
   'Australia': 'Австралия',
   'Austria': 'Австрия',
@@ -24,12 +25,14 @@ const teamTranslations: { [key: string]: string } = {
   'Brazil': 'Бразилия',
   'Cameroon': 'Камерун',
   'Canada': 'Канада',
+  'Cape Verde Islands': 'Кабо Верде',
   'Chile': 'Чили',
   'Colombia': 'Колумбия',
   'Costa Rica': 'Коста Рика',
   'Croatia': 'Хърватия',
-  'Czechia': 'Чехия',
+  'Curaçao': 'Кюрасао',
   'Czech Republic': 'Чехия',
+  'Czechia': 'Чехия',
   'Denmark': 'Дания',
   'Ecuador': 'Еквадор',
   'Egypt': 'Египет',
@@ -40,19 +43,24 @@ const teamTranslations: { [key: string]: string } = {
   'Germany': 'Германия',
   'Ghana': 'Гана',
   'Greece': 'Гърция',
+  'Haiti': 'Хаити',
   'Hungary': 'Унгария',
   'Iceland': 'Исландия',
   'Iran': 'Иран',
   'Ireland': 'Ирландия',
   'Italy': 'Италия',
   'Japan': 'Япония',
+  'Jordan': 'Йордания',
   'Mexico': 'Мексико',
   'Morocco': 'Мароко',
   'Netherlands': 'Холандия',
+  'New Zealand': 'Нова Зеландия',
   'Nigeria': 'Нигерия',
   'North Macedonia': 'Северна Македония',
   'Northern Ireland': 'Северна Ирландия',
   'Norway': 'Норвегия',
+  'Panama': 'Панама',
+  'Paraguay': 'Парагвай',
   'Peru': 'Перу',
   'Poland': 'Полша',
   'Portugal': 'Португалия',
@@ -66,6 +74,7 @@ const teamTranslations: { [key: string]: string } = {
   'Serbia': 'Сърбия',
   'Slovakia': 'Словакия',
   'Slovenia': 'Словения',
+  'South Africa': 'Южна Африка',
   'South Korea': 'Южна Корея',
   'Spain': 'Испания',
   'Sweden': 'Швеция',
@@ -75,7 +84,9 @@ const teamTranslations: { [key: string]: string } = {
   'Ukraine': 'Украйна',
   'United States': 'САЩ',
   'Uruguay': 'Уругвай',
-  'Wales': 'Уелс'
+  'Uzbekistan': 'Узбекистан',
+  'Wales': 'Уелс',
+  "Côte d'Ivoire": "Кот д'Ивоар"
 };
 
 interface Team {
@@ -96,6 +107,12 @@ export async function importTeams(supabaseService: SupabaseService) {
       teamNamesSet.add(match.awayTeam);
     });
   });
+
+  Object.keys(teamTranslations).forEach(team => {
+    if (!teamNamesSet.has(team)) {
+      teamNamesSet.add(team);
+    }
+  })
 
   // Създаване на масив с отборите с английско и българско име
   const teams: Team[] = Array.from(teamNamesSet).map(nameEn => ({
@@ -175,7 +192,7 @@ export async function listAllTeams(supabaseService: SupabaseService) {
 // Функция за изтриване на всички отбори (за тестване)
 export async function deleteAllTeams(supabaseService: SupabaseService) {
   console.log('⚠️  Изтриване на всички отбори...');
-  
+
   const { error } = await supabaseService.client
     .from('teams')
     .delete()
