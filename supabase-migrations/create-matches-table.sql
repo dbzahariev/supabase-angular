@@ -1,8 +1,8 @@
 -- Create matches table
 CREATE TABLE IF NOT EXISTS public.matches (
     id INTEGER PRIMARY KEY,
-    home_team VARCHAR(100) NOT NULL,
-    away_team VARCHAR(100) NOT NULL,
+    home_team_id INTEGER NOT NULL REFERENCES public.teams(id),
+    away_team_id INTEGER NOT NULL REFERENCES public.teams(id),
     utc_date TIMESTAMPTZ NOT NULL,
     group_name VARCHAR(50) NOT NULL,
     home_ft INTEGER NOT NULL,
@@ -61,15 +61,3 @@ CREATE TRIGGER update_matches_updated_at
     BEFORE UPDATE ON public.matches
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
-COMMENT ON TABLE public.matches IS 'Stores match information for Euro tournaments';
-COMMENT ON COLUMN public.matches.id IS 'Unique match identifier';
-COMMENT ON COLUMN public.matches.home_team IS 'Home team name';
-COMMENT ON COLUMN public.matches.away_team IS 'Away team name';
-COMMENT ON COLUMN public.matches.utc_date IS 'Match date and time in UTC';
-COMMENT ON COLUMN public.matches.group_name IS 'Group or stage name (e.g., GROUP_A, LAST_16, FINAL)';
-COMMENT ON COLUMN public.matches.home_ft IS 'Home team full-time score';
-COMMENT ON COLUMN public.matches.away_ft IS 'Away team full-time score';
-COMMENT ON COLUMN public.matches.home_pt IS 'Home team penalty score (-1 if no penalties)';
-COMMENT ON COLUMN public.matches.away_pt IS 'Away team penalty score (-1 if no penalties)';
-COMMENT ON COLUMN public.matches.winner IS 'Match winner: HOME_TEAM, AWAY_TEAM, or DRAW';
