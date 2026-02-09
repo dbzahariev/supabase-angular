@@ -23,6 +23,7 @@ export class AllMatchesComponent implements OnInit {
     expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
     rowIndexes: number[] = [];
     allMatches: any[] = [];
+    groups: string[] = [];
     private countryTranslationCache: {
         id: number,
         name_en: string,
@@ -46,6 +47,12 @@ export class AllMatchesComponent implements OnInit {
         if (!this.socket.hasListeners('matchesUpdate')) {
             this.socket.on('matchesUpdate', (data) => {
                 this.allMatches = data.matches;
+                this.allMatches.forEach((match: any) => {
+                    let groupKey = match.group;
+                    if (!this.groups.includes(groupKey)) {
+                        this.groups.push(groupKey);
+                    }
+                });
                 this.updateBetsDisplayFromApi();
             });
         }
@@ -71,82 +78,104 @@ export class AllMatchesComponent implements OnInit {
         const lng = this.getLng(true);
         const lngMini = this.getLng(false) as "bg" | "en";
 
-
         this.betsToShow = this.allMatches.map((bet: any, index) => {
-            const dateKey = bet.utcDate;
-            const groupKey = bet.group ?? bet.stage ?? "UNKNOWN_GROUP";
+            const cachedDate = this.getCachedDate(bet.utcDate, lng);
+            const homeTeam = this.findTeamByName(bet.homeTeam.name);
+            const awayTeam = this.findTeamByName(bet.awayTeam.name);
+            const { phaseLabel, group, groupRowsBy } = this.getStageInfo(bet);
 
-            if (!this.dateCache.has(dateKey)) {
-                const date = new Date(bet.utcDate);
-                this.dateCache.set(dateKey, {
-                    day: formatDate(date, 'dd.MM.yyyy', lng),
-                    time: formatDate(date, 'HH:mm', lng)
-                });
+            if (bet.id === 537327) {
+                bet.score.duration = "FULL_TIME";
+                bet.score.fullTime.home! = 3;
+                bet.score.fullTime.away! = 4;
+                bet.score.halfTime.home! = 1;
+                bet.score.halfTime.away! = 2;
             }
-
-            if (!this.groupTranslationCache.has(groupKey)) {
-                this.groupTranslationCache.set(groupKey,
-                    this.translate.instant('TABLE.' + groupKey));
+            else if (bet.id === 537328) {
+                bet.score.duration = "FULL_TIME";
+                bet.score.fullTime.home! = 4;
+                bet.score.fullTime.away! = 3;
+                bet.score.halfTime.home! = 2;
+                bet.score.halfTime.away! = 1;
             }
-
-            const cachedDate = this.dateCache.get(dateKey)!;
-            let homeTeam = this.countryTranslationCache.find(team => team.name_en === bet.homeTeam.name);
-            let awayTeam = this.countryTranslationCache.find(team => team.name_en === bet.awayTeam.name);
+            else if (bet.id === 537333) {
+                bet.score.duration = "FULL_TIME";
+                bet.score.fullTime.home! = 2;
+                bet.score.fullTime.away! = 2;
+                bet.score.halfTime.home! = 1;
+                bet.score.halfTime.away! = 1;
+            }
 
             return {
                 ...bet,
+                groupRowsBy,
+                group,
+                phaseLabel: phaseLabel,
                 row_index: index + 1,
                 match_day: cachedDate.day,
                 match_time: cachedDate.time,
-                group: this.groupTranslationCache.get(groupKey)!,
                 home_team: homeTeam?.[`name_${lngMini}`] ?? '',
                 away_team: awayTeam?.[`name_${lngMini}`] ?? '',
+                home_team_score: bet.score?.fullTime?.home,
+                away_team_score: bet.score?.fullTime?.away,
             };
-        })
+        });
 
         this.loading = false;
     }
 
-    updateBetsDisplayFromSupa() {
-        const lng = this.getLng(true);
-        const lngMini = this.getLng(false) as "bg" | "en";
+    private getCachedDate(utcDate: string, lng: string) {
+        if (!this.dateCache.has(utcDate)) {
+            const date = new Date(utcDate);
+            this.dateCache.set(utcDate, {
+                day: formatDate(date, 'dd.MM.yyyy', lng),
+                time: formatDate(date, 'HH:mm', lng)
+            });
+        }
+        return this.dateCache.get(utcDate)!;
+    }
 
-        this.supabaseService.getSupaMatchesByYear(2024).then(({ data: matches, error }) => {
-            if (matches) {
-                this.betsToShow = matches.map((bet, index) => {
-                    const dateKey = `${bet.utc_date}_${lng}`;
-                    const groupKey = bet.group_name;
+    private findTeamByName(name: string) {
+        return this.countryTranslationCache.find(team => team.name_en === name);
+    }
 
-                    if (!this.dateCache.has(dateKey)) {
-                        const date = new Date(bet.utc_date);
-                        this.dateCache.set(dateKey, {
-                            day: formatDate(date, 'dd.MM.yyyy', lng),
-                            time: formatDate(date, 'HH:mm', lng)
-                        });
-                    }
+    private getGroupTranslation(groupKey: string) {
+        if (!this.groupTranslationCache.has(groupKey)) {
+            this.groupTranslationCache.set(groupKey, this.translate.instant('TABLE.' + groupKey));
+        }
+        return this.groupTranslationCache.get(groupKey)!;
+    }
 
-                    if (!this.groupTranslationCache.has(groupKey)) {
-                        this.groupTranslationCache.set(groupKey,
-                            this.translate.instant('TABLE.' + groupKey));
-                    }
+    private getStageInfo(bet: any) {
+        const { stage, group } = bet;
+        const groupKey = group ?? stage ?? "UNKNOWN_GROUP";
+        const phaseMap = this.getPhaseMap();
+        const phaseLabel = this.getPhaseLabel(stage, groupKey);
+        const groupRowsBy = stage === 'GROUP_STAGE' ? "A" : phaseMap[stage];
 
-                    const cachedDate = this.dateCache.get(dateKey)!;
-                    let homeTeam = this.countryTranslationCache.find(team => team.id === bet['home_team_id']);
-                    let awayTeam = this.countryTranslationCache.find(team => team.id === bet['away_team_id']);
+        return {
+            groupRowsBy,
+            phaseLabel,
+            group: this.getGroupTranslation(groupKey),
+        };
+    }
 
-                    return {
-                        ...bet,
-                        row_index: index + 1,
-                        match_day: cachedDate.day,
-                        match_time: cachedDate.time,
-                        group: this.groupTranslationCache.get(groupKey)!,
-                        home_team: homeTeam?.[`name_${lngMini}`] ?? '',
-                        away_team: awayTeam?.[`name_${lngMini}`] ?? '',
-                    };
-                });
-                this.loading = false;
-            }
-        })
+    private getPhaseMap(): Record<string, string> {
+        return {
+            'GROUP_STAGE': this.translate.instant('TABLE.GROUPS_PHASE'),
+            'LAST_32': 'U',
+            'LAST_16': 'V',
+            'QUARTER_FINALS': 'W',
+            'SEMI_FINALS': 'X',
+            'THIRD_PLACE': 'Y',
+            'FINAL': 'Z'
+        };
+    }
+
+    private getPhaseLabel(stage: string, groupKey: string): string {
+        return stage === 'GROUP_STAGE'
+            ? this.getPhaseMap()[stage]
+            : this.getGroupTranslation(groupKey);
     }
 
     getLng(full = false) {
@@ -162,11 +191,23 @@ export class AllMatchesComponent implements OnInit {
         return "";
     }
 
-    returnTranslatedWinner(product: any, foo2?: number): string {
-        return "";
-        let lng = this.getLng();
-        let foo = product.winner.toLowerCase() + '_' + lng;
-        let result = product[foo];
+    returnTranslatedWinner(bet: any): string {
+        let result = "";
+
+        if (bet.score.fullTime.home > bet.score.fullTime.away) {
+            result = 'HOME_TEAM';
+        } else if (bet.score.fullTime.home === bet.score.fullTime.away) {
+            result = 'DRAW';
+        } else {
+            result = 'AWAY_TEAM';
+        }
+
+        if (bet.score.duration === 'FULL_TIME') {
+            result = this.translate.instant("TABLE." + result).slice(0, 1);
+        }
+        else {
+            result = ""
+        }
         return result;
     }
     getProductResultRow(product: any, columnIndex: number): string {
