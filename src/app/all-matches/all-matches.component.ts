@@ -7,7 +7,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { formatDate } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
-import { CountryTranslateService } from '../services/country-translate.service';
 
 @Component({
     selector: 'app-all-matches',
@@ -34,7 +33,6 @@ export class AllMatchesComponent implements OnInit {
 
 
     constructor(
-        private countryService: CountryTranslateService,
         private supabaseService: SupabaseService,
         private translate: TranslateService,
     ) {
@@ -76,7 +74,7 @@ export class AllMatchesComponent implements OnInit {
 
         this.betsToShow = this.allMatches.map((bet: any, index) => {
             const dateKey = bet.utcDate;
-            const groupKey = bet.group;
+            const groupKey = bet.group ?? bet.stage ?? "UNKNOWN_GROUP";
 
             if (!this.dateCache.has(dateKey)) {
                 const date = new Date(bet.utcDate);

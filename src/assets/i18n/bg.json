@@ -54,10 +54,16 @@
     "GROUP_F": "Група F",
     "GROUP_G": "Група G",
     "GROUP_H": "Група H",
-    "LAST_16": "Последни 16",
-    "QUARTER_FINALS": "Четвъртфинали",
+    "GROUP_J": "Група J",
+    "GROUP_I": "Група I",
+    "GROUP_K": "Група K",
+    "GROUP_L": "Група L",
+    "UNKNOWN_GROUP": "Неизвестна група",
+    "LAST_32": "Първи кръг",
+    "LAST_16": "Осмина финали",
+    "QUARTER_FINALS": "Четвърт финали",
     "SEMI_FINALS": "Полуфинали",
-    "THIRD_POSITION": "Трето място",
+    "THIRD_PLACE": "Трето място",
     "FINAL": "Финал"
   }
 }

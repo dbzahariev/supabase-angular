@@ -52,10 +52,16 @@
     "GROUP_F": "Group F",
     "GROUP_G": "Group G",
     "GROUP_H": "Group H",
-    "LAST_16": "Last 16",
+    "GROUP_I": "Group I",
+    "GROUP_J": "Group J",
+    "GROUP_K": "Group K",
+    "GROUP_L": "Group L",
+    "UNKNOWN_GROUP": "Unknown Group",
+    "LAST_32": "First Round",
+    "LAST_16": "Round of 16",
     "QUARTER_FINALS": "Quarter Finals",
     "SEMI_FINALS": "Semi Finals",
-    "THIRD_POSITION": "Third Position",
+    "THIRD_PLACE": "Third Place",
     "FINAL": "Final"
   }
 }
