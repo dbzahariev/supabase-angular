@@ -29,7 +29,7 @@ import { PredictionWithUser } from '../../models/match.model';
         </thead>
         <tbody>
           <tr *ngFor="let prediction of predictions">
-            <td>{{ prediction.name_bg }}</td>
+            <td>{{ prediction.users.name_bg }}</td>
             <td>{{ prediction.match_id }}</td>
             <td>{{ prediction.utc_date | date:'short' }}</td>
             <td>{{ prediction.match_group }}</td>
@@ -76,7 +76,7 @@ export class PredictionsListComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(private supabase: SupabaseService) { }
 
   ngOnInit() {
     this.loadPredictionsWithUsers();
@@ -86,9 +86,9 @@ export class PredictionsListComponent implements OnInit {
     try {
       this.loading = true;
       this.error = '';
-      
+
       const { data, error } = await this.supabase.getPredictionsWithUsers();
-      
+
       if (error) {
         this.error = error.message;
         console.error('Error loading predictions:', error);
@@ -107,9 +107,9 @@ export class PredictionsListComponent implements OnInit {
     try {
       this.loading = true;
       this.error = '';
-      
+
       const { data, error } = await this.supabase.getPredictionsByMatchId(matchId);
-      
+
       if (error) {
         this.error = error.message;
       } else {
@@ -124,13 +124,18 @@ export class PredictionsListComponent implements OnInit {
     try {
       this.loading = true;
       this.error = '';
-      
+
       const { data, error } = await this.supabase.getPredictionsByUserId(userId);
-      
+
       if (error) {
         this.error = error.message;
       } else {
-        this.predictions = data || [];
+        this.predictions = (data || []).map(item => ({
+          ...item,
+          user_id: item.users?.[0]?.id,
+          match_id: item.matches?.[0]?.id,
+          match_group: item.matches?.[0]?.group_name
+        })) as unknown as PredictionWithUser[];
       }
     } finally {
       this.loading = false;

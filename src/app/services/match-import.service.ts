@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase';
-import { Match } from '../models/match.model';
 
 interface BackupData {
   matches: any[];

@@ -8,7 +8,7 @@ import {
   User,
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
-import { Match, Prediction, PredictionWithUser } from './models/match.model'
+import { PredictionWithUser } from './models/match.model'
 
 export interface Profile {
   id?: string
@@ -234,71 +234,6 @@ export class SupabaseService {
       .select('*')
       .eq('group_name', group)
       .order('utc_date', { ascending: true })
-  }
-
-  // Добавяне на нов мач
-  addMatch(match: Match) {
-    const matchData = {
-      id: match.id,
-      home_team: match.homeTeam,
-      away_team: match.awayTeam,
-      utc_date: match.utcDate,
-      group_name: match.group,
-      home_ft: match.score.homeFT,
-      away_ft: match.score.awayFT,
-      home_pt: match.score.homePT,
-      away_pt: match.score.awayPT,
-      winner: match.score.winner
-    }
-
-    return this.supabase
-      .from('matches')
-      .insert(matchData)
-      .select()
-  }
-
-  // Добавяне на множество мачове наведнъж
-  addMatches(matches: Match[]) {
-    const matchesData = matches.map(match => ({
-      id: match.id,
-      home_team: match.homeTeam,
-      away_team: match.awayTeam,
-      utc_date: match.utcDate,
-      group_name: match.group,
-      home_ft: match.score.homeFT,
-      away_ft: match.score.awayFT,
-      home_pt: match.score.homePT,
-      away_pt: match.score.awayPT,
-      winner: match.score.winner
-    }))
-
-    return this.supabase
-      .from('matches')
-      .insert(matchesData)
-      .select()
-  }
-
-  // Актуализиране на мач
-  updateMatch(id: number, match: Partial<Match>) {
-    const updateData: any = {}
-
-    if (match.homeTeam) updateData.home_team = match.homeTeam
-    if (match.awayTeam) updateData.away_team = match.awayTeam
-    if (match.utcDate) updateData.utc_date = match.utcDate
-    if (match.group) updateData.group_name = match.group
-    if (match.score) {
-      if (match.score.homeFT !== undefined) updateData.home_ft = match.score.homeFT
-      if (match.score.awayFT !== undefined) updateData.away_ft = match.score.awayFT
-      if (match.score.homePT !== undefined) updateData.home_pt = match.score.homePT
-      if (match.score.awayPT !== undefined) updateData.away_pt = match.score.awayPT
-      if (match.score.winner) updateData.winner = match.score.winner
-    }
-
-    return this.supabase
-      .from('matches')
-      .update(updateData)
-      .eq('id', id)
-      .select()
   }
 
   // Изтриване на мач

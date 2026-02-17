@@ -5,9 +5,11 @@ import { InputIcon } from "primeng/inputicon";
 import { Button } from "primeng/button";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
-import { formatDate, NgClass } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
 import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import { MatchDetail } from '../models/match.model';
+
 
 @Component({
     selector: 'app-all-matches',
@@ -22,10 +24,9 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
     loading: boolean = true;
     allUsersNames: any[] = [];
     expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
-    allMatches: any[] = [];
+    allMatches: MatchDetail[] = [];
     // groups: string[] = [];
     private predictionsChannel: RealtimeChannel | null = null;
-    private supabase: SupabaseClient;
     private countryTranslationCache: {
         id: number,
         name_en: string,
@@ -36,11 +37,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
     private dateCache = new Map<string, { day: string; time: string }>();
 
 
-    constructor(
-        private supabaseService: SupabaseService,
-        private translate: TranslateService,
-    ) {
-        this.supabase = this.supabaseService.client;
+    constructor(private supabaseService: SupabaseService, private translate: TranslateService) {
         this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
         if (!this.socket.hasListeners('connect')) {
@@ -52,149 +49,11 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
             this.socket.on('matchesUpdate', (data) => {
                 this.allMatches = data.matches;
 
-                this.getPredictionFromView().then((data) => {
-                });
-
-                // this.getPredictionFromView().then(() => {
-                //     this.prepMatchesAndSupa().then(() => {
-                //         // this.composeBetsRows();
-                //     });
-                // });
+                this.getPredictionFromView().then(() => { });
             });
         }
 
         this.initializeCountryCache();
-    }
-
-    /*
-    async prepMatchesAndSupa() {
-        let miniMatches: any[] = await this.supabase
-            .from('matches')
-            .select(`*`)
-            .then(({ data, error }) => {
-                if (error) {
-                    console.error('Error fetching matches:', error);
-                    return [];
-                }
-                return data || [];
-            });
-
-        // await Promise.all(this.betsToShow.map(async (match: any, index) => {
-        //     let predIndex = index + 1;
-        //     let newId: string = "2026" + (predIndex < 10 ? "0" + predIndex : predIndex.toString());
-        //     let minimatchEl = miniMatches.find(m => m.id.toString() === newId.toString());
-
-        //     let away_team_id = this.findTeamByName(match.awayTeam.name)?.id;
-        //     let home_team_id = this.findTeamByName(match.homeTeam.name)?.id;
-
-        //     if (minimatchEl === undefined) {
-        //         if (away_team_id !== undefined && home_team_id !== undefined) {
-        //             let matchToInsert = {
-        //                 id: newId,
-        //                 home_team_id: home_team_id,
-        //                 away_team_id: away_team_id,
-        //                 utc_date: match.utcDate,
-        //                 group_name: match.group,
-        //                 home_ft: match.score?.fullTime?.home ?? -1,
-        //                 away_ft: match.score?.fullTime?.away ?? -1,
-        //                 home_pt: match.score?.halfTime?.home ?? -1,
-        //                 away_pt: match.score?.halfTime?.away ?? -1,
-        //                 winner: match.score ? (match.score.fullTime.home > match.score.fullTime.away ? 'HOME_TEAM' : (match.score.fullTime.home < match.score.fullTime.away ? 'AWAY_TEAM' : 'DRAW')) : null
-        //             }
-
-        //             await this.insertMatch(matchToInsert);
-        //         }
-        //     }
-        //     else {
-        //         let foundedBetsToMatch = this.betsToShow.find(m => m.id.toString() === match.id.toString());
-        //         if (foundedBetsToMatch) {
-        //             debugger
-        //             let matchToUpdate = {
-        //                 id: newId,
-        //                 home_team_id: home_team_id,
-        //                 away_team_id: away_team_id,
-        //                 utc_date: match.utcDate,
-        //                 group_name: match.group,
-        //                 home_ft: foundedBetsToMatch.score.fullTime.home ?? -1,
-        //                 away_ft: foundedBetsToMatch.score.fullTime.away ?? -1,
-        //                 home_pt: foundedBetsToMatch.score.halfTime.home ?? -1,
-        //                 away_pt: foundedBetsToMatch.score.halfTime.away ?? -1,
-        //                 winner: match.score ? (match.score.fullTime.home > match.score.fullTime.away ? 'HOME_TEAM' : (match.score.fullTime.home < match.score.fullTime.away ? 'AWAY_TEAM' : 'DRAW')) : null
-        //             }
-        //             debugger
-        //             let differences = this.getObjectDifferences(matchToUpdate, minimatchEl);
-        //             if (differences.length > 0) {
-        //                 debugger
-        //                 await this.updateMatch(matchToUpdate, minimatchEl.id.toString(), differences);
-        //             }
-        //         }
-        //     }
-        // }))
-    }
-    */
-
-    private getObjectDifferences(obj1: any, obj2: any): string[] {
-        const differences: string[] = [];
-
-        // Вземи всички уникални ключове от двата обекта
-        const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
-
-        allKeys.forEach(key => {
-            // Игнорирай created_at и updated_at
-            if (key === 'created_at' || key === 'updated_at') {
-                return;
-            }
-
-            const val1 = obj1[key];
-            const val2 = obj2[key];
-
-            // Ако е 'id', конвертирай към string преди сравнение
-            if (key === 'id') {
-                if (String(val1) !== String(val2)) {
-                    differences.push(key);
-                }
-            }
-            else if (key === 'utc_date') {
-                const date1 = new Date(val1).getTime();
-                const date2 = new Date(val2).getTime();
-                if (date1 !== date2) {
-                    differences.push(key);
-                }
-            }
-            else {
-                // Провери дали стойностите са различни
-                if (val1 !== val2) {
-                    differences.push(key);
-                }
-            }
-        });
-
-        return differences;
-    }
-
-    async insertMatch(matchToInsert: any) {
-        await this.supabase.from('matches')
-            .insert(matchToInsert)
-            .then(({ data, error }) => {
-                if (error) {
-                    console.error('Error inserting match:', error);
-                } else {
-                    console.log('Inserted match:', data, matchToInsert);
-                }
-            });
-    }
-
-    async updateMatch(item: any, matchId: string, Differences?: string[]) {
-        await this.supabase.from('matches')
-            .update(item)
-            .eq('id', matchId)
-            .then(({ error }) => {
-                if (error) {
-                    console.error('Error updating match:', error);
-                } else {
-                    console.log('Updated match:', matchId, "Changes:", item, "Differences:", Differences);
-                }
-            });
     }
 
     ngOnInit(): void {
@@ -212,9 +71,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         if (this.predictionsChannel) {
             return;
         }
-        this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', (payload: any) => {
-            this.getPredictionFromView();
-        });
+        this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', () => { this.getPredictionFromView(); });
     }
 
     async getPredictionFromView() {
@@ -299,123 +156,6 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         }));
     }
 
-    private updateOrAddUserPredictions(predictions: any[], user: any): any[] {
-        const existingUser = predictions.find(p => p.users.id === user.users.id);
-
-        if (existingUser) {
-            existingUser.points = (existingUser.points || 0) + (user.points || 0);
-            return predictions;
-        }
-
-        return [...predictions, user];
-    }
-
-    /*
-    private composeBetsRows2() {
-        const lng = this.getLng();
-        const lngMini = this.getLngMini();
-        const fooooUserPredictions: any[] = []
-
-        this.betsToShow = this.allMatches?.map((bet: any, index) => {
-            const matchRow = this.buildMatchRow(bet, index, lng, lngMini);
-            let newId: number = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
-            const predictions = this.latestPredictions.filter((prediction: any) => prediction.matches.id === newId);
-            if (predictions.length > 0) {
-                const enrichedPredictions = predictions.map((prediction) => {
-                    const newPoints = this.getPointFromMatch(matchRow, prediction);
-                    prediction.users = {
-                        ...prediction.users,
-                        points: newPoints,
-                    }
-                    let allPoints = fooooUserPredictions.filter(p => p.name === prediction.name).reduce((acc, curr) => acc + (curr.fullPrediction.points ?? 0), 0);
-                    let total_points = allPoints + newPoints
-
-                    let oldRow = fooooUserPredictions.find(p => p.name === prediction.name);
-                    if (oldRow) {
-                        oldRow.fullUser = prediction.users;
-                        oldRow.total_points = total_points;
-                        oldRow.fullPrediction = prediction;
-                    } else {
-                        debugger
-                        // prediction.users = {
-                        //     ...prediction.users,
-                        //     points: newPoints,
-                        // }
-                        fooooUserPredictions.push({
-                            fullUser: prediction.users,
-                            total_points: total_points,
-                            fullPrediction: prediction
-                        })
-                    }
-
-                    prediction.points = newPoints;
-                    return prediction;
-                });
-
-                return {
-                    ...matchRow,
-                    all_users: enrichedPredictions
-                };
-            }
-            else {
-                return {
-                    ...matchRow,
-                    all_users: []
-                }
-            }
-        }).filter((row: any) => row !== undefined);
-        this.allUsersNames = [...fooooUserPredictions]
-        this.loading = false;
-    }
-        */
-
-    /*
-    private composeBetsRowsOld() {
-        const lng = this.getLng();
-        const lngMini = this.getLngMini();
-        const predictionsByMatch = this.groupPredictionsByMatch(lngMini);
-        const fooooUserPredictions: any[] = []
-
-        this.betsToShow = this.allMatches.map((bet: any, index) => {
-            const matchRow = this.buildMatchRow(bet, index, lng, lngMini);
-            let newId: number = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
-            const predictions = predictionsByMatch.get(newId) ?? [];
-            if (predictions.length > 0) {
-
-                const enrichedPredictions = predictions.map((prediction) => {
-                    const newPoints = this.getPointFromMatch(matchRow, prediction);
-                    let allPoints = fooooUserPredictions.filter(p => p.name === prediction.name).reduce((acc, curr) => acc + (curr.fullPrediction.points ?? 0), 0);
-                    let oldRow = fooooUserPredictions.find(p => p.name === prediction.name);
-                    if (oldRow) {
-                        debugger
-                        oldRow.name = prediction.name;
-                        oldRow.total_points = allPoints + newPoints;
-                        oldRow.fullPrediction = prediction;
-                    } else {
-                        fooooUserPredictions.push({
-                            name: prediction.name,
-                            total_points: allPoints + newPoints,
-                            fullPrediction: prediction
-                        })
-                    }
-
-
-                    prediction.points = newPoints;
-                    return prediction;
-                });
-
-                return {
-                    ...matchRow,
-                    all_users: enrichedPredictions
-                };
-            }
-        });
-
-        this.allUsersNames = [...fooooUserPredictions]
-        this.loading = false;
-    }
-    */
-
     private buildMatchRow(bet: any, index: number, lng: "bg-BG" | "en-US", lngMini: "bg" | "en") {
         const cachedDate = this.getCachedDate(bet.utcDate, lng);
         const homeTeam = this.findTeamByName(bet.homeTeam.name);
@@ -427,7 +167,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         const predictionsForMatch = this.latestPredictions
             .filter((prediction: any) => prediction.matches.id === myId)
             .map((prediction: any) => {
-                const points = this.getPointFromMatch({...bet, score}, prediction);
+                const points = this.getPointFromMatch({ ...bet, score }, prediction);
                 return {
                     ...prediction,
                     points
@@ -435,7 +175,6 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
             });
 
         if (myId === 202609) {
-            // debugger
         }
 
         return {
@@ -490,46 +229,6 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         }
 
         return score;
-    }
-
-    /*
-    private groupPredictionsByMatch(lngMini: "bg" | "en") {
-        const grouped = new Map<number, any[]>();
-
-        this.latestPredictions.forEach((prediction: any) => {
-            const matchId = prediction.match_id;
-            if (!matchId) {
-                return;
-            }
-
-            const name = lngMini === 'bg' ? prediction.users.name_bg : prediction.users.name_en;
-
-            const formatted = {
-                name,
-                home_ft: prediction.home_ft,
-                away_ft: prediction.away_ft,
-                winner: prediction.winner,
-                winnerLabel: this.translatePredictionWinner(prediction.winner),
-                full: prediction
-            };
-
-            if (!grouped.has(matchId)) {
-                grouped.set(matchId, []);
-            }
-
-            grouped.get(matchId)!.push(formatted);
-        });
-
-        return grouped;
-    }
-    */
-
-    private translatePredictionWinner(winner?: string) {
-        if (!winner) {
-            return '';
-        }
-        const translation = this.translate.instant('TABLE.' + winner);
-        return translation ? translation.slice(0, 1) : '';
     }
 
     private getCachedDate(utcDate: string, lng: string) {
@@ -618,7 +317,6 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
             if (columnIndex === 0) return this.formatPredictionValue(selectedUser.home_ft);
             if (columnIndex === 1) return this.formatPredictionValue(selectedUser.away_ft);
             if (columnIndex === 2) return selectedUser.winner ?? "6";
-            debugger
             if (columnIndex === 3) return this.formatPredictionValue(selectedUser.points ?? 0, true);
 
             return "";
