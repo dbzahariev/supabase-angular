@@ -23,6 +23,36 @@ export interface Profile {
 export class SupabaseService {
   private supabase: SupabaseClient
   _session: AuthSession | null = null
+  private readonly predictionsWithUsersSelect = `
+    id,
+    utc_date,
+    home_ft,
+    away_ft,
+    home_pt,
+    away_pt,
+    winner,
+    users (
+      id,
+      name_bg,
+      name_en
+    ),
+    matches (
+      group_name,
+      id,
+      home_team_id,
+      away_team_id
+    ),
+    teams:matches (
+      home_team:home_team_id (
+        name_bg,
+        name_en
+      ),
+      away_team:away_team_id (
+        name_bg,
+        name_en
+      )
+    )
+  `
 
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
@@ -105,21 +135,21 @@ export class SupabaseService {
       .order('utc_date', { ascending: false })
   }
 
-  // Метод за четене на predictions с името на потребителя (от view)
+  // Метод за четене на predictions с името на потребителя (join към users)
   getPredictionsWithUsers() {
     return this.supabase
-      .from('predictions_with_users')
-      .select('*')
-      .order('utc_date', { ascending: false })
+      .from('predictions')
+      .select(this.predictionsWithUsersSelect)
+      .order('utc_date', { ascending: false }) as unknown as { data: PredictionWithUser[], error: any }
   }
 
   // Метод за четене на predictions с името на потребителя за конкретен мач
   getPredictionsByMatchId(matchId: number) {
     return this.supabase
-      .from('predictions_with_users')
-      .select('*')
+      .from('predictions')
+      .select(this.predictionsWithUsersSelect)
       .eq('match_id', matchId)
-      .order('name_bg', { ascending: true })
+      .order('utc_date', { ascending: true }) as unknown as { data: PredictionWithUser[], error: any }
   }
 
   getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
@@ -133,8 +163,8 @@ export class SupabaseService {
   // Метод за четене на predictions на конкретен потребител
   getPredictionsByUserId(userId: number) {
     return this.supabase
-      .from('predictions_with_users')
-      .select('*')
+      .from('predictions')
+      .select(this.predictionsWithUsersSelect)
       .eq('user_id', userId)
       .order('utc_date', { ascending: false })
   }
@@ -148,22 +178,32 @@ export class SupabaseService {
   }
 
   // Метод за слушане на промени в таблица
+  /**
+   * Subscribes to real-time changes on a specified database table.
+   * @param table - The name of the table to monitor for changes.
+   * @param callback - A callback function that is invoked when changes occur on the table.
+   * @returns The Supabase channel object that manages the subscription.
+   * @example
+   * subscribeToTable('users', (payload) => {
+   *   console.log('Users table changed:', payload);
+   * });
+   */
   subscribeToTable(table: string, callback: (payload: any) => void) {
     const channel = this.supabase
-      .channel('schema-db-changes')
+      .channel(`schema-db-changes:${table}`)
       .on(
         'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: table
-        },
+        { event: '*', schema: 'public', table },
         (payload) => {
-          console.log('🔔 Change received!', payload)
           callback(payload)
         }
       )
-      .subscribe()
+
+    channel.subscribe((status) => {
+      if (status === 'CHANNEL_ERROR') {
+        channel.unsubscribe()
+      }
+    })
 
     return channel
   }
