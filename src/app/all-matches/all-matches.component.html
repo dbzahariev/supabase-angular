@@ -34,8 +34,8 @@
                 <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
-                @for (user of allUsersNames; track user.name) {
-                <th rowspan="1" colspan="4">{{ user.name }} ({{ user.total_points }})</th>
+                @for (user of allUsersNames; track user.id) {
+                <th rowspan="1" colspan="4">{{ user.name }} ({{ user.points }})</th>
                 }
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
                 </th> -->
@@ -69,9 +69,9 @@
                 <td>{{getProductResultRow(product, j)}}</td>
                 }
                 <td class="re_away_team">{{ product?.away_team }}</td>
-                @for (i of rowIndexes; track i) {
+                @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
-                <td>{{ getUserPredictionValue(i, product, j) }}</td>
+                <td>{{ getUserPredictionValue(user, product, j) }}</td>
                 }
                 }
             </tr>
