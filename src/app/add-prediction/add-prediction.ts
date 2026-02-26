@@ -23,33 +23,34 @@ import localeEn from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
 import { CountryTranslateService } from '../services/country-translate.service';
 import { SupabaseService } from '../supabase';
+import { SupabaseChatService } from '../supabase-chat.service';
+import { MatchDetail, BetsToShow, PredictionWithUser } from '../models/match.model';
 
 registerLocaleData(localeBg, 'bg-BG');
 registerLocaleData(localeEn, 'en-US');
 
-interface PredictionType {
-  away_team_score: number;
-  backup_year: string;
-  date: string;
-  home_team_score: number;
-  id: number;
-  match_id: number;
-  points: number;
-  user_id: number;
-  winner: string;
-}
-
-interface Product {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  quantity: number;
-  inventoryStatus: string;
-  rating: number;
-}
+// interface PredictionType {
+//   away_team_score: number;
+//   backup_year: string;
+//   date: string;
+//   home_team_score: number;
+//   id: number;
+//   match_id: number;
+//   points: number;
+//   user_id: number;
+//   winner: string;
+// }
+// interface Product {
+//   id: string;
+//   code: string;
+//   name: string;
+//   description: string;
+//   price: number;
+//   category: string;
+//   quantity: number;
+//   inventoryStatus: string;
+//   rating: number;
+// }
 
 @Component({
   selector: 'app-add-prediction',
@@ -61,34 +62,45 @@ interface Product {
 export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
   isLocal = false;
-  betsToShow: any[] = [];
+  betsToShow: BetsToShow[] = [];
   loading: boolean = true;
-  allUsersNames: any[] = [];
+  allUsers: {
+    id: number;
+    name_bg: string;
+    name_en: string;
+  }[] = [];
+  allMatches: any[] = [];
   expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
   rowIndexes: number[] = [];
+  selectedUser: typeof this.allUsers[0] | null = null;
   trls: { name: string, translation: string }[] = [];
-
   private tableRoot: HTMLElement | null = null;
   private scrollHandler: (() => void) | null = null;
-
-  // Тест променливи за predictions таблицата
-  testPredictions: any[] = [];
   private predictionsChannel: any;
   private pollingInterval: any;
-
+  testPredictions: any[] = [];
+  private countryTranslationCache: {
+    id: number,
+    name_en: string,
+    name_bg: string
+  }[] = [];
   constructor(
     private countryService: CountryTranslateService,
     private translate: TranslateService,
     private elRef: ElementRef,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private chatService: SupabaseChatService
   ) {
     this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
-    // this.translate.get(['TABLE.HOME_TEAM', 'TABLE.AWAY_TEAM', 'TABLE.WINNER', 'TABLE.POINTS', 'TABLE.DRAW']).subscribe(translations => {
-    //   Object.entries(translations).forEach((el: [string, any]) => {
-    //     this.trls.push({ name: el[0], translation: el[1] });
-    //   });
-    // });
+
+    if (!this.socket.hasListeners('matchesUpdate')) {
+      this.socket.on('matchesUpdate', (data) => {
+        this.allMatches = data.matches;
+
+        this.updateBetsDisplay();
+      });
+    }
 
 
     if (!this.socket.hasListeners('connect')) {
@@ -101,34 +113,11 @@ export class AddPrediction implements OnInit, OnDestroy {
         console.log('Matches updated', data);
       });
     }
-
-    // // Съхраняваме канала като член-променлива
-    // supabase
-    //   .channel('custom-update-channel')
-    //   .on(
-    //     'postgres_changes',
-    //     {
-    //       event: '*',
-    //       schema: 'public',
-    //       table: '*',
-    //     },
-    //     (payload) => {
-    //       this.getPredictionFromView();
-    //       console.log('Update received!', payload)
-    //     }
-    //   )
-    //   .subscribe((status) => {
-    //     if (status !== 'CHANNEL_ERROR') {
-    //       console.log('Supabase channel status:', status);
-    //     }
-    //   });
+    this.initializeCountryCache();
   }
 
 
   ngOnInit() {
-    // this.updateBetsDisplay([]);
-    // this.getUserTotalPoints('Митко');
-    this.getPredictionFromView();
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
     this.scrollHandler = () => this.updateRe_home_teamLeft();
     if (this.tableRoot) {
@@ -139,6 +128,15 @@ export class AddPrediction implements OnInit, OnDestroy {
     // Зареди predictions
     this.loadTestPredictions();
     this.subscribeToTestPredictions();
+    this.fixUsernames();
+  }
+
+  fixUsernames() {
+    this.supabaseService.getUsers().then(({ data, error }) => {
+      //TDDO: Remove that
+      this.allUsers = data || [];
+      this.selectedUser = this.allUsers[1] || null;
+    });
   }
 
   ngOnDestroy() {
@@ -171,26 +169,18 @@ export class AddPrediction implements OnInit, OnDestroy {
     });
   }
 
-  async getPredictionFromView() {
-    this.loading = true;
-    try {
-      const { data, error } = await this.supabaseService.getPredictionsWithUsers();
-      if (error) throw error;
-      this.updateBetsDisplay(data ?? [], 1);
-    } catch (error) {
-      console.error('Error fetching predictions:', error);
-      this.betsToShow = [];
-    } finally {
-      this.loading = false;
-    }
-  }
-
   toggleGroup() {
     localStorage.setItem('expandedGroups', JSON.stringify(this.expandedRows));
   }
 
+  onUserSelectionChange(event: any) {
+    this.selectedUser = event.value;
+    this.updateBetsDisplay();
+  }
+
   getUserPredictionValue(idx: number, product: any, columnIndex: number) {
-    let selectedUserName = this.allUsersNames[idx]?.name;
+    debugger
+    let selectedUserName = this.allUsers[idx]?.name_bg;
     let selectedUser = product.all_users.find((user: { name: any; }) => user.name === selectedUserName);
 
     if (columnIndex === 0) return selectedUser?.home_score;
@@ -201,31 +191,18 @@ export class AddPrediction implements OnInit, OnDestroy {
   }
 
   returnTranslatedWinner(product: any, foo2?: number): string {
+    debugger
     let lng = this.getLng();
     let foo = product.winner.toLowerCase() + '_' + lng;
     let result = product[foo];
     return result;
   }
 
-  returnTranslatedWinner2(winner: string, sliceLength?: number): string {
-    if (this.trls.length === 0) return ""
-    let str = this.trls.find(trl => trl.name === 'TABLE.' + winner)?.translation ?? ""
-    if (sliceLength) return str.slice(0, sliceLength)
-    return str;
-  }
-
   getProductResultRow(product: any, columnIndex: number): string {
-    if (columnIndex === 0) return product.home_team_score ?? product.home_ft
-    if (columnIndex === 1) return product.away_team_score ?? product.away_ft
+    if (columnIndex === 0) return product.home_team_score
+    if (columnIndex === 1) return product.away_team_score
     if (columnIndex === 2) return this.returnTranslatedWinner(product)
     return "";
-  }
-
-  getUserTotalPoints(userName: string): number {
-    return this.betsToShow.reduce((total, match) => {
-      const foundUser = match.all_users.find((u: { name: string }) => u.name === userName);
-      return total + (foundUser?.points_predict || 0);
-    }, 0);
   }
 
   getColName(index: number) {
@@ -247,71 +224,92 @@ export class AddPrediction implements OnInit, OnDestroy {
     return lng as "bg-BG" | "en-US";
   }
 
-  updateBetsDisplay(data: any[], userId: number) {
-    let lng = this.getLng(true);
-    let lngMini = this.getLng(false);
-    this.supabaseService.getPredictionsByUserId(userId).then(({ data: userPredictions, error }) => {
-      let newData = [...data]
-      newData = newData.map((bet, index) => {
-        let match_day = formatDate(new Date(bet.utc_date), 'dd.MM.yyyy', lng);
-        let match_time = formatDate(new Date(bet.utc_date), 'HH:mm', lng);
-        let group = this.translate.instant('TABLE.' + bet.match_group);
-        let home_team = bet['home_team_' + lngMini];
-        let away_team = bet['away_team_' + lngMini];
-        return {
-          ...bet,
-          row_index: index + 1,
-          match_day: match_day,
-          match_time: match_time,
-          group: group,
-          home_team: home_team,
-          away_team: away_team,
-        }
-      })
-      this.betsToShow = newData
-    })
+
+  private async initializeCountryCache() {
+    this.supabaseService.getAllTeams().then(({ data: teams, error }) => {
+      this.countryTranslationCache = teams?.map(team => ({
+        id: team.id,
+        name_en: team.name_en,
+        name_bg: team.name_bg
+      })) ?? [];
+    });
   }
 
-  updateBetsDisplay2(data: any[]): void {
-    let lng: "bg" | "en" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg' : 'en';
-    this.loadTestPredictions();
 
-    const grouped = data.reduce<Record<number, any[]>>((acc, item) => { (acc[item.match_id] ||= []).push(item); return acc; }, {});
+  private findTeamByName(name: string) {
+    return this.countryTranslationCache.find(team => team.name_en === name) || { name_en: '', name_bg: '' };
+  }
 
-    this.betsToShow = Object.values(grouped).map((group) => {
-      const bet = group[0];
-      let foo = bet.match_id;
+  async updateBetsDisplay() {
+    if (this.selectedUser === null || this.allMatches === null) return;
+    // let userId = this.selectedUser?.id || 1;
+    let lng = this.getLng(true);
+    let lngMini = this.getLng(false);
 
-      const date = new Date(bet.match_date_utc);
+    // const { data, error } = await this.supabaseService.getPredictionsByUserId(userId);
+    this.betsToShow = this.allMatches.map((match: any, index: number) => {
+      let points: {
+        away: number;
+        home: number;
+      } = { home: match.home_ft || match.home_ht || -1, away: match.away_ft || match.away_ht || -1 };
+      let winner = this.chatService.getWinner(points);
+
+      let homeTeamName = (lngMini === 'bg' ? this.findTeamByName(match.homeTeam?.name)?.name_bg : this.findTeamByName(match.homeTeam?.name)?.name_en) || '';
+      let awayTeamName = (lngMini === 'bg' ? this.findTeamByName(match.awayTeam?.name)?.name_bg : this.findTeamByName(match.awayTeam?.name)?.name_en) || '';
+
+      if (match.group !== "GROUP_A" && match.group !== "GROUP_B" && match.group !== "GROUP_C" && match.group !== "GROUP_D" && match.group !== "GROUP_E" && match.group !== "GROUP_F" && match.group !== "GROUP_G" && match.group !== "GROUP_H" && match.group !== "GROUP_I" && match.group !== "GROUP_J" && match.group !== "GROUP_K" && match.group !== "GROUP_L" && match.group !== "GROUP_M" && match.group !== "GROUP_N" && match.group !== "GROUP_O" && match.group !== "GROUP_P") {
+        // debugger
+      }
+
+      if (match.id === 537327) {
+        match.score.duration = "FULL_TIME";
+        match.score.fullTime = { home: 3, away: 4 };
+        match.score.halfTime = { home: 1, away: 2 };
+        match.score.winner = "AWAY_TEAM";
+      } else if (match.id === 537328) {
+        match.score.duration = "FULL_TIME";
+        match.score.fullTime = { home: 4, away: 3 };
+        match.score.halfTime = { home: 2, away: 1 };
+        match.score.winner = "HOME_TEAM";
+      } else if (match.id === 537333) {
+        match.score.duration = "FULL_TIME";
+        match.score.fullTime = { home: 2, away: 2 };
+        match.score.halfTime = { home: 1, away: 1 };
+        match.score.winner = "DRAW";
+      }
+
+
       return {
-        winner: bet.winner,
-        row_index: +bet.match_id.toString().slice(-2),
-        match_day: formatDate(date, 'dd.MM.yyyy', navigator.language),
-        match_time: formatDate(date, 'HH:mm', navigator.language),
-        group: this.translate.instant('TABLE.' + bet.group),
-        home_team: this.countryService.translateCountryNameFromEnToLng(bet.home_team_name, lng),
-        home_team_score: bet.home_team_score,
-        away_team: this.countryService.translateCountryNameFromEnToLng(bet.away_team_name, lng),
-        away_team_score: bet.away_team_score,
-        group_row: this.getRoundByGroup(bet.group.toUpperCase()),
-        all_users: group.map(b => {
-          if (this.allUsersNames.find(u => u.name === b.user_name)) {
-            this.allUsersNames.find(u => u.name === b.user_name)!.total_points += b.points_predict;
-          } else {
-            this.allUsersNames.push({ name: b.user_name, total_points: b.points_predict });
-          }
-
-          this.rowIndexes = this.allUsersNames.map((_, i) => i);
-          return {
-            name: b.user_name,
-            home_score: b.home_team_predict_score,
-            away_score: b.away_team_predict_score,
-            winner_predict: b.winner_predict,
-            points_predict: b.points_predict,
-          }
-        })
-      };
+        row_index: index + 1,
+        match_day: formatDate(new Date(match.utcDate), 'dd.MM.yyyy', lng),
+        match_time: formatDate(new Date(match.utcDate), 'HH:mm', lng),
+        group: this.translate.instant('TABLE.' + (match.group || match.stage)),
+        home_team: homeTeamName,
+        away_team: awayTeamName,
+        home_team_score: match.home_ft ?? match.home_ht ?? -1,
+        away_team_score: match.away_ft ?? match.away_ht ?? -1,
+        winner: winner,
+      }
     });
+    // this.betsToShow = (data as unknown as MatchDetail[]).map((bet, index) => {
+    //   let points: {
+    //     away: number;
+    //     home: number;
+    //   } = { home: bet.home_ft || bet.home_ht || -1, away: bet.away_ft || bet.away_ht || -1 };
+    //   let winner = this.chatService.getWinner(points);
+    //   return {
+    //     row_index: index + 1,
+    //     match_day: formatDate(new Date(bet.utc_date), 'dd.MM.yyyy', lng),
+    //     match_time: formatDate(new Date(bet.utc_date), 'HH:mm', lng),
+    //     group: this.translate.instant('TABLE.' + bet.matches.group_name),
+    //     home_team: lngMini === 'bg' ? bet.teams.home_team.name_bg : bet.teams.home_team.name_en,
+    //     away_team: lngMini === 'bg' ? bet.teams.away_team.name_bg : bet.teams.away_team.name_en,
+    //     home_team_score: bet.home_ft ?? bet.home_ht ?? -1,
+    //     away_team_score: bet.away_ft ?? bet.away_ht ?? -1,
+    //     winner: winner,
+    //   }
+    // });
+    this.loading = false;
   }
 
   // ТЕСТ МЕТОДИ за predictions таблицата
@@ -332,8 +330,7 @@ export class AddPrediction implements OnInit, OnDestroy {
       console.log('🔔 REALTIME ПРОМЯНА:', payload.eventType, payload);
 
       // При всяка промяна, презареди данните и обнови визуализацията
-      this.getPredictionFromView();
-
+      this.updateBetsDisplay();
     });
   }
 

@@ -19,8 +19,8 @@ export class SupabaseChatService {
 
     constructor(private supabaseService: SupabaseService) {
         this.supabase = this.supabaseService.client;
-        this.fetchMessages();
-        this.listenForNewMessages();
+        // this.fetchMessages();
+        // this.listenForNewMessages();
     }
 
     async fetchMessages() {
@@ -55,5 +55,44 @@ export class SupabaseChatService {
                 }
             )
             .subscribe();
+    }
+
+    getWinner(score: { away: number, home: number }): "HOME_TEAM" | "AWAY_TEAM" | "DRAW" {
+        let result: "HOME_TEAM" | "AWAY_TEAM" | "DRAW";
+        if (score.away > score.home) {
+            result = "AWAY_TEAM";
+        } else if (score.home > score.away) {
+            result = "HOME_TEAM";
+        } else if (score.home < score.away) {
+            result = "AWAY_TEAM";
+        } else {
+            result = "DRAW";
+        }
+        return result;
+    }
+
+    /**
+     * Calculate points from match and prediction
+     */
+    getPointFromMatch(bet: any, prediction: any): number {
+        const actualHome = bet.score.fullTime.home;
+        const actualAway = bet.score.fullTime.away;
+        const actualWinner = bet.score.winner;
+        const predictedHome = prediction.home_ft;
+        const predictedAway = prediction.away_ft;
+        const predictedWinner = prediction.winner;
+
+        if (actualHome === predictedHome && actualAway === predictedAway) {
+            return 3;
+        }
+        const actualAbs = Math.abs(actualHome - actualAway);
+        const predictAbs = Math.abs(predictedHome - predictedAway);
+        if (actualAbs === predictAbs && actualWinner === predictedWinner) {
+            return 2;
+        }
+        if (actualWinner === predictedWinner) {
+            return 1;
+        }
+        return 0;
     }
 }

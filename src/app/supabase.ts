@@ -140,25 +140,25 @@ export class SupabaseService {
     return this.supabase
       .from('predictions')
       .select(this.predictionsWithUsersSelect)
-      .order('utc_date', { ascending: false }) as unknown as { data: PredictionWithUser[], error: any }
+      .order('utc_date', { ascending: false })
   }
 
   // Метод за четене на predictions с името на потребителя за конкретен мач
-  getPredictionsByMatchId(matchId: number) {
-    return this.supabase
-      .from('predictions')
-      .select(this.predictionsWithUsersSelect)
-      .eq('match_id', matchId)
-      .order('utc_date', { ascending: true }) as unknown as { data: PredictionWithUser[], error: any }
-  }
+  // getPredictionsByMatchId(matchId: number) {
+  //   return this.supabase
+  //     .from('predictions')
+  //     .select(this.predictionsWithUsersSelect)
+  //     .eq('match_id', matchId)
+  //     .order('utc_date', { ascending: true }) as unknown as { data: PredictionWithUser[], error: any }
+  // }
 
-  getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
-    return this.supabase
-      .from('matches')
-      .select('*')
-      .gt('id', `${year}00`)
-      .lt('id', `${year}99`)
-  }
+  // getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
+  //   return this.supabase
+  //     .from('matches')
+  //     .select('*')
+  //     .gt('id', `${year}00`)
+  //     .lt('id', `${year}99`)
+  // }
 
   // Метод за четене на predictions на конкретен потребител
   getPredictionsByUserId(userId: number) {
@@ -218,23 +218,29 @@ export class SupabaseService {
       .order('utc_date', { ascending: true })
   }
 
-  // Получаване на мач по ID
-  getMatchById(id: number) {
+  getUsers() {
     return this.supabase
-      .from('matches')
+      .from('users')
       .select('*')
-      .eq('id', id)
-      .single()
   }
 
+  // Получаване на мач по ID
+  // getMatchById(id: number) {
+  //   return this.supabase
+  //     .from('matches')
+  //     .select('*')
+  //     .eq('id', id)
+  //     .single()
+  // }
+
   // Получаване на мачове по група
-  getMatchesByGroup(group: string) {
-    return this.supabase
-      .from('matches')
-      .select('*')
-      .eq('group_name', group)
-      .order('utc_date', { ascending: true })
-  }
+  // getMatchesByGroup(group: string) {
+  //   return this.supabase
+  //     .from('matches')
+  //     .select('*')
+  //     .eq('group_name', group)
+  //     .order('utc_date', { ascending: true })
+  // }
 
   // Изтриване на мач
   deleteMatch(id: number) {

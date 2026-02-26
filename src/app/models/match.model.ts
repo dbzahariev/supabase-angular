@@ -11,6 +11,17 @@ export interface Prediction {
   winner: string;
 }
 
+export interface BetsToShow {
+  row_index: MatchDetail['id'];
+  match_day: string;
+  match_time: string;
+  group: MatchDetail['group'];
+  home_team: MatchDetail['homeTeam']['name'];
+  away_team: MatchDetail['awayTeam']['name'];
+  home_team_score: MatchDetail['score']['fullTime']['home'] | null;
+  away_team_score: MatchDetail['score']['fullTime']['away'] | null;
+}
+
 export interface PredictionWithUser extends Prediction {
   users: {
     id: number;
@@ -56,8 +67,30 @@ export interface MatchDetail {
     currentMatchday: number;
     winner: null;
   };
+  matches: {
+    away_team_id: number;
+    group_name: string;
+    home_team_id: number;
+    id: number;
+  };
+  home_ft: MatchDetail['score']['fullTime']['home'] | null;
+  away_ft: MatchDetail['score']['fullTime']['away'] | null;
+
+  home_ht: MatchDetail['score']['halfTime']['home'] | null;
+  away_ht: MatchDetail['score']['halfTime']['away'] | null;
+  teams: {
+    home_team: {
+      name_bg: string;
+      name_en: string;
+    };
+    away_team: {
+      name_bg: string;
+      name_en: string;
+    };
+  }
   id: number;
   utcDate: string;
+  utc_date: string;
   status: string;
   matchday: number;
   stage: string;

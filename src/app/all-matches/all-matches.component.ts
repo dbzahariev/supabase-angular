@@ -9,6 +9,7 @@ import { formatDate } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
 import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import { MatchDetail } from '../models/match.model';
+import { SupabaseChatService } from '../supabase-chat.service';
 
 
 @Component({
@@ -37,7 +38,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
     private dateCache = new Map<string, { day: string; time: string }>();
 
 
-    constructor(private supabaseService: SupabaseService, private translate: TranslateService) {
+    constructor(private supabaseService: SupabaseService, private translate: TranslateService, private chatService: SupabaseChatService) {
         this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
         if (!this.socket.hasListeners('connect')) {
@@ -47,6 +48,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         // Avoid duplicate event listeners
         if (!this.socket.hasListeners('matchesUpdate')) {
             this.socket.on('matchesUpdate', (data) => {
+                
                 this.allMatches = data.matches;
 
                 this.getPredictionFromView().then(() => { });
@@ -97,28 +99,6 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         });
     }
 
-    getPointFromMatch(bet: any, prediction: any): number {
-        const actualHome = bet.score.fullTime.home;
-        const actualAway = bet.score.fullTime.away;
-        const actualWinner = bet.score.winner;
-        const predictedHome = prediction.home_ft;
-        const predictedAway = prediction.away_ft;
-        const predictedWinner = prediction.winner;
-
-        if (actualHome === predictedHome && actualAway === predictedAway) {
-            return 3; // Точен резултат
-        }
-        const actualAbs = Math.abs(actualHome - actualAway);
-        const predictAbs = Math.abs(predictedHome - predictedAway);
-        if (actualAbs === predictAbs && actualWinner === predictedWinner) {
-            return 2; // Точна голова разлика
-        }
-        if (actualWinner === predictedWinner) {
-            return 1; // Точен победител
-        }
-        return 0; // Неправилна прогноза
-    }
-
     getUserName(user: any): string {
         const lngMini = this.getLngMini();
         let newName = user.users?.[`name_${lngMini}`] ?? '';
@@ -130,7 +110,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         const lngMini = this.getLngMini();
         this.allUsersNames = [];
 
-        this.betsToShow = this.allMatches?.map((bet: any, index) => {
+        this.betsToShow = this.allMatches?.map((bet: MatchDetail, index) => {
             let newMatchRow = this.buildMatchRow(bet, index, lng, lngMini);
             newMatchRow.predictions.forEach((prediction: any) => {
                 this.allUsersNames.push({ name: this.getUserName(prediction), points: prediction.points ?? 0, id: prediction.users.id });
@@ -156,7 +136,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         }));
     }
 
-    private buildMatchRow(bet: any, index: number, lng: "bg-BG" | "en-US", lngMini: "bg" | "en") {
+    private buildMatchRow(bet: MatchDetail, index: number, lng: "bg-BG" | "en-US", lngMini: "bg" | "en") {
         const cachedDate = this.getCachedDate(bet.utcDate, lng);
         const homeTeam = this.findTeamByName(bet.homeTeam.name);
         const awayTeam = this.findTeamByName(bet.awayTeam.name);
@@ -167,15 +147,12 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         const predictionsForMatch = this.latestPredictions
             .filter((prediction: any) => prediction.matches.id === myId)
             .map((prediction: any) => {
-                const points = this.getPointFromMatch({ ...bet, score }, prediction);
+                const points = this.chatService.getPointFromMatch(bet, score);
                 return {
                     ...prediction,
                     points
                 };
             });
-
-        if (myId === 202609) {
-        }
 
         return {
             score,

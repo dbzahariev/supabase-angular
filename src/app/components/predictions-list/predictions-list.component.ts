@@ -93,7 +93,7 @@ export class PredictionsListComponent implements OnInit {
         this.error = error.message;
         console.error('Error loading predictions:', error);
       } else {
-        this.predictions = data || [];
+        this.predictions = (data as unknown as PredictionWithUser[]) || [];
       }
     } catch (err) {
       this.error = 'Грешка при зареждане на прогнозите';
@@ -103,42 +103,42 @@ export class PredictionsListComponent implements OnInit {
     }
   }
 
-  async loadPredictionsForMatch(matchId: number) {
-    try {
-      this.loading = true;
-      this.error = '';
+  // async loadPredictionsForMatch(matchId: number) {
+  //   try {
+  //     this.loading = true;
+  //     this.error = '';
 
-      const { data, error } = await this.supabase.getPredictionsByMatchId(matchId);
+  //     const { data, error } = await this.supabase.getPredictionsByMatchId(matchId);
 
-      if (error) {
-        this.error = error.message;
-      } else {
-        this.predictions = data || [];
-      }
-    } finally {
-      this.loading = false;
-    }
-  }
+  //     if (error) {
+  //       this.error = error.message;
+  //     } else {
+  //       this.predictions = (data as PredictionWithUser[]) || [];
+  //     }
+  //   } finally {
+  //     this.loading = false;
+  //   }
+  // }
 
-  async loadPredictionsForUser(userId: number) {
-    try {
-      this.loading = true;
-      this.error = '';
+  // async loadPredictionsForUser(userId: number) {
+  //   try {
+  //     this.loading = true;
+  //     this.error = '';
 
-      const { data, error } = await this.supabase.getPredictionsByUserId(userId);
+  //     const { data, error } = await this.supabase.getPredictionsByUserId(userId);
 
-      if (error) {
-        this.error = error.message;
-      } else {
-        this.predictions = (data || []).map(item => ({
-          ...item,
-          user_id: item.users?.[0]?.id,
-          match_id: item.matches?.[0]?.id,
-          match_group: item.matches?.[0]?.group_name
-        })) as unknown as PredictionWithUser[];
-      }
-    } finally {
-      this.loading = false;
-    }
-  }
+  //     if (error) {
+  //       this.error = error.message;
+  //     } else {
+  //       this.predictions = (data || []).map(item => ({
+  //         ...item,
+  //         user_id: item.users?.[0]?.id,
+  //         match_id: item.matches?.[0]?.id,
+  //         match_group: item.matches?.[0]?.group_name
+  //       })) as unknown as PredictionWithUser[];
+  //     }
+  //   } finally {
+  //     this.loading = false;
+  //   }
+  // }
 }

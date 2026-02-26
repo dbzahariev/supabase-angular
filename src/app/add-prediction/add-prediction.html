@@ -1,6 +1,6 @@
 <div class="overflow-x-auto prediction-table-root">
     <!-- Тест бутон за Predictions -->
-    <div class="p-4 bg-blue-100 border border-blue-300 rounded mb-4">
+    <!-- <div class="p-4 bg-blue-100 border border-blue-300 rounded mb-4">
         <h3 class="font-bold mb-2">🧪 Тест Realtime</h3>
         <button pButton (click)="testAddPrediction()" label="Добави Prediction" class="p-button-success mr-2"></button>
         <button pButton (click)="loadTestPredictions()" label="Зареди Predictions" class="p-button-info"></button>
@@ -10,6 +10,13 @@
                 {{ p.id }} - {{ p.title }} - {{ p.created_at | date:'short' }}
             </div>
         </div>
+    </div> -->
+
+    <div class="p-4 mb-4">
+        <span class="text-lg font-semibold">{{ 'CHOOSE_USER' | translate }}: </span>
+        <p-dropdown [options]="allUsers" optionLabel="name_bg" [(ngModel)]="selectedUser"
+            selectedItemsLabel="{0} users selected" (onChange)="onUserSelectionChange($event)" display="chip">
+        </p-dropdown>
     </div>
 
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
@@ -44,8 +51,8 @@
                 <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
-                <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
-                </th>
+                <th rowspan="1" colspan="4">{{ selectedUser?.name_en }} </th>
+                <!-- <th rowspan="1" colspan="4" *ngFor="let user of selectedUser ? [selectedUser] : allUsers">{{ user.name_en }} </th> -->
             </tr>
             <!-- <tr>
                  <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th> 
@@ -56,10 +63,10 @@
         <ng-template #groupheader let-product let-expanded="expanded">
             <tr pRowGroupHeader>
                 <td colspan="10000">
-                    <button id="toggler_{{product.match_group}}" type="button" pButton pRipple [pRowToggler]="product"
+                    <button id="toggler_{{product.group}}" type="button" pButton pRipple [pRowToggler]="product"
                         text rounded plain class="mr-2" (click)="toggleGroup()"
                         [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
-                        {{'TABLE.' + product.match_group | translate}}
+                        {{'TABLE.' + product.group | translate}}
                     </button>
                 </td>
             </tr>

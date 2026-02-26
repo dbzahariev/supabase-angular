@@ -120,10 +120,10 @@ export class MatchImportService {
   /**
    * Проверява дали мач вече съществува в базата
    */
-  async matchExists(matchId: number): Promise<boolean> {
-    const { data, error } = await this.supabase.getMatchById(matchId);
-    return !error && data !== null;
-  }
+  // async matchExists(matchId: number): Promise<boolean> {
+  //   const { data, error } = await this.supabase.getMatchById(matchId);
+  //   return !error && data !== null;
+  // }
 
   /**
    * Изтрива всички мачове (внимавайте!)

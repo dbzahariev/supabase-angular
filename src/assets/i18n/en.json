@@ -24,6 +24,7 @@
     "PRODUCTS": "Products",
     "MESSAGES": "Messages"
   },
+  "CHOOSE_USER": "Choose a user",
   "TABLE": {
     "ID": "ID",
     "NAME": "Name",
