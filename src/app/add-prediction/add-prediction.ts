@@ -1,10 +1,5 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import backup2016 from '../../../backup_2016.json'
-import backup2018 from '../../../backup_2018.json'
-import backup2020 from '../../../backup_2020.json'
-import backup2022 from '../../../backup_2022.json'
-import backup2024 from '../../../backup_2024.json'
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
@@ -24,7 +19,7 @@ import { registerLocaleData } from '@angular/common';
 import { CountryTranslateService } from '../services/country-translate.service';
 import { SupabaseService } from '../supabase';
 import { SupabaseChatService } from '../supabase-chat.service';
-import { MatchDetail, BetsToShow, PredictionWithUser } from '../models/match.model';
+import { BetsToShow } from '../models/match.model';
 
 registerLocaleData(localeBg, 'bg-BG');
 registerLocaleData(localeEn, 'en-US');
@@ -52,6 +47,13 @@ registerLocaleData(localeEn, 'en-US');
 //   rating: number;
 // }
 
+interface User {
+  id: number;
+  name_bg: string;
+  name_en: string;
+  total_points: number;
+}
+
 @Component({
   selector: 'app-add-prediction',
   standalone: true,
@@ -64,15 +66,10 @@ export class AddPrediction implements OnInit, OnDestroy {
   isLocal = false;
   betsToShow: BetsToShow[] = [];
   loading: boolean = true;
-  allUsers: {
-    id: number;
-    name_bg: string;
-    name_en: string;
-  }[] = [];
+  allUsers: User[] = [];
   allMatches: any[] = [];
   expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
-  rowIndexes: number[] = [];
-  selectedUser: typeof this.allUsers[0] | null = null;
+  selectedUser: User | null = null;
   trls: { name: string, translation: string }[] = [];
   private tableRoot: HTMLElement | null = null;
   private scrollHandler: (() => void) | null = null;
@@ -96,7 +93,12 @@ export class AddPrediction implements OnInit, OnDestroy {
 
     if (!this.socket.hasListeners('matchesUpdate')) {
       this.socket.on('matchesUpdate', (data) => {
-        this.allMatches = data.matches;
+        this.allMatches = data.matches.map((match: any, index: number) => {
+          const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
+          return {
+            ...match, myId: myId,
+          }
+        });
 
         this.updateBetsDisplay();
       });
@@ -115,7 +117,6 @@ export class AddPrediction implements OnInit, OnDestroy {
     }
     this.initializeCountryCache();
   }
-
 
   ngOnInit() {
     this.tableRoot = this.elRef.nativeElement.querySelector('.prediction-table-root');
@@ -178,23 +179,26 @@ export class AddPrediction implements OnInit, OnDestroy {
     this.updateBetsDisplay();
   }
 
-  getUserPredictionValue(idx: number, product: any, columnIndex: number) {
-    debugger
-    let selectedUserName = this.allUsers[idx]?.name_bg;
-    let selectedUser = product.all_users.find((user: { name: any; }) => user.name === selectedUserName);
-
-    if (columnIndex === 0) return selectedUser?.home_score;
-    if (columnIndex === 1) return selectedUser?.away_score;
-    if (columnIndex === 2) return this.returnTranslatedWinner(selectedUser?.winner_predict, 1);
-    if (columnIndex === 3) return selectedUser?.points_predict || 0;
+  getUserPredictionValue(user: User | undefined | null, product: any, columnIndex: number) {
+    if (!user) return "";
+    let selectedUser = this.testPredictions.find((p: any) => p.user_id === user.id && p.match_id === product.id);
+    if (!selectedUser) return "";
+    if (columnIndex === 0) return selectedUser.home_ft;
+    if (columnIndex === 1) return selectedUser.away_ft;
+    if (columnIndex === 2) return this.returnTranslatedWinner(selectedUser.winner);
+    let points = this.getpoints(selectedUser);
+    if (this.selectedUser !== null) {
+      if (this.selectedUser.total_points === undefined) {
+        this.selectedUser.total_points = 0;
+      }
+      this.selectedUser.total_points += points;
+    }
+    if (columnIndex === 3) return points || 0;
     return "";
   }
 
-  returnTranslatedWinner(product: any, foo2?: number): string {
-    debugger
-    let lng = this.getLng();
-    let foo = product.winner.toLowerCase() + '_' + lng;
-    let result = product[foo];
+  returnTranslatedWinner(bet: any): string {
+    let result = this.translate.instant("TABLE." + bet.winner).slice(0, 1);
     return result;
   }
 
@@ -218,10 +222,12 @@ export class AddPrediction implements OnInit, OnDestroy {
     return "";
   }
 
-  getLng(full = false) {
-    let lng: "bg-BG" | "en-US" = (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
-    if (full === false) return lng.slice(0, 2) as "bg" | "en";
-    return lng as "bg-BG" | "en-US";
+  getLng(): "bg-BG" | "en-US" {
+    return (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
+  }
+
+  getLngMini(): "bg" | "en" {
+    return this.getLng().slice(0, 2) as "bg" | "en";
   }
 
 
@@ -243,24 +249,10 @@ export class AddPrediction implements OnInit, OnDestroy {
   async updateBetsDisplay() {
     if (this.selectedUser === null || this.allMatches === null) return;
     // let userId = this.selectedUser?.id || 1;
-    let lng = this.getLng(true);
-    let lngMini = this.getLng(false);
+    let lng = this.getLng();
+    let lngMini = this.getLngMini();
 
-    // const { data, error } = await this.supabaseService.getPredictionsByUserId(userId);
-    this.betsToShow = this.allMatches.map((match: any, index: number) => {
-      let points: {
-        away: number;
-        home: number;
-      } = { home: match.home_ft || match.home_ht || -1, away: match.away_ft || match.away_ht || -1 };
-      let winner = this.chatService.getWinner(points);
-
-      let homeTeamName = (lngMini === 'bg' ? this.findTeamByName(match.homeTeam?.name)?.name_bg : this.findTeamByName(match.homeTeam?.name)?.name_en) || '';
-      let awayTeamName = (lngMini === 'bg' ? this.findTeamByName(match.awayTeam?.name)?.name_bg : this.findTeamByName(match.awayTeam?.name)?.name_en) || '';
-
-      if (match.group !== "GROUP_A" && match.group !== "GROUP_B" && match.group !== "GROUP_C" && match.group !== "GROUP_D" && match.group !== "GROUP_E" && match.group !== "GROUP_F" && match.group !== "GROUP_G" && match.group !== "GROUP_H" && match.group !== "GROUP_I" && match.group !== "GROUP_J" && match.group !== "GROUP_K" && match.group !== "GROUP_L" && match.group !== "GROUP_M" && match.group !== "GROUP_N" && match.group !== "GROUP_O" && match.group !== "GROUP_P") {
-        // debugger
-      }
-
+    this.allMatches = this.allMatches.map((match: any) => {
       if (match.id === 537327) {
         match.score.duration = "FULL_TIME";
         match.score.fullTime = { home: 3, away: 4 };
@@ -277,38 +269,41 @@ export class AddPrediction implements OnInit, OnDestroy {
         match.score.halfTime = { home: 1, away: 1 };
         match.score.winner = "DRAW";
       }
+      return match;
+    });
 
+    // const { data, error } = await this.supabaseService.getPredictionsByUserId(userId);
+    this.betsToShow = this.allMatches.map((match: any, index: number) => {
+      let points: {
+        away: number;
+        home: number;
+      } = { home: match.home_ft || match.home_ht || -1, away: match.away_ft || match.away_ht || -1 };
+      let winner = this.chatService.getWinner(points);
+
+      let homeTeamName = (lngMini === 'bg' ? this.findTeamByName(match.homeTeam?.name)?.name_bg : this.findTeamByName(match.homeTeam?.name)?.name_en) || '';
+      let awayTeamName = (lngMini === 'bg' ? this.findTeamByName(match.awayTeam?.name)?.name_bg : this.findTeamByName(match.awayTeam?.name)?.name_en) || '';
+
+      if (match.group !== "GROUP_A" && match.group !== "GROUP_B" && match.group !== "GROUP_C" && match.group !== "GROUP_D" && match.group !== "GROUP_E" && match.group !== "GROUP_F" && match.group !== "GROUP_G" && match.group !== "GROUP_H" && match.group !== "GROUP_I" && match.group !== "GROUP_J" && match.group !== "GROUP_K" && match.group !== "GROUP_L" && match.group !== "GROUP_M" && match.group !== "GROUP_N" && match.group !== "GROUP_O" && match.group !== "GROUP_P") {
+      }
+
+
+
+
+      const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
 
       return {
+        id: myId,
         row_index: index + 1,
         match_day: formatDate(new Date(match.utcDate), 'dd.MM.yyyy', lng),
         match_time: formatDate(new Date(match.utcDate), 'HH:mm', lng),
         group: this.translate.instant('TABLE.' + (match.group || match.stage)),
         home_team: homeTeamName,
         away_team: awayTeamName,
-        home_team_score: match.home_ft ?? match.home_ht ?? -1,
-        away_team_score: match.away_ft ?? match.away_ht ?? -1,
-        winner: winner,
-      }
+        home_team_score: match.score.fullTime.home ?? match.score.halfTime.home ?? -1,
+        away_team_score: match.score.fullTime.away ?? match.score.halfTime.away ?? -1,
+        winner: match.score.winner,
+      };
     });
-    // this.betsToShow = (data as unknown as MatchDetail[]).map((bet, index) => {
-    //   let points: {
-    //     away: number;
-    //     home: number;
-    //   } = { home: bet.home_ft || bet.home_ht || -1, away: bet.away_ft || bet.away_ht || -1 };
-    //   let winner = this.chatService.getWinner(points);
-    //   return {
-    //     row_index: index + 1,
-    //     match_day: formatDate(new Date(bet.utc_date), 'dd.MM.yyyy', lng),
-    //     match_time: formatDate(new Date(bet.utc_date), 'HH:mm', lng),
-    //     group: this.translate.instant('TABLE.' + bet.matches.group_name),
-    //     home_team: lngMini === 'bg' ? bet.teams.home_team.name_bg : bet.teams.home_team.name_en,
-    //     away_team: lngMini === 'bg' ? bet.teams.away_team.name_bg : bet.teams.away_team.name_en,
-    //     home_team_score: bet.home_ft ?? bet.home_ht ?? -1,
-    //     away_team_score: bet.away_ft ?? bet.away_ht ?? -1,
-    //     winner: winner,
-    //   }
-    // });
     this.loading = false;
   }
 
@@ -322,6 +317,25 @@ export class AddPrediction implements OnInit, OnDestroy {
       this.testPredictions = data || [];
       console.log('✅ Заредени predictions:', this.testPredictions);
     }
+  }
+
+  getpoints(prediction: any): number {
+    let kk = this.allMatches.find((m: any) => m.myId === prediction.match_id);
+    let result = 0;
+    if (kk) {
+      result = this.chatService.getPointFromMatch(kk, prediction);
+    }
+    return result
+  }
+
+  getTotalPoints(): number {
+    let result = 0;
+    if (this.allMatches.length === 0) return result;
+    this.testPredictions.filter(p => p.user_id === this.selectedUser?.id).forEach(prediction => {
+      let points = this.getpoints(prediction);
+      result += points;
+    });
+    return result;
   }
 
   subscribeToTestPredictions() {

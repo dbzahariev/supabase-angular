@@ -26,6 +26,7 @@
   },
   "CHOOSE_USER": "Choose a user",
   "TABLE": {
+    "GROUPS_PHASE": "Groups Phase",
     "ID": "ID",
     "NAME": "Name",
     "CATEGORY": "Category",

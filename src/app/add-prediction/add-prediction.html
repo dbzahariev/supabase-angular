@@ -51,7 +51,7 @@
                 <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
-                <th rowspan="1" colspan="4">{{ selectedUser?.name_en }} </th>
+                <th rowspan="1" colspan="4">{{ selectedUser?.name_en }} ({{getTotalPoints()}})</th>
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of selectedUser ? [selectedUser] : allUsers">{{ user.name_en }} </th> -->
             </tr>
             <!-- <tr>
@@ -63,8 +63,8 @@
         <ng-template #groupheader let-product let-expanded="expanded">
             <tr pRowGroupHeader>
                 <td colspan="10000">
-                    <button id="toggler_{{product.group}}" type="button" pButton pRipple [pRowToggler]="product"
-                        text rounded plain class="mr-2" (click)="toggleGroup()"
+                    <button id="toggler_{{product.group}}" type="button" pButton pRipple [pRowToggler]="product" text
+                        rounded plain class="mr-2" (click)="toggleGroup()"
                         [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
                         {{'TABLE.' + product.group | translate}}
                     </button>
@@ -72,7 +72,7 @@
             </tr>
         </ng-template>
 
-        <ng-template #expandedrow let-product>
+        <ng-template #expandedrow let-product let-editing="editing">
             <tr>
                 <td class="col_row_number">{{ product?.row_index}}</td>
                 <td>{{ product?.match_day }}</td>
@@ -83,11 +83,9 @@
                     <td>{{getProductResultRow(product, j)}}</td>
                 </ng-container>
                 <td class="re_away_team">{{ product?.away_team }}</td>
-                <ng-container *ngFor="let i of rowIndexes">
-                    <ng-container *ngFor="let j of [0, 1, 2, 3]">
-                        <td>{{ getUserPredictionValue(i, product, j) }}</td>
-                    </ng-container>
-                </ng-container>
+                @for (j of [0, 1, 2, 3]; track j) {
+                <td>{{ getUserPredictionValue(selectedUser, product, j) }}</td>
+                }
             </tr>
         </ng-template>
     </p-table>
