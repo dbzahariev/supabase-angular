@@ -94,27 +94,40 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (!this.socket.hasListeners('matchesUpdate')) {
       this.socket.on('matchesUpdate', (data) => {
         this.allMatches = data.matches.map((match: any, index: number) => {
+          if (match.id === 537327) {
+            match.score.duration = "FULL_TIME";
+            match.score.fullTime = { home: 3, away: 4 };
+            match.score.halfTime = { home: 1, away: 2 };
+            match.score.winner = "AWAY_TEAM";
+          } else if (match.id === 537328) {
+            match.score.duration = "FULL_TIME";
+            match.score.fullTime = { home: 4, away: 3 };
+            match.score.halfTime = { home: 2, away: 1 };
+            match.score.winner = "HOME_TEAM";
+          } else if (match.id === 537333) {
+            match.score.duration = "FULL_TIME";
+            match.score.fullTime = { home: 2, away: 2 };
+            match.score.halfTime = { home: 1, away: 1 };
+            match.score.winner = "DRAW";
+          }
+
           const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
           return {
             ...match, myId: myId,
           }
-        });
+        })
 
         this.updateBetsDisplay();
       });
     }
 
 
+
+
     if (!this.socket.hasListeners('connect')) {
       this.socket.on('connect', () => { });
     }
 
-    // Avoid duplicate event listeners
-    if (!this.socket.hasListeners('matchesUpdate')) {
-      this.socket.on('matchesUpdate', (data) => {
-        console.log('Matches updated', data);
-      });
-    }
     this.initializeCountryCache();
   }
 
@@ -170,6 +183,41 @@ export class AddPrediction implements OnInit, OnDestroy {
     });
   }
 
+  onInput(event: any, product: any, columnIndex: number = -1) {
+    let editColumn = columnIndex === 0 ? 'home_ft' : columnIndex === 1 ? 'away_ft' : columnIndex === 2 ? 'winner' : '';
+    let newWinner = null;
+    if (editColumn === 'winner') {
+      newWinner = event.target.value;
+      if (newWinner.toLowerCase() === 'h' || newWinner === '1') newWinner = 'HOME_TEAM';
+      else if (newWinner.toLowerCase() === 'a' || newWinner === '2') newWinner = 'AWAY_TEAM';
+      else if (newWinner.toLowerCase() === 'd' || newWinner === '0') newWinner = 'DRAW';
+    }
+    if (columnIndex === -1) return;
+    let foo = this.testPredictions.find((p: any) => p.user_id === this.selectedUser?.id && p.match_id === product.id)?.id;
+    if (foo) {
+      this.supabaseService.updatePrediction(foo, { [editColumn]: newWinner || Number(event.target.value) }).then(({ data, error }) => {
+        this.loadTestPredictions();
+      });
+    }
+    else {
+      let newPrediction: any = {
+        user_id: this.selectedUser?.id || 0,
+        match_id: product.id,
+        home_ft: -1,
+        away_ft: -1,
+        home_pt: -1,
+        away_pt: -1,
+        winner: newWinner || '',
+        utc_date: new Date().toISOString(),
+      }
+
+      newPrediction[editColumn] = event.target.value;
+      this.supabaseService.addPrediction(newPrediction).then(({ data, error }) => {
+        this.loadTestPredictions();
+      });
+    };
+  }
+
   toggleGroup() {
     localStorage.setItem('expandedGroups', JSON.stringify(this.expandedRows));
   }
@@ -185,7 +233,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (!selectedUser) return "";
     if (columnIndex === 0) return selectedUser.home_ft;
     if (columnIndex === 1) return selectedUser.away_ft;
-    if (columnIndex === 2) return this.returnTranslatedWinner(selectedUser.winner);
+    if (columnIndex === 2) return this.returnTranslatedWinner(selectedUser);
     let points = this.getpoints(selectedUser);
     if (this.selectedUser !== null) {
       if (this.selectedUser.total_points === undefined) {
@@ -252,26 +300,6 @@ export class AddPrediction implements OnInit, OnDestroy {
     let lng = this.getLng();
     let lngMini = this.getLngMini();
 
-    this.allMatches = this.allMatches.map((match: any) => {
-      if (match.id === 537327) {
-        match.score.duration = "FULL_TIME";
-        match.score.fullTime = { home: 3, away: 4 };
-        match.score.halfTime = { home: 1, away: 2 };
-        match.score.winner = "AWAY_TEAM";
-      } else if (match.id === 537328) {
-        match.score.duration = "FULL_TIME";
-        match.score.fullTime = { home: 4, away: 3 };
-        match.score.halfTime = { home: 2, away: 1 };
-        match.score.winner = "HOME_TEAM";
-      } else if (match.id === 537333) {
-        match.score.duration = "FULL_TIME";
-        match.score.fullTime = { home: 2, away: 2 };
-        match.score.halfTime = { home: 1, away: 1 };
-        match.score.winner = "DRAW";
-      }
-      return match;
-    });
-
     // const { data, error } = await this.supabaseService.getPredictionsByUserId(userId);
     this.betsToShow = this.allMatches.map((match: any, index: number) => {
       let points: {
@@ -285,9 +313,6 @@ export class AddPrediction implements OnInit, OnDestroy {
 
       if (match.group !== "GROUP_A" && match.group !== "GROUP_B" && match.group !== "GROUP_C" && match.group !== "GROUP_D" && match.group !== "GROUP_E" && match.group !== "GROUP_F" && match.group !== "GROUP_G" && match.group !== "GROUP_H" && match.group !== "GROUP_I" && match.group !== "GROUP_J" && match.group !== "GROUP_K" && match.group !== "GROUP_L" && match.group !== "GROUP_M" && match.group !== "GROUP_N" && match.group !== "GROUP_O" && match.group !== "GROUP_P") {
       }
-
-
-
 
       const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
 

@@ -177,6 +177,14 @@ export class SupabaseService {
       .select()
   }
 
+  updatePrediction(id: number, prediction: any) {
+    return this.supabase
+      .from('predictions')
+      .update(prediction)
+      .eq('id', id)
+      .select()
+  }
+
   // Метод за слушане на промени в таблица
   /**
    * Subscribes to real-time changes on a specified database table.
