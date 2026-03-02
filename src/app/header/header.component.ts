@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TabsModule } from 'primeng/tabs';
 import { App } from '../app';
@@ -21,7 +20,7 @@ type Color = {
   standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [ButtonModule, DropdownModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule, TabsModule, RouterModule, CommonModule]
+  imports: [ButtonModule, SelectModule, FormsModule, TranslateModule, FloatLabelModule, TabsModule, RouterModule, CommonModule]
 })
 export class HeaderComponent implements OnInit {
   tabs = [

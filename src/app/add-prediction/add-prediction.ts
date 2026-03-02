@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
@@ -59,7 +58,7 @@ interface User {
   standalone: true,
   templateUrl: './add-prediction.html',
   styleUrls: ['./add-prediction.css'],
-  imports: [ButtonModule, DropdownModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, TableModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, HttpClientModule, CommonModule]
+  imports: [ButtonModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, HttpClientModule]
 })
 export class AddPrediction implements OnInit, OnDestroy {
   private socket: Socket;
@@ -222,8 +221,8 @@ export class AddPrediction implements OnInit, OnDestroy {
     localStorage.setItem('expandedGroups', JSON.stringify(this.expandedRows));
   }
 
-  onUserSelectionChange(event: any) {
-    this.selectedUser = event.value;
+  onUserSelectionChange(user: User | null) {
+    this.selectedUser = user;
     this.updateBetsDisplay();
   }
 

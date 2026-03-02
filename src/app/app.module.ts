@@ -4,16 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import Material from '@primeng/themes/material';
-import Aura from '@primeng/themes/aura';
-import Lara from '@primeng/themes/lara';
-import Nora from '@primeng/themes/nora';
+import Material from '@primeuix/themes/material';
+import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
+import Nora from '@primeuix/themes/nora';
 import { App } from './app';
 import { AuthComponent } from './auth/auth';
 import { AddPrediction } from './add-prediction/add-prediction';
 import { AllMatchesComponent } from './all-matches/all-matches.component';
-import { definePreset } from '@primeng/themes';
-import { DropdownModule } from 'primeng/dropdown';
+import { definePreset } from '@primeuix/themes';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -64,7 +63,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         BrowserModule,
         FormsModule,
         ButtonModule,
-        DropdownModule,
         // ChatComponent,
         HeaderComponent,
         AuthComponent,

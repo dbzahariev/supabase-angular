@@ -14,9 +14,9 @@
 
     <div class="p-4 mb-4">
         <span class="text-lg font-semibold">{{ 'CHOOSE_USER' | translate }}: </span>
-        <p-dropdown [options]="allUsers" optionLabel="name_bg" [(ngModel)]="selectedUser"
-            selectedItemsLabel="{0} users selected" (onChange)="onUserSelectionChange($event)" display="chip">
-        </p-dropdown>
+        <p-select [options]="allUsers" optionLabel="name_bg" [(ngModel)]="selectedUser"
+            (ngModelChange)="onUserSelectionChange($event)" class="w-full">
+        </p-select>
     </div>
 
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
