@@ -8,6 +8,7 @@ import { App } from '../app';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { ColorOption } from '../models/match.model';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -30,10 +31,11 @@ export class HeaderComponent implements OnInit {
     { en: 'Blue', bg: 'Синьо', code: 'blue' },
     { en: 'Yellow', bg: 'Жълто', code: 'yellow' }
   ];
-  themeColor = localStorage.getItem('theme-color') ?? this.colorOptions[0].code;
+  themeColor!: string;
 
   private translateService = inject(TranslateService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
   constructor() {
     this.router.events.subscribe(event => {
@@ -50,7 +52,7 @@ export class HeaderComponent implements OnInit {
       localStorage.setItem('lang', lang);
     }
     this.translateService.use(lang);
-    // Цветът вече се инициализира в themeColor
+    this.themeColor = this.themeService.getThemeColor();
   }
 
   getColorName(color: ColorOption): string {
@@ -61,7 +63,6 @@ export class HeaderComponent implements OnInit {
   changeLanguage(lang: string) {
     this.translateService.use(lang);
     localStorage.setItem('lang', lang);
-    // Не презареждам страницата, Angular ще обнови преводите автоматично
   }
 
   toggleDarkMode() {
@@ -71,8 +72,8 @@ export class HeaderComponent implements OnInit {
   }
 
   onThemeColorChange(code: string) {
+    this.themeService.setThemeColor(code);
     this.themeColor = code;
-    localStorage.setItem('theme-color', code);
-    // Може да добавиш логика за динамична смяна на тема тук
+    // Ако други компоненти са абонирани за themeColor$, ще се обновят автоматично
   }
 }
