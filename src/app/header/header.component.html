@@ -1,27 +1,49 @@
 <div class="header-container">
-    <p-button variant="outlined" [raised]="true" (onClick)="toggleDarkMode()">
+    <p-button
+        variant="outlined"
+        [raised]="true"
+        (onClick)="toggleDarkMode()"
+        aria-label="Toggle dark mode"
+        class="mr-2"
+    >
         <i [class]="`pi pi-${isDark ? 'moon' : 'sun'}`"></i>
     </p-button>
-    <p-floatlabel class="fl-color" variant="in">
-        <p-select (ngModelChange)="setThemeColor($event)" [(ngModel)]="currentColor" inputId="in_label"
-            [options]="realOptionsColors" optionLabel="name" styleClass="w-full" variant="filled" />
-        <label class="label-color" for="in_label">{{"CHOSE_COLOR" | translate}}</label>
+
+    <p-floatlabel class="fl-color theme-color-select" variant="in">
+        <label for="themeColorSelect" class="sr-only">{{ 'CHOSE_COLOR' | translate }}</label>
+        <select
+            id="themeColorSelect"
+            class="w-full"
+            [(ngModel)]="themeColor"
+            (ngModelChange)="onThemeColorChange($event)"
+            aria-label="{{ 'CHOSE_COLOR' | translate }}"
+        >
+            @for(color of colorOptions; track color.code){
+                <option [value]="color.code">{{ getColorName(color) }}</option>
+            }
+        </select>
     </p-floatlabel>
-    <button class="lang-button" (click)="changeLanguage('bg')">
-        <span class="fi fi-bg fis"></span>
-    </button>
 
-    <button class="lang-button" (click)="changeLanguage('en')">
-        <span class="fi fi-gb fis"></span>
-    </button>
+    <div class="flex gap-2 ml-2">
+        <button class="lang-button" (click)="changeLanguage('bg')" aria-label="Български">
+            <span class="fi fi-bg fis"></span>
+        </button>
+        <button class="lang-button" (click)="changeLanguage('en')" aria-label="English">
+            <span class="fi fi-gb fis"></span>
+        </button>
+    </div>
 
-    <p-tabs value="{{currentRoute}}">
+    <p-tabs [value]="currentRoute">
         <p-tablist>
             @for(tab of tabs; track tab.route){
-            <p-tab [value]="tab.route" [routerLink]="tab.route" class="flex items-center !gap-2 text-inherit">
-                <i [class]="tab.icon"></i>
-                <span>{{ 'ROUTE.' + tab.key | translate }}</span>
-            </p-tab>
+                <p-tab
+                    [value]="tab.route"
+                    [routerLink]="tab.route"
+                    class="flex items-center !gap-2 text-inherit"
+                >
+                    <i [class]="tab.icon"></i>
+                    <span>{{ 'ROUTE.' + tab.key | translate }}</span>
+                </p-tab>
             }
         </p-tablist>
     </p-tabs>
