@@ -7,12 +7,7 @@ import { TabsModule } from 'primeng/tabs';
 import { App } from '../app';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
-
-interface ColorOption {
-  en: string;
-  bg: string;
-  code: string;
-}
+import { ColorOption } from '../models/match.model';
 
 @Component({
   selector: 'app-header',

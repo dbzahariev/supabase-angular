@@ -1,3 +1,9 @@
+export interface ColorOption {
+  en: string;
+  bg: string;
+  code: string;
+}
+
 export interface Prediction {
   id: number;
   user_id: number;
