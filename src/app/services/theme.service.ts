@@ -9,10 +9,10 @@ export class ThemeService {
   setThemeColor(color: string) {
     localStorage.setItem('theme-color', color);
     this.themeColorSubject.next(color);
-      window.location.reload(); 
+    window.location.reload();
   }
 
   getThemeColor(): string {
-      return this.themeColorSubject.value;
+    return this.themeColorSubject.value;
   }
 }
