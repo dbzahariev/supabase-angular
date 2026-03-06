@@ -37,7 +37,6 @@ export class SupabaseService {
       name_en
     ),
     matches (
-      group_name,
       id,
       home_team_id,
       away_team_id
@@ -161,13 +160,13 @@ export class SupabaseService {
   // }
 
   // Метод за четене на predictions на конкретен потребител
-  getPredictionsByUserId(userId: number) {
-    return this.supabase
-      .from('predictions')
-      .select(this.predictionsWithUsersSelect)
-      .eq('user_id', userId)
-      .order('utc_date', { ascending: false })
-  }
+  // getPredictionsByUserId(userId: number) {
+  //   return this.supabase
+  //     .from('predictions')
+  //     .select(this.predictionsWithUsersSelect)
+  //     .eq('user_id', userId)
+  //     .order('utc_date', { ascending: false })
+  // }
 
   // Метод за добавяне на prediction
   addPrediction(prediction: any) {
