@@ -112,11 +112,12 @@ interface Match {
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, IconField, InputIcon, Button, TranslateModule]
+    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, TableModule]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     betsToShow: Bet[] = [];
     expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
+    allUsersNamesFromDB: User[] = [];
     allUsersNames: User[] = [];
     allPredictions: Prediction[] = [];
     allMatches: Match[] = [];
@@ -193,6 +194,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     fixPredictions() {
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
             this.allPredictions = data.data;
+            this.allPredictions.forEach((el) => {
+                let predictUser = { ...el.users, total_point: 3 }
+                let allUserNamesIndex = this.allUsersNames.findIndex(user => user.id === predictUser.id)
+                if (allUserNamesIndex === -1) {
+                    this.allUsersNames.push(predictUser)
+                }
+            })
             this.fixBetToShow();
         })
     }
@@ -216,7 +224,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     fixUsers() {
         this.supabaseService.getUsers().then((data: any) => {
-            this.allUsersNames = data.data;
+            this.allUsersNamesFromDB = data.data;
             this.cdr.detectChanges();
         })
     }
@@ -272,19 +280,34 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getProductResultRow(bet: Bet, index: number): string {
-        if (index === 0){
+        if (index === 0) {
             return bet.score?.fullTime.home?.toString() || "";
         }
-        if (index === 1){
+        if (index === 1) {
             return bet.score?.fullTime.away?.toString() || "";
         }
         if (index === 2) {
-           return bet.score?.winner === null ? "" : this.translate.instant("TABLE." + (bet.score?.winner || ""));
+            return bet.score?.winner === null ? "" : this.returnTranslateFromWin(bet.score?.winner)
         }
         return "";
     }
 
-    getUserPredictionValue(bet: any, index: number, foo1: any): string {
+    returnTranslateFromWin(winner: any): string {
+        if (winner === undefined) return ""
+        return this.translate.instant("TABLE." + (winner || "")).slice(0, 1);
+    }
+
+    getUserPredictionValue(user: User, bet: Bet, columnIndex: number): string {
+        let selectedPredict = this.allPredictions.find(pred => { return pred.matches.id === bet.id && pred.users.id === user.id })
+        if (columnIndex === 0) {
+            return selectedPredict?.home_ft.toString() || ""
+        }
+        if (columnIndex === 1) {
+            return selectedPredict?.away_ft.toString() || ""
+        }
+        if (columnIndex === 2) {
+            return this.returnTranslateFromWin(selectedPredict?.winner)
+        }
         return "bar";
     }
 }
