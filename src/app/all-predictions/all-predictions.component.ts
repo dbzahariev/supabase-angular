@@ -34,6 +34,7 @@ interface Team {
 }
 
 interface Prediction {
+    points: number;
     id: number;
     utc_date: string;
     home_ft: number;
@@ -187,22 +188,60 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getNameFromUser(user: User): string {
-        const lngMini = this.getLngMini();
-        return lngMini === 'bg' ? user.name_bg : user.name_en;
+        return this.getLng() === 'bg-BG' ? user.name_bg : user.name_en;
     }
 
     fixPredictions() {
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
             this.allPredictions = data.data;
-            this.allPredictions.forEach((el) => {
-                let predictUser = { ...el.users, total_point: 3 }
-                let allUserNamesIndex = this.allUsersNames.findIndex(user => user.id === predictUser.id)
-                if (allUserNamesIndex === -1) {
-                    this.allUsersNames.push(predictUser)
-                }
-            })
+            if (this.allPredictions) {
+                this.allPredictions.forEach((el) => {
+                    let predictUser = { ...el.users, total_point: 3 }
+                    let allUserNamesIndex = this.allUsersNames.findIndex(user => user.id === predictUser.id)
+                    if (allUserNamesIndex === -1) {
+                        this.allUsersNames.push(predictUser)
+                    }
+                })
+                this.allPredictions = this.allPredictions.map((prediction: Prediction) => {
+                    let newPrediction: Prediction = { ...prediction }
+                    let selectedMatch = this.allMatches.find(match => match.myId === prediction.matches.id)
+                    newPrediction.points = this.getPointFromMatch(selectedMatch, prediction)
+                    return newPrediction
+                })
+            }
             this.fixBetToShow();
         })
+    }
+
+    getPointFromMatch(bet: Match | undefined, prediction: Prediction): number {
+        if (!bet) {
+            return -2;
+        }
+        if (bet.score.fullTime.home === null){
+            return -3;
+        }
+        if (bet.score.fullTime.home === null || bet.score.fullTime.away === null) {
+            return -1;
+        }
+        const actualHome = bet.score.fullTime.home;
+        const actualAway = bet.score.fullTime.away;
+        const actualWinner = bet.score.winner;
+        const predictedHome = prediction.home_ft;
+        const predictedAway = prediction.away_ft;
+        const predictedWinner = prediction.winner;
+
+        if (actualHome === predictedHome && actualAway === predictedAway) {
+            return 3;
+        }
+        const actualAbs = Math.abs(actualHome - actualAway);
+        const predictAbs = Math.abs(predictedHome - predictedAway);
+        if (actualAbs === predictAbs && actualWinner === predictedWinner) {
+            return 2;
+        }
+        if (actualWinner === predictedWinner) {
+            return 1;
+        }
+        return 0;
     }
 
     ngOnInit(): void {
@@ -219,7 +258,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getPointsFromUser(user: User): number {
-        return 2;
+        return this.allPredictions.filter(pred => pred.users.id === user.id && pred.points >= 0).reduce((acc, prediction) => acc + prediction.points, 0);
     }
 
     fixUsers() {
@@ -231,10 +270,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getLng(): "bg-BG" | "en-US" {
         return (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
-    }
-
-    getLngMini(): "bg" | "en" {
-        return this.getLng().slice(0, 2) as "bg" | "en";
     }
 
     private getPhaseMap(): Record<string, string> {
@@ -268,8 +303,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 match_time: new Date(match.utcDate).toLocaleTimeString(this.getLng()),
                 group: match.myGroup,
                 id: match.myId,
-                home_team: (this.getLngMini() === 'bg' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
-                away_team: (this.getLngMini() === 'bg' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",
+                home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
+                away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",
                 score: match.score
             }
 
@@ -307,6 +342,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
         if (columnIndex === 2) {
             return this.returnTranslateFromWin(selectedPredict?.winner)
+        }
+        if (columnIndex === 3) {
+            // return selectedPredict?.points === -1 ? "" : selectedPredict?.points.toString() || ""
+            return selectedPredict?.points.toString() || ""
         }
         return "bar";
     }
