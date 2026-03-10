@@ -134,7 +134,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.socket = io('https://simple-node-proxy.onrender.com');
         if (!this.socket.hasListeners('matchesUpdate')) {
             this.socket.on('matchesUpdate', (data) => {
-                this.allMatches = data.matches.map((match: any, index: number) => {
+                this.allMatches = data.matches?.map((match: any, index: number) => {
                     let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                     let myGroup = this.getPhase(match.stage, match.group).group;
 

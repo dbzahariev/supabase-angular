@@ -26,6 +26,8 @@
   },
   "CHOOSE_USER": "Изберете потребител",
   "TABLE": {
+    "TITLE": "Мачове",
+    "SEARCH_KEYWORD": "Търсене",
     "ID": "Код",
     "NAME": "Име",
     "CATEGORY": "Категория",

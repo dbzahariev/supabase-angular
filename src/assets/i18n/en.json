@@ -26,6 +26,8 @@
   },
   "CHOOSE_USER": "Choose a user",
   "TABLE": {
+    "TITLE": "Matches",
+    "SEARCH_KEYWORD": "Search",
     "GROUPS_PHASE": "Groups Phase",
     "ID": "ID",
     "NAME": "Name",
