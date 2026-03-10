@@ -1,14 +1,11 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
 import {
-  AuthChangeEvent,
   AuthSession,
   createClient,
-  Session,
   SupabaseClient,
-  User,
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
-import { PredictionWithUser } from './models/match.model'
 
 export interface Profile {
   id?: string
@@ -53,6 +50,8 @@ export class SupabaseService {
     )
   `
 
+  private httpClient = inject(HttpClient);
+
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
       auth: {
@@ -83,17 +82,17 @@ export class SupabaseService {
   //   return this._session
   // }
 
-  profile(user: User) {
-    // return this.supabase
-    //   .from('profiles')
-    //   .select(`username, website, avatar_url`)
-    //   .eq('id', user.id)
-    //   .single()
-  }
+  // profile(user: User) {
+  //   // return this.supabase
+  //   //   .from('profiles')
+  //   //   .select(`username, website, avatar_url`)
+  //   //   .eq('id', user.id)
+  //   //   .single()
+  // }
 
-  authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
-    // return this.supabase.auth.onAuthStateChange(callback)
-  }
+  // authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
+  //   // return this.supabase.auth.onAuthStateChange(callback)
+  // }
 
   signIn(email: string) {
     return this.supabase.auth.signInWithOtp({ email })
@@ -103,21 +102,25 @@ export class SupabaseService {
     // return this.supabase.auth.signOut()
   }
 
-  updateProfile(profile: Profile) {
-    const update = {
-      ...profile,
-      updated_at: new Date(),
-    }
+  // updateProfile(profile: Profile) {
+  //   const update = {
+  //     ...profile,
+  //     updated_at: new Date(),
+  //   }
 
-    // return this.supabase.from('profiles').upsert(update)
-  }
+  //   // return this.supabase.from('profiles').upsert(update)
+  // }
 
-  downLoadImage(path: string) {
-    // return this.supabase.storage.from('avatars').download(path)
-  }
+  // downLoadImage(path: string) {
+  //   // return this.supabase.storage.from('avatars').download(path)
+  // }
 
-  uploadAvatar(filePath: string, file: File) {
-    // return this.supabase.storage.from('avatars').upload(filePath, file)
+  // uploadAvatar(filePath: string, file: File) {
+  //   // return this.supabase.storage.from('avatars').upload(filePath, file)
+  // }
+
+  getAllMatchesFromBE() {
+    return this.httpClient.get<unknown>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
   getAllTeams() {
@@ -169,14 +172,14 @@ export class SupabaseService {
   // }
 
   // Метод за добавяне на prediction
-  addPrediction(prediction: any) {
+  addPrediction(prediction: unknown) {
     return this.supabase
       .from('predictions')
       .insert(prediction)
       .select()
   }
 
-  updatePrediction(id: number, prediction: any) {
+  updatePrediction(id: number, prediction: unknown) {
     return this.supabase
       .from('predictions')
       .update(prediction)
@@ -195,7 +198,7 @@ export class SupabaseService {
    *   console.log('Users table changed:', payload);
    * });
    */
-  subscribeToTable(table: string, callback: (payload: any) => void) {
+  subscribeToTable(table: string, callback: (payload: unknown) => void) {
     const channel = this.supabase
       .channel(`schema-db-changes:${table}`)
       .on(

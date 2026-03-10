@@ -15,7 +15,6 @@ import { HttpClientModule } from '@angular/common/http';
 import localeBg from '@angular/common/locales/bg';
 import localeEn from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
-import { CountryTranslateService } from '../services/country-translate.service';
 import { SupabaseService } from '../supabase';
 import { SupabaseChatService } from '../supabase-chat.service';
 import { BetsToShow } from '../models/match.model';
@@ -81,7 +80,6 @@ export class AddPrediction implements OnInit, OnDestroy {
     name_bg: string
   }[] = [];
   constructor(
-    private countryService: CountryTranslateService,
     private translate: TranslateService,
     private elRef: ElementRef,
     private supabaseService: SupabaseService,
@@ -364,7 +362,8 @@ export class AddPrediction implements OnInit, OnDestroy {
 
   subscribeToTestPredictions() {
     console.log('👂 Започвам да слушам за промени в predictions...');
-    this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', (payload) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', (payload: any) => {
       console.log('🔔 REALTIME ПРОМЯНА:', payload.eventType, payload);
 
       // При всяка промяна, презареди данните и обнови визуализацията
