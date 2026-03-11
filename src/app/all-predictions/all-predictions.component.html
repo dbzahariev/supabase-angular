@@ -35,7 +35,7 @@
                     translate }}
                 </th>
                 @for (user of allUsersNames; track user.id) {
-                <th rowspan="1" colspan="4">{{ getNameFromUser(user) }} ({{ getPointsFromUser(user) }})</th>
+                <th rowspan="1" colspan="4">{{ getNameFromUser(user) }} ({{ user.total_points }})</th>
                 }
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
                 </th> -->

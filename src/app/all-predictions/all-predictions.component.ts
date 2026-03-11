@@ -8,7 +8,7 @@ import { Button } from "primeng/button";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { io, Socket } from 'socket.io-client';
+// import { io, Socket } from 'socket.io-client';
 
 interface Bet {
     row_index: number,
@@ -24,7 +24,8 @@ interface Bet {
 interface User {
     id: number,
     name_bg: string,
-    name_en: string
+    name_en: string,
+    total_points: number;
 }
 
 interface Team {
@@ -124,53 +125,70 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allMatches: Match[] = [];
     allTeams: Team[] = [];
     loading = true;
-    private socket: Socket;
+    // private socket: Socket;
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
     private translate = inject(TranslateService);
     private predictionsChannel: RealtimeChannel | null = null;
 
     constructor() {
-        this.socket = io('https://simple-node-proxy.onrender.com');
-        if (!this.socket.hasListeners('matchesUpdate')) {
-            this.socket.on('matchesUpdate', (data) => {
-                this.allMatches = data.matches?.map((match: any, index: number) => {
-                    let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
-                    let myGroup = this.getPhase(match.stage, match.group).group;
+        // this.socket = io('https://simple-node-proxy.onrender.com');
+        // if (!this.socket.hasListeners('matchesUpdate')) {
+        //     this.socket.on('matchesUpdate', (data) => {
+        //         console.log('Received matches update:', data);
+        //         this.fixAllMatches(data)
+        //     });
+        // }
+    }
 
-                    if (match.id === 537327) {
-                        match.score.duration = "FULL_TIME";
-                        match.score.fullTime.home = 3;
-                        match.score.fullTime.away = 4;
-                        match.score.halfTime.home = 1;
-                        match.score.halfTime.away = 2;
-                        match.score.winner = "AWAY_TEAM";
-                    } else if (match.id === 537328) {
-                        match.score.duration = "FULL_TIME";
-                        match.score.fullTime.home = 4;
-                        match.score.fullTime.away = 3;
-                        match.score.halfTime.home = 2;
-                        match.score.halfTime.away = 1;
-                        match.score.winner = "HOME_TEAM";
-                    } else if (match.id === 537333) {
-                        match.score.duration = "FULL_TIME";
-                        match.score.fullTime.home = 2;
-                        match.score.fullTime.away = 2;
-                        match.score.halfTime.home = 1;
-                        match.score.halfTime.away = 1;
-                        match.score.winner = "DRAW";
-                    }
+    getAllMatche() {
+        this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
+            console.log('Matches data from BE:', data);
+            this.fixAllMatches(data)
+        });
+    }
 
-                    return {
-                        ...match,
-                        myId: myId,
-                        myGroup: myGroup,
-                    }
-                });
+    fixAllMatches(data: any) {
+        if (!data || !data.matches) {
+            this.allMatches = [];
+        } else {
+            this.allMatches = data.matches?.map((match: any, index: number) => {
+                let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
+                let myGroup = this.getPhase(match.stage, match.group).group;
 
-                this.fixPredictions();
+                if (match.id === 537327) {
+                    match.score.duration = "FULL_TIME";
+                    match.score.fullTime.home = 3;
+                    match.score.fullTime.away = 4;
+                    match.score.halfTime.home = 1;
+                    match.score.halfTime.away = 2;
+                    match.score.winner = "AWAY_TEAM";
+                } else if (match.id === 537328) {
+                    match.score.duration = "FULL_TIME";
+                    match.score.fullTime.home = 4;
+                    match.score.fullTime.away = 3;
+                    match.score.halfTime.home = 2;
+                    match.score.halfTime.away = 1;
+                    match.score.winner = "HOME_TEAM";
+                } else if (match.id === 537333) {
+                    match.score.duration = "FULL_TIME";
+                    match.score.fullTime.home = 2;
+                    match.score.fullTime.away = 2;
+                    match.score.halfTime.home = 1;
+                    match.score.halfTime.away = 1;
+                    match.score.winner = "DRAW";
+                }
+
+                return {
+                    ...match,
+                    myId: myId,
+                    myGroup: myGroup,
+                }
             });
         }
+
+        this.fixPredictions();
+        // this.getAllMatche()
     }
 
     ngOnDestroy() {
@@ -195,17 +213,24 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
             this.allPredictions = data.data;
             if (this.allPredictions) {
-                this.allPredictions.forEach((el) => {
-                    let predictUser = { ...el.users, total_point: 3 }
+                this.allUsersNamesFromDB.forEach((el) => {
+                    let predictUser = { ...el }
                     let allUserNamesIndex = this.allUsersNames.findIndex(user => user.id === predictUser.id)
                     if (allUserNamesIndex === -1) {
-                        this.allUsersNames.push(predictUser)
+                        this.allUsersNames.push({ ...predictUser, total_points: 0 })
                     }
                 })
                 this.allPredictions = this.allPredictions.map((prediction: Prediction) => {
                     let newPrediction: Prediction = { ...prediction }
                     let selectedMatch = this.allMatches.find(match => match.myId === prediction.matches.id)
                     newPrediction.points = this.getPointFromMatch(selectedMatch, prediction)
+                    let userFromDBIndex = this.allUsersNames.findIndex(user => user.id === prediction.users.id)
+                    if (userFromDBIndex !== -1) {
+                        if (this.allUsersNames[userFromDBIndex].total_points !== undefined && newPrediction.points >= 0) {
+                            this.allUsersNames[userFromDBIndex].total_points += newPrediction.points;
+                        }
+                    }
+                    this.allUsersNames = this.allUsersNames.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
                     return newPrediction
                 })
             }
@@ -217,7 +242,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (!bet) {
             return -2;
         }
-        if (bet.score.fullTime.home === null){
+        if (bet.score.fullTime.home === null) {
             return -3;
         }
         if (bet.score.fullTime.home === null || bet.score.fullTime.away === null) {
@@ -247,6 +272,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.fixUsers();
         this.fixTeams();
+        this.getAllMatche();
         this.subscribeToTestPredictions();
     }
 
@@ -257,9 +283,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     }
 
-    getPointsFromUser(user: User): number {
-        return this.allPredictions.filter(pred => pred.users.id === user.id && pred.points >= 0).reduce((acc, prediction) => acc + prediction.points, 0);
-    }
+    // getPointsFromUser(user: User): number {
+    //     return user.total_points || 0;
+    //     // return this.allPredictions.filter(pred => pred.users.id === user.id && pred.points >= 0).reduce((acc, prediction) => acc + prediction.points, 0);
+    // }
 
     fixUsers() {
         this.supabaseService.getUsers().then((data: any) => {
@@ -334,18 +361,21 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getUserPredictionValue(user: User, bet: Bet, columnIndex: number): string {
         let selectedPredict = this.allPredictions.find(pred => { return pred.matches.id === bet.id && pred.users.id === user.id })
+        if (selectedPredict === undefined) {
+            return "";
+        }
         if (columnIndex === 0) {
-            return selectedPredict?.home_ft.toString() || ""
+            return selectedPredict.home_ft.toString() || ""
         }
         if (columnIndex === 1) {
-            return selectedPredict?.away_ft.toString() || ""
+            return selectedPredict.away_ft.toString() || ""
         }
         if (columnIndex === 2) {
-            return this.returnTranslateFromWin(selectedPredict?.winner)
+            return this.returnTranslateFromWin(selectedPredict.winner)
         }
         if (columnIndex === 3) {
             // return selectedPredict?.points === -1 ? "" : selectedPredict?.points.toString() || ""
-            return selectedPredict?.points.toString() || ""
+            return selectedPredict.points.toString() || ""
         }
         return "bar";
     }
