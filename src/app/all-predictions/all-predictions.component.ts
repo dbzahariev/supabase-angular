@@ -144,12 +144,15 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getAllMatche() {
+        console.log('DEBUG 1: Започва извличане на мачове от Backend...');
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
+            console.log('DEBUG 2: Данни за мачове получени:', data);
             this.fixAllMatches(data)
         });
     }
 
     fixAllMatches(data: any) {
+        console.log('DEBUG 3: Обработка на всички мачове...');
         if (!data || !data.matches) {
             this.allMatches = [];
         } else {
@@ -188,11 +191,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             });
         }
 
+        console.log('DEBUG 4: Мачовете са подготвени. Брой:', this.allMatches.length);
         this.fixPredictions();
         // this.getAllMatche()
     }
 
     ngOnDestroy() {
+        console.log('DEBUG: Компонентът е унищожен.');
         if (this.predictionsChannel) {
             this.predictionsChannel.unsubscribe();
             this.predictionsChannel = null;
@@ -211,7 +216,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixPredictions() {
+        console.log('DEBUG 5: Извличане на прогнози от Supabase View...');
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
+            console.log('DEBUG 6: Данни от View-то:', data);
             this.allPredictions = data.data;
 
             // Reset points for everyone before recalculating
@@ -235,6 +242,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             // Sort once at the end for better performance
             this.allUsersNames.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
+            console.log('DEBUG 7: Точките са изчислени. Потребители:', this.allUsersNames.length);
             this.fixBetToShow();
         })
     }
@@ -275,8 +283,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixTeams() {
+        console.log('DEBUG 8: Извличане на отбори...');
         this.supabaseService.getAllTeams().then((data: any) => {
-            this.allTeams = data.data;
+            console.log('DEBUG 9: Отборите са получени:', data.data?.length);
+            this.allTeams = data.data || [];
+            this.fixBetToShow();
         })
     }
 
@@ -286,6 +297,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     // }
 
     fixUsers() {
+        console.log('DEBUG: Извличане на потребители...');
         this.supabaseService.getUsers().then((data: any) => {
             this.allUsersNamesFromDB = data.data;
             this.cdr.detectChanges();
@@ -356,24 +368,36 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixBetToShow() {
-        this.betsToShow = this.allMatches.map((match: Match, index: number) => {
+        console.log('DEBUG 10: Изпълнение на fixBetToShow (подготовка за таблицата)...');
+        if (!this.allMatches || this.allMatches.length === 0) {
+            console.warn('DEBUG 11: Няма мачове (allMatches е празно). Спирам.');
+            this.betsToShow = [];
+            return;
+        }
+
+        // PrimeNG subheader grouping requires the data to be sorted by the grouped field.
+        const matchesToSort = [...this.allMatches];
+        matchesToSort.sort((a, b) => (a.myGroup || '').localeCompare(b.myGroup || ''));
+
+        this.betsToShow = matchesToSort.map((match: Match, index: number) => {
             let teamHome = this.allTeams.find((team: Team) => team.name_en === match.homeTeam.name);
             let teamAway = this.allTeams.find((team: Team) => team.name_en === match.awayTeam.name);
 
-            let newBet: Bet = {
+            const utcDate = match.utcDate ? new Date(match.utcDate) : null;
+
+            return {
                 row_index: index + 1,
-                match_day: new Date(match.utcDate).toLocaleDateString(this.getLng()),
-                match_time: new Date(match.utcDate).toLocaleTimeString(this.getLng()),
+                match_day: utcDate ? utcDate.toLocaleDateString(this.getLng()) : '',
+                match_time: utcDate ? utcDate.toLocaleTimeString(this.getLng(), { hour: '2-digit', minute: '2-digit' }) : '',
                 group: match.myGroup,
                 id: match.myId,
                 home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
                 away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",
                 score: match.score
-            }
-
-            return newBet;
+            };
         });
-        // this.loading = false;
+        
+        console.log('DEBUG 12: Финален масив betsToShow (това трябва да е в таблицата):', this.betsToShow);
         this.cdr.detectChanges();
     }
 

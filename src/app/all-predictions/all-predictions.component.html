@@ -3,9 +3,9 @@
     <!-- Add your template here -->
 
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
-        groupRowsBy="group" [scrollable]="true" scrollHeight="400rem"
+        groupRowsBy="group" [scrollable]="true" scrollHeight="70vh"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
-        [resizableColumns]="true" [expandedRowKeys]="expandedRows" size="small" styleClass="!p-0 !m-0">
+        [resizableColumns]="true" size="small" styleClass="!p-0 !m-0">
         <ng-template #caption>
             <div class="flex items-center justify-between ">
                 <span class="text-xl font-bold">{{ 'TABLE.TITLE' | translate }}</span>
