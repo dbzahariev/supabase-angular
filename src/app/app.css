@@ -14,11 +14,11 @@
     width: max-content;
     align-self: flex-start;
     height: 10vh;
-    color: white;
+    /* color: white; */
     box-sizing: border-box;
 }
 
 .element-bottom {
     background-color: rgb(249, 5, 5, 0.5);
-    color: white;
+    /* color: white; */
 }

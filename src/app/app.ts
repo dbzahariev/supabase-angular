@@ -28,8 +28,6 @@ export class App implements OnInit {
     let browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
     this.translateService.setDefaultLang(browserLang);
     this.translateService.use(browserLang);
-
-    // this.supabase.authChanges((_, session) => (this.session = session))
   }
 
   toggleDarkMode() {

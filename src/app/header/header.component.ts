@@ -33,6 +33,7 @@ export class HeaderComponent implements OnInit {
   ];
   themeColor!: string;
   themeTextColor: string = '#000000';
+  themeColorNew: string = '#ffffff';
 
   private translateService = inject(TranslateService);
   private router = inject(Router);
@@ -54,20 +55,8 @@ export class HeaderComponent implements OnInit {
     }
     this.translateService.use(lang);
     this.themeColor = this.themeService.getThemeColor();
-    this.themeTextColor = this.getContrastYIQ(this.themeColor);
-  }
-
-  private getContrastYIQ(hexcolor: string): string {
-    if (!hexcolor || hexcolor.length < 6) return '#000000';
-    hexcolor = hexcolor.replace("#", "");
-    if (hexcolor.length === 3) {
-      hexcolor = hexcolor.split('').map(char => char + char).join('');
-    }
-    const r = parseInt(hexcolor.substr(0, 2), 16);
-    const g = parseInt(hexcolor.substr(2, 2), 16);
-    const b = parseInt(hexcolor.substr(4, 2), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? '#000000' : '#ffffff';
+    this.fixTextColor()
+    // this.themeColorNew = localStorage.getItem('theme-color') || '#ffffff';
   }
 
   getColorName(color: ColorOption): string {
@@ -84,6 +73,16 @@ export class HeaderComponent implements OnInit {
     App.prototype.toggleDarkMode.call(this);
     this.isDark = !this.isDark;
     localStorage.setItem('dark-mode', this.isDark ? 'enabled' : 'disabled');
+    this.fixTextColor()
+  }
+
+  fixTextColor() {
+    let isDark = localStorage.getItem('dark-mode') === 'enabled';
+    if (isDark) {
+      this.themeTextColor = '#ffffff';
+    } else {
+      this.themeTextColor = '#000000';
+    }
   }
 
   onThemeColorChange(code: string) {

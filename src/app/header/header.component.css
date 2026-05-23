@@ -20,6 +20,11 @@ p-select {
 .foo-1 select {
     background-color: transparent;
     width: 100px;
+    color:var(--theme-text-color);
+}
+
+.foo-2 {
+    background-color: var(--theme-color);
 }
 
 .fl-color {

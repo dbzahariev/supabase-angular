@@ -19,7 +19,7 @@
             aria-label="{{ 'CHOSE_COLOR' | translate }}"
         >
             @for(color of colorOptions; track color.code){
-                <option [value]="color.code">{{ getColorName(color) }}</option>
+                <option class="foo-2" [value]="color.code">{{ getColorName(color) }}</option>
             }
         </select>
     </p-floatlabel>
