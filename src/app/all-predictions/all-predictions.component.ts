@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { TableModule } from "primeng/table";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
@@ -8,6 +8,7 @@ import { Button } from "primeng/button";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { dummyMatches, dummyTeams, dummyPredictions, dummyUsers } from '../dummy-data'
 // import { io, Socket } from 'socket.io-client';
@@ -136,6 +137,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private cdr = inject(ChangeDetectorRef);
     private translate = inject(TranslateService);
     private predictionsChannel: RealtimeChannel | null = null;
+    private destroyRef = inject(DestroyRef);
 
     constructor() {
         // this.socket = io('https://simple-node-proxy.onrender.com');
@@ -288,6 +290,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.fixTeams();
         this.getAllMatche();
         this.subscribeToTestPredictions();
+
+        // Нова логика: Слушаме за смяна на езика и рефрешваме таблицата
+        this.translate.onLangChange
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                this.fixBetToShow();
+            });
     }
 
     private getContrastYIQ(hexcolor: string): string {
@@ -365,7 +374,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getLng(): "bg-BG" | "en-US" {
-        return (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
+        const lang = this.translate.currentLang || localStorage.getItem('lang') || 'bg';
+        return lang === 'bg' ? 'bg-BG' : 'en-US';
     }
 
     private getPhaseMap(isToBeTranslate: boolean = true): Record<string, string> {
@@ -415,12 +425,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
             let phase = this.getPhaseMap(false)[match.stage];
             let phaseShow = `TABLE.${match.stage}`//this.getPhase(match.stage, match.group).show
-
             return {
                 row_index: index + 1,
                 match_day: utcDate ? utcDate.toLocaleDateString(this.getLng()) : '',
                 match_time: utcDate ? utcDate.toLocaleTimeString(this.getLng(), { hour: '2-digit', minute: '2-digit' }) : '',
-                group: match.myGroup,
+                group: this.getPhase(match.stage, match.group).group, // Ре-транслираме групата тук
                 stage: phaseShow,
                 phase: phase,
                 id: match.myId,
