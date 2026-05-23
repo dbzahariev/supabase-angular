@@ -3,7 +3,7 @@
     <!-- Add your template here -->
 
     <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
-        groupRowsBy="group" [scrollable]="true" scrollHeight="70vh"
+        groupRowsBy="phase" [scrollable]="true"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small" styleClass="!p-0 !m-0">
         <ng-template #caption>
@@ -22,8 +22,8 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="2" colspan="1" class="col_row_number" style="width: 0px;">{{ 'TABLE.ROW_INDEX' | translate
-                    }}</th>
+                <th rowspan="2" colspan="1" class="col_row_number" style="min-width: 50px;" pFrozenColumn>
+                    {{ 'TABLE.ROW_INDEX' | translate }}</th>
                 <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
                 <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
                 <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
@@ -51,14 +51,14 @@
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
                 <td [attr.colspan]="9 + (allUsersNames.length * 4)">
-                    <span class="font-bold ml-2">{{ product.group }}</span>
+                    <span class="font-bold ml-2">{{ product.stage }}</span>
                 </td>
             </tr>
         </ng-template>
 
         <ng-template #body let-product let-editing="editing">
             <tr>
-                <td class="col_row_number">{{ product?.row_index}}</td>
+                <td class="col_row_number" pFrozenColumn>{{ product?.row_index}}</td>
                 <td>{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group }}</td>

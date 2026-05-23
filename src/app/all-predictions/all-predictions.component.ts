@@ -347,9 +347,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return (localStorage.getItem('lang') ?? 'bg') === 'bg' ? 'bg-BG' : 'en-US';
     }
 
-    private getPhaseMap(): Record<string, string> {
+    private getPhaseMap(isToBeTranslate: boolean = true): Record<string, string> {
+        let groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE';
+
         return {
-            'GROUP_STAGE': this.translate.instant('TABLE.GROUPS_PHASE'),
+            'GROUP_STAGE': groupStage,
             'LAST_32': 'U',
             'LAST_16': 'V',
             'QUARTER_FINALS': 'W',
@@ -359,10 +361,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         };
     }
 
-    private getPhase(stage: string, groupKey: string): { group: string, stage: string } {
+    private getPhase(stage: string, groupKey: string): { group: string, stage: string, show: string} {
         let result = {
             stage: this.getPhaseMap()[stage],
             group: this.translate.instant('TABLE.' + (groupKey || stage)),
+            show:  stage === 'GROUP_STAGE' ? this.translate.instant('TABLE.GROUPS_PHASE'):this.translate.instant('TABLE.' + (groupKey || stage))
         }
         return result;
     }
@@ -384,19 +387,23 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             let teamAway = this.allTeams.find((team: Team) => team.name_en === match.awayTeam.name);
 
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
+            let phase = this.getPhaseMap(false)[match.stage];
+            let phaseShow = this.getPhase(match.stage, match.group).show
 
             return {
                 row_index: index + 1,
                 match_day: utcDate ? utcDate.toLocaleDateString(this.getLng()) : '',
                 match_time: utcDate ? utcDate.toLocaleTimeString(this.getLng(), { hour: '2-digit', minute: '2-digit' }) : '',
                 group: match.myGroup,
+                stage: phaseShow,
+                phase: phase,
                 id: match.myId,
                 home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
                 away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",
                 score: match.score
             };
         });
-        
+
         console.log('DEBUG 12: Финален масив betsToShow (това трябва да е в таблицата):', this.betsToShow);
         this.cdr.detectChanges();
     }
