@@ -20,7 +20,7 @@ import { ThemeService } from '../services/theme.service';
 export class HeaderComponent implements OnInit {
   tabs = [
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
-    { route: 'add-prediction', key: 'ADD_PREDICTION', icon: 'pi pi-plus-circle' },
+    // { route: 'add-prediction', key: 'ADD_PREDICTION', icon: 'pi pi-plus-circle' },
     { route: 'chat', key: 'CHAT', icon: 'pi pi-home' },
   ];
   isDark = localStorage.getItem('dark-mode') === 'enabled';
