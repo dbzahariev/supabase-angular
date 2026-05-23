@@ -48,7 +48,15 @@
             </tr> -->
         </ng-template>
 
-        <ng-template #expandedrow let-product let-editing="editing">
+        <ng-template #groupheader let-product>
+            <tr pRowGroupHeader>
+                <td [attr.colspan]="9 + (allUsersNames.length * 4)">
+                    <span class="font-bold ml-2">{{ product.group }}</span>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-product let-editing="editing">
             <tr>
                 <td class="col_row_number">{{ product?.row_index}}</td>
                 <td>{{ product?.match_day }}</td>
