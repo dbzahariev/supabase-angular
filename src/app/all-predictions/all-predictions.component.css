@@ -1,4 +1,79 @@
-/* Styles for AllPredictionsComponent */
-h2 {
-  color: #333;
+/* :host {
+    display: block;
+    width: 100%;
+} */
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
+    padding: 0.4rem 0.4rem;
+    font-size: 0.85rem;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-thead > tr > th {
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.table-container {
+    width: 100%;
+    overflow: auto; /* Позволява хоризонтално скролване и sticky да работи */
+}
+
+.my-table{
+    width: 100% !important;
+}
+
+/* Общи граници за колоните */
+:host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
+    border: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
+}
+
+.user-separator {
+    /* border-left: 2px solid  !important; */
+}
+
+/* Фиксиране на колоната с номерата (header и body клетки) */
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th.col_row_number,
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td.col_row_number {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 100 !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.15) !important;
+}
+
+:host ::ng-deep .p-datatable-table {
+    min-width: 100% !important;
+    width: fit-content !important; /* Таблицата се разпъва според съдържанието */
+    table-layout: auto !important; /* Позволява на колоните да определят ширината си спрямо съдържанието */
+}
+
+.score-cell {
+    min-width: 50px; /* Минимална ширина за клетките с резултати */
+}
+
+@media screen and (max-width: 768px) {
+    h2 {
+        font-size: 1.25rem;
+        margin: 0.5rem 0;
+    }
+
+    .hide-on-mobile {
+        display: none !important;
+    }
+
+    .col_date {
+        font-size: 0.75rem !important;
+        min-width: 60px !important;
+    }
+
+    .re_home_team {
+        min-width: 90px !important;
+        font-weight: bold;
+    }
+
+    /* Намаляваме инпутите за редактиране на мобилен */
+    :host ::ng-deep .p-inputtext {
+        padding: 0.25rem;
+        font-size: 0.8rem;
+    }
 }

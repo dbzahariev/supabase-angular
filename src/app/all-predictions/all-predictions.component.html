@@ -1,8 +1,5 @@
-<div>
-    <h2>All Predictions</h2>
-    <!-- Add your template here -->
-
-    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
+<div class="table-container" [style.--theme-color]="themeColor" [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
+    <p-table #dt [value]="betsToShow" class="my-table" showGridlines [loading]="loading" rowGroupMode="subheader"
         groupRowsBy="phase" [scrollable]="true"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small" styleClass="!p-0 !m-0">
@@ -22,21 +19,21 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="2" colspan="1" class="col_row_number" style="min-width: 50px;" pFrozenColumn>
+                <th rowspan="1" colspan="1" class="col_row_number" style="min-width: 50px;" pFrozenColumn>
                     {{ 'TABLE.ROW_INDEX' | translate }}</th>
-                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.DATE' | translate }}</th>
-                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.TIME' | translate }}</th>
-                <th rowspan="2" colspan="1" style="width: 0px;">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_home_team" style="width: 0px;">{{
+                <th rowspan="1" colspan="1" class="col_date" style="min-width: 80px;">{{ 'TABLE.DATE' | translate }}1</th>
+                <th rowspan="1" colspan="1" style="min-width: 80px;">{{ 'TABLE.TIME' | translate }}2</th>
+                <th rowspan="1" colspan="1" style="min-width: 100px;">{{ 'TABLE.GROUP' | translate }}3</th>
+                <th rowspan="1" colspan="1" class="re_home_team" style="min-width: 120px;">{{
                     'TABLE.HOME_TEAM' |
                     translate }}
                 </th>
-                <th rowspan="1" colspan="3" class="re_result" style="width: 0px;">{{ 'TABLE.RESULT' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_away_team" style="width: 0px;">{{ 'TABLE.AWAY_TEAM' |
+                <th rowspan="1" colspan="3" class="re_result user-separator" style="min-width: 150px;">{{ 'TABLE.RESULT' | translate }}</th>
+                <th rowspan="1" colspan="1" class="re_away_team" style="min-width: 120px;">{{ 'TABLE.AWAY_TEAM' |
                     translate }}
                 </th>
                 @for (user of allUsersNames; track user.id) {
-                <th rowspan="1" colspan="4">{{ getNameFromUser(user) }} ({{ user.total_points }})</th>
+                <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})</th>
                 }
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
                 </th> -->
@@ -50,8 +47,8 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td [attr.colspan]="9 + (allUsersNames.length * 4)">
-                    <span class="font-bold ml-2">{{ product.stage }}</span>
+                <td [attr.colspan]="9 + (allUsersNames.length * 4)" class="group-header-cell">
+                    <span class="font-bold ml-2">{{ product.stage | translate}}</span>
                 </td>
             </tr>
         </ng-template>
@@ -59,20 +56,20 @@
         <ng-template #body let-product let-editing="editing">
             <tr>
                 <td class="col_row_number" pFrozenColumn>{{ product?.row_index}}</td>
-                <td>{{ product?.match_day }}</td>
+                <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group }}</td>
-                <td class="re_home_team">{{ product?.home_team }}</td>
-                <td>{{product?.score?.fullTime.home}}</td>
-                <td>{{product?.score?.fullTime.away}}</td>
-                <td>{{product?.score?.winner ?( ('TABLE.'+ product?.score?.winner ) | translate):''}}</td>
+                <td class="re_home_team" alignFrozen="left">{{ product?.home_team }}</td>
+                <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
+                <td class="score-cell">{{product?.score?.fullTime.away}}</td>
+                <td class="score-cell">{{product?.score?.winner ?( ('TABLE.'+ product?.score?.winner ) | translate):''}}</td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
                 <td class="re_away_team">{{ product?.away_team }}</td>
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
-                <td (click)="product['edit_' + user.id + '_' + j] = true" class="cursor-pointer" style="min-width: 50px;">
+                <td (click)="product['edit_' + user.id + '_' + j] = true" [class.user-separator]="j === 0" class="cursor-pointer" style="min-width: 50px;">
                     @if (product['edit_' + user.id + '_' + j]) {
                         <input pInputText type="text" 
                             [ngModel]="getUserPredictionValue(user, product, j)" 

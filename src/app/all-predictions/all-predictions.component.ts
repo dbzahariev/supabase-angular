@@ -127,6 +127,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allMatches: Match[] = [];
     allTeams: Team[] = [];
     loading = false;
+    themeColor: string = '#ffffff';
+    themeTextColor: string = '#000000';
+    mixColor: string = '#ffffff';
+    mixPercent: string = '85%';
     // private socket: Socket;
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -276,10 +280,27 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.themeColor = localStorage.getItem('theme-color') || '#ffffff';
+        this.themeTextColor = this.getContrastYIQ(this.themeColor);
+        this.mixColor = this.themeTextColor === '#000000' ? '#ffffff' : '#000000';
+        this.mixPercent = this.themeTextColor === '#000000' ? '85%' : '40%';
         this.fixUsers();
         this.fixTeams();
         this.getAllMatche();
         this.subscribeToTestPredictions();
+    }
+
+    private getContrastYIQ(hexcolor: string): string {
+        if (!hexcolor || hexcolor.length < 6) return '#000000';
+        hexcolor = hexcolor.replace("#", "");
+        if (hexcolor.length === 3) {
+            hexcolor = hexcolor.split('').map(char => char + char).join('');
+        }
+        const r = parseInt(hexcolor.substr(0, 2), 16);
+        const g = parseInt(hexcolor.substr(2, 2), 16);
+        const b = parseInt(hexcolor.substr(4, 2), 16);
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return (yiq >= 128) ? '#000000' : '#ffffff';
     }
 
     fixTeams() {
@@ -361,11 +382,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         };
     }
 
-    private getPhase(stage: string, groupKey: string): { group: string, stage: string, show: string} {
+    private getPhase(stage: string, groupKey: string): { group: string, stage: string } {
+        let show = ""
+        if (stage === 'GROUP_STAGE') {
+            show = 'TABLE.GROUPS_PHASE'
+        } else {
+        }
         let result = {
             stage: this.getPhaseMap()[stage],
             group: this.translate.instant('TABLE.' + (groupKey || stage)),
-            show:  stage === 'GROUP_STAGE' ? this.translate.instant('TABLE.GROUPS_PHASE'):this.translate.instant('TABLE.' + (groupKey || stage))
+            // show: show,//stage === 'GROUP_STAGE' ? this.translate.instant('TABLE.GROUPS_PHASE') : this.translate.instant('TABLE.' + (groupKey || stage))
         }
         return result;
     }
@@ -380,7 +406,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
         // PrimeNG subheader grouping requires the data to be sorted by the grouped field.
         const matchesToSort = [...this.allMatches];
-        matchesToSort.sort((a, b) => (a.myGroup || '').localeCompare(b.myGroup || ''));
+        matchesToSort.sort((a, b) => (a.utcDate || '').localeCompare(b.utcDate || ''));
 
         this.betsToShow = matchesToSort.map((match: Match, index: number) => {
             let teamHome = this.allTeams.find((team: Team) => team.name_en === match.homeTeam.name);
@@ -388,7 +414,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
             let phase = this.getPhaseMap(false)[match.stage];
-            let phaseShow = this.getPhase(match.stage, match.group).show
+            let phaseShow = `TABLE.${match.stage}`//this.getPhase(match.stage, match.group).show
 
             return {
                 row_index: index + 1,
