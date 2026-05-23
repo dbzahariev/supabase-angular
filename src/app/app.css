@@ -1,4 +1,24 @@
-* {
+.blue-container {
+    width: 100vw;
+    height: 100vh;
+}
+
+.scroll-wrapper {
     display: flex;
-    width: 786px;
+    flex-direction: column;
+    width: 810px;
+    height: 300%;
+}
+
+.element-top {
+    width: max-content;
+    align-self: flex-start;
+    height: 10vh;
+    color: white;
+    box-sizing: border-box;
+}
+
+.element-bottom {
+    background-color: rgb(249, 5, 5, 0.5);
+    color: white;
 }

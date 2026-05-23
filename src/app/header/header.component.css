@@ -1,5 +1,9 @@
 @import "primeicons/primeicons.css";
 
+.header-container {
+    min-width: 100px;
+}
+
 .pi-check {
     color: var(--p-primary-400);
 }
@@ -11,6 +15,11 @@
 p-select {
     border-color: var(--p-primary-800) !important;
     width: 100% !important;
+}
+
+.foo-1 select {
+    background-color: transparent;
+    width: 100px;
 }
 
 .fl-color {
@@ -43,4 +52,5 @@ p-select {
     border: solid 1px black;
     border-radius: 4px;
     padding: 0.5rem;
+    color: black;
 }

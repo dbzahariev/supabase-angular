@@ -1,10 +1,8 @@
 .chat-container {
-    /* max-width: 400px; */
     margin: 0 auto;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 16px;
-    /* background: #fafafa; */
 }
 
 .chat-users {

@@ -32,6 +32,7 @@ export class HeaderComponent implements OnInit {
     { en: 'Yellow', bg: 'Жълто', code: 'yellow' }
   ];
   themeColor!: string;
+  themeTextColor: string = '#000000';
 
   private translateService = inject(TranslateService);
   private router = inject(Router);
@@ -53,6 +54,20 @@ export class HeaderComponent implements OnInit {
     }
     this.translateService.use(lang);
     this.themeColor = this.themeService.getThemeColor();
+    this.themeTextColor = this.getContrastYIQ(this.themeColor);
+  }
+
+  private getContrastYIQ(hexcolor: string): string {
+    if (!hexcolor || hexcolor.length < 6) return '#000000';
+    hexcolor = hexcolor.replace("#", "");
+    if (hexcolor.length === 3) {
+      hexcolor = hexcolor.split('').map(char => char + char).join('');
+    }
+    const r = parseInt(hexcolor.substr(0, 2), 16);
+    const g = parseInt(hexcolor.substr(2, 2), 16);
+    const b = parseInt(hexcolor.substr(4, 2), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#000000' : '#ffffff';
   }
 
   getColorName(color: ColorOption): string {

@@ -1,8 +1,3 @@
-/* :host {
-    display: block;
-    width: 100%;
-} */
-
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
     padding: 0.4rem 0.4rem;
     font-size: 0.85rem;
@@ -15,24 +10,17 @@
 
 .table-container {
     width: 100%;
-    overflow: auto; /* Позволява хоризонтално скролване и sticky да работи */
 }
 
 .my-table{
     width: 100% !important;
 }
 
-/* Общи граници за колоните */
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
     border: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
 }
 
-.user-separator {
-    /* border-left: 2px solid  !important; */
-}
-
-/* Фиксиране на колоната с номерата (header и body клетки) */
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th.col_row_number,
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td.col_row_number {
     position: sticky !important;
@@ -43,12 +31,12 @@
 
 :host ::ng-deep .p-datatable-table {
     min-width: 100% !important;
-    width: fit-content !important; /* Таблицата се разпъва според съдържанието */
-    table-layout: auto !important; /* Позволява на колоните да определят ширината си спрямо съдържанието */
+    width: fit-content !important;
+    table-layout: auto !important;
 }
 
 .score-cell {
-    min-width: 50px; /* Минимална ширина за клетките с резултати */
+    min-width: 50px; 
 }
 
 @media screen and (max-width: 768px) {
@@ -71,7 +59,6 @@
         font-weight: bold;
     }
 
-    /* Намаляваме инпутите за редактиране на мобилен */
     :host ::ng-deep .p-inputtext {
         padding: 0.25rem;
         font-size: 0.8rem;

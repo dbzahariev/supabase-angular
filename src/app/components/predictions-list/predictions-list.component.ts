@@ -59,14 +59,14 @@ import { PredictionWithUser } from '../../models/match.model';
     }
     
     th {
-      background-color: #f4f4f4;
+      // background-color: #f4f4f4;
       font-weight: bold;
     }
     
     .error {
       color: red;
       padding: 10px;
-      background-color: #ffe6e6;
+      // background-color: #ffe6e6;
       border-radius: 4px;
     }
   `]

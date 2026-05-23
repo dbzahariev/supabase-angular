@@ -1,4 +1,4 @@
-<div class="header-container">
+<div class="header-container" [style.--theme-color]="themeColor" [style.--theme-text-color]="themeTextColor">
     <p-button
         variant="outlined"
         [raised]="true"
@@ -9,7 +9,7 @@
         <i [class]="`pi pi-${isDark ? 'moon' : 'sun'}`"></i>
     </p-button>
 
-    <p-floatlabel class="fl-color theme-color-select" variant="in">
+    <p-floatlabel class="fl-color theme-color-select foo-1" variant="in">
         <label for="themeColorSelect" class="sr-only">{{ 'CHOSE_COLOR' | translate }}</label>
         <select
             id="themeColorSelect"
