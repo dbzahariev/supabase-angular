@@ -8,6 +8,8 @@ import { Button } from "primeng/button";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { FormsModule } from '@angular/forms';
+import { dummyMatches, dummyTeams, dummyPredictions, dummyUsers } from '../dummy-data'
 // import { io, Socket } from 'socket.io-client';
 
 interface Bet {
@@ -25,7 +27,7 @@ interface User {
     id: number,
     name_bg: string,
     name_en: string,
-    total_points: number;
+    total_points?: number;
 }
 
 interface Team {
@@ -35,7 +37,7 @@ interface Team {
 }
 
 interface Prediction {
-    points: number;
+    points?: number;
     id: number;
     utc_date: string;
     home_ft: number;
@@ -46,7 +48,7 @@ interface Prediction {
     users: User;
     matches: {
         id: number;
-        group_name: string;
+        group_name?: string;
         away_team_id: number;
         home_team_id: number;
     };
@@ -114,7 +116,7 @@ interface Match {
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, TableModule]
+    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, TableModule, FormsModule]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     betsToShow: Bet[] = [];
@@ -124,7 +126,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allPredictions: Prediction[] = [];
     allMatches: Match[] = [];
     allTeams: Team[] = [];
-    loading = true;
+    loading = false;
     // private socket: Socket;
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -143,7 +145,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getAllMatche() {
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
-            console.log('Matches data from BE:', data);
             this.fixAllMatches(data)
         });
     }
@@ -212,28 +213,28 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     fixPredictions() {
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
             this.allPredictions = data.data;
+
+            // Reset points for everyone before recalculating
+            this.allUsersNames = this.allUsersNamesFromDB.map(u => ({ ...u, total_points: 0 }));
+
             if (this.allPredictions) {
-                this.allUsersNamesFromDB.forEach((el) => {
-                    let predictUser = { ...el }
-                    let allUserNamesIndex = this.allUsersNames.findIndex(user => user.id === predictUser.id)
-                    if (allUserNamesIndex === -1) {
-                        this.allUsersNames.push({ ...predictUser, total_points: 0 })
-                    }
-                })
                 this.allPredictions = this.allPredictions.map((prediction: Prediction) => {
                     let newPrediction: Prediction = { ...prediction }
                     let selectedMatch = this.allMatches.find(match => match.myId === prediction.matches.id)
                     newPrediction.points = this.getPointFromMatch(selectedMatch, prediction)
+
                     let userFromDBIndex = this.allUsersNames.findIndex(user => user.id === prediction.users.id)
                     if (userFromDBIndex !== -1) {
-                        if (this.allUsersNames[userFromDBIndex].total_points !== undefined && newPrediction.points >= 0) {
-                            this.allUsersNames[userFromDBIndex].total_points += newPrediction.points;
+                        if (newPrediction.points >= 0) {
+                            this.allUsersNames[userFromDBIndex].total_points! += newPrediction.points;
                         }
                     }
-                    this.allUsersNames = this.allUsersNames.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
                     return newPrediction
                 })
             }
+
+            // Sort once at the end for better performance
+            this.allUsersNames.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
             this.fixBetToShow();
         })
     }
@@ -241,9 +242,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     getPointFromMatch(bet: Match | undefined, prediction: Prediction): number {
         if (!bet) {
             return -2;
-        }
-        if (bet.score.fullTime.home === null) {
-            return -3;
         }
         if (bet.score.fullTime.home === null || bet.score.fullTime.away === null) {
             return -1;
@@ -280,7 +278,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.supabaseService.getAllTeams().then((data: any) => {
             this.allTeams = data.data;
         })
-
     }
 
     // getPointsFromUser(user: User): number {
@@ -293,6 +290,45 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             this.allUsersNamesFromDB = data.data;
             this.cdr.detectChanges();
         })
+    }
+
+    async changePrediction(user: User, bet: Bet, columnIndex: number, newValue: string) {
+        if (columnIndex > 1) return; // Only Home (0) and Away (1) scores are editable
+        let selectedMatch = this.allMatches.find(match => match.myId === bet.id)
+
+        const score = parseInt(newValue);
+        if (isNaN(score)) return;
+
+        let prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id) as any;
+
+        const isNew = !prediction;
+        const payload: any = {
+            user_id: user.id,
+            match_id: bet.id,
+            match_group: selectedMatch?.group,
+            home_ft: prediction ? prediction.home_ft : 0,
+            away_ft: prediction ? prediction.away_ft : 0,
+            home_pt: prediction ? prediction.home_pt : 0,
+            away_pt: prediction ? prediction.away_pt : 0,
+            winner: prediction ? prediction.winner : 'DRAW',
+        };
+
+        if (columnIndex === 0) payload.home_ft = score;
+        if (columnIndex === 1) payload.away_ft = score;
+
+        // Automatically determine winner based on scores
+        if (payload.home_ft > payload.away_ft) payload.winner = 'HOME_TEAM';
+        else if (payload.away_ft > payload.home_ft) payload.winner = 'AWAY_TEAM';
+        else payload.winner = 'DRAW';
+
+        const { data, error } = isNew
+            ? await this.supabaseService.addPrediction(payload)
+            : await this.supabaseService.updatePrediction(prediction.id, payload);
+
+        if (!error) {
+            // Refresh local state
+            this.fixPredictions();
+        }
     }
 
     getLng(): "bg-BG" | "en-US" {
@@ -337,7 +373,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             return newBet;
         });
-        this.loading = false;
+        // this.loading = false;
         this.cdr.detectChanges();
     }
 
@@ -375,7 +411,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
         if (columnIndex === 3) {
             // return selectedPredict?.points === -1 ? "" : selectedPredict?.points.toString() || ""
-            return selectedPredict.points.toString() || ""
+            return selectedPredict.points?.toString() || ""
         }
         return "bar";
     }
