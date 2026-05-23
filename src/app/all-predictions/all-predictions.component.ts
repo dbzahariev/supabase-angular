@@ -129,6 +129,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allTeams: Team[] = [];
     loading = false;
     themeColor: string = '#ffffff';
+    themeBackground:string = '#ffffff';
     themeTextColor: string = '#000000';
     mixColor: string = '#ffffff';
     mixPercent: string = '85%';
@@ -150,15 +151,12 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getAllMatche() {
-        console.log('DEBUG 1: Започва извличане на мачове от Backend...');
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
-            console.log('DEBUG 2: Данни за мачове получени:', data);
             this.fixAllMatches(data)
         });
     }
 
     fixAllMatches(data: any) {
-        console.log('DEBUG 3: Обработка на всички мачове...');
         if (!data || !data.matches) {
             this.allMatches = [];
         } else {
@@ -197,7 +195,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             });
         }
 
-        console.log('DEBUG 4: Мачовете са подготвени. Брой:', this.allMatches.length);
         this.fixPredictions();
         // this.getAllMatche()
     }
@@ -222,9 +219,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixPredictions() {
-        console.log('DEBUG 5: Извличане на прогнози от Supabase View...');
         this.supabaseService.getPredictionsWithUsers().then((data: any) => {
-            console.log('DEBUG 6: Данни от View-то:', data);
             this.allPredictions = data.data;
 
             // Reset points for everyone before recalculating
@@ -248,7 +243,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             // Sort once at the end for better performance
             this.allUsersNames.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
-            console.log('DEBUG 7: Точките са изчислени. Потребители:', this.allUsersNames.length);
             this.fixBetToShow();
         })
     }
@@ -284,6 +278,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.themeColor = localStorage.getItem('theme-color') || '#ffffff';
         this.themeTextColor = this.getContrastYIQ(this.themeColor);
+        this.themeBackground = (localStorage.getItem('dark-mode') || 'disabled') === 'enabled' ? '#000000' : '#ffffff';
         this.mixColor = this.themeTextColor === '#000000' ? '#ffffff' : '#000000';
         this.mixPercent = this.themeTextColor === '#000000' ? '85%' : '40%';
         this.fixUsers();
@@ -313,9 +308,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixTeams() {
-        console.log('DEBUG 8: Извличане на отбори...');
         this.supabaseService.getAllTeams().then((data: any) => {
-            console.log('DEBUG 9: Отборите са получени:', data.data?.length);
             this.allTeams = data.data || [];
             this.fixBetToShow();
         })
@@ -327,7 +320,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     // }
 
     fixUsers() {
-        console.log('DEBUG: Извличане на потребители...');
         this.supabaseService.getUsers().then((data: any) => {
             this.allUsersNamesFromDB = data.data;
             this.cdr.detectChanges();
@@ -407,9 +399,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixBetToShow() {
-        console.log('DEBUG 10: Изпълнение на fixBetToShow (подготовка за таблицата)...');
         if (!this.allMatches || this.allMatches.length === 0) {
-            console.warn('DEBUG 11: Няма мачове (allMatches е празно). Спирам.');
             this.betsToShow = [];
             return;
         }
@@ -439,7 +429,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             };
         });
 
-        console.log('DEBUG 12: Финален масив betsToShow (това трябва да е в таблицата):', this.betsToShow);
         this.cdr.detectChanges();
     }
 

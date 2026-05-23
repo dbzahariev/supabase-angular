@@ -16,6 +16,10 @@
     width: 100% !important;
 }
 
+.p-datatable {
+    background-color: var(--theme-background-color) !important;
+}
+
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
     border: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
@@ -39,6 +43,12 @@
     min-width: 50px; 
 }
 
+.group-header-cell{
+    position: sticky;
+    display: inline-block;
+    left: 0px;
+}
+
 @media screen and (max-width: 768px) {
     h2 {
         font-size: 1.25rem;
@@ -56,7 +66,6 @@
 
     .re_home_team {
         min-width: 90px !important;
-        font-weight: bold;
     }
 
     :host ::ng-deep .p-inputtext {
