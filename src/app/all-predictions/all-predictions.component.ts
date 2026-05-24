@@ -11,6 +11,7 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { dummyMatches, dummyTeams, dummyPredictions, dummyUsers } from '../dummy-data'
+import { CommonModule } from '@angular/common';
 // import { io, Socket } from 'socket.io-client';
 
 interface Bet {
@@ -117,7 +118,7 @@ interface Match {
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, TableModule, FormsModule]
+    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, FormsModule, CommonModule]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     betsToShow: Bet[] = [];
@@ -128,7 +129,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allTeams: Team[] = [];
     loading = false;
     themeColor: string = '#ffffff';
-    themeBackground:string = '#ffffff';
+    themeBackground: string = '#ffffff';
     themeTextColor: string = '#000000';
     mixColor: string = '#ffffff';
     mixPercent: string = '85%';
@@ -147,6 +148,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         //         this.fixAllMatches(data)
         //     });
         // }
+    }
+
+    isShowRow(product: any) {
+        return !JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]').includes(product.phase)
     }
 
     ngOnInit(): void {
@@ -468,5 +473,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return selectedPredict.points?.toString() || ""
         }
         return "bar";
+    }
+
+    togleGroup(pro: any) {
+        let myExpandHiddenGroup = JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]');
+        let oldHiddes = [...myExpandHiddenGroup]
+        let newHiiden = oldHiddes.includes(pro.phase) ? oldHiddes.filter(x => x !== pro.phase) : [...oldHiddes, pro.phase]
+        localStorage.setItem('hiddenGrops', JSON.stringify(newHiiden));
+        this.cdr.detectChanges();
     }
 }
