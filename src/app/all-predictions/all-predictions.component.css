@@ -17,7 +17,11 @@
 }
 
 .p-datatable {
-    background-color: var(--theme-background-color) !important;
+    background-color: var(--p-datatable-header-background) !important;
+}
+
+.group-header-cell {
+    width: 150px;
 }
 
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,

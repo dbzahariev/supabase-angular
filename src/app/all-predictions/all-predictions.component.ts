@@ -121,7 +121,6 @@ interface Match {
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     betsToShow: Bet[] = [];
-    expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
     allUsersNamesFromDB: User[] = [];
     allUsersNames: User[] = [];
     allPredictions: Prediction[] = [];
@@ -148,6 +147,25 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         //         this.fixAllMatches(data)
         //     });
         // }
+    }
+
+    ngOnInit(): void {
+        this.themeColor = localStorage.getItem('theme-color') || '#ffffff';
+        this.themeTextColor = this.getContrastYIQ(this.themeColor);
+        this.themeBackground = (localStorage.getItem('dark-mode') || 'disabled') === 'enabled' ? '#000000' : '#ffffff';
+        this.mixColor = this.themeTextColor === '#000000' ? '#ffffff' : '#000000';
+        this.mixPercent = this.themeTextColor === '#000000' ? '85%' : '40%';
+        this.fixUsers();
+        this.fixTeams();
+        this.getAllMatche();
+        this.subscribeToTestPredictions();
+
+        // Нова логика: Слушаме за смяна на езика и рефрешваме таблицата
+        this.translate.onLangChange
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                this.fixBetToShow();
+            });
     }
 
     getAllMatche() {
@@ -273,25 +291,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return 1;
         }
         return 0;
-    }
-
-    ngOnInit(): void {
-        this.themeColor = localStorage.getItem('theme-color') || '#ffffff';
-        this.themeTextColor = this.getContrastYIQ(this.themeColor);
-        this.themeBackground = (localStorage.getItem('dark-mode') || 'disabled') === 'enabled' ? '#000000' : '#ffffff';
-        this.mixColor = this.themeTextColor === '#000000' ? '#ffffff' : '#000000';
-        this.mixPercent = this.themeTextColor === '#000000' ? '85%' : '40%';
-        this.fixUsers();
-        this.fixTeams();
-        this.getAllMatche();
-        this.subscribeToTestPredictions();
-
-        // Нова логика: Слушаме за смяна на езика и рефрешваме таблицата
-        this.translate.onLangChange
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => {
-                this.fixBetToShow();
-            });
     }
 
     private getContrastYIQ(hexcolor: string): string {
