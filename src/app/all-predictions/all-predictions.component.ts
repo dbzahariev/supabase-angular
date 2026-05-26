@@ -187,28 +187,28 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 let myGroup = this.getPhase(match.stage, match.group);
 
-                if (match.id === 537327) {
-                    match.score.duration = "FULL_TIME";
-                    match.score.fullTime.home = 3;
-                    match.score.fullTime.away = 4;
-                    match.score.halfTime.home = 1;
-                    match.score.halfTime.away = 2;
-                    match.score.winner = "AWAY_TEAM";
-                } else if (match.id === 537328) {
-                    match.score.duration = "FULL_TIME";
-                    match.score.fullTime.home = 4;
-                    match.score.fullTime.away = 3;
-                    match.score.halfTime.home = 2;
-                    match.score.halfTime.away = 1;
-                    match.score.winner = "HOME_TEAM";
-                } else if (match.id === 537333) {
-                    match.score.duration = "FULL_TIME";
-                    match.score.fullTime.home = 2;
-                    match.score.fullTime.away = 2;
-                    match.score.halfTime.home = 1;
-                    match.score.halfTime.away = 1;
-                    match.score.winner = "DRAW";
-                }
+                // if (match.id === 537327) {
+                //     match.score.duration = "FULL_TIME";
+                //     match.score.fullTime.home = 3;
+                //     match.score.fullTime.away = 4;
+                //     match.score.halfTime.home = 1;
+                //     match.score.halfTime.away = 2;
+                //     match.score.winner = "AWAY_TEAM";
+                // } else if (match.id === 537328) {
+                //     match.score.duration = "FULL_TIME";
+                //     match.score.fullTime.home = 4;
+                //     match.score.fullTime.away = 3;
+                //     match.score.halfTime.home = 2;
+                //     match.score.halfTime.away = 1;
+                //     match.score.winner = "HOME_TEAM";
+                // } else if (match.id === 537333) {
+                //     match.score.duration = "FULL_TIME";
+                //     match.score.fullTime.home = 2;
+                //     match.score.fullTime.away = 2;
+                //     match.score.halfTime.home = 1;
+                //     match.score.halfTime.away = 1;
+                //     match.score.winner = "DRAW";
+                // }
 
                 return {
                     ...match,
@@ -457,8 +457,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return this.returnTranslateFromWin(selectedPredict.winner)
         }
         if (columnIndex === 3) {
-            // return selectedPredict?.points === -1 ? "" : selectedPredict?.points.toString() || ""
-            return selectedPredict.points?.toString() || ""
+            let result = selectedPredict.points?.toString() || "-1"
+            if (result === "-1") {
+                result = ""
+            }
+            return result
         }
         return "bar";
     }
