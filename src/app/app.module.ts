@@ -21,6 +21,7 @@ import { HeaderComponent } from './header/header.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AppRoutingModule } from './app-routing.module';
+import { RulesComponent } from './rules/rules';
 
 const mainColor = localStorage.getItem('theme-color') || 'green'
 
@@ -57,7 +58,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @NgModule({
     declarations: [
-        App
+        App,
+        RulesComponent
     ],
     imports: [
         BrowserModule,

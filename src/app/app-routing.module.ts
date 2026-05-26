@@ -6,6 +6,7 @@ import { MatchImportComponent } from './components/match-import/match-import.com
 import { TeamImportComponent } from './components/team-import/team-import.component';
 import { AllMatchesComponent } from './all-matches/all-matches.component';
 import { AllPredictionsComponent } from './all-predictions/all-predictions.component';
+import { RulesComponent } from './rules/rules';
 
 const routes: Routes = [
     {path: 'add-prediction', component: AddPrediction},
@@ -14,6 +15,7 @@ const routes: Routes = [
     { path: 'import-matches', component: MatchImportComponent },
     { path: 'import-teams', component: TeamImportComponent },
     { path: '', component: AllPredictionsComponent },
+    { path: 'rules', component: RulesComponent },
 ];
 
 @NgModule({

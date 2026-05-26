@@ -1,0 +1,8 @@
+* {
+    background-color: var(--p-content-background) !important;
+}
+
+.foo {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
