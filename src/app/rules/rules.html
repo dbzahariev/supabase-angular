@@ -1,234 +1,244 @@
-<div class="max-w-5xl foo mx-auto p-6 md:p-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-700">
+<div class="w-full overflow-hidden">
+    <div class="max-w-5xl foo mx-auto p-6 md:p-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-700">
+        <!-- HEADER -->
+        <div class="text-center mb-10">
 
-    <!-- HEADER -->
-    <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-yellow-400 mb-3">
+                ⚽ {{ t.title }}
+            </h2>
 
-        <h2 class="text-3xl md:text-4xl font-extrabold text-yellow-400 mb-3">
-            ⚽ {{ t.title }}
-        </h2>
-
-        <p class="text-sm md:text-base">
-            {{ t.subtitle }}
-        </p>
-
-    </div>
-
-    <!-- DEADLINE -->
-    <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
-
-        <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
-            ⏰ {{ t.deadlineTitle }}
-        </h3>
-
-        <p class="leading-7 mb-4">
-            {{ t.deadlineText }}
-
-            <span class="font-bold text-yellow-400">
-                {{ t.deadlineHighlight }}
-            </span>.
-        </p>
-
-        <div class="bg-orange-500/20 border border-orange-400 text-orange-300 rounded-xl p-4 mb-4">
-            ⚠️ {{ t.warning }}
-        </div>
-
-        <p class="leading-7 mb-4">
-            {{ t.monitoring }}
-        </p>
-
-        <div class="rounded-xl p-4 border border-slate-700 mb-4">
-
-            <p class="font-semibold text-slate-500 mb-3">
-                {{ t.submitTitle }}
+            <p class="text-sm md:text-base">
+                {{ t.subtitle }}
             </p>
 
-            <ul class="space-y-2 text-slate-500">
-
-                <li class="flex items-center gap-2">
-                    ✅ {{ t.submitTable }}
-                </li>
-
-                <li class="flex items-center gap-2">
-                    📧 {{ t.submitEmail }}
-
-                    <a
-                        href="mailto:ramsess90@gmail.com"
-                        class="text-sky-400 hover:text-sky-300 underline transition"
-                    >
-                        ramsess90@gmail.com
-                    </a>
-
-                </li>
-
-            </ul>
-
         </div>
 
-        <p class="text-slate-500 leading-7">
+        <!-- DEADLINE -->
+        <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
 
-            {{ t.editText }}
+            <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
+                ⏰ {{ t.deadlineTitle }}
+            </h3>
 
-            <span class="font-bold text-yellow-400">
-                {{ t.editHighlight }}
-            </span>.
+            <p class="leading-7 mb-4">
+                {{ t.deadlineText }}
 
-        </p>
+                <span class="font-bold text-yellow-400">
+                    {{ t.deadlineHighlight }}
+                </span>.
+            </p>
 
-    </div>
+            <div class="bg-orange-500/20 border border-orange-400 text-orange-300 rounded-xl p-4 mb-4">
+                ⚠️ {{ t.warning }}
+            </div>
 
-    <!-- POINTS -->
-    <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
+            <p class="leading-7 mb-4">
+                {{ t.monitoring }}
+            </p>
 
-        <h3 class="text-xl font-bold text-emerald-400 mb-5 flex items-center gap-2">
-            🏆 {{ t.pointsTitle }}
-        </h3>
+            <div class="rounded-xl p-4 border border-slate-700 mb-4">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 hover:border-emerald-400 transition">
-
-                <div class="text-5xl font-black text-emerald-400 mb-3">
-                    3
-                </div>
-
-                <p class="text-lg font-semibold mb-1">
-                    {{ t.points }}
+                <p class="font-semibold text-slate-500 mb-3">
+                    {{ t.submitTitle }}
                 </p>
 
-                <p class="text-slate-500">
-                    {{ t.exactScore }}
-                </p>
+                <ul class="space-y-2 text-slate-500">
+
+                    <li class="flex items-center gap-2">
+                        ✅ {{ t.submitTable }}
+                    </li>
+
+                    <li class="flex items-center gap-2">
+                        📧 {{ t.submitEmail }}
+
+                        <a href="mailto:ramsess90@gmail.com"
+                            class="text-sky-400 hover:text-sky-300 underline transition">
+                            ramsess90@gmail.com
+                        </a>
+
+                    </li>
+
+                </ul>
 
             </div>
 
-            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 hover:border-yellow-400 transition">
+            <p class="text-slate-500 leading-7">
 
-                <div class="text-5xl font-black text-yellow-400 mb-3">
-                    1
+                {{ t.editText }}
+
+                <span class="font-bold text-yellow-400">
+                    {{ t.editHighlight }}
+                </span>.
+
+            </p>
+
+        </div>
+
+        <!-- POINTS -->
+        <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
+
+            <h3 class="text-xl font-bold text-emerald-400 mb-5 flex items-center gap-2">
+                🏆 {{ t.pointsTitle }}
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 hover:border-emerald-400 transition">
+
+                    <div class="text-5xl font-black text-emerald-400 mb-3">
+                        3
+                    </div>
+
+                    <p class="text-lg font-semibold mb-1">
+                        {{ t.points }}
+                    </p>
+
+                    <p class="text-slate-500">
+                        {{ t.exactScore }}
+                    </p>
+
                 </div>
 
-                <p class="text-lg font-semibold mb-1">
-                    {{ t.point }}
-                </p>
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-700 hover:border-yellow-400 transition">
 
-                <p class="text-slate-500">
-                    {{ t.correctOutcome }}
-                </p>
+                    <div class="text-5xl font-black text-yellow-400 mb-3">
+                        1
+                    </div>
+
+                    <p class="text-lg font-semibold mb-1">
+                        {{ t.point }}
+                    </p>
+
+                    <p class="text-slate-500">
+                        {{ t.correctOutcome }}
+                    </p>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+        <!-- COEFFICIENTS -->
+        <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
 
-    <!-- COEFFICIENTS -->
-    <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-pink-400 mb-5 flex items-center gap-2">
+                📈 {{ t.coefficientsTitle }}
+            </h3>
 
-        <h3 class="text-xl font-bold text-pink-400 mb-5 flex items-center gap-2">
-            📈 {{ t.coefficientsTitle }}
-        </h3>
+            <div class="overflow-x-auto rounded-2xl border border-slate-700">
 
-        <div class="overflow-x-auto rounded-2xl border border-slate-700">
+                <table class="w-full text-sm md:text-base">
 
-            <table class="w-full text-sm md:text-base">
+                    <thead class="bg-slate-900">
 
-                <thead class="bg-slate-900">
+                        <tr>
 
-                    <tr>
+                            <th class="p-4 text-left font-bold">
+                                {{ t.stage }}
+                            </th>
 
-                        <th class="p-4 text-left font-bold">
-                            {{ t.stage }}
-                        </th>
+                            <th class="p-4 text-center font-bold">
+                                {{ t.multiplier }}
+                            </th>
 
-                        <th class="p-4 text-center font-bold">
-                            {{ t.multiplier }}
-                        </th>
+                        </tr>
 
-                    </tr>
+                    </thead>
 
-                </thead>
+                    <tbody class="divide-y divide-slate-700">
 
-                <tbody class="divide-y divide-slate-700">
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                    <tr class="hover:bg-slate-700/40 transition">
+                            <td class="p-4 text-slate-500">
+                                {{ t.groupStage }}
+                            </td>
 
-                        <td class="p-4 text-slate-500">
-                            {{ t.groupStage }}
-                        </td>
+                            <td class="p-4 text-center font-bold">
+                                x1
+                            </td>
 
-                        <td class="p-4 text-center font-bold">
-                            x1
-                        </td>
+                        </tr>
 
-                    </tr>
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                    <tr class="hover:bg-slate-700/40 transition">
+                            <td class="p-4 text-slate-500">
+                                {{ t.roundOf32 }}
+                            </td>
 
-                        <td class="p-4 text-slate-500">
-                            {{ t.roundOf16 }}
-                        </td>
+                            <td class="p-4 text-center font-bold">
+                                x1.5
+                            </td>
 
-                        <td class="p-4 text-center font-bold">
-                            x1.5
-                        </td>
+                        </tr>
 
-                    </tr>
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                    <tr class="hover:bg-slate-700/40 transition">
+                            <td class="p-4 text-slate-500">
+                                {{ t.roundOf16 }}
+                            </td>
 
-                        <td class="p-4 text-slate-500">
-                            {{ t.quarterFinals }}
-                        </td>
+                            <td class="p-4 text-center font-bold">
+                                x1.5
+                            </td>
 
-                        <td class="p-4 text-center font-bold">
-                            x2
-                        </td>
+                        </tr>
 
-                    </tr>
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                    <tr class="hover:bg-slate-700/40 transition">
+                            <td class="p-4 text-slate-500">
+                                {{ t.quarterFinals }}
+                            </td>
 
-                        <td class="p-4 text-slate-500">
-                            {{ t.semiFinals }}
-                        </td>
+                            <td class="p-4 text-center font-bold">
+                                x2
+                            </td>
 
-                        <td class="p-4 text-center font-bold">
-                            x2.5
-                        </td>
+                        </tr>
 
-                    </tr>
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                    <tr class="hover:bg-slate-700/40 transition">
+                            <td class="p-4 text-slate-500">
+                                {{ t.semiFinals }}
+                            </td>
 
-                        <td class="p-4 text-green-500">
-                            {{ t.final }}
-                        </td>
+                            <td class="p-4 text-center font-bold">
+                                x2.5
+                            </td>
 
-                        <td class="p-4 text-center font-bold text-yellow-400 text-lg font-extrabold">
-                            x3
-                        </td>
+                        </tr>
 
-                    </tr>
+                        <tr class="hover:bg-slate-700/40 transition">
 
-                </tbody>
+                            <td class="p-4 text-green-500">
+                                {{ t.final }}
+                            </td>
 
-            </table>
+                            <td class="p-4 text-center font-bold text-yellow-400 text-lg font-extrabold">
+                                x3
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- FUN -->
+        <div class="bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl p-6 text-center shadow-lg">
+
+            <p class="text-2xl md:text-3xl font-black">
+                🎉 {{ t.funTitle }}
+            </p>
+
+            <p class="text-xl md:text-2xl mt-2 font-bold">
+                {{ t.funText }}
+            </p>
 
         </div>
 
     </div>
-
-    <!-- FUN -->
-    <div class="bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl p-6 text-center shadow-lg">
-
-        <p class="text-2xl md:text-3xl font-black">
-            🎉 {{ t.funTitle }}
-        </p>
-
-        <p class="text-xl md:text-2xl mt-2 font-bold">
-            {{ t.funText }}
-        </p>
-
-    </div>
-
-</div>

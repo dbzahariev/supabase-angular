@@ -21,7 +21,7 @@ export class RulesComponent {
       monitoring: 'Димитър следи за спазването на правилата в последните 5 минути преди началото на всяка среща.',
 
       submitTitle: 'Прогнозите могат да се подават:',
-      submitTable: 'Директно в таблицата',
+      submitTable: 'Директно в таблицата в таб "Всички прогнози"',
       submitEmail: 'По имейл:',
 
       editText: 'Промени по прогнозите също се приемат до',
@@ -40,9 +40,10 @@ export class RulesComponent {
       multiplier: 'Коефициент',
 
       groupStage: 'Групова фаза',
-      roundOf16: '1/8 финали',
-      quarterFinals: '1/4 финали',
-      semiFinals: '1/2 финали + мач за 3-то място',
+      roundOf32: 'Шестнайсетинафинали',
+      roundOf16: 'Осминафинали',
+      quarterFinals: 'Четвъртфинали',
+      semiFinals: 'Полуфинали + мач за 3-то място',
       final: 'Финал',
 
       funTitle: 'И най-важното правило:',
@@ -62,7 +63,7 @@ export class RulesComponent {
       monitoring: 'Dimitar will monitor and enforce the rules during the final 5 minutes before each match starts.',
 
       submitTitle: 'Predictions can be submitted:',
-      submitTable: 'Directly in the table',
+      submitTable: 'Directly in the table in tab "All Predictions"',
       submitEmail: 'By email:',
 
       editText: 'Prediction changes are also allowed up to',
@@ -81,9 +82,10 @@ export class RulesComponent {
       multiplier: 'Multiplier',
 
       groupStage: 'Group Stage',
+      roundOf32: 'Round of 32',
       roundOf16: 'Round of 16',
       quarterFinals: 'Quarter-finals',
-      semiFinals: 'Semi-finals + Third Place Match',
+      semiFinals: 'Semi-finals + 3rd place match',
       final: 'Final',
 
       funTitle: 'And most importantly:',
