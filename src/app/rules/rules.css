@@ -6,3 +6,37 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+@media screen and (max-width: 768px) {
+    .foo {
+        margin-top: 0;
+        margin-bottom: 0;
+        width: fit-content;
+        padding: 15px;
+    }
+}
+
+
+
+
+@keyframes bounce-real {
+  0% {
+    transform: translateY(0) scale(1,1);
+  }
+  30% {
+    transform: translateY(-14px) scale(1.05,0.95);
+  }
+  50% {
+    transform: translateY(0) scale(0.95,1.05);
+  }
+  70% {
+    transform: translateY(-6px) scale(1.02,0.98);
+  }
+  100% {
+    transform: translateY(0) scale(1,1);
+  }
+}
+
+.animate-bounce-real {
+  animation: bounce-real 1.4s infinite ease-in-out;
+}
