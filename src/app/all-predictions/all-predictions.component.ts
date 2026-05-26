@@ -133,6 +133,27 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     themeTextColor: string = '#000000';
     mixColor: string = '#ffffff';
     mixPercent: string = '85%';
+    cicles: {
+        label: string;
+        dateFrom: Date;
+        dateTo: Date;
+    }[] = [
+            {
+                label: "cicle_1",
+                dateFrom: new Date("2026-06-11T19:00:00Z"),
+                dateTo: new Date('2026-06-18T16:59:59Z')
+            },
+            {
+                label: "cicle_2",
+                dateFrom: new Date('2026-06-18T17:00:00Z'),
+                dateTo: new Date('2026-06-24T01:59:59Z')
+            },
+            {
+                label: "cicle_3",
+                dateFrom: new Date('2026-06-24T02:00:00Z'),
+                dateTo: new Date("2026-06-28T02:00:00Z")
+            }
+        ]
     private socket: Socket;
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -374,8 +395,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return lang === 'bg' ? 'bg-BG' : 'en-US';
     }
 
-    private getPhaseMap(isToBeTranslate: boolean = true): Record<string, string> {
-        let groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE';
+    private getPhaseMap(isToBeTranslate: boolean = true, cicle: string = ''): Record<string, string> {
+        let cicleStr = cicle.length > 0 ? `.${cicle}` : ""
+        let groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE' + cicleStr;
 
         return {
             'GROUP_STAGE': groupStage,
@@ -390,6 +412,19 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     private getPhase(stage: string, groupKey: string): string {
         return `TABLE.${(groupKey || stage)}`
+    }
+
+    private getCycleLabelByDate(targetDate: Date | string) {
+        const t = new Date(targetDate).getTime();
+
+        const cycle = this.cicles.find(c => {
+            const from = new Date(c.dateFrom).getTime();
+            const to = new Date(c.dateTo).getTime();
+
+            return t >= from && t <= to;
+        });
+
+        return cycle?.label.toUpperCase() ?? undefined;
     }
 
     fixBetToShow() {
@@ -407,13 +442,20 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             let teamAway = this.allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? { name_bg: "Ще се реши", name_en: "Will be decided" };
 
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
+
+            let isLngBg = this.getLng() === 'bg-BG'
+            let curLng = isLngBg ? 'bg-BG' : "nl-BE"
+            let curTZObj = { timeZone: isLngBg ? "Europe/Sofia" : "Europe/Brussels" }
+
+            let cicle: string | undefined = this.getCycleLabelByDate(new Date(match.utcDate))
+
             return {
                 row_index: index + 1,
-                match_day: utcDate ? utcDate.toLocaleDateString(this.getLng()) : '',
-                match_time: utcDate ? utcDate.toLocaleTimeString(this.getLng(), { hour: '2-digit', minute: '2-digit' }) : '',
+                match_day: utcDate ? utcDate.toLocaleDateString(curLng, curTZObj) : '',
+                match_time: utcDate ? utcDate.toLocaleTimeString(curLng, curTZObj) : '',
                 group: this.getPhase(match.stage, match.group),
-                stage: `TABLE.${match.stage}`,
-                phase: this.getPhaseMap(false)[match.stage],
+                stage: cicle ? `TABLE.${match.stage}.${cicle}` : `TABLE.${match.stage}`,
+                phase: this.getPhaseMap(false, cicle)[match.stage],
                 id: match.myId,
                 home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
                 away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",

@@ -29,7 +29,11 @@
     "TITLE": "Matches",
     "SEARCH_KEYWORD": "Search",
     "GROUPS_PHASE": "Groups Phase",
-    "GROUP_STAGE": "Groups Phase",
+    "GROUP_STAGE": {
+      "CICLE_1": "Group stage - Round 1",
+      "CICLE_2": "Group stage - Round 2",
+      "CICLE_3": "Group stage - Round 3"
+    },
     "ID": "ID",
     "NAME": "Name",
     "CATEGORY": "Category",
