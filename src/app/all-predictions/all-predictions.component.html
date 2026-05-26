@@ -19,7 +19,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="1" colspan="1" class="col_row_number" style="min-width: 50px;" pFrozenColumn>
+                <th rowspan="1" colspan="1" class="col_row_number" pFrozenColumn>
                     {{ 'TABLE.ROW_INDEX' | translate }}</th>
                 <th rowspan="1" colspan="1" class="col_date" style="min-width: 80px;">{{ 'TABLE.DATE' | translate }}
                 </th>
@@ -49,22 +49,19 @@
         </ng-template>
 
         <ng-template #groupheader let-product>
-            <tr pRowGroupHeader>
-                <td [attr.colspan]="9 + (allUsersNames.length * 4)" class="group-header-cell">
-                    <span (click)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product">{{
-                        product.stage |
-                        translate}}</span>
-                </td>
+            <tr>
+                <th pFrozenColumn class="my-header" colspan="50"><p (click)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
+                        [pRowToggler]="product">{{ product.stage | translate}}</p></th>
             </tr>
         </ng-template>
 
         <ng-template #body let-product let-editing="editing">
             @if (isShowRow(product)) {
             <tr>
-                <td class="col_row_number" pFrozenColumn>{{ product?.row_index}}</td>
+                <td pFrozenColumn>{{ product?.row_index}}</td>
                 <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
-                <td>{{ product?.group }}</td>
+                <td>{{ product?.group | translate}}</td>
                 <td class="re_home_team" alignFrozen="left">{{ product?.home_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
@@ -77,7 +74,7 @@
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="product['edit_' + user.id + '_' + j] = true" [class.user-separator]="j === 0"
-                    class="cursor-pointer" style="min-width: 50px;">
+                    class="cursor-pointer" style="min-width: 30px;">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"

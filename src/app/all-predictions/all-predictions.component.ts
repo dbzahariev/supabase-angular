@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { dummyMatches, dummyTeams, dummyPredictions, dummyUsers } from '../dummy-data'
 import { CommonModule } from '@angular/common';
-// import { io, Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 interface Bet {
     row_index: number,
@@ -133,7 +133,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     themeTextColor: string = '#000000';
     mixColor: string = '#ffffff';
     mixPercent: string = '85%';
-    // private socket: Socket;
+    private socket: Socket;
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
     private translate = inject(TranslateService);
@@ -141,13 +141,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private destroyRef = inject(DestroyRef);
 
     constructor() {
-        // this.socket = io('https://simple-node-proxy.onrender.com');
-        // if (!this.socket.hasListeners('matchesUpdate')) {
-        //     this.socket.on('matchesUpdate', (data) => {
-        //         console.log('Received matches update:', data);
-        //         this.fixAllMatches(data)
-        //     });
-        // }
+        this.socket = io('https://simple-node-proxy.onrender.com');
+        if (!this.socket.hasListeners('matchesUpdate')) {
+            this.socket.on('matchesUpdate', (data) => {
+                console.log('Received matches update:', data);
+                this.fixAllMatches(data)
+            });
+        }
     }
 
     isShowRow(product: any) {
@@ -185,7 +185,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         } else {
             this.allMatches = data.matches?.map((match: any, index: number) => {
                 let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
-                let myGroup = this.getPhase(match.stage, match.group).group;
+                let myGroup = this.getPhase(match.stage, match.group);
 
                 if (match.id === 537327) {
                     match.score.duration = "FULL_TIME";
@@ -388,18 +388,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         };
     }
 
-    private getPhase(stage: string, groupKey: string): { group: string, stage: string } {
-        let show = ""
-        if (stage === 'GROUP_STAGE') {
-            show = 'TABLE.GROUPS_PHASE'
-        } else {
-        }
-        let result = {
-            stage: this.getPhaseMap()[stage],
-            group: this.translate.instant('TABLE.' + (groupKey || stage)),
-            // show: show,//stage === 'GROUP_STAGE' ? this.translate.instant('TABLE.GROUPS_PHASE') : this.translate.instant('TABLE.' + (groupKey || stage))
-        }
-        return result;
+    private getPhase(stage: string, groupKey: string): string {
+        return `TABLE.${(groupKey || stage)}`
     }
 
     fixBetToShow() {
@@ -413,19 +403,17 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         matchesToSort.sort((a, b) => (a.utcDate || '').localeCompare(b.utcDate || ''));
 
         this.betsToShow = matchesToSort.map((match: Match, index: number) => {
-            let teamHome = this.allTeams.find((team: Team) => team.name_en === match.homeTeam.name);
-            let teamAway = this.allTeams.find((team: Team) => team.name_en === match.awayTeam.name);
+            let teamHome = this.allTeams.find((team: Team) => team.name_en === match.homeTeam.name) ?? { name_bg: "Ще се реши", name_en: "Will be decided" };
+            let teamAway = this.allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? { name_bg: "Ще се реши", name_en: "Will be decided" };
 
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
-            let phase = this.getPhaseMap(false)[match.stage];
-            let phaseShow = `TABLE.${match.stage}`//this.getPhase(match.stage, match.group).show
             return {
                 row_index: index + 1,
                 match_day: utcDate ? utcDate.toLocaleDateString(this.getLng()) : '',
                 match_time: utcDate ? utcDate.toLocaleTimeString(this.getLng(), { hour: '2-digit', minute: '2-digit' }) : '',
-                group: this.getPhase(match.stage, match.group).group, // Ре-транслираме групата тук
-                stage: phaseShow,
-                phase: phase,
+                group: this.getPhase(match.stage, match.group),
+                stage: `TABLE.${match.stage}`,
+                phase: this.getPhaseMap(false)[match.stage],
                 id: match.myId,
                 home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
                 away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",

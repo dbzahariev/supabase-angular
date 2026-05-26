@@ -20,9 +20,6 @@
     background-color: var(--p-datatable-header-background) !important;
 }
 
-.group-header-cell {
-    width: 150px;
-}
 
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
@@ -44,13 +41,11 @@
 }
 
 .score-cell {
-    min-width: 50px; 
+    min-width: 40px;
 }
 
-.group-header-cell{
-    position: sticky;
-    display: inline-block;
-    left: 0px;
+.my-header{
+    text-align: left;
 }
 
 @media screen and (max-width: 768px) {
