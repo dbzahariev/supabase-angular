@@ -118,7 +118,7 @@ interface Match {
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, IconField, InputIcon, Button, TranslateModule, FormsModule, CommonModule]
+    imports: [TableModule, TranslateModule, FormsModule, CommonModule]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     betsToShow: Bet[] = [];

@@ -1,20 +1,20 @@
 <div class="table-container" [style.--theme-background-color]="themeBackground" [style.--theme-color]="themeColor"
     [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
-    <p-table #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="phase"
+    <p-table class="foo" #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="phase"
         [scrollable]="true" [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
-        [resizableColumns]="true" size="small" styleClass="!p-0 !m-0">
+        [resizableColumns]="true" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between ">
                 <span class="text-xl font-bold">{{ 'TABLE.TITLE' | translate }}</span>
-                <p-iconfield iconPosition="left" class="ml-auto">
+                <!-- <p-iconfield iconPosition="left" class="ml-auto">
                     <p-inputicon>
                         <i class="pi pi-search"></i>
                     </p-inputicon>
                     <input id="searchInput" #searchInput pInputText type="text"
                         (input)="dt.filterGlobal(searchInput.value, 'contains')"
                         placeholder="{{ 'TABLE.SEARCH_KEYWORD' | translate }}" />
-                </p-iconfield>
-                <p-button icon="pi pi-refresh" rounded raised />
+                </p-iconfield> -->
+                <!-- <p-button icon="pi pi-refresh" rounded raised /> -->
             </div>
         </ng-template>
         <ng-template #header>

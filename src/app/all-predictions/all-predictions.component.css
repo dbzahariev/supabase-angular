@@ -27,22 +27,11 @@
 
 .sticky-group-header {
     position: sticky;
-    /* left: 0; */
-    /* z-index: 1000; */
-
-    /* background: white; */
-
-    /* padding: 1rem; */
-    /* width: fit-content; */
-    /* min-width: 250px; */
 }
 
 .p-datatable-wrapper {
     overflow: auto !important;
 }
-/* .p-datatable-scrollable-body {
-    overflow: auto !important;
-} */
 
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
@@ -83,11 +72,10 @@
 
     .col_date {
         font-size: 0.75rem !important;
-        min-width: 60px !important;
     }
 
-    .re_home_team {
-        min-width: 90px !important;
+    .p-datatable{
+        width: 560px !important;
     }
 
     :host ::ng-deep .p-inputtext {
