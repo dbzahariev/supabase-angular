@@ -49,9 +49,17 @@
         </ng-template>
 
         <ng-template #groupheader let-product>
-            <tr>
-                <th pFrozenColumn class="my-header" colspan="50"><p (click)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
-                        [pRowToggler]="product">{{ product.stage | translate}}</p></th>
+            <tr pRowGroupHeader>
+                <td pFrozenColumn class="group-sticky-cell" colspan="3">
+                    <div (click)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product">
+                        {{ product.stage | translate }}
+                    </div>
+                </td>
+
+                <!-- празни клетки -->
+                @for (_ of [].constructor((allUsersNames.length * 4)+5); track $index) {
+                    <td></td>
+                }
             </tr>
         </ng-template>
 

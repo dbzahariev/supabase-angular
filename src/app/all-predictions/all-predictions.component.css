@@ -20,6 +20,29 @@
     background-color: var(--p-datatable-header-background) !important;
 }
 
+.group-header-td {
+    padding: 0 !important;
+    border: 0;
+}
+
+.sticky-group-header {
+    position: sticky;
+    /* left: 0; */
+    /* z-index: 1000; */
+
+    /* background: white; */
+
+    /* padding: 1rem; */
+    /* width: fit-content; */
+    /* min-width: 250px; */
+}
+
+.p-datatable-wrapper {
+    overflow: auto !important;
+}
+/* .p-datatable-scrollable-body {
+    overflow: auto !important;
+} */
 
 :host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th,
 :host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td {
