@@ -19,24 +19,110 @@
 
 
 
-@keyframes bounce-real {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   WRAPPER
+========================= */
+.ball-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* =========================
+   BALL BOUNCE + WOBBLE
+========================= */
+.bounce-ball {
+  display: inline-block;
+  transform-origin: center;
+  animation: bounceBall 1.2s infinite ease-in-out;
+  /* filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.6)); */
+}
+
+/* =========================
+   SHADOW (squash effect)
+========================= */
+.ball-shadow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 28px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: shadowSquash 1.2s infinite ease-in-out;
+}
+
+/* =========================
+   BOUNCE ANIMATION
+========================= */
+@keyframes bounceBall {
   0% {
-    transform: translateY(0) scale(1,1);
+    transform: translateY(0) translateX(0) scale(1, 1);
   }
-  30% {
-    transform: translateY(-14px) scale(1.05,0.95);
+
+  25% {
+    transform: translateY(-14px) translateX(-2px) scale(1.1, 0.9);
   }
+
   50% {
-    transform: translateY(0) scale(0.95,1.05);
+    transform: translateY(0) translateX(2px) scale(0.95, 1.05);
   }
-  70% {
-    transform: translateY(-6px) scale(1.02,0.98);
+
+  75% {
+    transform: translateY(-8px) translateX(-1px) scale(1.05, 0.95);
   }
+
   100% {
-    transform: translateY(0) scale(1,1);
+    transform: translateY(0) translateX(0) scale(1, 1);
   }
 }
 
-.animate-bounce-real {
-  animation: bounce-real 1.4s infinite ease-in-out;
+/* =========================
+   SHADOW ANIMATION
+========================= */
+@keyframes shadowSquash {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.35;
+  }
+
+  25% {
+    transform: translateX(-50%) scale(0.6);
+    opacity: 0.15;
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.35;
+  }
+
+  75% {
+    transform: translateX(-50%) scale(0.7);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.35;
+  }
 }
+

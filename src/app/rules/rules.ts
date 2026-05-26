@@ -136,12 +136,4 @@ export class RulesComponent {
   animate = true;
 
   iconColor = '#22c55e'; // or dynamic
-
-  ngOnInit() {
-    this.animate = false;
-
-    setTimeout(() => {
-      this.animate = true;
-    }, 100);
-  }
 }
