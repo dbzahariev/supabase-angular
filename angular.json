@@ -52,8 +52,7 @@
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
