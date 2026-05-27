@@ -120,7 +120,7 @@ export class SupabaseService {
   // }
 
   getAllMatchesFromBE() {
-    return this.httpClient.get<unknown>('https://simple-node-proxy.onrender.com/api/matches')
+    return this.httpClient.get<any>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
   getAllTeams() {
@@ -151,7 +151,7 @@ export class SupabaseService {
   //     .from('predictions')
   //     .select(this.predictionsWithUsersSelect)
   //     .eq('match_id', matchId)
-  //     .order('utc_date', { ascending: true }) as unknown as { data: PredictionWithUser[], error: any }
+  //     .order('utc_date', { ascending: true }) as any as { data: PredictionWithUser[], error: any }
   // }
 
   // getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
@@ -172,14 +172,14 @@ export class SupabaseService {
   // }
 
   // Метод за добавяне на prediction
-  addPrediction(prediction: unknown) {
+  addPrediction(prediction: any) {
     return this.supabase
       .from('predictions')
       .insert(prediction)
       .select()
   }
 
-  updatePrediction(id: number, prediction: unknown) {
+  updatePrediction(id: number, prediction: any) {
     return this.supabase
       .from('predictions')
       .update(prediction)
@@ -198,7 +198,7 @@ export class SupabaseService {
    *   console.log('Users table changed:', payload);
    * });
    */
-  subscribeToTable(table: string, callback: (payload: unknown) => void) {
+  subscribeToTable(table: string, callback: (payload: any) => void) {
     const channel = this.supabase
       .channel(`schema-db-changes:${table}`)
       .on(
