@@ -1,19 +1,26 @@
 * {
-    background-color: var(--p-content-background) !important;
+  background-color: var(--p-content-background) !important;
 }
 
 .foo {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.foo2 {
+  justify-content: center;
+  padding: 10px;
 }
 
 @media screen and (max-width: 768px) {
-    .foo {
-        margin-top: 0;
-        margin-bottom: 0;
-        width: fit-content;
-        padding: 15px;
-    }
+  .foo {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 15px;
+    /* width: 650px; */
+  }
+
+
 }
 
 
@@ -125,4 +132,3 @@
     opacity: 0.35;
   }
 }
-
