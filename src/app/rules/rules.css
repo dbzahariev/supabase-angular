@@ -5,6 +5,8 @@
 .foo {
   margin-top: 10px;
   margin-bottom: 10px;
+
+  padding: 15px;
 }
 
 .foo2 {
@@ -16,7 +18,6 @@
   .foo {
     margin-top: 0;
     margin-bottom: 0;
-    padding: 15px;
     /* width: 650px; */
   }
 
