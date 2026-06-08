@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { SupabaseService } from '../app/supabase'
 import { TranslateService } from '@ngx-translate/core'
@@ -13,18 +13,18 @@ import { HeaderComponent } from './header/header.component'
   providers: [SupabaseService],
 })
 export class App implements OnInit {
-  // session: typeof this.supabase.session
+  private translateService = inject(TranslateService);
 
-  constructor(
-    private translateService: TranslateService) {
-    // this.session = this.supabase.session
-  }
+  constructor() { /* empty */ }
 
   ngOnInit() {
-    localStorage.getItem('dark-mode') === 'enabled' && App.prototype.toggleDarkMode.call(this);
+    const isDarkModeEnabled = localStorage.getItem('dark-mode') !== null;
+    if (!isDarkModeEnabled) {
+      localStorage.setItem('dark-mode', 'disabled')
+    }
 
     this.translateService.addLangs(['en', 'bg']);
-    let browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
+    const browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
     this.translateService.setDefaultLang(browserLang);
     this.translateService.use(browserLang);
   }
