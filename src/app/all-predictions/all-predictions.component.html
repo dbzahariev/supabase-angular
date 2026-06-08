@@ -51,7 +51,7 @@
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
                 <td pFrozenColumn class="group-sticky-cell" colspan="3">
-                    <div (click)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product">
+                    <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)" (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product" tabindex="0" role="button">
                         {{ product.stage | translate }}
                     </div>
                 </td>
@@ -87,7 +87,7 @@
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"
                         (keydown.enter)="product['edit_' + user.id + '_' + j] = false"
-                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false" [autofocus]="true"
+                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false"
                         class="w-full" />
                     } @else {
                     {{ getUserPredictionValue(user, product, j) }}

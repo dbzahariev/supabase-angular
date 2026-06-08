@@ -120,7 +120,7 @@ export class SupabaseService {
   // }
 
   getAllMatchesFromBE() {
-    return this.httpClient.get<any>('https://simple-node-proxy.onrender.com/api/matches')
+    return this.httpClient.get<unknown>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
   getAllTeams() {
@@ -172,14 +172,14 @@ export class SupabaseService {
   // }
 
   // Метод за добавяне на prediction
-  addPrediction(prediction: any) {
+  addPrediction(prediction: unknown) {
     return this.supabase
       .from('predictions')
       .insert(prediction)
       .select()
   }
 
-  updatePrediction(id: number, prediction: any) {
+  updatePrediction(id: number, prediction: unknown) {
     return this.supabase
       .from('predictions')
       .update(prediction)
@@ -198,7 +198,7 @@ export class SupabaseService {
    *   console.log('Users table changed:', payload);
    * });
    */
-  subscribeToTable(table: string, callback: (payload: any) => void) {
+  subscribeToTable(table: string, callback: (payload: unknown) => void) {
     const channel = this.supabase
       .channel(`schema-db-changes:${table}`)
       .on(

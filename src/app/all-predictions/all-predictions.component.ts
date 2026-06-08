@@ -2,15 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { TableModule } from "primeng/table";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { Button } from "primeng/button";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { dummyMatches, dummyTeams, dummyPredictions, dummyUsers } from '../dummy-data'
 import { CommonModule } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
 
@@ -128,11 +124,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allMatches: Match[] = [];
     allTeams: Team[] = [];
     loading = false;
-    themeColor: string = '#ffffff';
-    themeBackground: string = '#ffffff';
-    themeTextColor: string = '#000000';
-    mixColor: string = '#ffffff';
-    mixPercent: string = '85%';
+    themeColor = '#ffffff';
+    themeBackground = '#ffffff';
+    themeTextColor = '#000000';
+    mixColor = '#ffffff';
+    mixPercent = '85%';
     cicles: {
         label: string;
         dateFrom: Date;
@@ -176,9 +172,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.themeColor = localStorage.getItem('theme-color') || '#ffffff';
+        this.themeColor = localStorage.getItem('theme-color') ?? '#ffffff';
         this.themeTextColor = this.getContrastYIQ(this.themeColor);
-        this.themeBackground = (localStorage.getItem('dark-mode') || 'disabled') === 'enabled' ? '#000000' : '#ffffff';
+        this.themeBackground = (localStorage.getItem('dark-mode') ?? 'disabled') === 'enabled' ? '#000000' : '#ffffff';
         this.mixColor = this.themeTextColor === '#000000' ? '#ffffff' : '#000000';
         this.mixPercent = this.themeTextColor === '#000000' ? '85%' : '40%';
         this.fixUsers();
@@ -380,7 +376,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         else if (payload.away_ft > payload.home_ft) payload.winner = 'AWAY_TEAM';
         else payload.winner = 'DRAW';
 
-        const { data, error } = isNew
+        const { error } = isNew
             ? await this.supabaseService.addPrediction(payload)
             : await this.supabaseService.updatePrediction(prediction.id, payload);
 
@@ -395,7 +391,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return lang === 'bg' ? 'bg-BG' : 'en-US';
     }
 
-    private getPhaseMap(isToBeTranslate: boolean = true, cicle: string = ''): Record<string, string> {
+    private getPhaseMap(isToBeTranslate = true, cicle = ''): Record<string, string> {
         let cicleStr = cicle.length > 0 ? `.${cicle}` : ""
         let groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE' + cicleStr;
 

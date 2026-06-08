@@ -49,15 +49,19 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    let lang = localStorage.getItem('lang');
-    if (!lang) {
-      lang = this.translateService.getBrowserLang() || 'en';
-      localStorage.setItem('lang', lang);
+    const isLnlang = localStorage.getItem('lang') === null;
+    if (isLnlang) {
+      localStorage.setItem('lang', 'bg');
     }
-    this.translateService.use(lang);
+    this.translateService.use(localStorage.getItem('lang') || 'bg');
     this.themeColor = this.themeService.getThemeColor();
     this.fixTextColor()
     // this.themeColorNew = localStorage.getItem('theme-color') || '#ffffff';
+
+    const isHaveThemeColor = localStorage.getItem('theme-color') === null
+    if (isHaveThemeColor) {
+      this.onThemeColorChange(this.colorOptions[0].code);
+    }
   }
 
   getColorName(color: ColorOption): string {
