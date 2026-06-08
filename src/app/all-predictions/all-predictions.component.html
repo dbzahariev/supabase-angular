@@ -19,21 +19,13 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="1" colspan="1" class="col_row_number" pFrozenColumn>
-                    {{ 'TABLE.ROW_INDEX' | translate }}</th>
-                <th rowspan="1" colspan="1" class="col_date" style="min-width: 80px;">{{ 'TABLE.DATE' | translate }}
-                </th>
-                <th rowspan="1" colspan="1" style="min-width: 80px;">{{ 'TABLE.TIME' | translate }}</th>
-                <th rowspan="1" colspan="1" style="min-width: 100px;">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="1" colspan="1" class="re_home_team" style="min-width: 120px;">{{
-                    'TABLE.HOME_TEAM' |
-                    translate }}
-                </th>
-                <th rowspan="1" colspan="3" class="re_result user-separator" style="min-width: 150px;">{{ 'TABLE.RESULT'
-                    | translate }}</th>
-                <th rowspan="1" colspan="1" class="re_away_team" style="min-width: 120px;">{{ 'TABLE.AWAY_TEAM' |
-                    translate }}
-                </th>
+                <th rowspan="1" colspan="1" class="col_row_number">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+                <th rowspan="1" colspan="1" class="col_date">{{ 'TABLE.DATE' | translate }}</th>
+                <th rowspan="1" colspan="1">{{ 'TABLE.TIME' | translate }}</th>
+                <th rowspan="1" colspan="1">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="1" colspan="1" class="re_home_team">{{'TABLE.HOME_TEAM' | translate }}</th>
+                <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
+                <th rowspan="1" colspan="1" class="re_away_team">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
                 @for (user of allUsersNames; track user.id) {
                 <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})
                 </th>
@@ -50,7 +42,7 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td pFrozenColumn class="group-sticky-cell" colspan="3">
+                <td colspan="3">
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)" (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product" tabindex="0" role="button">
                         {{ product.stage | translate }}
                     </div>
@@ -66,11 +58,11 @@
         <ng-template #body let-product let-editing="editing">
             @if (isShowRow(product)) {
             <tr>
-                <td pFrozenColumn>{{ product?.row_index}}</td>
+                <td>{{ product?.row_index}}</td>
                 <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group | translate}}</td>
-                <td class="re_home_team" alignFrozen="left">{{ product?.home_team }}</td>
+                <td class="re_home_team">{{ product?.home_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
                 <td class="score-cell">{{product?.score?.winner ?( ('TABLE.'+ product?.score?.winner ) | translate):''}}

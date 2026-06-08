@@ -1,13 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core'
-import { RouterOutlet } from '@angular/router'
 import { SupabaseService } from '../app/supabase'
 import { TranslateService } from '@ngx-translate/core'
-import { ToastModule } from 'primeng/toast'
-import { HeaderComponent } from './header/header.component'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, ToastModule],
+  standalone: false,
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   providers: [SupabaseService],

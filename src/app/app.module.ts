@@ -59,7 +59,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
     imports: [
         BrowserModule,
-        App,
         RulesComponent,
         FormsModule,
         ButtonModule,
@@ -78,6 +77,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
         AppRoutingModule,
     ],
+    declarations: [App],
     bootstrap: [App],
     providers: [
         provideHttpClient(),
