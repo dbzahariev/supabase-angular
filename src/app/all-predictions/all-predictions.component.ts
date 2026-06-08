@@ -432,6 +432,15 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return cycle?.label.toUpperCase() ?? undefined;
     }
 
+    private formatDateToDDMM(date: Date | null, locale: string = 'en-GB', timeZone?: string): string {
+        if (!date) return '';
+        return date.toLocaleDateString(locale, {
+            day: '2-digit',
+            month: '2-digit',
+            timeZone: timeZone
+        });
+    }
+
     private formatTimeToHHmm(date: Date | null, locale: string = 'en-GB', timeZone?: string): string {
         if (!date) return '00:00';
         return date.toLocaleTimeString(locale, {
@@ -466,7 +475,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             return {
                 row_index: index + 1,
-                match_day: utcDate ? utcDate.toLocaleDateString(curLng, curTZObj) : '',
+                match_day: this.formatDateToDDMM(utcDate, curLng, curTZObj.timeZone),
                 match_time: this.formatTimeToHHmm(utcDate, curLng, curTZObj.timeZone),
                 group: this.getPhase(match.stage, match.group),
                 stage: cicle ? `TABLE.${match.stage}.${cicle}` : `TABLE.${match.stage}`,
