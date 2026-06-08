@@ -8,7 +8,6 @@ import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-match-import',
-  standalone: true,
   imports: [CommonModule, ButtonModule, CardModule, ProgressBarModule, MessageModule],
   templateUrl: './match-import.component.html',
   styleUrls: ['./match-import.component.css']

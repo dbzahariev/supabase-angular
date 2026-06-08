@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-rules',
-  standalone: false,
+  imports: [NgClass],
   templateUrl: './rules.html',
-  styleUrl: './rules.css',
+  styleUrls: ['./rules.css'],
 })
 export class RulesComponent {
   themeColors400: any = {

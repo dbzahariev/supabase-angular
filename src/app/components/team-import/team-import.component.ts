@@ -10,7 +10,6 @@ import { importTeams, listAllTeams, deleteAllTeams } from '../../scripts/import-
 
 @Component({
   selector: 'app-team-import',
-  standalone: true,
   imports: [CommonModule, ButtonModule, CardModule, ProgressBarModule, MessageModule, TableModule],
   templateUrl: './team-import.component.html',
   styleUrls: ['./team-import.component.css']

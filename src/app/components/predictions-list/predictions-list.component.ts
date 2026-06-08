@@ -5,7 +5,6 @@ import { PredictionWithUser } from '../../models/match.model';
 
 @Component({
   selector: 'app-predictions-list',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="predictions-container">

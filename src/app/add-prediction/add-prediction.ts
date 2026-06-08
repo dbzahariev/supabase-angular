@@ -54,7 +54,6 @@ interface User {
 
 @Component({
   selector: 'app-add-prediction',
-  standalone: true,
   templateUrl: './add-prediction.html',
   styleUrls: ['./add-prediction.css'],
   imports: [ButtonModule, FormsModule, CommonModule, TranslateModule, TableModule, IconFieldModule, InputTextModule, InputIconModule, TagModule, SelectModule, MultiSelectModule, HttpClientModule]

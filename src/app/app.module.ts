@@ -57,12 +57,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-    declarations: [
-        App,
-        RulesComponent
-    ],
     imports: [
         BrowserModule,
+        App,
+        RulesComponent,
         FormsModule,
         ButtonModule,
         // ChatComponent,

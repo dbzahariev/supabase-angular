@@ -4,7 +4,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TabsModule } from 'primeng/tabs';
-import { App } from '../app';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { ColorOption } from '../models/match.model';
@@ -12,7 +11,6 @@ import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
   imports: [ButtonModule, FormsModule, TranslateModule, FloatLabelModule, TabsModule, RouterModule, CommonModule]
@@ -33,8 +31,8 @@ export class HeaderComponent implements OnInit {
     { en: 'Yellow', bg: 'Жълто', code: 'yellow' }
   ];
   themeColor!: string;
-  themeTextColor: string = '#000000';
-  themeColorNew: string = '#ffffff';
+  themeTextColor = '#000000';
+  themeColorNew = '#ffffff';
 
   private translateService = inject(TranslateService);
   private router = inject(Router);
@@ -75,7 +73,8 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    App.prototype.toggleDarkMode.call(this);
+    const element = document.querySelector('html');
+    element?.classList.toggle('my-app-dark');
     this.isDark = !this.isDark;
     localStorage.setItem('dark-mode', this.isDark ? 'enabled' : 'disabled');
     this.fixTextColor()

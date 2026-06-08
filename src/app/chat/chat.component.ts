@@ -9,7 +9,6 @@ import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-chat',
-    standalone: true,
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
     imports: [FormsModule, CommonModule, Slider, ToastModule, TranslateModule]
