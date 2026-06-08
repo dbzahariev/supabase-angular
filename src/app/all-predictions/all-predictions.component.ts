@@ -432,6 +432,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return cycle?.label.toUpperCase() ?? undefined;
     }
 
+    private formatTimeToHHmm(date: Date | null, locale: string = 'en-GB', timeZone?: string): string {
+        if (!date) return '00:00';
+        return date.toLocaleTimeString(locale, {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: timeZone
+        });
+    }
+
     fixBetToShow() {
         if (!this.allMatches || this.allMatches.length === 0) {
             this.betsToShow = [];
@@ -457,7 +467,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return {
                 row_index: index + 1,
                 match_day: utcDate ? utcDate.toLocaleDateString(curLng, curTZObj) : '',
-                match_time: utcDate ? utcDate.toLocaleTimeString(curLng, curTZObj) : '',
+                match_time: this.formatTimeToHHmm(utcDate, curLng, curTZObj.timeZone),
                 group: this.getPhase(match.stage, match.group),
                 stage: cicle ? `TABLE.${match.stage}.${cicle}` : `TABLE.${match.stage}`,
                 phase: this.getPhaseMap(false, cicle)[match.stage],
@@ -521,11 +531,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
-    getColName(idx:number){
-        if (idx=== 0) return "TABLE.HOME_TEAM_SHORT"
-        if (idx=== 1) return "TABLE.AWAY_TEAM_SHORT"
-        if (idx=== 2) return "TABLE.WINNER_SHORT"
-        if (idx=== 3) return "TABLE.POINTS_SHORT"
+    getColName(idx: number) {
+        if (idx === 0) return "TABLE.HOME_TEAM_SHORT"
+        if (idx === 1) return "TABLE.AWAY_TEAM_SHORT"
+        if (idx === 2) return "TABLE.WINNER_SHORT"
+        if (idx === 3) return "TABLE.POINTS_SHORT"
         return ""
     }
 
@@ -536,7 +546,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             console.log('No data change')
             return false;
         }
-        console.log('Data change', {foo1: this.lastMatchesDataHash, foo2: currentHash})
+        console.log('Data change', { foo1: this.lastMatchesDataHash, foo2: currentHash })
         this.lastMatchesDataHash = currentHash;
         return true;
     }
