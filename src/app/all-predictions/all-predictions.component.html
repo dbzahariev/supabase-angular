@@ -74,7 +74,7 @@
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="product['edit_' + user.id + '_' + j] = true" [class.user-separator]="j === 0"
-                    class="cursor-pointer" style="min-width: 30px;">
+                    class="cursor-pointer" style="min-width: 50px;">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"

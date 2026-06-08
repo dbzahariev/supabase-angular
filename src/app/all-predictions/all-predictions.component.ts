@@ -156,13 +156,17 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private translate = inject(TranslateService);
     private predictionsChannel: RealtimeChannel | null = null;
     private destroyRef = inject(DestroyRef);
+    private lastMatchesDataHash = '';
 
     constructor() {
         this.socket = io('https://simple-node-proxy.onrender.com');
         if (!this.socket.hasListeners('matchesUpdate')) {
             this.socket.on('matchesUpdate', (data) => {
                 console.log('Received matches update:', data);
-                this.fixAllMatches(data)
+                if (this.isDataChanged(data)) {
+                    console.log('update matches update:', data);
+                    this.fixAllMatches(data)
+                }
             });
         }
     }
@@ -192,7 +196,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getAllMatche() {
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
-            this.fixAllMatches(data)
+            if (this.isDataChanged(data)) {
+                this.fixAllMatches(data)
+            }
         });
     }
 
@@ -510,5 +516,17 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         let newHiiden = oldHiddes.includes(pro.phase) ? oldHiddes.filter(x => x !== pro.phase) : [...oldHiddes, pro.phase]
         localStorage.setItem('hiddenGrops', JSON.stringify(newHiiden));
         this.cdr.detectChanges();
+    }
+
+    private isDataChanged(data: any): boolean {
+        let matchsCount = data.matches.length
+        const currentHash = JSON.stringify(data);
+        if (matchsCount === 0 || currentHash === this.lastMatchesDataHash) {
+            console.log('No data change')
+            return false;
+        }
+        console.log('Data change', {foo1: this.lastMatchesDataHash, foo2: currentHash})
+        this.lastMatchesDataHash = currentHash;
+        return true;
     }
 }
