@@ -52,7 +52,7 @@
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
                         (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
-                        {{ product.stage | translate }}
+                        {{ (product.stage + '_TITLE') | translate }}
                     </div>
                 </td>
 
