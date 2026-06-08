@@ -475,7 +475,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
             return {
                 row_index: index + 1,
-                match_day: this.formatDateToDDMM(utcDate, curLng, curTZObj.timeZone),
+                match_day: this.formatDateToDDMM(utcDate, curLng, curTZObj.timeZone), 
                 match_time: this.formatTimeToHHmm(utcDate, curLng, curTZObj.timeZone),
                 group: this.getPhase(match.stage, match.group),
                 stage: cicle ? `TABLE.${match.stage}.${cicle}` : `TABLE.${match.stage}`,
