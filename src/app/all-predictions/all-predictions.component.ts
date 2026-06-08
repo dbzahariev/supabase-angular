@@ -518,6 +518,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
+    getColName(idx:number){
+        if (idx=== 0) return "TABLE.HOME_TEAM_SHORT"
+        if (idx=== 1) return "TABLE.AWAY_TEAM_SHORT"
+        if (idx=== 2) return "TABLE.WINNER_SHORT"
+        if (idx=== 3) return "TABLE.POINTS_SHORT"
+        return ""
+    }
+
     private isDataChanged(data: any): boolean {
         let matchsCount = data.matches.length
         const currentHash = JSON.stringify(data);

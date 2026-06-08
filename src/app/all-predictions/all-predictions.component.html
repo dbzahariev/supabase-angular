@@ -1,7 +1,8 @@
 <div class="table-container" [style.--theme-background-color]="themeBackground" [style.--theme-color]="themeColor"
     [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
-    <p-table class="foo" #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader" groupRowsBy="phase"
-        [scrollable]="true" [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
+    <p-table class="foo" #dt [value]="betsToShow" showGridlines [loading]="loading" rowGroupMode="subheader"
+        groupRowsBy="phase" [scrollable]="true"
+        [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between ">
@@ -19,13 +20,13 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th rowspan="1" colspan="1" class="col_row_number">{{ 'TABLE.ROW_INDEX' | translate }}</th>
-                <th rowspan="1" colspan="1" class="col_date">{{ 'TABLE.DATE' | translate }}</th>
-                <th rowspan="1" colspan="1">{{ 'TABLE.TIME' | translate }}</th>
-                <th rowspan="1" colspan="1">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="1" colspan="1" class="re_home_team">{{'TABLE.HOME_TEAM' | translate }}</th>
+                <th rowspan="2" colspan="1" class="col_row_number">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+                <th rowspan="2" colspan="1" class="col_date">{{ 'TABLE.DATE' | translate }}</th>
+                <th rowspan="2" colspan="1">{{ 'TABLE.TIME' | translate }}</th>
+                <th rowspan="2" colspan="1">{{ 'TABLE.GROUP' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_home_team">{{'TABLE.HOME_TEAM' | translate }}</th>
                 <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
-                <th rowspan="1" colspan="1" class="re_away_team">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_away_team">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
                 @for (user of allUsersNames; track user.id) {
                 <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})
                 </th>
@@ -33,24 +34,31 @@
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
                 </th> -->
             </tr>
-            <!-- <tr>
-                 <th *ngFor="let j of [0, 1, 2]">{{getColName(j)}}</th> 
-                 <th *ngFor="let i of [].constructor(allUsersNames.length*4); let idx = index">
-                    {{getColName(idx)}}</th> 
-            </tr> -->
+            <tr>
+                <th *ngFor="let col of [0,1,2,3]; let idx = index">
+                        {{ getColName(idx) | translate}}
+                </th>
+                <ng-container *ngFor="let user of allUsersNames">
+                    <th *ngFor="let col of [0,1,2,3]; let idx = index">
+                        {{ getColName(idx) | translate}}
+                    </th>
+                </ng-container>
+            </tr>
         </ng-template>
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
                 <td colspan="3">
-                    <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)" (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer" [pRowToggler]="product" tabindex="0" role="button">
+                    <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
+                        (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
+                        [pRowToggler]="product" tabindex="0" role="button">
                         {{ product.stage | translate }}
                     </div>
                 </td>
 
                 <!-- празни клетки -->
                 @for (_ of [].constructor((allUsersNames.length * 4)+5); track $index) {
-                    <td></td>
+                <td></td>
                 }
             </tr>
         </ng-template>
@@ -79,8 +87,7 @@
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"
                         (keydown.enter)="product['edit_' + user.id + '_' + j] = false"
-                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false"
-                        class="w-full" />
+                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false" class="w-full" />
                     } @else {
                     {{ getUserPredictionValue(user, product, j) }}
                     }
