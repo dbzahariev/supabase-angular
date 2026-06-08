@@ -172,14 +172,14 @@ export class SupabaseService {
   // }
 
   // Метод за добавяне на prediction
-  addPrediction(prediction: unknown) {
+  addPrediction(prediction: Record<string, unknown> | Record<string, unknown>[]) {
     return this.supabase
       .from('predictions')
       .insert(prediction)
       .select()
   }
 
-  updatePrediction(id: number, prediction: unknown) {
+  updatePrediction(id: number, prediction: Record<string, unknown>) {
     return this.supabase
       .from('predictions')
       .update(prediction)
