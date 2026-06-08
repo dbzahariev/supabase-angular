@@ -47,17 +47,17 @@
 .col_stage.sticky,
 .col_row_number.sticky{
     left: 0 !important;
-    min-width: 40px;
+    /* min-width: 40px; */
 }
 
 .re_home_team.sticky{
     left: 40px !important;
-    min-width: 160px;
+    /* min-width: 160px; */
 }
 
 .re_away_team.sticky{
-    left: 200px !important;
-    min-width: 160px;
+    left: 140px !important;
+    /* min-width: 160px; */
 }
 
 /* :host ::ng-deep .p-datatable .p-datatable-thead > tr > th.col_row_number,
