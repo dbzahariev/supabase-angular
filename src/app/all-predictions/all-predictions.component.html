@@ -19,14 +19,14 @@
             </div>
         </ng-template>
         <ng-template #header>
-            <tr>
-                <th rowspan="2" colspan="1" class="col_row_number">{{ 'TABLE.ROW_INDEX' | translate }}</th>
+        <tr>
+                <th rowspan="2" colspan="1" class="col_row_number" [ngClass]="'sticky'">{{ 'TABLE.ROW_INDEX' | translate }}</th>
                 <th rowspan="2" colspan="1" class="col_date">{{ 'TABLE.DATE' | translate }}</th>
                 <th rowspan="2" colspan="1">{{ 'TABLE.TIME' | translate }}</th>
                 <th rowspan="2" colspan="1">{{ 'TABLE.GROUP' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_home_team">{{'TABLE.HOME_TEAM' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{'TABLE.HOME_TEAM' | translate }}</th>
                 <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
-                <th rowspan="2" colspan="1" class="re_away_team">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
+                <th rowspan="2" colspan="1" class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
                 @for (user of allUsersNames; track user.id) {
                 <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})
                 </th>
@@ -35,7 +35,7 @@
                 </th> -->
             </tr>
             <tr>
-                <th *ngFor="let col of [0,1,2,3]; let idx = index">
+                <th *ngFor="let col of [0,1,2]; let idx = index">
                         {{ getColName(idx) | translate}}
                 </th>
                 <ng-container *ngFor="let user of allUsersNames">
@@ -48,7 +48,7 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td colspan="3">
+                <td class="col_stage" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'" [attr.colspan]="(allUsersNames.length * 1)+8">
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
                         (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
@@ -58,7 +58,7 @@
 
                 <!-- празни клетки -->
                 @for (_ of [].constructor((allUsersNames.length * 4)+5); track $index) {
-                <td></td>
+                <!-- <td></td> -->
                 }
             </tr>
         </ng-template>
@@ -66,11 +66,11 @@
         <ng-template #body let-product let-editing="editing">
             @if (isShowRow(product)) {
             <tr>
-                <td>{{ product?.row_index}}</td>
+                <td class="col_row_number" [ngClass]="'sticky'">{{ product?.row_index}}</td>
                 <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group | translate}}</td>
-                <td class="re_home_team">{{ product?.home_team }}</td>
+                <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.home_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
                 <td class="score-cell">{{product?.score?.winner ?( ('TABLE.'+ product?.score?.winner ) | translate):''}}
@@ -78,7 +78,7 @@
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
-                <td class="re_away_team">{{ product?.away_team }}</td>
+                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="product['edit_' + user.id + '_' + j] = true" [class.user-separator]="j === 0"

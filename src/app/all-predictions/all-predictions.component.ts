@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
 
+export const IS_SMALL_SCREEN = window.innerWidth < 768;
+
 interface Bet {
     row_index: number,
     match_day: string,
@@ -117,6 +119,7 @@ interface Match {
     imports: [TableModule, TranslateModule, FormsModule, CommonModule]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
+    protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
     betsToShow: Bet[] = [];
     allUsersNamesFromDB: User[] = [];
     allUsersNames: User[] = [];

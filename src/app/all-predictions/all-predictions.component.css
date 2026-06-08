@@ -38,6 +38,28 @@
     border: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
 }
 
+.sticky {
+    /* position: sticky !important; */
+    /* z-index: 100 !important; */
+    background-color: var(--p-datatable-header-background) !important;
+}
+
+.col_stage.sticky,
+.col_row_number.sticky{
+    left: 0 !important;
+    min-width: 40px;
+}
+
+.re_home_team.sticky{
+    left: 40px !important;
+    min-width: 160px;
+}
+
+.re_away_team.sticky{
+    left: 200px !important;
+    min-width: 160px;
+}
+
 /* :host ::ng-deep .p-datatable .p-datatable-thead > tr > th.col_row_number,
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td.col_row_number {
     position: sticky !important;
@@ -61,6 +83,14 @@
 }
 
 @media screen and (max-width: 768px) {
+    /* .re_home_team.sticky {
+        position: relative !important;
+    }
+    
+    .re_away_team.sticky {
+        position: relative !important;
+    } */
+
     h2 {
         font-size: 1.25rem;
         margin: 0.5rem 0;
