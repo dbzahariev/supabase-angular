@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { TableModule } from "primeng/table";
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -116,7 +118,8 @@ interface Match {
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, TranslateModule, FormsModule, CommonModule]
+    imports: [TableModule, ToastModule, TranslateModule, FormsModule, CommonModule],
+    providers: [MessageService]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
@@ -157,6 +160,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
     private translate = inject(TranslateService);
+    private messageService = inject(MessageService);
     private predictionsChannel: RealtimeChannel | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
@@ -196,6 +200,56 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.fixBetToShow();
             });
     }
+
+    // async checkMatchesForUpdate() {
+    //     let fooooo = ((await this.supabaseService.getMatches()).data)?.filter((match: any) => (match.id>202500))
+    //     let foo = this.allMatches
+    //     let foo2 = this.allTeams
+
+    //     let foo3 = this.betsToShow
+    //     this.betsToShow.forEach((bet:any) => {
+    //         let teamHome = this.allTeams.find((team: Team) => team.name_bg === bet.home_team);
+    //         let teamAway = this.allTeams.find((team: Team) => team.name_bg === bet.away_team);
+    //         let selectedMatch = this.allMatches.find(match => match.homeTeam.name === teamHome?.name_en && match.awayTeam.name === teamAway?.name_en);
+            
+    //         if (selectedMatch) {
+    //             let ffff = selectedMatch.myId
+    //             let supaMatch = fooooo?.find(match => match.id === ffff)
+    //             if (!supaMatch) {
+    //                 debugger
+    //                 let newMatch = {
+    //                     "id": selectedMatch.myId,
+    //                     "home_team_id": teamHome?.id,
+    //                     "away_team_id": teamAway?.id,
+    //                     "utc_date": bet.matchUtcDate,
+    //                     "group_name": `Група ${bet.group.replace('TABLE.GROUP_', '')}`,
+    //                     "home_ft": -1,
+    //                     "away_ft": -1,
+    //                     "home_pt": -1,
+    //                     "away_pt": -1,
+    //                     "winner": "DRAW"
+    //                 }
+
+    //                 // this.supabaseService.addMatch(newMatch).then(({ data, error }) => {
+    //                 //     if (error) {
+    //                 //         console.error('Error adding match:', error);
+    //                 //     }
+    //                 // });
+    //             }
+                
+    //             let kkkkk = supaMatch?.home_team_id!==teamHome?.id 
+    //             let kkkkk2 =supaMatch?.away_team_id!==teamAway?.id
+    //             // if (kkkkk || kkkkk2) {
+    //             //    
+    //             //     debugger
+    //             // }
+
+    //             // if (kkk){
+    //             //     debugger
+    //             // }
+    //         }
+    //     })
+    // }
 
     getAllMatche() {
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
@@ -360,9 +414,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (columnIndex > 1) return; // Only Home (0) and Away (1) scores are editable
         let selectedMatch = this.allMatches.find(match => match.myId === bet.id)
 
-        const score = parseInt(newValue);
-        if (isNaN(score)) return;
-
+        let score = parseInt(newValue);
+        if (isNaN(score)) {
+            score = -1; // Invalid score, you can choose how to handle this case
+        }
         let prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id) as any;
 
         const isNew = !prediction;
@@ -370,28 +425,57 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             user_id: user.id,
             match_id: bet.id,
             match_group: selectedMatch?.group,
-            home_ft: prediction ? prediction.home_ft : 0,
-            away_ft: prediction ? prediction.away_ft : 0,
-            home_pt: prediction ? prediction.home_pt : 0,
-            away_pt: prediction ? prediction.away_pt : 0,
+            home_ft: prediction ? prediction.home_ft : -1,
+            away_ft: prediction ? prediction.away_ft : -1,
+            home_pt: prediction ? prediction.home_pt : -1,
+            away_pt: prediction ? prediction.away_pt : -1,
             winner: prediction ? prediction.winner : 'DRAW',
         };
 
         if (columnIndex === 0) payload.home_ft = score;
         if (columnIndex === 1) payload.away_ft = score;
-
         // Automatically determine winner based on scores
         if (payload.home_ft > payload.away_ft) payload.winner = 'HOME_TEAM';
         else if (payload.away_ft > payload.home_ft) payload.winner = 'AWAY_TEAM';
         else payload.winner = 'DRAW';
 
-        const { error } = isNew
-            ? await this.supabaseService.addPrediction(payload)
-            : await this.supabaseService.updatePrediction(prediction.id, payload);
+        const hasInvalidScore = payload.home_ft < 0 && payload.away_ft < 0;
 
-        if (!error) {
-            // Refresh local state
+        let error: any;
+        if (hasInvalidScore && !isNew) {
+            ({ error } = await this.supabaseService.deletePrediction(prediction.id));
+        } else if (!hasInvalidScore) {
+            ({ error } = isNew
+                ? await this.supabaseService.addPrediction(payload)
+                : await this.supabaseService.updatePrediction(prediction.id, payload));
+        }
+
+        if (!error && (hasInvalidScore ? !isNew : true)) {
+            if (hasInvalidScore) {
+                this.messageService.add({
+                    severity: 'info',
+                    summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
+                    detail: this.translate.instant('TOAST.PREDICTION_DELETED_MESSAGE'),
+                    life: 3000
+                });
+            }
+            else {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: this.translate.instant('TOAST.PREDICTION_SAVED_TITLE'),
+                    detail: this.translate.instant('TOAST.PREDICTION_SAVED_MESSAGE'),
+                    life: 3000
+                });
+            }
             this.fixPredictions();
+        } else {
+            console.error('Error saving prediction:', error);
+            this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant('TOAST.ERROR_TITLE'),
+                detail: this.translate.instant('TOAST.ERROR_MESSAGE'),
+                life: 3000
+            });
         }
     }
 
@@ -483,9 +567,12 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 id: match.myId,
                 home_team: (this.getLng() === 'bg-BG' ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || "",
                 away_team: (this.getLng() === 'bg-BG' ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || "",
-                score: match.score
+                score: match.score,
+                matchUtcDate: match.utcDate
             };
         });
+
+        // this.checkMatchesForUpdate();
 
         this.cdr.detectChanges();
     }

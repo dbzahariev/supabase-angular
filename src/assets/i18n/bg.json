@@ -26,6 +26,14 @@
     "MESSAGES": "Съобщения"
   },
   "CHOOSE_USER": "Изберете потребител",
+  "TOAST": {
+    "PREDICTION_DELETED_TITLE": "Информация",
+    "PREDICTION_DELETED_MESSAGE": "Прогнозата беше изтрита успешно",
+    "PREDICTION_SAVED_TITLE": "Успех",
+    "PREDICTION_SAVED_MESSAGE": "Прогнозата беше запазена успешно",
+    "ERROR_TITLE": "Грешка",
+    "ERROR_MESSAGE": "Възникна грешка. Моля опитайте отново"
+  },
   "TABLE": {
     "TITLE": "Мачове",
     "SEARCH_KEYWORD": "Търсене",

@@ -26,6 +26,14 @@
     "MESSAGES": "Messages"
   },
   "CHOOSE_USER": "Choose a user",
+  "TOAST": {
+    "PREDICTION_DELETED_TITLE": "Info",
+    "PREDICTION_DELETED_MESSAGE": "Prediction deleted successfully",
+    "PREDICTION_SAVED_TITLE": "Success",
+    "PREDICTION_SAVED_MESSAGE": "Prediction saved successfully",
+    "ERROR_TITLE": "Error",
+    "ERROR_MESSAGE": "An error occurred. Please try again"
+  },
   "TABLE": {
     "TITLE": "Matches",
     "SEARCH_KEYWORD": "Search",

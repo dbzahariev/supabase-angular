@@ -179,12 +179,34 @@ export class SupabaseService {
       .select()
   }
 
+  addMatch(match: Record<string, unknown> | Record<string, unknown>[]) {
+    return this.supabase
+      .from('matches')
+      .insert(match)
+      .select()
+  }
+
+  updateMatch(id: number, match: Record<string, unknown>) {
+    return this.supabase
+      .from('matches')
+      .update(match)
+      .eq('id', id)
+      .select()
+  }
+
   updatePrediction(id: number, prediction: Record<string, unknown>) {
     return this.supabase
       .from('predictions')
       .update(prediction)
       .eq('id', id)
       .select()
+  }
+
+  deletePrediction(id: number) {
+    return this.supabase
+      .from('predictions')
+      .delete()
+      .eq('id', id)
   }
 
   // Метод за слушане на промени в таблица
