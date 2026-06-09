@@ -158,16 +158,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             {
                 label: "cicle_1",
                 dateFrom: new Date("2026-06-11T19:00:00Z"),
-                dateTo: new Date('2026-06-18T16:59:59Z')
+                dateTo: new Date('2026-06-18T10:59:59Z')
             },
             {
                 label: "cicle_2",
-                dateFrom: new Date('2026-06-18T17:00:00Z'),
-                dateTo: new Date('2026-06-24T01:59:59Z')
+                dateFrom: new Date('2026-06-18T11:00:00Z'),
+                dateTo: new Date('2026-06-24T06:59:59Z')
             },
             {
                 label: "cicle_3",
-                dateFrom: new Date('2026-06-24T02:00:00Z'),
+                dateFrom: new Date('2026-06-24T07:00:00Z'),
                 dateTo: new Date("2026-06-28T02:00:00Z")
             }
         ]
