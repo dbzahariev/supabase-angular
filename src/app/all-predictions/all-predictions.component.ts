@@ -20,6 +20,8 @@ interface Bet {
     match_day: string,
     match_time: string,
     group: string,
+    stage: string,
+    phase: string,
     id: number,
     home_team: string,
     away_team: string,
@@ -553,21 +555,39 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     downloadTableAsExcel() {
         const isLngBg = this.getLng() === 'bg-BG';
 
-        const headers = [
+        const mainHeaders = [
             '#',
             isLngBg ? 'Дата' : 'Date',
             isLngBg ? 'Час' : 'Time',
             isLngBg ? 'Група' : 'Group',
             isLngBg ? 'Домакин' : 'Home team',
+            isLngBg ? 'Резултат' : 'Result',
+            '',
+            '',
+            isLngBg ? 'Гост' : 'Away team',
+            ...this.allUsersNames.flatMap(u => [
+                `${this.getNameFromUser(u)} (${u.total_points ?? 0})`,
+                '',
+                '',
+                '',
+            ]),
+        ];
+
+        const subHeaders = [
+            '',
+            '',
+            '',
+            '',
+            '',
             isLngBg ? 'Д' : 'H',
             isLngBg ? 'Г' : 'A',
             isLngBg ? 'П' : 'W',
-            isLngBg ? 'Гост' : 'Away team',
-            ...this.allUsersNames.flatMap(u => [
-                `${this.getNameFromUser(u)} Д`,
-                `${this.getNameFromUser(u)} Г`,
-                `${this.getNameFromUser(u)} П`,
-                `${this.getNameFromUser(u)} Т`,
+            '',
+            ...this.allUsersNames.flatMap(() => [
+                isLngBg ? 'Д' : 'H',
+                isLngBg ? 'Г' : 'A',
+                isLngBg ? 'П' : 'W',
+                isLngBg ? 'Т' : 'Pts',
             ]),
         ];
 
@@ -599,13 +619,32 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 return result;
             });
 
-        const totalsRow = [
-            '', '', '', '', '',
-            '', '', '', isLngBg ? 'Общо' : 'Total',
-            ...this.allUsersNames.flatMap(u => ['', '', '', u.total_points ?? 0]),
-        ];
+        // Group rows by phase and add phase headers
+        const groupedRows: any[] = [];
+        let lastPhase: string | null = null;
+        
+        for (const row of rows) {
+            const betIndex = this.betsToShow.filter(bet => this.isShowRow(bet)).indexOf(
+                this.betsToShow.filter(bet => this.isShowRow(bet)).find(b => 
+                    b.row_index === row[0]
+                )!
+            );
+            const bet = this.betsToShow.filter(bet => this.isShowRow(bet))[betIndex];
+            
+            if (bet && bet.phase !== lastPhase) {
+                lastPhase = bet.phase;
+                const groupStageLabel = isLngBg ? 'Групова фаза' : 'Group Stage';
+                const cycleLabel = this.getCycleLabelFromBet(bet);
+                const phaseRow = new Array(row.length).fill('');
+                phaseRow[0] = cycleLabel ? `${groupStageLabel} - ${cycleLabel}` : groupStageLabel;
+                groupedRows.push(phaseRow);
+            }
+            groupedRows.push(row);
+        }
 
-        const wsData = [headers, ...rows, totalsRow];
+        const finalRows = groupedRows;
+
+        const wsData = [mainHeaders, subHeaders, ...finalRows];
         void this.persistPredictionBackupRemotely({
             event_id: this.generateBackupEventId(),
             timestamp: new Date().toISOString(),
@@ -618,6 +657,38 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             payload: { table_snapshot: JSON.stringify(wsData) },
         });
         const ws = XLSX.utils.aoa_to_sheet(wsData);
+        
+        // Merge cells for headers without subdivisions
+        const merges: any[] = [
+            { s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }, // # (A1:A2)
+            { s: { r: 0, c: 1 }, e: { r: 1, c: 1 } }, // Date (B1:B2)
+            { s: { r: 0, c: 2 }, e: { r: 1, c: 2 } }, // Time (C1:C2)
+            { s: { r: 0, c: 3 }, e: { r: 1, c: 3 } }, // Group (D1:D2)
+            { s: { r: 0, c: 4 }, e: { r: 1, c: 4 } }, // Home team (E1:E2)
+            { s: { r: 0, c: 5 }, e: { r: 0, c: 7 } }, // Result (F1:H1)
+            { s: { r: 0, c: 8 }, e: { r: 1, c: 8 } }, // Away team (I1:I2)
+        ];
+        
+        // Add merges for each user header (4 columns per user: Д, Г, П, Т)
+        let userStartCol = 9;
+        for (let i = 0; i < this.allUsersNames.length; i++) {
+            const colStart = userStartCol + (i * 4);
+            const colEnd = colStart + 3;
+            merges.push({ s: { r: 0, c: colStart }, e: { r: 0, c: colEnd } });
+        }
+        
+        // Add merges for phase header rows
+        for (let rowIdx = 2; rowIdx < wsData.length; rowIdx++) {
+            const row = wsData[rowIdx];
+            // Check if this is a phase header row (first cell has "Групова фаза" or "Group Stage")
+            if (row[0] && (row[0].toString().includes('Групова фаза') || row[0].toString().includes('Group Stage'))) {
+                // Merge across all columns for this row
+                merges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: row.length - 1 } });
+            }
+        }
+        
+        ws['!merges'] = merges;
+        
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, isLngBg ? 'Прогнози' : 'Predictions');
 
@@ -744,6 +815,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     getLng(): "bg-BG" | "en-US" {
         const lang = this.translate.currentLang || localStorage.getItem('lang') || 'bg';
         return lang === 'bg' ? 'bg-BG' : 'en-US';
+    }
+
+    private getCycleLabelFromBet(bet: Bet): string {
+        const isLngBg = this.getLng() === 'bg-BG';
+        if (bet.stage?.includes('CICLE_1')) return isLngBg ? 'Кръг 1' : 'Round 1';
+        if (bet.stage?.includes('CICLE_2')) return isLngBg ? 'Кръг 2' : 'Round 2';
+        if (bet.stage?.includes('CICLE_3')) return isLngBg ? 'Кръг 3' : 'Round 3';
+        return '';
     }
 
     private getPhaseMap(isToBeTranslate = true, cicle = ''): Record<string, string> {
