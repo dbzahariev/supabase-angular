@@ -477,6 +477,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (payload.home_ft > payload.away_ft) payload.winner = 'HOME_TEAM';
         else if (payload.away_ft > payload.home_ft) payload.winner = 'AWAY_TEAM';
         else payload.winner = 'DRAW';
+        if (payload.home_ft == -1 || payload.away_ft === -1) {
+            payload.winner = '';
+        }
 
         const hasInvalidScore = payload.home_ft < 0 && payload.away_ft < 0;
         const shouldDelete = hasInvalidScore && !isNew;
@@ -850,7 +853,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     returnTranslateFromWin(winner: any): string {
-        if (winner === undefined) return ""
+        if (winner === undefined || winner === "") return ""
         return this.translate.instant("TABLE." + (winner || "")).slice(0, 1);
     }
 
@@ -860,6 +863,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return "";
         }
         if (columnIndex === 0) {
+            if (selectedPredict.home_ft === -1){
+                return ""
+            }
             return selectedPredict.home_ft.toString() || ""
         }
         if (columnIndex === 1) {
