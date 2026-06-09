@@ -199,6 +199,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return !JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]').includes(product.phase)
     }
 
+    editCell(user: User, product: any, j: number) {
+        product['edit_' + user.id + '_' + j] = true;
+        setTimeout(() => {
+            const input = document.querySelector(`input[data-edit-key="${user.id}_${j}"]`) as HTMLInputElement;
+            if (input) {
+                input.focus();
+            }
+        }, 0);
+    }
+
     ngOnInit(): void {
         this.themeColor = localStorage.getItem('theme-color') ?? '#ffffff';
         this.themeTextColor = this.getContrastYIQ(this.themeColor);
