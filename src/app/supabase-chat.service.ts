@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 import { SupabaseService } from './supabase';
@@ -11,17 +11,32 @@ export interface Message {
     user_name?: string;
 }
 
+interface MessageRow extends Message {
+    users?: { name?: string };
+}
+
+interface MatchPointInput {
+    score: {
+        fullTime: {
+            home: number;
+            away: number;
+        };
+        winner: string;
+    };
+}
+
+interface PredictionPointInput {
+    home_ft: number;
+    away_ft: number;
+    winner: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SupabaseChatService {
-    private supabase: SupabaseClient;
+    private readonly supabaseService = inject(SupabaseService);
+    private readonly supabase: SupabaseClient = this.supabaseService.client;
     private messagesSubject = new BehaviorSubject<Message[]>([]);
     messages$ = this.messagesSubject.asObservable();
-
-    constructor(private supabaseService: SupabaseService) {
-        this.supabase = this.supabaseService.client;
-        // this.fetchMessages();
-        // this.listenForNewMessages();
-    }
 
     async fetchMessages() {
         const { data, error } = await this.supabase
@@ -29,7 +44,7 @@ export class SupabaseChatService {
             .select('id, user_id, content, created_at, users(name)')
             .order('created_at', { ascending: true });
         if (!error && data) {
-            const messages = data.map((msg: any) => ({
+            const messages = (data as MessageRow[]).map((msg) => ({
                 ...msg,
                 user_name: msg.users?.name || 'Unknown',
             }));
@@ -50,7 +65,7 @@ export class SupabaseChatService {
             .on(
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'messages' },
-                (payload) => {
+                () => {
                     this.fetchMessages();
                 }
             )
@@ -74,7 +89,7 @@ export class SupabaseChatService {
     /**
      * Calculate points from match and prediction
      */
-    getPointFromMatch(bet: any, prediction: any): number {
+    getPointFromMatch(bet: MatchPointInput, prediction: PredictionPointInput): number {
         const actualHome = bet.score.fullTime.home;
         const actualAway = bet.score.fullTime.away;
         const actualWinner = bet.score.winner;

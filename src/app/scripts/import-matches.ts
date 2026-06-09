@@ -51,7 +51,7 @@ export async function importSingleYear(
   year: string,
   importService: MatchImportService
 ) {
-  const backupMap: any = {
+  const backupMap: Record<string, typeof backup2016> = {
     '2016': backup2016,
     '2018': backup2018,
     '2020': backup2020,

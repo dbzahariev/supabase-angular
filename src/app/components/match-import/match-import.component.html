@@ -67,38 +67,48 @@
       <!-- Статистика -->
       <div class="col-12 md:col-6">
         <h3>Статистика</h3>
-        <div *ngIf="stats">
+        @if (stats) {
+        <div>
           <p><strong>Общо мачове:</strong> {{ stats.total }}</p>
           
           <h4>По години:</h4>
           <ul>
-            <li *ngFor="let year of stats.byYear | keyvalue">
+            @for (year of stats.byYear | keyvalue; track year.key) {
+            <li>
               {{ year.key }}: {{ year.value }} мача
             </li>
+            }
           </ul>
         </div>
-        <div *ngIf="!stats">
+        } @else {
+        <div>
           <p>Зареждане на статистика...</p>
         </div>
+        }
       </div>
 
       <!-- Progress bar -->
-      <div class="col-12" *ngIf="importing">
+      @if (importing) {
+      <div class="col-12">
         <p-progressBar mode="indeterminate"></p-progressBar>
         <p class="text-center mt-2">Импортиране...</p>
       </div>
+      }
 
       <!-- Резултати -->
-      <div class="col-12" *ngIf="importResults.length > 0">
+      @if (importResults.length > 0) {
+      <div class="col-12">
         <h3>Резултати от импортирането</h3>
         <div class="flex flex-column gap-2">
+          @for (result of importResults; track $index) {
           <p-message 
-            *ngFor="let result of importResults"
             [severity]="result.success ? 'success' : 'error'"
             [text]="result.year + ': ' + (result.success ? result.count + ' мача импортирани' : 'Грешка при импортиране')">
           </p-message>
+          }
         </div>
       </div>
+      }
     </div>
   </p-card>
 </div>

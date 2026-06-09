@@ -81,7 +81,7 @@ export class HeaderComponent implements OnInit {
   }
 
   fixTextColor() {
-    let isDark = localStorage.getItem('dark-mode') === 'enabled';
+    const isDark = localStorage.getItem('dark-mode') === 'enabled';
     if (isDark) {
       this.themeTextColor = '#ffffff';
     } else {

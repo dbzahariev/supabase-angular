@@ -1,18 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../supabase';
 
 interface BackupData {
-  matches: any[];
-  users: any[];
+  matches: BackupMatch[];
+  users: unknown[];
+}
+
+interface BackupMatch {
+  id: number;
+  homeTeam: string;
+  awayTeam: string;
+  utcDate: string;
+  group: string;
+  score?: {
+    homeFT?: number;
+    awayFT?: number;
+    homePT?: number;
+    awayPT?: number;
+    winner?: string;
+  };
+}
+
+interface ImportMatchResult {
+  success: boolean;
+  count: number;
+  errors: unknown[];
+}
+
+interface ImportStats {
+  total: number;
+  byGroup: Record<string, number>;
+  byYear: Record<number, number>;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchImportService {
-  private teamsMap: Map<string, number> = new Map();
-
-  constructor(private supabase: SupabaseService) { }
+  private readonly supabase = inject(SupabaseService);
+  private teamsMap = new Map<string, number>();
 
   /**
    * Зарежда отборите от базата данни и създава map от име към ID
@@ -34,7 +60,7 @@ export class MatchImportService {
     }
 
     this.teamsMap.clear();
-    teams.forEach((team: any) => {
+    teams.forEach((team) => {
       this.teamsMap.set(team.name_en, team.id);
     });
 
@@ -55,13 +81,13 @@ export class MatchImportService {
   /**
    * Импортира мачове от backup JSON файл
    */
-  async importMatchesFromBackup(backupData: BackupData): Promise<{ success: boolean; count: number; errors: any[] }> {
+  async importMatchesFromBackup(backupData: BackupData): Promise<ImportMatchResult> {
     try {
       // Първо зареждаме отборите
       await this.loadTeamsMap();
 
       // Преобразуваме мачовете използвайки team ID-та вместо имена
-      const matchesData = backupData.matches.map((match: any) => {
+      const matchesData = backupData.matches.map((match: BackupMatch) => {
         const result = {
           id: match.id,
           home_team_id: this.getTeamId(match.homeTeam),
@@ -102,8 +128,8 @@ export class MatchImportService {
   /**
    * Импортира мачове от всички backup файлове
    */
-  async importAllBackups(backups: { year: string; data: BackupData }[]): Promise<any> {
-    const results = [];
+  async importAllBackups(backups: { year: string; data: BackupData }[]): Promise<({ year: string } & ImportMatchResult)[]> {
+    const results: ({ year: string } & ImportMatchResult)[] = [];
 
     for (const backup of backups) {
       console.log(`\n📅 Импортиране на мачове от ${backup.year}...`);
@@ -145,15 +171,15 @@ export class MatchImportService {
   /**
    * Получава статистика за импортираните мачове
    */
-  async getImportStats(): Promise<any> {
+  async getImportStats(): Promise<ImportStats> {
     const { data: matches } = await this.supabase.getMatches();
 
     if (!matches || matches.length === 0) {
       return { total: 0, byGroup: {}, byYear: {} };
     }
 
-    const byGroup: any = {};
-    const byYear: any = {};
+    const byGroup: Record<string, number> = {};
+    const byYear: Record<number, number> = {};
 
     for (const match of matches) {
       // По група

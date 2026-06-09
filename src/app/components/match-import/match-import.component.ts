@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchImportService } from '../../services/match-import.service';
 import { ButtonModule } from 'primeng/button';
@@ -6,20 +6,41 @@ import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MessageModule } from 'primeng/message';
 
+interface ImportResult {
+  year: string;
+  success: boolean;
+  count: number;
+  errors: unknown[];
+}
+
+interface ImportStats {
+  total: number;
+  byGroup: Record<string, number>;
+  byYear: Record<string, number>;
+}
+
+interface BackupModule {
+  default: {
+    matches: unknown[];
+    users: unknown[];
+  };
+}
+
 @Component({
   selector: 'app-match-import',
   imports: [CommonModule, ButtonModule, CardModule, ProgressBarModule, MessageModule],
   templateUrl: './match-import.component.html',
   styleUrls: ['./match-import.component.css']
 })
-export class MatchImportComponent {
+export class MatchImportComponent implements OnInit {
+  private readonly importService = inject(MatchImportService);
   importing = false;
-  importResults: any[] = [];
-  stats: any = null;
+  importResults: ImportResult[] = [];
+  stats: ImportStats | null = null;
 
-  backups: any[] = [];
+  backups: { year: string; data: { matches: unknown[]; users: unknown[] } }[] = [];
 
-  constructor(private importService: MatchImportService) {
+  constructor() {
     // Ще заредим данните динамично
     this.loadBackupFiles();
   }
@@ -33,14 +54,14 @@ export class MatchImportComponent {
         import('../../../../backup_2020.json'),
         import('../../../../backup_2022.json'),
         import('../../../../backup_2024.json')
-      ]);
+      ]) as BackupModule[];
 
       this.backups = [
-        { year: '2016', data: backup2016 },
-        { year: '2018', data: backup2018 },
-        { year: '2020', data: backup2020 },
-        { year: '2022', data: backup2022 },
-        { year: '2024', data: backup2024 }
+        { year: '2016', data: backup2016.default },
+        { year: '2018', data: backup2018.default },
+        { year: '2020', data: backup2020.default },
+        { year: '2022', data: backup2022.default },
+        { year: '2024', data: backup2024.default }
       ];
     } catch (error) {
       console.error('Грешка при зареждане на backup файлове:', error);
@@ -52,7 +73,7 @@ export class MatchImportComponent {
     this.importResults = [];
 
     try {
-      const results = await this.importService.importAllBackups(this.backups);
+      const results = await this.importService.importAllBackups(this.backups as any);
       this.importResults = results;
       await this.loadStats();
     } catch (error) {
@@ -68,7 +89,7 @@ export class MatchImportComponent {
     const backup = this.backups.find(b => b.year === year);
     
     if (backup) {
-      const result = await this.importService.importMatchesFromBackup(backup.data);
+      const result = await this.importService.importMatchesFromBackup(backup.data as any);
       this.importResults = [{ year, ...result }];
       await this.loadStats();
     }

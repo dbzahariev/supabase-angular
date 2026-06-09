@@ -79,9 +79,9 @@
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group }}</td>
                 <td class="re_home_team">{{ product?.home_team }}</td>
-                <ng-container *ngFor="let j of [0, 1, 2]">
-                    <td>{{getProductResultRow(product, j)}}</td>
-                </ng-container>
+                @for (j of [0, 1, 2]; track j) {
+                <td>{{getProductResultRow(product, j)}}</td>
+                }
                 <td class="re_away_team">{{ product?.away_team }}</td>
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td [pEditableColumn]="product">

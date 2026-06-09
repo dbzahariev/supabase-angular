@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase';
 import { ButtonModule } from 'primeng/button';
@@ -8,22 +8,33 @@ import { MessageModule } from 'primeng/message';
 import { TableModule } from 'primeng/table';
 import { importTeams, listAllTeams, deleteAllTeams } from '../../scripts/import-teams';
 
+interface TeamRow {
+  id: number;
+  name_en: string;
+  name_bg: string;
+}
+
+interface ImportTeamResult {
+  success: boolean;
+  inserted?: number;
+  total?: number;
+  error?: unknown;
+}
+
 @Component({
   selector: 'app-team-import',
   imports: [CommonModule, ButtonModule, CardModule, ProgressBarModule, MessageModule, TableModule],
   templateUrl: './team-import.component.html',
   styleUrls: ['./team-import.component.css']
 })
-export class TeamImportComponent {
+export class TeamImportComponent implements OnInit {
+  private readonly supabaseService = inject(SupabaseService);
   importing = false;
-  teams: any[] = [];
-  importResult: any = null;
+  teams: TeamRow[] = [];
+  importResult: ImportTeamResult | null = null;
   loading = false;
-
-  constructor(private supabaseService: SupabaseService) { }
-
-  async ngOnInit() {
-    await this.loadTeams();
+  ngOnInit(): void {
+    void this.loadTeams();
   }
 
   async importAllTeams() {

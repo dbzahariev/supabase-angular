@@ -43,7 +43,7 @@ const MyPreset = definePreset(Aura, {
     }
 });
 
-const themeMap: Record<string, any> = {
+const themeMap: Record<string, unknown> = {
     material: Material,
     aura: Aura,
     lara: Lara,

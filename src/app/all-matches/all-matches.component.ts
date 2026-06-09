@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TableModule } from "primeng/table";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
@@ -7,10 +7,52 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { formatDate } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
-import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
-import { MatchDetail } from '../models/match.model';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { SupabaseChatService } from '../supabase-chat.service';
 
+interface PredictionRecord {
+    users: { id: number; name_bg?: string; name_en?: string };
+    matches: { id: number };
+    home_ft?: number | null;
+    away_ft?: number | null;
+    winner?: string;
+    points?: number;
+}
+
+interface ScoreShape {
+    winner?: string | null;
+    duration?: string;
+    fullTime: { home: number | null; away: number | null };
+    halfTime: { home: number | null; away: number | null };
+}
+
+interface MatchWithMeta {
+    id: number;
+    stage: string;
+    group?: string | null;
+    utcDate: string;
+    homeTeam: { name: string };
+    awayTeam: { name: string };
+    score?: ScoreShape;
+}
+
+interface BetRow {
+    score: ScoreShape | undefined;
+    groupRowsBy: string;
+    group: string;
+    phaseLabel: string;
+    row_index: number;
+    my_id: number;
+    match_day: string;
+    match_time: string;
+    home_team: string;
+    away_team: string;
+    home_team_score: number | null | undefined;
+    away_team_score: number | null | undefined;
+    predictions: PredictionRecord[];
+}
+
+type ExpandedRows = Record<string, boolean>;
 
 @Component({
     selector: 'app-all-matches',
@@ -19,13 +61,16 @@ import { SupabaseChatService } from '../supabase-chat.service';
     imports: [TableModule, IconField, InputIcon, Button, TranslateModule]
 })
 export class AllMatchesComponent implements OnInit, OnDestroy {
+    private readonly supabaseService = inject(SupabaseService);
+    private readonly translate = inject(TranslateService);
+    private readonly chatService = inject(SupabaseChatService);
     private socket: Socket;
     isLocal = false;
-    betsToShow: any[] = [];
-    loading: boolean = true;
-    allUsersNames: any[] = [];
-    expandedRows: any = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}');
-    allMatches: MatchDetail[] = [];
+    betsToShow: BetRow[] = [];
+    loading = true;
+    allUsersNames: { name: string; points: number; id: number }[] = [];
+    expandedRows: ExpandedRows = JSON.parse(localStorage.getItem('expandedGroups') || '{"ROUND_2":true,"ROUND_3":true,"ROUND_4":true,"ROUND_5":true}') as ExpandedRows;
+    allMatches: MatchWithMeta[] = [];
     // groups: string[] = [];
     private predictionsChannel: RealtimeChannel | null = null;
     private countryTranslationCache: {
@@ -33,25 +78,22 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         name_en: string,
         name_bg: string
     }[] = [];
-    private latestPredictions: any[] = [];
+    private latestPredictions: PredictionRecord[] = [];
     private groupTranslationCache = new Map<string, string>();
     private dateCache = new Map<string, { day: string; time: string }>();
 
-
-    constructor(private supabaseService: SupabaseService, private translate: TranslateService, private chatService: SupabaseChatService) {
+    constructor() {
         this.socket = io(this.isLocal ? 'http://localhost:3000' : 'https://simple-node-proxy.onrender.com');
 
         if (!this.socket.hasListeners('connect')) {
-            this.socket.on('connect', () => { });
+            this.socket.on('connect', () => undefined);
         }
 
         // Avoid duplicate event listeners
         if (!this.socket.hasListeners('matchesUpdate')) {
-            this.socket.on('matchesUpdate', (data) => {
-                
+            this.socket.on('matchesUpdate', (data: { matches: MatchWithMeta[] }) => {
                 this.allMatches = data.matches;
-
-                this.getPredictionFromView().then(() => { });
+                void this.getPredictionFromView();
             });
         }
 
@@ -73,14 +115,23 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         if (this.predictionsChannel) {
             return;
         }
-        this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', () => { this.getPredictionFromView(); });
+        this.predictionsChannel = this.supabaseService.subscribeToTable('predictions', () => {
+            void this.getPredictionFromView();
+        });
     }
 
     async getPredictionFromView() {
         try {
             const { data, error } = await this.supabaseService.getPredictionsWithUsers();
             if (error) throw error;
-            this.latestPredictions = data;
+            this.latestPredictions = (data ?? []).map((row) => ({
+                users: Array.isArray(row.users) ? row.users[0] : row.users,
+                matches: Array.isArray(row.matches) ? row.matches[0] : row.matches,
+                home_ft: row.home_ft,
+                away_ft: row.away_ft,
+                winner: row.winner,
+                points: 0,
+            })) as PredictionRecord[];
 
             this.composeBetsRows();
         } catch (error) {
@@ -90,7 +141,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
     }
 
     private async initializeCountryCache() {
-        this.supabaseService.getAllTeams().then(({ data: teams, error }) => {
+        this.supabaseService.getAllTeams().then(({ data: teams }) => {
             this.countryTranslationCache = teams?.map(team => ({
                 id: team.id,
                 name_en: team.name_en,
@@ -99,9 +150,9 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         });
     }
 
-    getUserName(user: any): string {
+    getUserName(user: PredictionRecord): string {
         const lngMini = this.getLngMini();
-        let newName = user.users?.[`name_${lngMini}`] ?? '';
+        const newName = user.users?.[`name_${lngMini}`] ?? '';
         return newName;
     }
 
@@ -110,9 +161,9 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         const lngMini = this.getLngMini();
         this.allUsersNames = [];
 
-        this.betsToShow = this.allMatches?.map((bet: MatchDetail, index) => {
-            let newMatchRow = this.buildMatchRow(bet, index, lng, lngMini);
-            newMatchRow.predictions.forEach((prediction: any) => {
+        this.betsToShow = this.allMatches?.map((bet: MatchWithMeta, index) => {
+            const newMatchRow = this.buildMatchRow(bet, index, lng, lngMini);
+            newMatchRow.predictions.forEach((prediction: PredictionRecord) => {
                 this.allUsersNames.push({ name: this.getUserName(prediction), points: prediction.points ?? 0, id: prediction.users.id });
             })
             return newMatchRow;
@@ -121,7 +172,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         this.loading = false;
     }
 
-    aggregateUserPoints(users: Array<{ name: string; points: number, id: number }>): Array<{ name: string; points: number, id: number }> {
+    aggregateUserPoints(users: { name: string; points: number, id: number }[]): { name: string; points: number, id: number }[] {
         const userMap = new Map<string, number>();
 
         users.forEach(user => {
@@ -136,7 +187,7 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         }));
     }
 
-    private buildMatchRow(bet: MatchDetail, index: number, lng: "bg-BG" | "en-US", lngMini: "bg" | "en") {
+    private buildMatchRow(bet: MatchWithMeta, index: number, lng: "bg-BG" | "en-US", lngMini: "bg" | "en"): BetRow {
         const cachedDate = this.getCachedDate(bet.utcDate, lng);
         const homeTeam = this.findTeamByName(bet.homeTeam.name);
         const awayTeam = this.findTeamByName(bet.awayTeam.name);
@@ -145,9 +196,24 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
 
         const predictionsForMatch = this.latestPredictions
-            .filter((prediction: any) => prediction.matches.id === myId)
-            .map((prediction: any) => {
-                const points = this.chatService.getPointFromMatch(bet, score);
+            .filter((prediction: PredictionRecord) => prediction.matches.id === myId)
+            .map((prediction: PredictionRecord) => {
+                const points = this.chatService.getPointFromMatch(
+                    {
+                        score: {
+                            fullTime: {
+                                home: score?.fullTime?.home ?? 0,
+                                away: score?.fullTime?.away ?? 0,
+                            },
+                            winner: score?.winner ?? '',
+                        },
+                    },
+                    {
+                        home_ft: prediction.home_ft ?? 0,
+                        away_ft: prediction.away_ft ?? 0,
+                        winner: prediction.winner ?? '',
+                    }
+                );
                 return {
                     ...prediction,
                     points
@@ -171,15 +237,21 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         };
     }
 
-    private getScoreWithOverrides(bet: any) {
+    private getScoreWithOverrides(bet: MatchWithMeta): ScoreShape | undefined {
         if (!bet?.score) {
             return bet?.score;
         }
 
-        const score = {
+        const score: ScoreShape = {
             ...bet.score,
-            fullTime: { ...bet.score.fullTime },
-            halfTime: { ...bet.score.halfTime }
+            fullTime: {
+                home: bet.score.fullTime?.home ?? 0,
+                away: bet.score.fullTime?.away ?? 0,
+            },
+            halfTime: {
+                home: bet.score.halfTime?.home ?? 0,
+                away: bet.score.halfTime?.away ?? 0,
+            }
         };
 
         if (bet.id === 537327) {
@@ -230,8 +302,9 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         return this.groupTranslationCache.get(groupKey)!;
     }
 
-    private getStageInfo(bet: any) {
-        const { stage, group } = bet;
+    private getStageInfo(bet: MatchWithMeta) {
+        const stage = bet.stage ?? 'GROUP_STAGE';
+        const { group } = bet;
         const groupKey = group ?? stage ?? "UNKNOWN_GROUP";
         const phaseMap = this.getPhaseMap();
         const phaseLabel = this.getPhaseLabel(stage, groupKey);
@@ -270,8 +343,8 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         return this.getLng().slice(0, 2) as "bg" | "en";
     }
 
-    getUserPredictionValue(fullUser: any, product: any, columnIndex: number): string {
-        let selectedUser = product.predictions.find((p: any) => p.users.id === fullUser.id);
+    getUserPredictionValue(fullUser: { id: number }, product: BetRow, columnIndex: number): string {
+        const selectedUser = product.predictions.find((p: PredictionRecord) => p.users.id === fullUser.id);
 
         if (selectedUser) {
             if (columnIndex === 0) return this.formatPredictionValue(selectedUser.home_ft);
@@ -309,16 +382,18 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         return value.toString();
     }
 
-    returnTranslatedWinner(bet: any): string {
+    returnTranslatedWinner(bet: { winner?: string; score?: ScoreShape }): string {
         let result = "";
 
         if (!bet?.score?.fullTime) {
             result = this.translate.instant("TABLE." + bet.winner).slice(0, 1);
         }
         else {
-            if (bet.score.fullTime.home > bet.score.fullTime.away) {
+            const homeScore = bet.score.fullTime.home ?? 0;
+            const awayScore = bet.score.fullTime.away ?? 0;
+            if (homeScore > awayScore) {
                 result = 'HOME_TEAM';
-            } else if (bet.score.fullTime.home === bet.score.fullTime.away) {
+            } else if (homeScore === awayScore) {
                 result = 'DRAW';
             } else {
                 result = 'AWAY_TEAM';
@@ -333,9 +408,9 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
         }
         return result;
     }
-    getProductResultRow(product: any, columnIndex: number): string {
-        if (columnIndex === 0) return product.home_team_score ?? product.score?.fullTime?.home;
-        if (columnIndex === 1) return product.away_team_score ?? product.score?.fullTime?.away;
+    getProductResultRow(product: BetRow, columnIndex: number): string {
+        if (columnIndex === 0) return String(product.home_team_score ?? product.score?.fullTime?.home ?? '');
+        if (columnIndex === 1) return String(product.away_team_score ?? product.score?.fullTime?.away ?? '');
         if (columnIndex === 2) return this.returnTranslatedWinner(product)
         return "";
     }

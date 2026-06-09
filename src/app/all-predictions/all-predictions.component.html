@@ -51,14 +51,18 @@
                 </th> -->
             </tr>
             <tr>
-                <th *ngFor="let col of [0,1,2]; let idx = index">
+                @for (col of [0,1,2]; track col; let idx = $index) {
+                <th>
                         {{ getColName(idx) | translate}}
                 </th>
-                <ng-container *ngFor="let user of allUsersNames">
-                    <th *ngFor="let col of [0,1,2,3]; let idx = index">
+                }
+                @for (user of allUsersNames; track user.id) {
+                    @for (col of [0,1,2,3]; track col; let idx = $index) {
+                    <th>
                         {{ getColName(idx) | translate}}
                     </th>
-                </ng-container>
+                    }
+                }
             </tr>
         </ng-template>
 
@@ -98,7 +102,7 @@
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="product['edit_' + user.id + '_' + j] = true" [class.user-separator]="j === 0" 
-                    class="cursor-pointer" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 50px;': 'min-width: 31px;'">
+                    class="cursor-pointer" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"

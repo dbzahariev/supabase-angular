@@ -15,7 +15,7 @@ import backup2022 from '../../../backup_2022.json';
 import backup2024 from '../../../backup_2024.json';
 
 // Речник за превод на имената на отборите от английски на български
-const teamTranslations: { [key: string]: string } = {
+const teamTranslations: Record<string, string> = {
   'Albania': 'Албания',
   'Algeria': 'Алжир',
   'Argentina': 'Аржентина',
@@ -94,15 +94,24 @@ interface Team {
   name_bg: string;
 }
 
+interface BackupMatch {
+  homeTeam: string;
+  awayTeam: string;
+}
+
+interface BackupFile {
+  matches: BackupMatch[];
+}
+
 export async function importTeams(supabaseService: SupabaseService) {
   console.log('🚀 Стартиране на импортиране на отбори...\n');
 
   // Събиране на всички отбори от всички backup файлове
-  const allBackups = [backup2016, backup2018, backup2020, backup2022, backup2024];
+  const allBackups: BackupFile[] = [backup2016, backup2018, backup2020, backup2022, backup2024];
   const teamNamesSet = new Set<string>();
 
   allBackups.forEach(backup => {
-    backup.matches.forEach((match: any) => {
+    backup.matches.forEach((match) => {
       teamNamesSet.add(match.homeTeam);
       teamNamesSet.add(match.awayTeam);
     });

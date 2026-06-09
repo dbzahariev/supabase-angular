@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SupabaseChatService, Message } from '../supabase-chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,19 +14,19 @@ import { MessageService } from 'primeng/api';
     imports: [FormsModule, CommonModule, Slider, ToastModule, TranslateModule]
 })
 export class ChatComponent implements OnInit {
+    private readonly chatService = inject(SupabaseChatService);
+    private readonly messageService = inject(MessageService);
+    private readonly translateService = inject(TranslateService);
     messages: Message[] = [];
     users: { id: number; name: string }[] = [];
     selectedUserId: number | null = null;
     newMessage = '';
     fontSize!: number;
-
-    constructor(private chatService: SupabaseChatService, private messageService: MessageService, private translateService: TranslateService) { }
-
     ngOnInit() {
         this.chatService.messages$.subscribe(msgs => {
             const oldMessagesArr = this.messages;
-            let oldMessagesStr = JSON.stringify(oldMessagesArr);
-            let newMessagesStr = JSON.stringify(msgs);
+            const oldMessagesStr = JSON.stringify(oldMessagesArr);
+            const newMessagesStr = JSON.stringify(msgs);
             if (oldMessagesArr.length > 0 && oldMessagesStr !== newMessagesStr) {
                 setTimeout(() => {
                     this.messageService.add({
@@ -43,20 +43,20 @@ export class ChatComponent implements OnInit {
         this.fontSize = Number(localStorage.getItem('chat-font-size') ?? 16);
     }
 
-    updateFontSize(event: any) {
-        let savedFontSize = Number(localStorage.getItem('chat-font-size') ?? 0);
+    updateFontSize(event: number) {
+        const savedFontSize = Number(localStorage.getItem('chat-font-size') ?? 0);
         if (event && Number(event) !== savedFontSize) {
             localStorage.setItem('chat-font-size', event.toString());
         }
     }
 
-    onUserChange(event: any) {
+    onUserChange(event: number | null) {
         localStorage.setItem('chat-selected-user-id', (event ?? "").toString());
-        this.fetchUsers().then(() => { });
+        void this.fetchUsers();
     }
 
     async fetchUsers() {
-        let uniqueUsers = await this.fetchUsersWithLastBackupYear() ?? [{ id: 1, name: '' }];
+        const uniqueUsers = await this.fetchUsersWithLastBackupYear() ?? [{ id: 1, name: '' }];
         this.users = uniqueUsers;
         let savedUserId = localStorage.getItem('chat-selected-user-id');
         if (savedUserId === null) {
@@ -64,13 +64,13 @@ export class ChatComponent implements OnInit {
             savedUserId = this.users[0].id.toString();
         }
         if (this.users.length > 0) {
-            let savedUserId = localStorage.getItem('chat-selected-user-id');
+            const savedUserId = localStorage.getItem('chat-selected-user-id');
             this.selectedUserId = this.users.find(user => user.id === Number(savedUserId))?.id ?? this.users[0].id;
         }
     }
 
     async fetchUsersWithLastBackupYear() {
-        let lastBackupYear = await this.getLastBackupYear();
+        const lastBackupYear = await this.getLastBackupYear();
         const { data, error } = await this.chatService['supabase']
             .from('users')
             .select('id, name, predictions!inner(backup_year)')
@@ -78,7 +78,7 @@ export class ChatComponent implements OnInit {
 
         // Remove the predictions property from each user object
         if (data) {
-            data.forEach((user: any) => {
+            data.forEach((user: { predictions?: unknown }) => {
                 delete user.predictions;
             });
         }

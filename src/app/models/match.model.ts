@@ -131,5 +131,5 @@ export interface MatchDetail {
   odds: {
     msg: string;
   };
-  referees: any[];
+  referees: unknown[];
 }

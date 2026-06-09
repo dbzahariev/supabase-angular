@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-root',
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   templateUrl: './app.html',
   styleUrls: ['./app.css'],

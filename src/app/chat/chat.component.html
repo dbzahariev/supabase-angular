@@ -6,15 +6,19 @@
     <div class="chat-users">
         <label>{{'CHAT.USER_LABEL' | translate}}:
             <select [(ngModel)]="selectedUserId" (ngModelChange)="onUserChange($event)">
-                <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
+                @for (user of users; track user.id) {
+                <option [value]="user.id">{{user.name}}</option>
+                }
             </select>
         </label>
     </div>
     <div class="chat-messages">
-        <div *ngFor="let msg of messages" class="chat-message" [ngStyle]="{'font-size.px': fontSize}">
+        @for (msg of messages; track $index) {
+        <div class="chat-message" [ngStyle]="{'font-size.px': fontSize}">
             <span class="chat-date">{{msg.created_at | date:'dd.MM.yy (HH:mm)'}}</span>
             <b>{{msg.user_name}}:</b> {{msg.content}}
         </div>
+        }
     </div>
     <div class="chat-input">
         <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()"

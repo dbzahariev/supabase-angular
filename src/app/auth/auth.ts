@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { SupabaseService } from '../../app/supabase'
 import { CommonModule } from '@angular/common';
@@ -14,17 +14,12 @@ import { CommonModule } from '@angular/common';
 })
 export class AuthComponent {
   loading = false
+  private readonly supabase = inject(SupabaseService)
+  private readonly formBuilder = inject(FormBuilder)
 
-  signInForm;
-
-  constructor(
-    private readonly supabase: SupabaseService,
-    private readonly formBuilder: FormBuilder
-  ) {
-    this.signInForm = this.formBuilder.group({
-      email: '',
-    });
-  }
+  signInForm = this.formBuilder.group({
+    email: '',
+  });
 
   async onSubmit(): Promise<void> {
     try {

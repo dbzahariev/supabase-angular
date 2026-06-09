@@ -863,6 +863,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return selectedPredict.home_ft.toString() || ""
         }
         if (columnIndex === 1) {
+            if (selectedPredict.away_ft === -1){
+                return ""
+            }
             return selectedPredict.away_ft.toString() || ""
         }
         if (columnIndex === 2) {

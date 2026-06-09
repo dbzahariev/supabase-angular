@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase';
 import { PredictionWithUser } from '../../models/match.model';
@@ -10,11 +10,16 @@ import { PredictionWithUser } from '../../models/match.model';
     <div class="predictions-container">
       <h2>Прогнози с потребители</h2>
       
-      <div *ngIf="loading">Зареждане...</div>
+      @if (loading) {
+      <div>Зареждане...</div>
+      }
       
-      <div *ngIf="error" class="error">{{ error }}</div>
+      @if (error) {
+      <div class="error">{{ error }}</div>
+      }
       
-      <table *ngIf="!loading && predictions.length > 0">
+      @if (!loading && predictions.length > 0) {
+      <table>
         <thead>
           <tr>
             <th>Потребител</th>
@@ -27,7 +32,8 @@ import { PredictionWithUser } from '../../models/match.model';
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let prediction of predictions">
+          @for (prediction of predictions; track prediction.match_id) {
+          <tr>
             <td>{{ prediction.users.name_bg }}</td>
             <td>{{ prediction.match_id }}</td>
             <td>{{ prediction.utc_date | date:'short' }}</td>
@@ -36,8 +42,10 @@ import { PredictionWithUser } from '../../models/match.model';
             <td>{{ prediction.home_pt }} - {{ prediction.away_pt }}</td>
             <td>{{ prediction.winner }}</td>
           </tr>
+          }
         </tbody>
       </table>
+      }
     </div>
   `,
   styles: [`
@@ -72,8 +80,7 @@ export class PredictionsListComponent implements OnInit {
   predictions: PredictionWithUser[] = [];
   loading = false;
   error = '';
-
-  constructor(private supabase: SupabaseService) { }
+  private readonly supabase = inject(SupabaseService);
 
   ngOnInit() {
     this.loadPredictionsWithUsers();

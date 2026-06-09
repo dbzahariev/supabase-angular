@@ -27,24 +27,30 @@
       </p-button>
     </div>
 
-    <div *ngIf="importing" class="mb-4">
+    @if (importing) {
+    <div class="mb-4">
       <p-progressBar mode="indeterminate"></p-progressBar>
       <p class="text-center mt-2">Импортиране на отбори...</p>
     </div>
+    }
 
-    <div *ngIf="importResult" class="mb-4">
+    @if (importResult) {
+    <div class="mb-4">
+      @if (importResult.success) {
       <p-message 
-        *ngIf="importResult.success" 
         severity="success" 
         [text]="'Успешно импортирани ' + importResult.inserted + ' от ' + importResult.total + ' отбора'">
       </p-message>
+      }
       
+      @if (!importResult.success) {
       <p-message 
-        *ngIf="!importResult.success" 
         severity="error" 
         text="Грешка при импортиране на отбори">
       </p-message>
+      }
     </div>
+    }
 
     <div class="mb-3">
       <h3>Общо отбори: {{ teams.length }}</h3>

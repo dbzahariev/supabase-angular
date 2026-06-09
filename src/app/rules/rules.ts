@@ -8,7 +8,7 @@ import { NgClass } from '@angular/common';
   styleUrls: ['./rules.css'],
 })
 export class RulesComponent {
-  themeColors400: any = {
+  readonly themeColors400: Record<string, string> = {
     yellow: 'text-yellow-400',
     green: 'text-green-400',
     blue: 'text-blue-400',
@@ -17,7 +17,7 @@ export class RulesComponent {
     purple: 'text-purple-400'
   };
 
-  themeColors600: any = {
+  readonly themeColors600: Record<string, string> = {
     yellow: 'to-yellow-600',
     green: 'to-green-600',
     blue: 'to-blue-600',
@@ -26,7 +26,7 @@ export class RulesComponent {
     purple: 'to-purple-600'
   };
 
-  translations = {
+  readonly translations = {
     bg: {
       title: 'Правила на играта',
       subtitle: 'Прогнозирай резултатите, трупай точки и се бори за първото място 🏆',
@@ -113,7 +113,7 @@ export class RulesComponent {
   };
 
   get t() {
-    let isLngBg = localStorage.getItem('lang') === 'bg';
+    const isLngBg = localStorage.getItem('lang') === 'bg';
     return isLngBg
       ? this.translations.bg
       : this.translations.en;
@@ -130,11 +130,9 @@ export class RulesComponent {
     return this.themeColors600[color] || 'text-yellow-600';
   }
 
-  get colorFromTs() {
-    return '#25f11e'
-  }
+  readonly colorFromTs = '#25f11e';
 
-  animate = true;
+  readonly animate = true;
 
-  iconColor = '#22c55e'; // or dynamic
+  readonly iconColor = '#22c55e'; // or dynamic
 }
