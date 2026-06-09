@@ -209,6 +209,21 @@ export class SupabaseService {
       .eq('id', id)
   }
 
+  addPredictionBackupEvent(backupEvent: Record<string, unknown>) {
+    return this.supabase
+      .from('prediction_backup_events')
+      .insert(backupEvent)
+      .select('id')
+      .single()
+  }
+
+  getPredictionBackupEvents() {
+    return this.supabase
+      .from('prediction_backup_events')
+      .select('*')
+      .order('event_timestamp', { ascending: true })
+  }
+
   // Метод за слушане на промени в таблица
   /**
    * Subscribes to real-time changes on a specified database table.

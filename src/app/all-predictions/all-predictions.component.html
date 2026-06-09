@@ -7,8 +7,22 @@
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small">
         <ng-template #caption>
-            <div class="flex items-center justify-between ">
+            <div class="flex items-center justify-between gap-2">
                 <span class="text-xl font-bold">{{ 'TABLE.TITLE' | translate }}</span>
+                <div class="flex gap-2">
+                    <button
+                        type="button"
+                        class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                        (click)="downloadTableAsExcel()">
+                        {{ 'TABLE.DOWNLOAD_EXCEL' | translate }}
+                    </button>
+                    <button
+                        type="button"
+                        class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                        (click)="downloadPredictionBackup()">
+                        {{ 'TABLE.DOWNLOAD_BACKUP' | translate }}
+                    </button>
+                </div>
                 <!-- <p-iconfield iconPosition="left" class="ml-auto">
                     <p-inputicon>
                         <i class="pi pi-search"></i>

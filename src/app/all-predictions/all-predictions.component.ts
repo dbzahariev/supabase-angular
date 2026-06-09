@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { io, Socket } from 'socket.io-client';
+import * as XLSX from 'xlsx';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 
@@ -114,6 +115,19 @@ interface Match {
     myId: number;
 }
 
+interface PredictionBackupEntry {
+    event_id: string;
+    timestamp: string;
+    action: 'insert' | 'update' | 'delete' | 'skip' | 'error' | 'download';
+    user_id: number;
+    match_id: number;
+    prediction_id: number | null;
+    column_index: number;
+    input_value: string;
+    payload: Record<string, any>;
+    error_message?: string;
+}
+
 @Component({
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
@@ -122,6 +136,7 @@ interface Match {
     providers: [MessageService]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
+    private remoteBackupWarningShown = false;
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
     betsToShow: Bet[] = [];
     allUsersNamesFromDB: User[] = [];
@@ -411,14 +426,38 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     async changePrediction(user: User, bet: Bet, columnIndex: number, newValue: string) {
-        if (columnIndex > 1) return; // Only Home (0) and Away (1) scores are editable
+        const timestamp = new Date().toISOString();
+        const eventId = this.generateBackupEventId();
         let selectedMatch = this.allMatches.find(match => match.myId === bet.id)
+        let prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id) as any;
+
+        if (columnIndex > 1) {
+            const ignoredEntry: PredictionBackupEntry = {
+                event_id: eventId,
+                timestamp,
+                action: 'skip',
+                user_id: user.id,
+                match_id: bet.id,
+                prediction_id: prediction?.id ?? null,
+                column_index: columnIndex,
+                input_value: newValue,
+                payload: {
+                    home_ft: prediction ? prediction.home_ft : -1,
+                    away_ft: prediction ? prediction.away_ft : -1,
+                    home_pt: prediction ? prediction.home_pt : -1,
+                    away_pt: prediction ? prediction.away_pt : -1,
+                    winner: prediction ? prediction.winner : 'DRAW',
+                    match_group: selectedMatch?.group,
+                },
+            };
+            void this.persistPredictionBackupRemotely(ignoredEntry);
+            return;
+        }
 
         let score = parseInt(newValue);
         if (isNaN(score)) {
             score = -1; // Invalid score, you can choose how to handle this case
         }
-        let prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id) as any;
 
         const isNew = !prediction;
         const payload: any = {
@@ -440,18 +479,47 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         else payload.winner = 'DRAW';
 
         const hasInvalidScore = payload.home_ft < 0 && payload.away_ft < 0;
+        const shouldDelete = hasInvalidScore && !isNew;
+        const shouldUpsert = !hasInvalidScore;
+        const shouldSkip = hasInvalidScore && isNew;
 
         let error: any;
-        if (hasInvalidScore && !isNew) {
+        if (shouldDelete) {
             ({ error } = await this.supabaseService.deletePrediction(prediction.id));
-        } else if (!hasInvalidScore) {
+        } else if (shouldUpsert) {
             ({ error } = isNew
                 ? await this.supabaseService.addPrediction(payload)
                 : await this.supabaseService.updatePrediction(prediction.id, payload));
         }
 
-        if (!error && (hasInvalidScore ? !isNew : true)) {
-            if (hasInvalidScore) {
+        const backupEntry: PredictionBackupEntry = {
+            event_id: eventId,
+            timestamp,
+            action: error ? 'error' : shouldDelete ? 'delete' : shouldUpsert ? (isNew ? 'insert' : 'update') : 'skip',
+            user_id: user.id,
+            match_id: bet.id,
+            prediction_id: prediction?.id ?? null,
+            column_index: columnIndex,
+            input_value: newValue,
+            payload: {
+                home_ft: payload.home_ft,
+                away_ft: payload.away_ft,
+                home_pt: payload.home_pt,
+                away_pt: payload.away_pt,
+                winner: payload.winner,
+                match_group: payload.match_group,
+            },
+            error_message: error?.message,
+        };
+
+        void this.persistPredictionBackupRemotely(backupEntry);
+
+        if (shouldSkip && !error) {
+            return;
+        }
+
+        if (!error && (shouldDelete || shouldUpsert)) {
+            if (shouldDelete) {
                 this.messageService.add({
                     severity: 'info',
                     summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
@@ -477,6 +545,197 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 life: 3000
             });
         }
+    }
+
+    downloadTableAsExcel() {
+        const isLngBg = this.getLng() === 'bg-BG';
+
+        const headers = [
+            '#',
+            isLngBg ? 'Дата' : 'Date',
+            isLngBg ? 'Час' : 'Time',
+            isLngBg ? 'Група' : 'Group',
+            isLngBg ? 'Домакин' : 'Home team',
+            isLngBg ? 'Д' : 'H',
+            isLngBg ? 'Г' : 'A',
+            isLngBg ? 'П' : 'W',
+            isLngBg ? 'Гост' : 'Away team',
+            ...this.allUsersNames.flatMap(u => [
+                `${this.getNameFromUser(u)} Д`,
+                `${this.getNameFromUser(u)} Г`,
+                `${this.getNameFromUser(u)} П`,
+                `${this.getNameFromUser(u)} Т`,
+            ]),
+        ];
+
+        const rows = this.betsToShow
+            .filter(bet => this.isShowRow(bet))
+            .map(bet => {
+                const groupLabel = this.translate.instant(bet.group);
+                const result = [
+                    bet.row_index,
+                    bet.match_day,
+                    bet.match_time,
+                    groupLabel,
+                    bet.home_team,
+                    bet.score?.fullTime.home ?? '',
+                    bet.score?.fullTime.away ?? '',
+                    bet.score?.winner ? this.returnTranslateFromWin(bet.score.winner) : '',
+                    bet.away_team,
+                ];
+
+                for (const user of this.allUsersNames) {
+                    result.push(
+                        this.getUserPredictionValue(user, bet, 0),
+                        this.getUserPredictionValue(user, bet, 1),
+                        this.getUserPredictionValue(user, bet, 2),
+                        this.getUserPredictionValue(user, bet, 3),
+                    );
+                }
+
+                return result;
+            });
+
+        const totalsRow = [
+            '', '', '', '', '',
+            '', '', '', isLngBg ? 'Общо' : 'Total',
+            ...this.allUsersNames.flatMap(u => ['', '', '', u.total_points ?? 0]),
+        ];
+
+        const wsData = [headers, ...rows, totalsRow];
+        void this.persistPredictionBackupRemotely({
+            event_id: this.generateBackupEventId(),
+            timestamp: new Date().toISOString(),
+            action: 'download',
+            user_id: 1,
+            match_id: 202601,
+            prediction_id: null,
+            column_index: -1,
+            input_value: 'excel_export',
+            payload: { table_snapshot: JSON.stringify(wsData) },
+        });
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, isLngBg ? 'Прогнози' : 'Predictions');
+
+        const fileName = `predictions-${this.formatLocalDateTime(new Date(), 'filename')}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('TOAST.EXCEL_DOWNLOADED_TITLE'),
+            detail: this.translate.instant('TOAST.EXCEL_DOWNLOADED_MESSAGE'),
+            life: 2500,
+        });
+    }
+
+    async downloadPredictionBackup() {
+        const entries = await this.getPredictionBackupEntries();
+
+        const exportPayload = {
+            exported_at: new Date().toISOString(),
+            total_entries: entries.length,
+            entries,
+        };
+
+        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+        const objectUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = objectUrl;
+        anchor.download = `prediction-backup-${this.formatLocalDateTime(new Date(), 'filename')}.json`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(objectUrl);
+
+        this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('TOAST.BACKUP_DOWNLOADED_TITLE'),
+            detail: entries.length === 0
+                ? this.translate.instant('TOAST.BACKUP_DOWNLOADED_EMPTY_MESSAGE')
+                : this.translate.instant('TOAST.BACKUP_DOWNLOADED_MESSAGE', { count: entries.length }),
+            life: 2500,
+        });
+    }
+
+    private async getPredictionBackupEntries(): Promise<PredictionBackupEntry[]> {
+        try {
+            const { data, error } = await this.supabaseService.getPredictionBackupEvents();
+            if (error || !data) {
+                console.warn('Could not fetch remote backup entries.', error);
+                return [];
+            }
+            return data.map((row: any) => ({
+                event_id: row.event_id,
+                timestamp: this.formatLocalDateTime(new Date(row.event_timestamp)),
+                action: row.action,
+                user_id: row.user_id,
+                match_id: row.match_id,
+                prediction_id: row.prediction_id,
+                column_index: row.column_index,
+                input_value: row.input_value,
+                payload: row.payload,
+                error_message: row.error_message,
+            })) as PredictionBackupEntry[];
+        } catch {
+            return [];
+        }
+    }
+
+    private async persistPredictionBackupRemotely(entry: PredictionBackupEntry): Promise<void> {
+        try {
+            const { error } = await this.supabaseService.addPredictionBackupEvent({
+                event_id: entry.event_id,
+                event_timestamp: entry.timestamp,
+                action: entry.action,
+                user_id: entry.user_id,
+                match_id: entry.match_id,
+                prediction_id: entry.prediction_id,
+                column_index: entry.column_index,
+                input_value: entry.input_value,
+                payload: entry.payload,
+                error_message: entry.error_message,
+                source: 'all-predictions',
+            });
+
+            if (error && !this.remoteBackupWarningShown) {
+                this.remoteBackupWarningShown = true;
+                console.warn('Remote prediction backup is unavailable. Apply SQL migration for prediction_backup_events table.', error);
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_TITLE'),
+                    detail: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_MESSAGE'),
+                    life: 4500,
+                });
+            }
+        } catch (error) {
+            if (!this.remoteBackupWarningShown) {
+                this.remoteBackupWarningShown = true;
+                console.warn('Failed to persist prediction backup remotely.', error);
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_TITLE'),
+                    detail: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_MESSAGE'),
+                    life: 4500,
+                });
+            }
+        }
+    }
+
+    private formatLocalDateTime(date: Date, mode: 'display' | 'filename' = 'display'): string {
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const y = date.getFullYear();
+        const hh = String(date.getHours()).padStart(2, '0');
+        const mm = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
+        return mode === 'filename'
+            ? `${d}_${m}_${y}_${hh}_${mm}_${ss}`
+            : `${d}:${m}:${y}, ${hh}:${mm}:${ss}`;
+    }
+
+    private generateBackupEventId(): string {
+        return `${Date.now()}_${Math.random().toString(16).slice(2, 10)}`;
     }
 
     getLng(): "bg-BG" | "en-US" {
@@ -516,7 +775,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return cycle?.label.toUpperCase() ?? undefined;
     }
 
-    private formatDateToDDMM(date: Date | null, locale: string = 'en-GB', timeZone?: string): string {
+    private formatDateToDDMM(date: Date | null, locale = 'en-GB', timeZone?: string): string {
         if (!date) return '';
         return date.toLocaleDateString(locale, {
             day: '2-digit',
@@ -525,7 +784,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         });
     }
 
-    private formatTimeToHHmm(date: Date | null, locale: string = 'en-GB', timeZone?: string): string {
+    private formatTimeToHHmm(date: Date | null, locale = 'en-GB', timeZone?: string): string {
         if (!date) return '00:00';
         return date.toLocaleTimeString(locale, {
             hour: '2-digit',
