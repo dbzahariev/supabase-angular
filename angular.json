@@ -23,7 +23,10 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/supabase-angular",
+            "outputPath": {
+              "base": "dist/supabase-angular",
+              "browser": ""
+            },
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
