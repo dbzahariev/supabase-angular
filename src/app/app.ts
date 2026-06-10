@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core'
 import { SupabaseService } from '../app/supabase'
 import { TranslateService } from '@ngx-translate/core'
+import { ActivatedRoute } from '@angular/router'
+import { AdminService } from './services/admin.service'
 
 @Component({
   selector: 'app-root',
@@ -12,6 +14,8 @@ import { TranslateService } from '@ngx-translate/core'
 })
 export class App implements OnInit {
   private translateService = inject(TranslateService);
+  private route = inject(ActivatedRoute);
+  private adminService = inject(AdminService);
 
   constructor() { /* empty */ }
 
@@ -25,6 +29,14 @@ export class App implements OnInit {
     const browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
     this.translateService.setDefaultLang(browserLang);
     this.translateService.use(browserLang);
+
+    // Unlock admin mode when navigating to /?set-admin=<key>
+    this.route.queryParams.subscribe(params => {
+      const key = params['set-admin'];
+      if (key) {
+        this.adminService.tryUnlock(key);
+      }
+    });
   }
 
   toggleDarkMode() {
