@@ -6,18 +6,21 @@ const ADMIN_STORAGE_KEY = 'admin_unlocked';
 @Injectable({ providedIn: 'root' })
 export class AdminService {
 
-  /** Returns true if the admin key stored in localStorage matches the environment key. */
-  isAdmin(): boolean {
-    return localStorage.getItem(ADMIN_STORAGE_KEY) === environment.adminKey;
+  constructor() {
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get('set-admin');
+    if (key) {
+      this.tryUnlock(key);
+    }
   }
 
-  /**
-   * Tries to unlock admin mode with the provided key.
-   * Returns true on success, false on wrong key.
-   */
+  isAdmin(): boolean {
+    return localStorage.getItem(ADMIN_STORAGE_KEY) === this.simpleHash(environment.adminKey);
+  }
+
   tryUnlock(key: string): boolean {
     if (key === environment.adminKey) {
-      localStorage.setItem(ADMIN_STORAGE_KEY, key);
+      localStorage.setItem(ADMIN_STORAGE_KEY, this.simpleHash(key));
       return true;
     }
     return false;
@@ -25,5 +28,13 @@ export class AdminService {
 
   lock(): void {
     localStorage.removeItem(ADMIN_STORAGE_KEY);
+  }
+
+  private simpleHash(value: string): string {
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) {
+      hash = (Math.imul(31, hash) + value.charCodeAt(i)) | 0;
+    }
+    return hash.toString(16);
   }
 }

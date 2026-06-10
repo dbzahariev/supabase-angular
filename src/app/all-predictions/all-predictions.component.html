@@ -16,12 +16,14 @@
                         (click)="downloadTableAsExcel()">
                         {{ 'TABLE.DOWNLOAD_EXCEL' | translate }}
                     </button>
+                    @if (isAdmin()) {
                     <button
                         type="button"
                         class="px-3 py-2 text-sm font-semibold rounded border border-current"
                         (click)="downloadPredictionBackup()">
                         {{ 'TABLE.DOWNLOAD_BACKUP' | translate }}
                     </button>
+                    }
                 </div>
                 <!-- <p-iconfield iconPosition="left" class="ml-auto">
                     <p-inputicon>

@@ -16,6 +16,7 @@ import { AllPredictionsBackupService } from './all-predictions-backup.service';
 import { AllPredictionsPredictionFlowService } from './all-predictions-prediction-flow.service';
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
 import { Bet, Match, Prediction, PredictionBackupEntry, Team, User, MatchesApiResponse } from './all-predictions.models';
+import { AdminService } from '../services/admin.service';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 
@@ -51,6 +52,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private backupService = inject(AllPredictionsBackupService);
     private predictionFlowService = inject(AllPredictionsPredictionFlowService);
     private mapperService = inject(AllPredictionsMapperService);
+    private adminService = inject(AdminService);
     private predictionsChannel: RealtimeChannel | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
@@ -62,6 +64,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     this.fixAllMatches(response);
                 }
             });
+    }
+
+    isAdmin(): boolean {
+        return this.adminService.isAdmin();
     }
 
     isShowRow(product: Bet): boolean {
@@ -227,7 +233,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     severity: 'info',
                     summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
                     detail: this.translate.instant('TOAST.PREDICTION_DELETED_MESSAGE'),
-                    life: 3000
+                    life: 3000,
                 });
             }
             else {
