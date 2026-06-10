@@ -6,6 +6,8 @@ import {
   SupabaseClient,
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
+import { Observable } from 'rxjs'
+import { MatchesApiResponse, Prediction, PredictionBackupEventRow, SupabaseMatch, SupabaseResponse, Team, User } from './all-predictions/all-predictions.models'
 
 export interface Profile {
   id?: string
@@ -75,166 +77,71 @@ export class SupabaseService {
     return this.supabase
   }
 
-  // get session() {
-  //   this.supabase.auth.getSession().then(({ data }) => {
-  //     this._session = data.session
-  //   })
-  //   return this._session
-  // }
-
-  // profile(user: User) {
-  //   // return this.supabase
-  //   //   .from('profiles')
-  //   //   .select(`username, website, avatar_url`)
-  //   //   .eq('id', user.id)
-  //   //   .single()
-  // }
-
-  // authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
-  //   // return this.supabase.auth.onAuthStateChange(callback)
-  // }
-
   signIn(email: string) {
     return this.supabase.auth.signInWithOtp({ email })
   }
 
-  signOut() {
-    // return this.supabase.auth.signOut()
+  getAllMatchesFromBE(): Observable<MatchesApiResponse> {
+    return this.httpClient.get<MatchesApiResponse>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
-  // updateProfile(profile: Profile) {
-  //   const update = {
-  //     ...profile,
-  //     updated_at: new Date(),
-  //   }
-
-  //   // return this.supabase.from('profiles').upsert(update)
-  // }
-
-  // downLoadImage(path: string) {
-  //   // return this.supabase.storage.from('avatars').download(path)
-  // }
-
-  // uploadAvatar(filePath: string, file: File) {
-  //   // return this.supabase.storage.from('avatars').upload(filePath, file)
-  // }
-
-  getAllMatchesFromBE() {
-    return this.httpClient.get<unknown>('https://simple-node-proxy.onrender.com/api/matches')
-  }
-
-  getAllTeams() {
+  getAllTeams(): Promise<SupabaseResponse<Team>> {
     return this.supabase
       .from('teams')
-      .select('*')
+      .select('*') as unknown as Promise<SupabaseResponse<Team>>
   }
 
-  // Метод за четене на predictions
-  getPredictions() {
+  getPredictions(): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .select('*')
-      .order('utc_date', { ascending: false })
+      .order('utc_date', { ascending: false }) as unknown as Promise<SupabaseResponse<Prediction>>
   }
 
-  // Метод за четене на predictions с името на потребителя (join към users)
-  getPredictionsWithUsers() {
+  getPredictionsWithUsers(): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .select(this.predictionsWithUsersSelect)
-      .order('utc_date', { ascending: false })
+      .order('utc_date', { ascending: false }) as unknown as Promise<SupabaseResponse<Prediction>>
   }
 
-  // Метод за четене на predictions с името на потребителя за конкретен мач
-  // getPredictionsByMatchId(matchId: number) {
-  //   return this.supabase
-  //     .from('predictions')
-  //     .select(this.predictionsWithUsersSelect)
-  //     .eq('match_id', matchId)
-  //     .order('utc_date', { ascending: true }) as any as { data: PredictionWithUser[], error: any }
-  // }
-
-  // getSupaMatchesByYear(year: 2016 | 2018 | 2020 | 2022 | 2024) {
-  //   return this.supabase
-  //     .from('matches')
-  //     .select('*')
-  //     .gt('id', `${year}00`)
-  //     .lt('id', `${year}99`)
-  // }
-
-  // Метод за четене на predictions на конкретен потребител
-  // getPredictionsByUserId(userId: number) {
-  //   return this.supabase
-  //     .from('predictions')
-  //     .select(this.predictionsWithUsersSelect)
-  //     .eq('user_id', userId)
-  //     .order('utc_date', { ascending: false })
-  // }
-
-  // Метод за добавяне на prediction
-  addPrediction(prediction: Record<string, unknown> | Record<string, unknown>[]) {
+  addPrediction(prediction: Record<string, unknown> | Record<string, unknown>[]): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .insert(prediction)
-      .select()
+      .select() as unknown as Promise<SupabaseResponse<Prediction>>
   }
 
-  addMatch(match: Record<string, unknown> | Record<string, unknown>[]) {
-    return this.supabase
-      .from('matches')
-      .insert(match)
-      .select()
-  }
-
-  updateMatch(id: number, match: Record<string, unknown>) {
-    return this.supabase
-      .from('matches')
-      .update(match)
-      .eq('id', id)
-      .select()
-  }
-
-  updatePrediction(id: number, prediction: Record<string, unknown>) {
+  updatePrediction(id: number, prediction: Record<string, unknown>): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .update(prediction)
       .eq('id', id)
-      .select()
+      .select() as unknown as Promise<SupabaseResponse<Prediction>>
   }
 
-  deletePrediction(id: number) {
+  deletePrediction(id: number): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .delete()
-      .eq('id', id)
+      .eq('id', id) as unknown as Promise<SupabaseResponse<Prediction>>
   }
 
-  addPredictionBackupEvent(backupEvent: Record<string, unknown>) {
+  addPredictionBackupEvent(backupEvent: Record<string, unknown>): Promise<SupabaseResponse<PredictionBackupEventRow>> {
     return this.supabase
       .from('prediction_backup_events')
       .insert(backupEvent)
       .select('id')
-      .single()
+      .single() as unknown as Promise<SupabaseResponse<PredictionBackupEventRow>>
   }
 
-  getPredictionBackupEvents() {
+  getPredictionBackupEvents(): Promise<SupabaseResponse<PredictionBackupEventRow>> {
     return this.supabase
       .from('prediction_backup_events')
       .select('*')
-      .order('event_timestamp', { ascending: true })
+      .order('event_timestamp', { ascending: true }) as unknown as Promise<SupabaseResponse<PredictionBackupEventRow>>
   }
 
-  // Метод за слушане на промени в таблица
-  /**
-   * Subscribes to real-time changes on a specified database table.
-   * @param table - The name of the table to monitor for changes.
-   * @param callback - A callback function that is invoked when changes occur on the table.
-   * @returns The Supabase channel object that manages the subscription.
-   * @example
-   * subscribeToTable('users', (payload) => {
-   *   console.log('Users table changed:', payload);
-   * });
-   */
   subscribeToTable(table: string, callback: (payload: unknown) => void) {
     const channel = this.supabase
       .channel(`schema-db-changes:${table}`)
@@ -255,45 +162,23 @@ export class SupabaseService {
     return channel
   }
 
-  // Методи за работа с matches таблицата
-
-  // Получаване на всички мачове
-  getMatches() {
+  getMatches(): Promise<SupabaseResponse<SupabaseMatch>> {
     return this.supabase
       .from('matches')
       .select('*')
-      .order('utc_date', { ascending: true })
+      .order('utc_date', { ascending: true }) as unknown as Promise<SupabaseResponse<SupabaseMatch>>
   }
 
-  getUsers() {
+  getUsers(): Promise<SupabaseResponse<User>> {
     return this.supabase
       .from('users')
-      .select('*')
+      .select('*') as unknown as Promise<SupabaseResponse<User>>
   }
 
-  // Получаване на мач по ID
-  // getMatchById(id: number) {
-  //   return this.supabase
-  //     .from('matches')
-  //     .select('*')
-  //     .eq('id', id)
-  //     .single()
-  // }
-
-  // Получаване на мачове по група
-  // getMatchesByGroup(group: string) {
-  //   return this.supabase
-  //     .from('matches')
-  //     .select('*')
-  //     .eq('group_name', group)
-  //     .order('utc_date', { ascending: true })
-  // }
-
-  // Изтриване на мач
-  deleteMatch(id: number) {
+  deleteMatch(id: number): Promise<SupabaseResponse<SupabaseMatch>> {
     return this.supabase
       .from('matches')
       .delete()
-      .eq('id', id)
+      .eq('id', id) as unknown as Promise<SupabaseResponse<SupabaseMatch>>
   }
 }

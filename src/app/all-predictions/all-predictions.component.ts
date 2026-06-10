@@ -1,5 +1,3 @@
-/* eslint-disable prefer-const */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { TableModule } from "primeng/table";
 import { ToastModule } from 'primeng/toast';
@@ -17,7 +15,7 @@ import { AllPredictionsExportService } from './all-predictions-export.service';
 import { AllPredictionsBackupService } from './all-predictions-backup.service';
 import { AllPredictionsPredictionFlowService } from './all-predictions-prediction-flow.service';
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
-import { Bet, Match, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
+import { Bet, Match, Prediction, PredictionBackupEntry, Team, User, MatchesApiResponse } from './all-predictions.models';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 
@@ -36,7 +34,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     allPredictions: Prediction[] = [];
     allMatches: Match[] = [];
     allTeams: Team[] = [];
-    loading = false;
     themeColor = '#ffffff';
     themeBackground = '#ffffff';
     themeTextColor = '#000000';
@@ -60,18 +57,20 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     constructor() {
         this.realtimeService.createMatchesSocket((data) => {
-                if (this.isDataChanged(data)) {
-                    this.fixAllMatches(data);
+                const response = data as MatchesApiResponse;
+                if (this.isDataChanged(response)) {
+                    this.fixAllMatches(response);
                 }
             });
     }
 
-    isShowRow(product: any) {
+    isShowRow(product: Bet): boolean {
         return !JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]').includes(product.phase)
     }
 
-    editCell(user: User, product: any, j: number) {
-        product['edit_' + user.id + '_' + j] = true;
+    editCell(user: User, product: Bet, j: number): void {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (product as Record<string, any>)['edit_' + user.id + '_' + j] = true;
         setTimeout(() => {
             const input = document.querySelector(`input[data-edit-key="${user.id}_${j}"]`) as HTMLInputElement;
             if (input) {
@@ -92,7 +91,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.getAllMatche();
         this.subscribeToTestPredictions();
 
-        // Нова логика: Слушаме за смяна на езика и рефрешваме таблицата
         this.translate.onLangChange
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
@@ -100,46 +98,21 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             });
     }
 
-
-
-    getAllMatche() {
-        this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
+    getAllMatche(): void {
+        this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
             if (this.isDataChanged(data)) {
-                this.fixAllMatches(data)
+                this.fixAllMatches(data);
             }
         });
     }
 
-    fixAllMatches(data: any) {
+    fixAllMatches(data: MatchesApiResponse): void {
         if (!data || !data.matches) {
             this.allMatches = [];
         } else {
-            this.allMatches = data.matches?.map((match: any, index: number) => {
-                let myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
-                let myGroup = this.mapperService.getPhase(match.stage, match.group);
-
-                // if (match.id === 537327) {
-                //     match.score.duration = "FULL_TIME";
-                //     match.score.fullTime.home = 3;
-                //     match.score.fullTime.away = 4;
-                //     match.score.halfTime.home = 1;
-                //     match.score.halfTime.away = 2;
-                //     match.score.winner = "AWAY_TEAM";
-                // } else if (match.id === 537328) {
-                //     match.score.duration = "FULL_TIME";
-                //     match.score.fullTime.home = 4;
-                //     match.score.fullTime.away = 3;
-                //     match.score.halfTime.home = 2;
-                //     match.score.halfTime.away = 1;
-                //     match.score.winner = "HOME_TEAM";
-                // } else if (match.id === 537333) {
-                //     match.score.duration = "FULL_TIME";
-                //     match.score.fullTime.home = 2;
-                //     match.score.fullTime.away = 2;
-                //     match.score.halfTime.home = 1;
-                //     match.score.halfTime.away = 1;
-                //     match.score.winner = "DRAW";
-                // }
+            this.allMatches = data.matches?.map((match: Match, index: number) => {
+                const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
+                const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
                 return {
                     ...match,
@@ -150,15 +123,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
 
         this.fixPredictions();
-        // this.getAllMatche()
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
     }
 
-    subscribeToTestPredictions() {
+    subscribeToTestPredictions(): void {
         if (this.predictionsChannel) {
             return;
         }
@@ -185,7 +157,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return this.mapperService.getColName(idx);
     }
 
-    returnTranslateFromWin(winner: any): string {
+    returnTranslateFromWin(winner: string | null): string {
         return this.mapperService.returnTranslateFromWin(winner);
     }
 
@@ -193,9 +165,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return this.mapperService.getProductResultRow(bet, index);
     }
 
-    fixPredictions() {
-        this.supabaseService.getPredictionsWithUsers().then((data: any) => {
-            this.allPredictions = data.data || [];
+    fixPredictions(): void {
+        this.supabaseService.getPredictionsWithUsers().then((response) => {
+            this.allPredictions = response.data || [];
 
             const result = this.pointsService.applyPointsAndRankings(
                 this.allPredictions,
@@ -213,18 +185,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return this.pointsService.calculatePredictionPoints(bet, prediction);
     }
 
-    fixTeams() {
-        this.supabaseService.getAllTeams().then((data: any) => {
-            this.allTeams = data.data || [];
+    fixTeams(): void {
+        this.supabaseService.getAllTeams().then((response) => {
+            this.allTeams = response.data || [];
             this.fixBetToShow();
         })
     }
 
-
-
-    fixUsers() {
-        this.supabaseService.getUsers().then((data: any) => {
-            this.allUsersNamesFromDB = data.data;
+    fixUsers(): void {
+        this.supabaseService.getUsers().then((response) => {
+            this.allUsersNamesFromDB = response.data ?? [];
             this.cdr.detectChanges();
         })
     }
@@ -341,19 +311,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
     }
 
-
-
-
-
-    fixBetToShow() {
+    fixBetToShow(): void {
         this.betsToShow = this.mapperService.buildBetsToShow(this.allMatches, this.allTeams);
         this.cdr.detectChanges();
     }
 
-
-
-    togleGroup(pro: any) {
-        const hiddenGroups = JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]');
+    togleGroup(pro: Bet): void {
+        const hiddenGroups = JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]') as string[];
         const updated = hiddenGroups.includes(pro.phase)
             ? hiddenGroups.filter((x: string) => x !== pro.phase)
             : [...hiddenGroups, pro.phase];
@@ -361,13 +325,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
-    private isDataChanged(data: any): boolean {
+    private isDataChanged(data: MatchesApiResponse): boolean {
         const hashResult = this.realtimeService.hasMatchesDataChanged(data, this.lastMatchesDataHash);
         if (!hashResult.changed) {
-            console.log('No data change')
             return false;
         }
-        console.log('Data change', { foo1: this.lastMatchesDataHash, foo2: hashResult.hash })
         this.lastMatchesDataHash = hashResult.hash;
         return true;
     }

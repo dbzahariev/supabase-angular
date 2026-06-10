@@ -1,5 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+export interface SupabaseResponse<T> {
+    error: { message: string; details?: string } | null;
+    data: T[] | null;
+}
+
+export interface FilterSet {
+    season: string;
+}
+
+export interface ResultSet {
+    count: number;
+    first: string;
+    last: string;
+    played: number;
+}
+
+export interface CompetitionInfo {
+    id: number;
+    name: string;
+    code: string;
+    type: string;
+    emblem: string;
+}
+
+export interface MatchesApiResponse {
+    filters: FilterSet;
+    resultSet: ResultSet;
+    competition: CompetitionInfo;
+    matches: Match[];
+}
+
 export interface Bet {
     row_index: number;
     match_day: string;
@@ -114,4 +145,31 @@ export interface PredictionBackupEntry {
     input_value: string;
     payload: Record<string, any>;
     error_message?: string;
+}
+
+export interface PredictionBackupEventRow {
+    event_id: string;
+    event_timestamp: string;
+    action: 'insert' | 'update' | 'delete' | 'skip' | 'error' | 'download';
+    user_id: number;
+    match_id: number;
+    prediction_id: number | null;
+    column_index: number;
+    input_value: string;
+    payload: Record<string, unknown>;
+    error_message?: string;
+    source?: string;
+}
+
+export interface SupabaseMatch {
+    id: number;
+    home_team_id: number;
+    away_team_id: number;
+    utc_date: string;
+    group_name: string;
+    home_ft: number;
+    away_ft: number;
+    home_pt: number;
+    away_pt: number;
+    winner: string;
 }

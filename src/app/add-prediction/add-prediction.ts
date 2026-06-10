@@ -49,7 +49,7 @@ interface User {
   id: number;
   name_bg: string;
   name_en: string;
-  total_points: number;
+  total_points?: number;
 }
 
 interface MatchLike {
@@ -365,7 +365,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (error) {
       console.error('❌ Грешка при зареждане:', error);
     } else {
-      this.testPredictions = data || [];
+      this.testPredictions = (data as unknown as PredictionEntry[]) || [];
       console.log('✅ Заредени predictions:', this.testPredictions);
     }
   }
@@ -427,7 +427,7 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (error) {
       console.error('❌ Грешка при добавяне:', error);
     } else {
-      console.log('✅ Успешно добавен:', data[0]);
+      console.log('✅ Успешно добавен:', data?.[0]);
       // Презареди данните след успешно добавяне
       await this.loadTestPredictions();
     }
