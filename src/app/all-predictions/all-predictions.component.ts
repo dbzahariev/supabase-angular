@@ -60,9 +60,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     constructor() {
         this.realtimeService.createMatchesSocket((data) => {
-                console.log('Received matches update:', data);
                 if (this.isDataChanged(data)) {
-                    console.log('update matches update:', data);
                     this.fixAllMatches(data);
                 }
             });
@@ -102,55 +100,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             });
     }
 
-    // async checkMatchesForUpdate() {
-    //     let fooooo = ((await this.supabaseService.getMatches()).data)?.filter((match: any) => (match.id>202500))
-    //     let foo = this.allMatches
-    //     let foo2 = this.allTeams
 
-    //     let foo3 = this.betsToShow
-    //     this.betsToShow.forEach((bet:any) => {
-    //         let teamHome = this.allTeams.find((team: Team) => team.name_bg === bet.home_team);
-    //         let teamAway = this.allTeams.find((team: Team) => team.name_bg === bet.away_team);
-    //         let selectedMatch = this.allMatches.find(match => match.homeTeam.name === teamHome?.name_en && match.awayTeam.name === teamAway?.name_en);
-            
-    //         if (selectedMatch) {
-    //             let ffff = selectedMatch.myId
-    //             let supaMatch = fooooo?.find(match => match.id === ffff)
-    //             if (!supaMatch) {
-    //                 debugger
-    //                 let newMatch = {
-    //                     "id": selectedMatch.myId,
-    //                     "home_team_id": teamHome?.id,
-    //                     "away_team_id": teamAway?.id,
-    //                     "utc_date": bet.matchUtcDate,
-    //                     "group_name": `Група ${bet.group.replace('TABLE.GROUP_', '')}`,
-    //                     "home_ft": -1,
-    //                     "away_ft": -1,
-    //                     "home_pt": -1,
-    //                     "away_pt": -1,
-    //                     "winner": "DRAW"
-    //                 }
-
-    //                 // this.supabaseService.addMatch(newMatch).then(({ data, error }) => {
-    //                 //     if (error) {
-    //                 //         console.error('Error adding match:', error);
-    //                 //     }
-    //                 // });
-    //             }
-                
-    //             let kkkkk = supaMatch?.home_team_id!==teamHome?.id 
-    //             let kkkkk2 =supaMatch?.away_team_id!==teamAway?.id
-    //             // if (kkkkk || kkkkk2) {
-    //             //    
-    //             //     debugger
-    //             // }
-
-    //             // if (kkk){
-    //             //     debugger
-    //             // }
-    //         }
-    //     })
-    // }
 
     getAllMatche() {
         this.supabaseService.getAllMatchesFromBE().subscribe((data: any) => {
@@ -204,7 +154,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        console.log('DEBUG: Компонентът е унищожен.');
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
     }
@@ -271,10 +220,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         })
     }
 
-    // getPointsFromUser(user: User): number {
-    //     return user.total_points || 0;
-    //     // return this.allPredictions.filter(pred => pred.users.id === user.id && pred.points >= 0).reduce((acc, prediction) => acc + prediction.points, 0);
-    // }
+
 
     fixUsers() {
         this.supabaseService.getUsers().then((data: any) => {
@@ -324,7 +270,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             }
             this.fixPredictions();
         } else {
-            console.error('Error saving prediction:', result.error);
             this.messageService.add({
                 severity: 'error',
                 summary: this.translate.instant('TOAST.ERROR_TITLE'),

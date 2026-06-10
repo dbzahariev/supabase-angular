@@ -152,7 +152,7 @@ export class AllPredictionsMapperService {
             return result === '-1' ? '' : result;
         }
 
-        return 'bar';
+        return '';
     }
 
     getNameFromUser(user: User): string {
