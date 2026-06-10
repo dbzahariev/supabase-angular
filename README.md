@@ -1,59 +1,129 @@
-# SupabaseAngular
+# Supabase Angular - Football Predictions
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+Уеб приложение за футболни прогнози с класиране на участниците, базирано на Angular + Supabase.
 
-## Development server
+## Какво прави приложението
 
-To start a local development server, run:
+- Показва всички мачове по фази и групи.
+- Позволява добавяне/редакция на прогнози за всеки мач.
+- Изчислява точки на база реален резултат и прогноза.
+- Показва общо класиране на участниците.
+- Поддържа BG/EN език.
+- Поддържа realtime обновяване на мачове и прогнози.
+- Има отделна страница с официални правила.
+
+Основни страници:
+
+- `/` - всички прогнози
+- `/add-prediction` - добавяне/редакция на прогнози
+- `/all-matches` - всички мачове и точки
+- `/rules` - правила на играта
+
+## Линк към сайта
+
+- Production: [http://dworld.onrender.com/](http://dworld.onrender.com/)
+- Local: [http://localhost:4200](http://localhost:4200)
+
+## Правила на играта
+
+Кратко резюме на правилата (според страницата Rules в приложението):
+
+- Прогнозите се подават най-късно 5 минути преди началото на мача.
+- При изпуснат срок, за съответния мач не може да се подаде прогноза.
+- Прогнозите могат да се подават:
+	- директно в таба All Predictions
+	- по email: ramsess90@gmail.com
+- Промени по прогноза са позволени до 5 минути преди началото на мача.
+
+Точкуване:
+
+- 3 точки за точен резултат
+- 1 точка за познат знак (краен изход)
+
+Коефициенти по фази:
+
+- Групова фаза: x1
+- Шестнайсетинафинали: x1.5
+- Осминафинали: x1.5
+- Четвъртфинали: x2
+- Полуфинали + мач за 3-то място: x2.5
+- Финал: x3
+
+## Локално пускане
+
+### Изисквания
+
+- Node.js: 20.19+ (или 22.12+ / 24+)
+- npm
+
+### Инсталация
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Стартиране (dev)
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+След стартиране отвори:
+
+- http://localhost:4200
+
+### Build
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
-
-To build the project run:
+### Тестове
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Environment променливи
 
-## Running unit tests
+Проектът използва Angular environment конфигурация в `environments/environment.ts`.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Нужни са минимум следните стойности:
 
-```bash
-ng test
+```ts
+export const environment = {
+	production: false,
+	supabaseUrl: 'https://<your-project>.supabase.co',
+	supabaseKey: '<your-anon-key>'
+};
 ```
 
-## Running end-to-end tests
+Обяснение:
 
-For end-to-end (e2e) testing, run:
+- `supabaseUrl` - URL на Supabase проекта
+- `supabaseKey` - Supabase anon public key
 
-```bash
-ng e2e
-```
+Важно:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Не комитвай secret ключове в публично repo.
+- За production използвай отделен environment файл (напр. `environment.prod.ts`) и различни ключове/проекти при нужда.
 
-## Additional Resources
+## Технологии
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Angular 21
+- Supabase (Database + Realtime + Auth)
+- PrimeNG
+- Tailwind CSS
+- ngx-translate
+- Socket.IO (за външен realtime feed)
+
+## Данни и SQL
+
+В папка `supabase-migrations/` са SQL скриптовете за таблици/изгледи и помощни миграции.
+
+## Полезни npm скриптове
+
+- `npm start` - стартира dev сървър
+- `npm run build` - production build
+- `npm test` - unit тестове
+- `npm run lint` - lint
