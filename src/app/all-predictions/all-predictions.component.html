@@ -70,18 +70,13 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td class="col_stage" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'" [attr.colspan]="(allUsersNames.length * 1)+8">
+                <td class="col_stage" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'" [attr.colspan]="(allUsersNames.length * 4) + 9">
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
                         (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
                         {{ (product.stage + '_TITLE') | translate }}
                     </div>
                 </td>
-
-                <!-- празни клетки -->
-                @for (_ of [].constructor((allUsersNames.length * 4)+5); track $index) {
-                <!-- <td></td> -->
-                }
             </tr>
         </ng-template>
 
@@ -106,10 +101,11 @@
                 <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" 
                     class="cursor-pointer" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
-                    <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j)"
+                    <input pInputText type="text" [autofocus]="true" [ngModel]="getUserPredictionValue(user, product, j)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"
                         (keydown.enter)="product['edit_' + user.id + '_' + j] = false"
-                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false" 
+                        (keydown.escape)="product['edit_' + user.id + '_' + j] = false"
+                        (blur)="product['edit_' + user.id + '_' + j] = false"
                         [attr.data-edit-key]="user.id + '_' + j"
                         class="w-full" />
                     } @else {

@@ -244,7 +244,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     life: 3000
                 });
             }
-            this.fixPredictions();
+            // this.fixPredictions();
         } else {
             this.messageService.add({
                 severity: 'error',
