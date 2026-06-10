@@ -44,13 +44,14 @@ export class RulesComponent {
       submitEmail: 'По имейл:',
 
       editText: 'Промени по прогнозите също се приемат до',
-      editHighlight: '5 минути преди началото на мача',
+      editHighlight: 'първия съдийски сигнал',
 
       pointsTitle: 'Точкуване',
       points: 'точки',
       point: 'точка',
 
       exactScore: 'за познат точен резултат',
+      goalDifferenceScore: 'голова разлика или за познат равен резултат',
       correctOutcome: 'за познат знак',
 
       coefficientsTitle: 'Коефициенти по фази',
@@ -93,6 +94,7 @@ export class RulesComponent {
       point: 'point',
 
       exactScore: 'for an exact score prediction',
+      goalDifferenceScore: 'for predicting the goal difference or an equal score',
       correctOutcome: 'for predicting the correct outcome',
 
       coefficientsTitle: 'Stage Multipliers',
