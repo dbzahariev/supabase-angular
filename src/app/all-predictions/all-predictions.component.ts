@@ -76,20 +76,38 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return !JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]').includes(product.phase)
     }
 
-    editCell(user: User, product: Bet, j: number): void {
+    isAloowedToEdit(user: User, product: Bet, j: number): boolean {
+        let result = false;
         if (this.selectedPlayerId === null) {
-            return;
+            result = false;
         }
 
         // Allow editing own column
         if (this.selectedPlayerId === user.id) {
-            // Allow
+            result = true;
         }
         // Special: user 6 can also edit user 1's column
         else if (this.selectedPlayerId === 6 && user.id === 1) {
-            // Allow
+            result = true;
         }
         else {
+            result = false;
+        }
+
+        // Disallow editing winner for non-admins
+        if (j === 2 && !this.isAdmin()) {
+            result = !(product.group.split('.')[1].split('_')[0] === 'GROUP');
+        }
+
+        // Disallow editing points points for non-admins
+        if (j === 3 && !this.isAdmin()) {
+            result = false;
+        }
+        return result
+    }
+
+    editCell(user: User, product: Bet, j: number): void {
+        if (!this.isAloowedToEdit(user, product, j)) {
             return;
         }
 
