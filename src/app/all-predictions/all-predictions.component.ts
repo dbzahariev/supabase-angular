@@ -77,10 +77,19 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     editCell(user: User, product: Bet, j: number): void {
-        const canEditSelectedUser = this.selectedPlayerId !== null && this.selectedPlayerId === user.id;
-        const canEditAdminUser = user.id === 1;
+        if (this.selectedPlayerId === null) {
+            return;
+        }
 
-        if (!canEditSelectedUser && !canEditAdminUser) {
+        // Allow editing own column
+        if (this.selectedPlayerId === user.id) {
+            // Allow
+        }
+        // Special: user 6 can also edit user 1's column
+        else if (this.selectedPlayerId === 6 && user.id === 1) {
+            // Allow
+        }
+        else {
             return;
         }
 
