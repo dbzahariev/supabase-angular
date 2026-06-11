@@ -101,7 +101,7 @@
                 <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" 
                     class="cursor-pointer" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
-                    <input pInputText type="text" [autofocus]="true" [ngModel]="getUserPredictionValue(user, product, j)"
+                    <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"
                         (keydown.enter)="product['edit_' + user.id + '_' + j] = false"
                         (keydown.escape)="product['edit_' + user.id + '_' + j] = false"
@@ -109,7 +109,7 @@
                         [attr.data-edit-key]="user.id + '_' + j"
                         class="w-full" />
                     } @else {
-                    {{ getUserPredictionValue(user, product, j) }}
+                    {{ getUserPredictionValue(user, product, j, true) }}
                     }
                 </td>
                 <!-- <td [pEditableColumn]="product.code" pEditableColumnField="code">{{ getUserPredictionValue(user, product, j) }}</td> -->

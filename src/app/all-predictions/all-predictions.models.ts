@@ -43,6 +43,7 @@ export interface Bet {
     away_team: string;
     score?: Match['score'];
     matchUtcDate?: string;
+    matchStatus?: "TIMED" | string;
 }
 
 export interface User {

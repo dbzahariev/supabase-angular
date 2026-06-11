@@ -155,8 +155,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return this.mapperService.getCycleLabelFromBet(bet);
     }
 
-    getUserPredictionValue(user: User, bet: Bet, columnIndex: number): string {
-        return this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions);
+    getUserPredictionValue(user: User, bet: Bet, columnIndex: number, hidden: boolean): string {
+        return this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, hidden);
     }
 
     getColName(idx: number): string {
@@ -264,7 +264,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             betsToShow: this.betsToShow,
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
-            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions),
+            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
             translateGroup: (groupKey: string) => this.translate.instant(groupKey),
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
             getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),

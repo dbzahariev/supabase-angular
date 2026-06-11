@@ -89,7 +89,7 @@ export class AllPredictionsMapperService {
             const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
             const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
             const cicle = this.getCycleLabelByDate(new Date(match.utcDate));
-
+            
             return {
                 row_index: index + 1,
                 match_day: this.formatDateToDDMM(utcDate, curLng, timeZone),
@@ -102,6 +102,7 @@ export class AllPredictionsMapperService {
                 away_team: (isLngBg ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || '',
                 score: match.score,
                 matchUtcDate: match.utcDate,
+                matchStatus: match.status,
             };
         });
     }
@@ -132,24 +133,46 @@ export class AllPredictionsMapperService {
         return this.translate.instant('TABLE.' + (winner || '')).slice(0, 1);
     }
 
-    getUserPredictionValue(user: User, bet: Bet, columnIndex: number, predictions: Prediction[]): string {
+    getUserPredictionValue(user: User, bet: Bet, columnIndex: number, predictions: Prediction[], hidden: boolean): string {
         const selectedPredict = predictions.find(pred => pred.matches.id === bet.id && pred.users.id === user.id);
         if (selectedPredict === undefined) {
             return '';
         }
 
         if (columnIndex === 0) {
-            return selectedPredict.home_ft === -1 ? '' : selectedPredict.home_ft.toString();
+            let homeMatchPredictionValue = selectedPredict.home_ft === -1 ? '' : selectedPredict.home_ft.toString();
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+                homeMatchPredictionValue = '?';
+            }
+            return homeMatchPredictionValue;
         }
         if (columnIndex === 1) {
-            return selectedPredict.away_ft === -1 ? '' : selectedPredict.away_ft.toString();
+            let awayMatchPredictionValue = selectedPredict.away_ft === -1 ? '' : selectedPredict.away_ft.toString();
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+                awayMatchPredictionValue = '?';
+            }
+
+            return awayMatchPredictionValue;
         }
         if (columnIndex === 2) {
-            return this.returnTranslateFromWin(selectedPredict.winner);
+            let translatedWinner = this.returnTranslateFromWin(selectedPredict.winner);
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+                translatedWinner = '?';
+            }
+            return translatedWinner;
         }
         if (columnIndex === 3) {
-            const result = selectedPredict.points?.toString() || '-1';
-            return result === '-1' ? '' : result;
+            const result = selectedPredict.points?.toString() || '';
+            let newResult = result === '-1' ? '' : result;
+
+            if (hidden && bet.matchStatus === 'TIMED') {
+                if (user.id === 1) {
+                    newResult = result === '-1' ? '0' : result;
+                } else {
+                    newResult = "?";
+                }
+            }
+            return newResult;
         }
 
         return '';
