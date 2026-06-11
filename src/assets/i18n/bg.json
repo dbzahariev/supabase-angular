@@ -43,6 +43,7 @@
   },
   "TABLE": {
     "TITLE": "Мачове",
+    "ALL_PLAYERS": "Всички играчи",
     "DOWNLOAD_BACKUP": "Изтегли backup",
     "DOWNLOAD_EXCEL": "Изтегли Excel",
     "SEARCH_KEYWORD": "Търсене",

@@ -8,7 +8,22 @@
         [resizableColumns]="true" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between gap-2">
-                <span class="text-xl font-bold">{{ 'TABLE.TITLE' | translate }}</span>
+                <div class="flex items-center gap-4">
+                    <span class="text-xl font-bold">{{ 'TABLE.TITLE' | translate }}</span>
+                
+                    <div class="relative inline-block">
+                        <select class="px-3 pr-8 py-2 text-sm rounded border border-current bg-transparent appearance-none" aria-label="Players"
+                            [ngModel]="selectedPlayerId ?? ''"
+                            (ngModelChange)="onPlayerSelect($event)">
+                            <option value="">{{ 'TABLE.ALL_PLAYERS' | translate }}</option>
+                            @for (user of allUsersNames.filter(u => u.id !== 1); track user.id) {
+                            <option [value]="user.id">{{ getNameFromUser(user) }}</option>
+                            }
+                        </select>
+                        <span class="pi pi-chevron-down pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs"></span>
+                    </div>
+                </div>
+                
                 <div class="flex gap-2">
                     <button
                         type="button"

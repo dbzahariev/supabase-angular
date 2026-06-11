@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Bet, Match, Prediction, Team, User } from './all-predictions.models';
 
+const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
+
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsMapperService {
     private translate = inject(TranslateService);
@@ -11,6 +13,16 @@ export class AllPredictionsMapperService {
         { label: 'cicle_2', dateFrom: new Date('2026-06-18T11:00:00Z'), dateTo: new Date('2026-06-24T06:59:59Z') },
         { label: 'cicle_3', dateFrom: new Date('2026-06-24T07:00:00Z'), dateTo: new Date('2026-06-28T02:00:00Z') },
     ];
+
+    private getSelectedUserId(): number | null {
+        const selectedUserId = localStorage.getItem(SELECTED_USER_ID_STORAGE_KEY);
+        if (!selectedUserId) {
+            return null;
+        }
+
+        const parsedSelectedUserId = Number(selectedUserId);
+        return Number.isFinite(parsedSelectedUserId) ? parsedSelectedUserId : null;
+    }
 
     getLng(): 'bg-BG' | 'en-US' {
         const lang = this.translate.currentLang || localStorage.getItem('lang') || 'bg';
@@ -135,20 +147,22 @@ export class AllPredictionsMapperService {
 
     getUserPredictionValue(user: User, bet: Bet, columnIndex: number, predictions: Prediction[], hidden: boolean): string {
         const selectedPredict = predictions.find(pred => pred.matches.id === bet.id && pred.users.id === user.id);
+        const selectedUserId = this.getSelectedUserId() ?? -1;
+
         if (selectedPredict === undefined) {
             return '';
         }
 
         if (columnIndex === 0) {
             let homeMatchPredictionValue = selectedPredict.home_ft === -1 ? '' : selectedPredict.home_ft.toString();
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
                 homeMatchPredictionValue = '?';
             }
             return homeMatchPredictionValue;
         }
         if (columnIndex === 1) {
             let awayMatchPredictionValue = selectedPredict.away_ft === -1 ? '' : selectedPredict.away_ft.toString();
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
                 awayMatchPredictionValue = '?';
             }
 
@@ -156,7 +170,7 @@ export class AllPredictionsMapperService {
         }
         if (columnIndex === 2) {
             let translatedWinner = this.returnTranslateFromWin(selectedPredict.winner);
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== 1) {
+            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
                 translatedWinner = '?';
             }
             return translatedWinner;
@@ -169,7 +183,11 @@ export class AllPredictionsMapperService {
                 if (user.id === 1) {
                     newResult = result === '-1' ? '0' : result;
                 } else {
-                    newResult = "?";
+                    if (user.id === selectedUserId) {
+                        newResult = result === '-1' ? '0' : result;
+                    } else {
+                        newResult = "?";
+                    }
                 }
             }
             return newResult;

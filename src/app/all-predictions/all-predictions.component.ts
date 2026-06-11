@@ -19,6 +19,7 @@ import { Bet, Match, Prediction, PredictionBackupEntry, Team, User, MatchesApiRe
 import { AdminService } from '../services/admin.service';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
+const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 
 @Component({
     selector: 'app-all-predictions',
@@ -30,6 +31,7 @@ export const IS_SMALL_SCREEN = window.innerWidth < 768;
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
     betsToShow: Bet[] = [];
+    selectedPlayerId: number | null = null;
     allUsersNamesFromDB: User[] = [];
     allUsersNames: User[] = [];
     allPredictions: Prediction[] = [];
@@ -85,6 +87,24 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }, 0);
     }
 
+    onPlayerSelect(playerId: number | string | null): void {
+        if (playerId === null || playerId === '') {
+            this.selectedPlayerId = null;
+            localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            return;
+        }
+
+        const parsedPlayerId = Number(playerId);
+        if (!Number.isFinite(parsedPlayerId)) {
+            this.selectedPlayerId = null;
+            localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            return;
+        }
+
+        this.selectedPlayerId = parsedPlayerId;
+        localStorage.setItem(SELECTED_USER_ID_STORAGE_KEY, String(parsedPlayerId));
+    }
+
     ngOnInit(): void {
         const themeState = this.themeService.buildThemeState();
         this.themeColor = themeState.themeColor;
@@ -92,6 +112,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.themeBackground = themeState.themeBackground;
         this.mixColor = themeState.mixColor;
         this.mixPercent = themeState.mixPercent;
+        const savedPlayerId =
+            localStorage.getItem(SELECTED_USER_ID_STORAGE_KEY) ?? localStorage.getItem('selectedPlayerId');
+        this.selectedPlayerId = savedPlayerId ? Number(savedPlayerId) : null;
         this.fixUsers();
         this.fixTeams();
         this.getAllMatche();
