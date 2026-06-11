@@ -58,8 +58,8 @@
                 <th rowspan="2" colspan="1">{{ 'TABLE.TIME' | translate }}</th>
                 <th rowspan="2" colspan="1">{{ 'TABLE.GROUP' | translate }}</th>
                 <th rowspan="2" colspan="1" class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{'TABLE.HOME_TEAM' | translate }}</th>
-                <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
                 <th rowspan="2" colspan="1" class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
+                <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
                 @for (user of allUsersNames; track user.id) {
                 <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})
                 </th>
@@ -103,6 +103,7 @@
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group | translate}}</td>
                 <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.home_team }}</td>
+                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
                 <td class="score-cell">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
@@ -110,7 +111,6 @@
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
-                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" 
