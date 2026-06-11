@@ -68,7 +68,7 @@
                 </div>
 
                 <h2 class="text-3xl font-bold" [ngClass]="themeColor400">
-                    {{ t.title }}
+                    {{ 'RULES.TITLE' | translate }}
                 </h2>
             </div>
 
@@ -78,92 +78,27 @@
         <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
 
             <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
-                Общи правила
+                {{ 'RULES.GENERAL_RULES_TITLE' | translate }}
             </h3>
 
-            <p>Прогнозите на отделните участници са скрити за другите участници до началото на мача.
-                Това не се отнася за прогнозите на Айко, който винаги са явни.</p>
+            <p>{{ 'RULES.PREDICTIONS_HIDDEN' | translate }}</p>
 
             <p>
-                Прогнози за всички мачове се дават на сайта
+                {{ 'RULES.PREDICTIONS_SUBMISSION' | translate }}
                 <a href="http://dworld.onrender.com/">www.dworld.onrender.com</a>.
                 <br />
-                Ако не е въведена прогноза до началото на сррещата, тя може да се даде
-                до 15 мин след началото на срещата, но тогава се получават 50% от
-                полащите се точки.
+                {{ 'RULES.LATE_SUBMISSION' | translate }}
                 <br />
-                По уважителни причини може да се обадите на Димитър и той ще ги въведе
-                в системата.
+                {{ 'RULES.CONTACT_DIMITUR' | translate }}
             </p>
 
         </div>
-
-        <!-- DEADLINE -->
-        <!-- <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
-
-            <h3 class="text-xl font-bold text-sky-400 mb-4 flex items-center gap-2">
-                ⏰ {{ t.deadlineTitle }}
-            </h3>
-
-            <p class="leading-7 mb-4">
-                {{ t.deadlineText }}
-
-                <span class="font-bold text-yellow-400">
-                    {{ t.deadlineHighlight }}
-                </span>.
-            </p>
-
-            <div class="bg-orange-500/20 border border-orange-400 text-orange-300 rounded-xl p-4 mb-4">
-                ⚠️ {{ t.warning }}
-            </div>
-
-            <p class="leading-7 mb-4">
-                {{ t.monitoring }}
-            </p>
-
-            <div class="rounded-xl p-4 border border-slate-700 mb-4">
-
-                <p class="font-semibold text-slate-500 mb-3">
-                    {{ t.submitTitle }}
-                </p>
-
-                <ul class="space-y-2 text-slate-500">
-
-                    <li class="flex items-center gap-2">
-                        ✅ {{ t.submitTable }}
-                    </li>
-
-                    <li class="flex items-center gap-2">
-                        📧 {{ t.submitEmail }}
-
-                        <a href="mailto:ramsess90@gmail.com"
-                            class="text-sky-400 hover:text-sky-300 underline transition">
-                            ramsess90@gmail.com
-                        </a>
-
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <p class="text-slate-500 leading-7">
-
-                {{ t.editText }}
-
-                <span class="font-bold text-yellow-400">
-                    {{ t.editHighlight }}
-                </span>.
-
-            </p>
-
-        </div> -->
 
         <!-- POINTS -->
         <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
 
             <h3 class="text-xl font-bold text-emerald-400 mb-5 flex items-center gap-2">
-                🏆 {{ t.pointsTitle }}
+                🏆 {{ 'RULES.POINTS_TITLE' | translate }}
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -175,11 +110,11 @@
                     </div>
 
                     <p class="text-lg font-semibold mb-1">
-                        {{ t.points }}
+                        {{ 'RULES.POINTS' | translate }}
                     </p>
 
                     <p class="text-slate-500">
-                        {{ t.exactScore }}
+                        {{ 'RULES.EXACT_SCORE' | translate }}
                     </p>
 
                 </div>
@@ -191,11 +126,11 @@
                     </div>
 
                     <p class="text-lg font-semibold mb-1">
-                        {{ t.points }}
+                        {{ 'RULES.POINTS' | translate }}
                     </p>
 
                     <p class="text-slate-500">
-                        {{ t.goalDifferenceScore }}
+                        {{ 'RULES.GOAL_DIFFERENCE_SCORE' | translate }}
                     </p>
 
                 </div>
@@ -207,29 +142,27 @@
                     </div>
 
                     <p class="text-lg font-semibold mb-1">
-                        {{ t.point }}
+                        {{ 'RULES.POINT' | translate }}
                     </p>
 
                     <p class="text-slate-500">
-                        {{ t.correctOutcome }}
+                        {{ 'RULES.CORRECT_OUTCOME' | translate }}
                     </p>
 
                 </div>
 
             </div>
 
-            <p>След груповата фаза се дава прогноза и за победител от двубоя след
-                редовното време при равен резултат, като се добавя 1 точка за познат
-                отбор, който продължава напред в турнира.</p>
+            <p>{{ 'RULES.KNOCKOUT_PREDICTION' | translate }}</p>
 
-            <p>След шестнайсетинафиналите точките се умножават по коефициент:</p>
+            <p>{{ 'RULES.MULTIPLIER_EXPLANATION' | translate }}</p>
         </div>
 
         <!-- COEFFICIENTS -->
         <div class="bg-slate-800 rounded-2xl p-6 mb-6 border border-slate-700">
 
             <h3 class="text-xl font-bold text-pink-400 mb-5 flex items-center gap-2">
-                📈 {{ t.coefficientsTitle }}
+                📈 {{ 'RULES.COEFFICIENTS_TITLE' | translate }}
             </h3>
 
             <div class="rounded-2xl border border-slate-700">
@@ -241,11 +174,11 @@
                         <tr>
 
                             <th class="p-2 text-left font-bold">
-                                {{ t.stage }}
+                                {{ 'RULES.STAGE' | translate }}
                             </th>
 
                             <th class="p-2 text-center font-bold">
-                                {{ t.multiplier }}
+                                {{ 'RULES.MULTIPLIER' | translate }}
                             </th>
 
                         </tr>
@@ -257,7 +190,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-slate-500">
-                                {{ t.groupStage }}
+                                {{ 'RULES.GROUP_STAGE' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold">
@@ -269,7 +202,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-slate-500">
-                                {{ t.roundOf32 }}
+                                {{ 'RULES.ROUND_OF_32' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold">
@@ -281,7 +214,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-slate-500">
-                                {{ t.roundOf16 }}
+                                {{ 'RULES.ROUND_OF_16' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold">
@@ -293,7 +226,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-slate-500">
-                                {{ t.quarterFinals }}
+                                {{ 'RULES.QUARTER_FINALS' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold">
@@ -305,7 +238,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-slate-500">
-                                {{ t.semiFinals }}
+                                {{ 'RULES.SEMI_FINALS' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold">
@@ -317,7 +250,7 @@
                         <tr class="hover:bg-slate-700/40 transition">
 
                             <td class="p-2 text-green-500">
-                                {{ t.final }}
+                                {{ 'RULES.FINAL' | translate }}
                             </td>
 
                             <td class="p-2 text-center font-bold text-yellow-400 text-lg font-extrabold">
@@ -338,11 +271,11 @@
         <div class="bg-gradient-to-r from-pink-600 rounded-2xl p-6 text-center shadow-lg" [ngClass]="themeColor600">
 
             <p class="text-2xl md:text-3xl font-black">
-                🎉 {{ t.funTitle }}
+                🎉 {{ 'RULES.FUN_TITLE' | translate }}
             </p>
 
             <p class="text-xl md:text-2xl mt-2 font-bold">
-                {{ t.funText }}
+                {{ 'RULES.FUN_TEXT' | translate }}
             </p>
 
         </div>

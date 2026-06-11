@@ -1,31 +1,9 @@
 {
-  "HELLO": "Hello!",
-  "WELCOME": "Welcome, {{name}}!",
-  "DARK_MODE_TOGGLE": "Dark Mode",
-  "CHOSE_COLOR": "Choose a color",
-  "colors": {
-    "green": "Green",
-    "red": "Red",
-    "blue": "Blue",
-    "yellow": "Yellow"
-  },
-  "CHAT": {
-    "TITLE": "New Messages",
-    "DETAIL": "You have new messages",
-    "INPUT_PLACEHOLDER": "Insert your message here",
-    "SEND_BUTTON": "Send",
-    "USER_LABEL": "User",
-    "FONT_SIZE_LABEL": "Font Size"
-  },
   "ROUTE": {
-    "ALL_RULES":"Rules",
     "ALL_PREDICTIONS": "All Predictions",
-    "ADD_PREDICTION": "Add Prediction",
-    "CHAT": "Chat",
-    "PRODUCTS": "Products",
-    "MESSAGES": "Messages"
+    "ALL_RULES": "Rules",
+    "CHAT": "Chat"
   },
-  "CHOOSE_USER": "Choose a user",
   "TOAST": {
     "PREDICTION_DELETED_TITLE": "Info",
     "PREDICTION_DELETED_MESSAGE": "Prediction deleted successfully",
@@ -102,5 +80,32 @@
     "THIRD_PLACE_TITLE": "Third Place",
     "FINAL": "1/2",
     "FINAL_TITLE": "Final"
+  },
+  "RULES": {
+    "TITLE": "Game Rules",
+    "GENERAL_RULES_TITLE": "General Rules",
+    "PREDICTIONS_HIDDEN": "Individual participant predictions are hidden from other participants until the match starts. This does not apply to Aiko's predictions, which are always visible.",
+    "PREDICTIONS_SUBMISSION": "Predictions for all matches are given on the website",
+    "LATE_SUBMISSION": "If a prediction is not entered by the start of the match, it can be given up to 15 minutes after the match starts, but then only 50% of the points awarded are given.",
+    "CONTACT_DIMITUR": "For valid reasons, you can call Dimitur and he will enter them into the system.",
+    "KNOCKOUT_PREDICTION": "After the group stage, a prediction is given for the winner of the match after regular time in case of a draw, with an additional 1 point for predicting the correct team that advances in the tournament.",
+    "MULTIPLIER_EXPLANATION": "After the Round of 32, the points are multiplied by a coefficient:",
+    "POINTS_TITLE": "Scoring System",
+    "POINTS": "points",
+    "POINT": "point",
+    "EXACT_SCORE": "for an exact score prediction",
+    "GOAL_DIFFERENCE_SCORE": "for predicting the goal difference or an equal score",
+    "CORRECT_OUTCOME": "for predicting the correct outcome",
+    "COEFFICIENTS_TITLE": "Stage Multipliers",
+    "STAGE": "Stage",
+    "MULTIPLIER": "Multiplier",
+    "GROUP_STAGE": "Group Stage",
+    "ROUND_OF_32": "Round of 32",
+    "ROUND_OF_16": "Round of 16",
+    "QUARTER_FINALS": "Quarter-finals",
+    "SEMI_FINALS": "Semi-finals + 3rd place match",
+    "FINAL": "Final",
+    "FUN_TITLE": "And most importantly:",
+    "FUN_TEXT": "Have fun!"
   }
 }

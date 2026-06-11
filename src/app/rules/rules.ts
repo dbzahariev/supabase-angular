@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-rules',
-  imports: [NgClass],
+  imports: [NgClass, TranslateModule],
   templateUrl: './rules.html',
   styleUrls: ['./rules.css'],
 })
 export class RulesComponent {
+  private translate = inject(TranslateModule);
+
   readonly themeColors400: Record<string, string> = {
     yellow: 'text-yellow-400',
     green: 'text-green-400',
@@ -25,102 +28,6 @@ export class RulesComponent {
     pink: 'to-pink-600',
     purple: 'to-purple-600'
   };
-
-  readonly translations = {
-    bg: {
-      title: 'Правила на играта',
-      subtitle: 'Прогнозирай резултатите, трупай точки и се бори за първото място 🏆',
-
-      deadlineTitle: 'Срок за прогнози',
-      deadlineText: 'Прогнози за всички мачове се подават най-късно',
-      deadlineHighlight: '5 минути преди първия съдийски сигнал',
-
-      warning: 'При неспазване на крайния срок играчът губи право да даде прогноза за съответния мач.',
-
-      monitoring: 'Димитър следи за спазването на правилата в последните 5 минути преди началото на всяка среща.',
-
-      submitTitle: 'Прогнозите могат да се подават:',
-      submitTable: 'Директно в таблицата в таб "Всички прогнози"',
-      submitEmail: 'По имейл:',
-
-      editText: 'Промени по прогнозите също се приемат до',
-      editHighlight: 'първия съдийски сигнал',
-
-      pointsTitle: 'Точкуване',
-      points: 'точки',
-      point: 'точка',
-
-      exactScore: 'за познат точен резултат',
-      goalDifferenceScore: 'голова разлика или за познат равен резултат',
-      correctOutcome: 'за познат знак',
-
-      coefficientsTitle: 'Коефициенти по фази',
-
-      stage: 'Фаза',
-      multiplier: 'Коефициент',
-
-      groupStage: 'Групова фаза',
-      roundOf32: 'Шестнайсетинафинали',
-      roundOf16: 'Осминафинали',
-      quarterFinals: 'Четвъртфинали',
-      semiFinals: 'Полуфинали + мач за 3-то място',
-      final: 'Финал',
-
-      funTitle: 'И най-важното правило:',
-      funText: 'Да се забавляваме!'
-    },
-
-    en: {
-      title: 'Game Rules',
-      subtitle: 'Predict match results, earn points and fight for the top spot 🏆',
-
-      deadlineTitle: 'Prediction Deadline',
-      deadlineText: 'Predictions for all matches must be submitted no later than',
-      deadlineHighlight: '5 minutes before kick-off',
-
-      warning: 'If the deadline is missed, the player loses the right to submit a prediction for that match.',
-
-      monitoring: 'Dimitar will monitor and enforce the rules during the final 5 minutes before each match starts.',
-
-      submitTitle: 'Predictions can be submitted:',
-      submitTable: 'Directly in the table in tab "All Predictions"',
-      submitEmail: 'By email:',
-
-      editText: 'Prediction changes are also allowed up to',
-      editHighlight: '5 minutes before the match starts',
-
-      pointsTitle: 'Scoring System',
-      points: 'points',
-      point: 'point',
-
-      exactScore: 'for an exact score prediction',
-      goalDifferenceScore: 'for predicting the goal difference or an equal score',
-      correctOutcome: 'for predicting the correct outcome',
-
-      coefficientsTitle: 'Stage Multipliers',
-
-      stage: 'Stage',
-      multiplier: 'Multiplier',
-
-      groupStage: 'Group Stage',
-      roundOf32: 'Round of 32',
-      roundOf16: 'Round of 16',
-      quarterFinals: 'Quarter-finals',
-      semiFinals: 'Semi-finals + 3rd place match',
-      final: 'Final',
-
-      funTitle: 'And most importantly:',
-      funText: 'Have fun!'
-    }
-  };
-
-  get t() {
-    const isLngBg = localStorage.getItem('lang') === 'bg';
-    return isLngBg
-      ? this.translations.bg
-      : this.translations.en;
-  }
-
 
   get themeColor400() {
     const color = localStorage.getItem('theme-color') || 'yellow';
