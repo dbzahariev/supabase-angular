@@ -77,6 +77,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     editCell(user: User, product: Bet, j: number): void {
+        const canEditSelectedUser = this.selectedPlayerId !== null && this.selectedPlayerId === user.id;
+        const canEditAdminUser = user.id === 1;
+
+        if (!canEditSelectedUser && !canEditAdminUser) {
+            return;
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (product as Record<string, any>)['edit_' + user.id + '_' + j] = true;
         setTimeout(() => {
