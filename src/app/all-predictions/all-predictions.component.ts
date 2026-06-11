@@ -179,8 +179,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
                 if (match.id === 537327) {
                     match.status = 'IN_PLAY'
+                    match.status = 'FINISHED'
 
-                    match.score.fullTime.home = 1
+                    match.score.fullTime.home = 2
                     match.score.fullTime.away = 0
                     match.score.winner = 'HOME_TEAM'
                 }

@@ -10,6 +10,11 @@ export class AllPredictionsPointsService {
             return -2;
         }
         else {
+            // if (match.id === 537327) {
+            //     if (prediction.users.id === 1) {
+            //         debugger
+            //     }
+            // }
             if (match.score.fullTime.home === null || match.score.fullTime.away === null) {
                 result = -1;
             }
@@ -26,20 +31,22 @@ export class AllPredictionsPointsService {
             }
 
 
-            if (actualHome === predictedHome && actualAway === predictedAway) {
+            if (result === -1 && (actualHome === predictedHome && actualAway === predictedAway)) {
                 result = 3;
             }
 
             const actualAbs = Math.abs(actualHome - actualAway);
             const predictAbs = Math.abs(predictedHome - predictedAway);
-            if (actualAbs === predictAbs && actualWinner === predictedWinner) {
+            if (result === -1 && (actualAbs === predictAbs && actualWinner === predictedWinner)) {
                 result = 2;
             }
 
-            if (actualWinner === predictedWinner) {
+            if (result === -1 && (actualWinner === predictedWinner)) {
                 result = 1;
             } else {
-                result = 0;
+                if (result === -1) {
+                    result = 0;
+                }
             }
 
             if (match.status === 'IN_PLAY') {
