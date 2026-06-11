@@ -61,11 +61,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     constructor() {
         this.realtimeService.createMatchesSocket((data) => {
-                const response = data as MatchesApiResponse;
-                if (this.isDataChanged(response)) {
-                    this.fixAllMatches(response);
-                }
-            });
+            const response = data as MatchesApiResponse;
+            if (this.isDataChanged(response)) {
+                this.fixAllMatches(response);
+            }
+        });
     }
 
     isAdmin(): boolean {
@@ -176,6 +176,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             this.allMatches = data.matches?.map((match: Match, index: number) => {
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
+
+                if (match.id === 537327) {
+                    match.status = 'IN_PLAY'
+
+                    match.score.fullTime.home = 1
+                    match.score.fullTime.away = 0
+                    match.score.winner = 'HOME_TEAM'
+                }
 
                 return {
                     ...match,

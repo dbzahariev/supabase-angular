@@ -105,7 +105,7 @@
                 <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.home_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
-                <td class="score-cell">{{product?.score?.winner ?( ('TABLE.'+ product?.score?.winner ) | translate):''}}
+                <td class="score-cell">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
                 </td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
