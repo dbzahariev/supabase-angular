@@ -169,6 +169,22 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         });
     }
 
+    getTimeWindow(utcTime: string | Date):
+        "past" | "next10" | "next20" | "later" {
+
+        const now = new Date();
+        console.log(now.toUTCString())
+        const target = new Date(utcTime);
+
+        const diffMs = target.getTime() - now.getTime();
+        const diffMin = diffMs / (1000 * 60);
+
+        if (diffMin < 0) return "past";
+        if (diffMin <= 10) return "next10";
+        if (diffMin <= 20) return "next20";
+        return "later";
+    }
+
     fixAllMatches(data: MatchesApiResponse): void {
         if (!data || !data.matches) {
             this.allMatches = [];
@@ -176,6 +192,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             this.allMatches = data.matches?.map((match: Match, index: number) => {
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
+
+                let inNext10Min = this.getTimeWindow(match.utcDate) === 'next10'
+
+                if (inNext10Min) {
+                    match.status = 'IN_PLAY'
+                    match.score.fullTime.home = 0
+                    match.score.fullTime.away = 0
+                }
 
                 return {
                     ...match,
