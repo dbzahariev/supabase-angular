@@ -10,11 +10,6 @@ export class AllPredictionsPointsService {
             return -2;
         }
         else {
-            // if (match.id === 537327) {
-            //     if (prediction.users.id === 1) {
-            //         debugger
-            //     }
-            // }
             if (match.score.fullTime.home === null || match.score.fullTime.away === null) {
                 result = -1;
             }
@@ -73,11 +68,13 @@ export class AllPredictionsPointsService {
             return nextPrediction;
         });
 
-        users.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
+        const restUsers = [...users.sort((a, b) => (b.total_points || 0) - (a.total_points || 0))].filter(u => u.id !== 1);
+        const AIUser = users.find(u => u.id === 1);
+        const sortedUsers = AIUser ? [AIUser, ...restUsers] : restUsers;
 
         return {
             predictions: predictionsWithPoints,
-            users,
+            users :sortedUsers,
         };
     }
 }

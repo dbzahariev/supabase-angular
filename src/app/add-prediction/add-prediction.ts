@@ -119,22 +119,22 @@ export class AddPrediction implements OnInit, OnDestroy {
     if (!this.socket.hasListeners('matchesUpdate')) {
       this.socket.on('matchesUpdate', (data: { matches: MatchLike[] }) => {
         this.allMatches = data.matches.map((match: MatchLike, index: number) => {
-          if (match.id === 537327) {
-            match.score.duration = "FULL_TIME";
-            match.score.fullTime = { home: 3, away: 4 };
-            match.score.halfTime = { home: 1, away: 2 };
-            match.score.winner = "AWAY_TEAM";
-          } else if (match.id === 537328) {
-            match.score.duration = "FULL_TIME";
-            match.score.fullTime = { home: 4, away: 3 };
-            match.score.halfTime = { home: 2, away: 1 };
-            match.score.winner = "HOME_TEAM";
-          } else if (match.id === 537333) {
-            match.score.duration = "FULL_TIME";
-            match.score.fullTime = { home: 2, away: 2 };
-            match.score.halfTime = { home: 1, away: 1 };
-            match.score.winner = "DRAW";
-          }
+          // if (match.id === 537327) {
+          //   match.score.duration = "FULL_TIME";
+          //   match.score.fullTime = { home: 3, away: 4 };
+          //   match.score.halfTime = { home: 1, away: 2 };
+          //   match.score.winner = "AWAY_TEAM";
+          // } else if (match.id === 537328) {
+          //   match.score.duration = "FULL_TIME";
+          //   match.score.fullTime = { home: 4, away: 3 };
+          //   match.score.halfTime = { home: 2, away: 1 };
+          //   match.score.winner = "HOME_TEAM";
+          // } else if (match.id === 537333) {
+          //   match.score.duration = "FULL_TIME";
+          //   match.score.fullTime = { home: 2, away: 2 };
+          //   match.score.halfTime = { home: 1, away: 1 };
+          //   match.score.winner = "DRAW";
+          // }
 
           const myId = Number("2026" + (index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString()));
           return {

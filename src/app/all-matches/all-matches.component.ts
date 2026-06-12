@@ -254,28 +254,28 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
             }
         };
 
-        if (bet.id === 537327) {
-            score.duration = "FULL_TIME";
-            score.fullTime.home = 3;
-            score.fullTime.away = 4;
-            score.halfTime.home = 1;
-            score.halfTime.away = 2;
-            score.winner = "AWAY_TEAM";
-        } else if (bet.id === 537328) {
-            score.duration = "FULL_TIME";
-            score.fullTime.home = 4;
-            score.fullTime.away = 3;
-            score.halfTime.home = 2;
-            score.halfTime.away = 1;
-            score.winner = "HOME_TEAM";
-        } else if (bet.id === 537333) {
-            score.duration = "FULL_TIME";
-            score.fullTime.home = 2;
-            score.fullTime.away = 2;
-            score.halfTime.home = 1;
-            score.halfTime.away = 1;
-            score.winner = "DRAW";
-        }
+        // if (bet.id === 537327) {
+        //     score.duration = "FULL_TIME";
+        //     score.fullTime.home = 3;
+        //     score.fullTime.away = 4;
+        //     score.halfTime.home = 1;
+        //     score.halfTime.away = 2;
+        //     score.winner = "AWAY_TEAM";
+        // } else if (bet.id === 537328) {
+        //     score.duration = "FULL_TIME";
+        //     score.fullTime.home = 4;
+        //     score.fullTime.away = 3;
+        //     score.halfTime.home = 2;
+        //     score.halfTime.away = 1;
+        //     score.winner = "HOME_TEAM";
+        // } else if (bet.id === 537333) {
+        //     score.duration = "FULL_TIME";
+        //     score.fullTime.home = 2;
+        //     score.fullTime.away = 2;
+        //     score.halfTime.home = 1;
+        //     score.halfTime.away = 1;
+        //     score.winner = "DRAW";
+        // }
 
         return score;
     }
