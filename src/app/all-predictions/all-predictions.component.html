@@ -84,7 +84,7 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td class="col_stage"[ngClass]="IS_SMALL_SCREEN ? 'sticky': 'sticky'" [attr.colspan]="IS_SMALL_SCREEN ? 15: 28">
+                <td class="col_stage"[ngClass]="IS_SMALL_SCREEN ? 'sticky': 'sticky'" [attr.colspan]="IS_SMALL_SCREEN ? 12: 27">
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
                         (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">

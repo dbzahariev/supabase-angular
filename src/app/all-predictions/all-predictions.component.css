@@ -50,7 +50,7 @@
 
 .sticky {
     position: sticky;
-    z-index: 2;
+    z-index: 0;
     background-color: var(--p-datatable-header-background) !important;
 }
 
