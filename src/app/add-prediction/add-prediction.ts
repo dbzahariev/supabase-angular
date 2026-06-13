@@ -123,7 +123,6 @@ export class AddPrediction implements OnInit, OnDestroy {
       ? 'http://localhost:3000'
       : 'https://simple-node-proxy.onrender.com';
 
-    // Ако вече има socket, затваряме го за да няма дублирани listeners
     if (this.socket) {
       this.socket.removeAllListeners();
       this.socket.disconnect();
@@ -150,13 +149,35 @@ export class AddPrediction implements OnInit, OnDestroy {
       console.error('[socket] connect_error:', err.message);
     });
 
-    this.socket.on('matchesUpdate', (data: { matches: MatchLike[] }) => {
-      this.allMatches = data.matches.map((match: MatchLike, index: number) => {
-        const myId = Number('2026' + (index + 1 < 10 ? '0' + (index + 1) : (index + 1).toString()));
-        return { ...match, myId };
+    this.socket.on('matchesUpdate', (data: any) => {
+      console.log('[socket] matchesUpdate received:', {
+        type: typeof data,
+        isArray: Array.isArray(data),
+        hasMatches: data?.matches ? 'yes' : 'no',
+        length: Array.isArray(data) ? data.length : data?.matches?.length,
+        timestamp: new Date().toISOString(),
       });
 
-      this.updateBetsDisplay();
+      try {
+        // Безопасна парсване на структурата
+        const matches = Array.isArray(data) ? data : data?.matches || [];
+
+        if (!matches.length) {
+          console.warn('[socket] No matches in data');
+          return;
+        }
+
+        this.allMatches = matches.map((match: MatchLike, index: number) => {
+          const myId = Number('2026' + (index + 1 < 10 ? '0' + (index + 1) : (index + 1).toString()));
+          return { ...match, myId };
+        });
+
+        console.log('[socket] allMatches updated:', this.allMatches.length);
+        this.updateBetsDisplay();
+        console.log('[socket] UI updated');
+      } catch (err) {
+        console.error('[socket] Error processing matchesUpdate:', err);
+      }
     });
   }
 
