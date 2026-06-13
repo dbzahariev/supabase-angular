@@ -17,6 +17,7 @@ import { AllPredictionsPredictionFlowService } from './all-predictions-predictio
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
 import { Bet, Match, Prediction, PredictionBackupEntry, Team, User, MatchesApiResponse } from './all-predictions.models';
 import { AdminService } from '../services/admin.service';
+import { environment } from '../../../environments/environment';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
@@ -30,6 +31,7 @@ const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
+    private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.matchesPollingIntervalMs ?? 10000);
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
     allUsersNamesFromDB: User[] = [];
@@ -56,6 +58,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private mapperService = inject(AllPredictionsMapperService);
     private adminService = inject(AdminService);
     private predictionsChannel: RealtimeChannel | null = null;
+    private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
 
@@ -161,6 +164,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.fixUsers();
         this.fixTeams();
         this.getAllMatche();
+        this.startMatchesPolling();
         this.subscribeToTestPredictions();
 
         this.translate.onLangChange
@@ -194,6 +198,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixAllMatches(data: MatchesApiResponse): void {
+        console.log('[FE] fixAllMatches called, matches count:', data?.matches?.length);
         if (!data || !data.matches) {
             this.allMatches = [];
         } else {
@@ -201,7 +206,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
-                let inNext10Min = this.getTimeWindow(match.utcDate) === 'next10'
+                const inNext10Min = this.getTimeWindow(match.utcDate) === 'next10'
 
                 if (inNext10Min) {
                     match.status = 'IN_PLAY'
@@ -223,6 +228,21 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
+
+        if (this.matchesPollingInterval) {
+            clearInterval(this.matchesPollingInterval);
+            this.matchesPollingInterval = null;
+        }
+    }
+
+    private startMatchesPolling(): void {
+        if (this.matchesPollingInterval) {
+            return;
+        }
+
+        this.matchesPollingInterval = setInterval(() => {
+            this.getAllMatche();
+        }, this.MATCHES_POLLING_INTERVAL_MS);
     }
 
     subscribeToTestPredictions(): void {
