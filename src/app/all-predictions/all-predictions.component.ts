@@ -63,22 +63,22 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private lastMatchesDataHash = '';
 
     constructor() {
-    console.log('[INIT] Component constructor called');
+        console.log('[INIT] Component constructor called');
 
-    this.realtimeService.createMatchesSocket((data) => {
-        console.log('[INIT] Callback invoked with data');
-        const response = data as MatchesApiResponse;
-        
-        if (this.isDataChanged(response)) {
-            console.log('[INIT] Data changed, calling fixAllMatches');
-            this.fixAllMatches(response);
-        } else {
-            console.log('[INIT] Data unchanged');
-        }
-    });
-    
-    console.log('[INIT] Constructor completed');
-}
+        this.realtimeService.createMatchesSocket((data) => {
+            console.log('[INIT] Callback invoked with data');
+            const response = data as MatchesApiResponse;
+
+            if (this.isDataChanged(response)) {
+                console.log('[INIT] Data changed, calling fixAllMatches');
+                this.fixAllMatches(response);
+            } else {
+                console.log('[INIT] Data unchanged');
+            }
+        });
+
+        console.log('[INIT] Constructor completed');
+    }
 
     isAdmin(): boolean {
         return this.adminService.isAdmin();
