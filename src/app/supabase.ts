@@ -7,7 +7,7 @@ import {
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
 import { Observable } from 'rxjs'
-import { MatchesApiResponse, Prediction, PredictionBackupEventRow, SupabaseMatch, SupabaseResponse, Team, User } from './all-predictions/all-predictions.models'
+import { Match, Prediction, PredictionBackupEventRow, SupabaseMatch, SupabaseResponse, Team, User } from './all-predictions/all-predictions.models'
 
 export interface Profile {
   id?: string
@@ -81,8 +81,8 @@ export class SupabaseService {
     return this.supabase.auth.signInWithOtp({ email })
   }
 
-  getAllMatchesFromBE(): Observable<MatchesApiResponse> {
-    return this.httpClient.get<MatchesApiResponse>('https://simple-node-proxy.onrender.com/api/matches')
+  getAllMatchesFromBE(): Observable<Match[]> {
+    return this.httpClient.get<Match[]>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
   getAllTeams(): Promise<SupabaseResponse<Team>> {

@@ -15,7 +15,7 @@ import { AllPredictionsExportService } from './all-predictions-export.service';
 import { AllPredictionsBackupService } from './all-predictions-backup.service';
 import { AllPredictionsPredictionFlowService } from './all-predictions-prediction-flow.service';
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
-import { Bet, Match, Prediction, PredictionBackupEntry, Team, User, MatchesApiResponse } from './all-predictions.models';
+import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
 import { AdminService } from '../services/admin.service';
 import { environment } from '../../../environments/environment';
 
@@ -197,11 +197,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixAllMatches(data: MatchesApiResponse): void {
-        console.log('[FE] fixAllMatches called, matches count:', data?.matches?.length);
-        if (!data || !data.matches) {
+        console.log('[FE] fixAllMatches called, matches count:', data?.length);
+        if (!data || data.length === 0) {
             this.allMatches = [];
         } else {
-            this.allMatches = data.matches?.map((match: Match, index: number) => {
+            this.allMatches = data.map((match: Match, index: number) => {
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
@@ -430,11 +430,12 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     private isDataChanged(data: MatchesApiResponse): boolean {
-        const hashResult = this.realtimeService.hasMatchesDataChanged(data, this.lastMatchesDataHash);
-        if (!hashResult.changed) {
-            return false;
+        const { changed, hash } = this.realtimeService.hasMatchesDataChanged(data, this.lastMatchesDataHash);
+        const currentHash = JSON.stringify(data);
+        console.log('[FE] Checking if data changed. Current hash:', currentHash, 'Last hash:', this.lastMatchesDataHash, 'Changed:', changed);
+        if (changed) {
+            this.lastMatchesDataHash = hash;
         }
-        this.lastMatchesDataHash = hashResult.hash;
-        return true;
+        return changed;
     }
 }

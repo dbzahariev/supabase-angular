@@ -91,8 +91,8 @@ export class AllMatchesComponent implements OnInit, OnDestroy {
 
         // Avoid duplicate event listeners
         if (!this.socket.hasListeners('matchesUpdate')) {
-            this.socket.on('matchesUpdate', (data: { matches: MatchWithMeta[] }) => {
-                this.allMatches = data.matches;
+            this.socket.on('matchesUpdate', (data: MatchWithMeta[] | { matches: MatchWithMeta[] }) => {
+                this.allMatches = Array.isArray(data) ? data : data.matches;
                 void this.getPredictionFromView();
             });
         }

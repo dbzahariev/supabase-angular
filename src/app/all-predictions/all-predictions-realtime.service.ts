@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { io, Socket } from 'socket.io-client';
+import { Match } from './all-predictions.models';
 import { SupabaseService } from '../supabase';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsRealtimeService {
     // В RealtimeService (или каквото е service-а)
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
-    createMatchesSocket(onUpdate: (data: any) => void): Socket {
+    createMatchesSocket(onUpdate: (data: Match[]) => void): Socket {
         console.log('[socket] Creating new socket...');
 
         const socket = io('https://simple-node-proxy.onrender.com', {
@@ -66,8 +67,8 @@ export class AllPredictionsRealtimeService {
         }
     }
 
-    hasMatchesDataChanged(data: any, lastHash: string): { changed: boolean; hash: string } {
-        const matchesCount = data?.matches?.length ?? 0;
+    hasMatchesDataChanged(data: Match[], lastHash: string): { changed: boolean; hash: string } {
+        const matchesCount = data?.length ?? 0;
         const currentHash = JSON.stringify(data);
 
         if (matchesCount === 0 || currentHash === lastHash) {

@@ -24,12 +24,7 @@ export interface CompetitionInfo {
     emblem: string;
 }
 
-export interface MatchesApiResponse {
-    filters: FilterSet;
-    resultSet: ResultSet;
-    competition: CompetitionInfo;
-    matches: Match[];
-}
+export type MatchesApiResponse = Match[];
 
 export interface Bet {
     row_index: number;
@@ -82,26 +77,6 @@ export interface Prediction {
 }
 
 export interface Match {
-    area: {
-        id: number;
-        name: string;
-        code: string;
-        flag: string | null;
-    };
-    competition: {
-        id: number;
-        name: string;
-        code: string;
-        type: string;
-        emblem: string;
-    };
-    season: {
-        id: number;
-        startDate: string;
-        endDate: string;
-        currentMatchday: number;
-        winner: string | null;
-    };
     id: number;
     utcDate: string;
     status: string;
@@ -130,8 +105,6 @@ export interface Match {
         fullTime: { home: number | null; away: number | null };
         halfTime: { home: number | null; away: number | null };
     };
-    odds: { msg: string };
-    referees: any[];
     myId: number;
 }
 
