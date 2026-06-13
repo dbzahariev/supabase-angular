@@ -9,8 +9,6 @@ import Aura from '@primeuix/themes/aura';
 import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
 import { App } from './app';
-import { AddPrediction } from './add-prediction/add-prediction';
-import { AllMatchesComponent } from './all-matches/all-matches.component';
 import { definePreset } from '@primeuix/themes';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
@@ -61,8 +59,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         FormsModule,
         ButtonModule,
         HeaderComponent,
-        AddPrediction,
-        AllMatchesComponent,
         ToastModule,
         TranslateModule.forRoot({
             loader: {
