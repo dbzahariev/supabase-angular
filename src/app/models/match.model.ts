@@ -4,6 +4,13 @@ export interface ColorOption {
   code: string;
 }
 
+export interface Referee {
+  id: number;
+  name: string;
+  type: string;
+  nationality: string;
+}
+
 export interface Prediction {
   id: number;
   user_id: number;
@@ -131,5 +138,5 @@ export interface MatchDetail {
   odds: {
     msg: string;
   };
-  referees: unknown[];
+  referees: Referee[];
 }

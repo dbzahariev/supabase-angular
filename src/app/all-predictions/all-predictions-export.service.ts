@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { Bet, User } from './all-predictions.models';
 
+type WorksheetCell = string | number | boolean | null | undefined;
+type WorksheetRow = WorksheetCell[];
+type WorksheetData = WorksheetRow[];
+
 export interface ExportWorksheetData {
-    wsData: any[][];
+    wsData: WorksheetData;
     fileName: string;
 }
 
@@ -41,7 +45,7 @@ export class AllPredictionsExportService {
         };
     }
 
-    private buildWorksheetData(input: ExportPredictionsInput): any[][] {
+    private buildWorksheetData(input: ExportPredictionsInput): WorksheetData {
         const visibleBets = input.betsToShow.filter(input.isShowRow);
         const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
         const includePhaseRows = input.includePhaseRows ?? true;
@@ -108,7 +112,7 @@ export class AllPredictionsExportService {
             ]),
         ];
 
-        const groupedRows: any[][] = [];
+        const groupedRows: WorksheetData = [];
         let lastPhase: string | null = null;
 
         for (const bet of visibleBets) {
@@ -116,12 +120,12 @@ export class AllPredictionsExportService {
                 lastPhase = bet.phase;
                 const groupStageLabel = input.isLngBg ? 'Групова фаза' : 'Group Stage';
                 const cycleLabel = input.getCycleLabelFromBet(bet);
-                const phaseRow = new Array(mainHeaders.length).fill('');
+                const phaseRow: WorksheetRow = new Array(mainHeaders.length).fill('');
                 phaseRow[0] = cycleLabel ? `${groupStageLabel} - ${cycleLabel}` : groupStageLabel;
                 groupedRows.push(phaseRow);
             }
 
-            const row: any[] = includeDateTimeAndGroup
+            const row: WorksheetRow = includeDateTimeAndGroup
                 ? [
                     bet.row_index,
                     bet.match_day,
@@ -157,14 +161,14 @@ export class AllPredictionsExportService {
         return [mainHeaders, subHeaders, ...groupedRows];
     }
 
-    private buildMerges(wsData: any[][], usersCount: number): any[] {
+    private buildMerges(wsData: WorksheetData, usersCount: number): XLSX.Range[] {
         const hasDateColumn = wsData[0]?.[1] === 'Date' || wsData[0]?.[1] === 'Дата';
         const userStartCol = hasDateColumn ? 9 : 6;
         const resultStartCol = hasDateColumn ? 5 : 2;
         const awayTeamCol = hasDateColumn ? 8 : 5;
         const verticalMergeCols = hasDateColumn ? [0, 1, 2, 3, 4, awayTeamCol] : [0, 1, awayTeamCol];
 
-        const merges: any[] = [
+        const merges: XLSX.Range[] = [
             ...verticalMergeCols.map((col) => ({ s: { r: 0, c: col }, e: { r: 1, c: col } })),
             { s: { r: 0, c: resultStartCol }, e: { r: 0, c: resultStartCol + 2 } },
         ];

@@ -18,7 +18,7 @@ interface ImportTeamResult {
   success: boolean;
   inserted?: number;
   total?: number;
-  error?: unknown;
+  error?: Error | { message?: string; details?: string; code?: string };
 }
 
 @Component({

@@ -7,7 +7,18 @@ import {
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
 import { Observable } from 'rxjs'
-import { Match, Prediction, PredictionBackupEventRow, SupabaseMatch, SupabaseResponse, Team, User } from './all-predictions/all-predictions.models'
+import {
+  JsonObject,
+  Match,
+  Prediction,
+  PredictionBackupEventInsert,
+  PredictionBackupEventRow,
+  PredictionWritePayload,
+  SupabaseMatch,
+  SupabaseResponse,
+  Team,
+  User
+} from './all-predictions/all-predictions.models'
 
 export interface Profile {
   id?: string
@@ -88,68 +99,68 @@ export class SupabaseService {
   getAllTeams(): Promise<SupabaseResponse<Team>> {
     return this.supabase
       .from('teams')
-      .select('*') as unknown as Promise<SupabaseResponse<Team>>
+      .select('*') as Promise<SupabaseResponse<Team>>
   }
 
   getPredictions(): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .select('*')
-      .order('utc_date', { ascending: false }) as unknown as Promise<SupabaseResponse<Prediction>>
+      .order('utc_date', { ascending: false }) as Promise<SupabaseResponse<Prediction>>
   }
 
   getPredictionsWithUsers(): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .select(this.predictionsWithUsersSelect)
-      .order('utc_date', { ascending: false }) as unknown as Promise<SupabaseResponse<Prediction>>
+      .order('utc_date', { ascending: false }) as Promise<SupabaseResponse<Prediction>>
   }
 
-  addPrediction(prediction: Record<string, unknown> | Record<string, unknown>[]): Promise<SupabaseResponse<Prediction>> {
+  addPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .insert(prediction)
-      .select() as unknown as Promise<SupabaseResponse<Prediction>>
+      .select() as Promise<SupabaseResponse<Prediction>>
   }
 
-  updatePrediction(id: number, prediction: Record<string, unknown>): Promise<SupabaseResponse<Prediction>> {
+  updatePrediction(id: number, prediction: PredictionWritePayload): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .update(prediction)
       .eq('id', id)
-      .select() as unknown as Promise<SupabaseResponse<Prediction>>
+      .select() as Promise<SupabaseResponse<Prediction>>
   }
 
   deletePrediction(id: number): Promise<SupabaseResponse<Prediction>> {
     return this.supabase
       .from('predictions')
       .delete()
-      .eq('id', id) as unknown as Promise<SupabaseResponse<Prediction>>
+      .eq('id', id) as Promise<SupabaseResponse<Prediction>>
   }
 
-  addPredictionBackupEvent(backupEvent: Record<string, unknown>): Promise<SupabaseResponse<PredictionBackupEventRow>> {
+  addPredictionBackupEvent(backupEvent: PredictionBackupEventInsert): Promise<SupabaseResponse<PredictionBackupEventRow>> {
     return this.supabase
       .from('prediction_backup_events')
       .insert(backupEvent)
       .select('id')
-      .single() as unknown as Promise<SupabaseResponse<PredictionBackupEventRow>>
+      .single() as Promise<SupabaseResponse<PredictionBackupEventRow>>
   }
 
   getPredictionBackupEvents(): Promise<SupabaseResponse<PredictionBackupEventRow>> {
     return this.supabase
       .from('prediction_backup_events')
       .select('*')
-      .order('event_timestamp', { ascending: true }) as unknown as Promise<SupabaseResponse<PredictionBackupEventRow>>
+      .order('event_timestamp', { ascending: true }) as Promise<SupabaseResponse<PredictionBackupEventRow>>
   }
 
-  subscribeToTable(table: string, callback: (payload: unknown) => void) {
+  subscribeToTable(table: string, callback: (payload: JsonObject) => void) {
     const channel = this.supabase
       .channel(`schema-db-changes:${table}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table },
         (payload) => {
-          callback(payload)
+          callback(payload as JsonObject)
         }
       )
 
@@ -166,19 +177,19 @@ export class SupabaseService {
     return this.supabase
       .from('matches')
       .select('*')
-      .order('utc_date', { ascending: true }) as unknown as Promise<SupabaseResponse<SupabaseMatch>>
+      .order('utc_date', { ascending: true }) as Promise<SupabaseResponse<SupabaseMatch>>
   }
 
   getUsers(): Promise<SupabaseResponse<User>> {
     return this.supabase
       .from('users')
-      .select('*') as unknown as Promise<SupabaseResponse<User>>
+      .select('*') as Promise<SupabaseResponse<User>>
   }
 
   deleteMatch(id: number): Promise<SupabaseResponse<SupabaseMatch>> {
     return this.supabase
       .from('matches')
       .delete()
-      .eq('id', id) as unknown as Promise<SupabaseResponse<SupabaseMatch>>
+      .eq('id', id) as Promise<SupabaseResponse<SupabaseMatch>>
   }
 }

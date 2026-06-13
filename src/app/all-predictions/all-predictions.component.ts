@@ -116,8 +116,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (product as Record<string, any>)['edit_' + user.id + '_' + j] = true;
+        Object.assign(product, { ['edit_' + user.id + '_' + j]: true });
         setTimeout(() => {
             const input = document.querySelector(`input[data-edit-key="${user.id}_${j}"]`) as HTMLInputElement;
             if (input) {

@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase';
-import { Bet, Match, Prediction, PredictionBackupEntry, User } from './all-predictions.models';
+import { Bet, Match, Prediction, PredictionBackupEntry, PredictionWritePayload, SupabaseResponse, User } from './all-predictions.models';
 
-interface PredictionMutationPayload extends Record<string, unknown> {
-    user_id: number;
-    match_id: number;
-    match_group: string | undefined;
-    home_ft: number;
-    away_ft: number;
-    home_pt: number;
-    away_pt: number;
-    winner: string;
-}
+type PredictionMutationPayload = PredictionWritePayload;
+type PredictionMutationError = SupabaseResponse<Prediction>['error'];
 
 export interface PredictionChangeResult {
     backupEntry: PredictionBackupEntry;
-    error: any;
+    error: PredictionMutationError;
     shouldRefresh: boolean;
     isDelete: boolean;
     isSkip: boolean;
@@ -37,7 +29,7 @@ export class AllPredictionsPredictionFlowService {
         const { supabaseService, user, bet, columnIndex, newValue, allMatches, allPredictions, eventId, timestamp } = params;
 
         const selectedMatch = allMatches.find(match => match.myId === bet.id);
-        const prediction = allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id) as any;
+        const prediction = allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id);
 
         if (columnIndex > 1) {
             return {
@@ -73,13 +65,13 @@ export class AllPredictionsPredictionFlowService {
         const shouldUpsert = !hasInvalidScore;
         const shouldSkip = hasInvalidScore && isNew;
 
-        let error: any;
+        let error: PredictionMutationError = null;
         if (shouldDelete) {
             ({ error } = await supabaseService.deletePrediction(prediction.id));
         } else if (shouldUpsert) {
             ({ error } = isNew
-                ? await supabaseService.addPrediction(payload as Record<string, unknown>)
-                : await supabaseService.updatePrediction(prediction.id, payload as Record<string, unknown>));
+                ? await supabaseService.addPrediction(payload)
+                : await supabaseService.updatePrediction(prediction.id, payload));
         }
 
         return {

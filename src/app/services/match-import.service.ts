@@ -1,12 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../supabase';
 
-interface BackupData {
-  matches: BackupMatch[];
-  users: unknown[];
+export interface BackupUser {
+  id?: number;
+  name_bg?: string;
+  name_en?: string;
 }
 
-interface BackupMatch {
+export interface BackupData {
+  matches: BackupMatch[];
+  users: BackupUser[];
+}
+
+export interface BackupMatch {
   id: number;
   homeTeam: string;
   awayTeam: string;
@@ -21,10 +27,10 @@ interface BackupMatch {
   };
 }
 
-interface ImportMatchResult {
+export interface ImportMatchResult {
   success: boolean;
   count: number;
-  errors: unknown[];
+  errors: Array<Error | { message?: string; details?: string; code?: string }>;
 }
 
 interface ImportStats {

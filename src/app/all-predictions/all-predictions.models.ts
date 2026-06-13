@@ -3,6 +3,12 @@ export interface SupabaseResponse<T> {
     data: T[] | null;
 }
 
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
+export interface JsonObject {
+    [key: string]: JsonValue;
+}
+
 export interface FilterSet {
     season: string;
 }
@@ -115,8 +121,33 @@ export interface PredictionBackupEntry {
     prediction_id: number | null;
     column_index: number;
     input_value: string;
-    payload: Record<string, any>;
+    payload: JsonObject;
     error_message?: string;
+}
+
+export interface PredictionWritePayload {
+    user_id: number;
+    match_id: number;
+    match_group?: string;
+    home_ft: number;
+    away_ft: number;
+    home_pt: number;
+    away_pt: number;
+    winner: string;
+}
+
+export interface PredictionBackupEventInsert {
+    event_id: string;
+    event_timestamp: string;
+    action: PredictionBackupEntry['action'];
+    user_id: number;
+    match_id: number;
+    prediction_id: number | null;
+    column_index: number;
+    input_value: string;
+    payload: JsonObject;
+    error_message?: string;
+    source?: string;
 }
 
 export interface PredictionBackupEventRow {
@@ -128,7 +159,7 @@ export interface PredictionBackupEventRow {
     prediction_id: number | null;
     column_index: number;
     input_value: string;
-    payload: Record<string, unknown>;
+    payload: JsonObject;
     error_message?: string;
     source?: string;
 }

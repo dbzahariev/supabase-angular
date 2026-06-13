@@ -139,7 +139,7 @@ export class AllPredictionsMapperService {
         return '';
     }
 
-    returnTranslateFromWin(winner: any): string {
+    returnTranslateFromWin(winner: string | null | undefined): string {
         if (winner === undefined || winner === '') return '';
         return this.translate.instant('TABLE.' + (winner || '')).slice(0, 1);
     }

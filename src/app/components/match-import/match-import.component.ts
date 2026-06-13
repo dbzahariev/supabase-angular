@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatchImportService } from '../../services/match-import.service';
+import { BackupData, ImportMatchResult, MatchImportService } from '../../services/match-import.service';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -8,9 +8,9 @@ import { MessageModule } from 'primeng/message';
 
 interface ImportResult {
   year: string;
-  success: boolean;
-  count: number;
-  errors: unknown[];
+  success: ImportMatchResult['success'];
+  count: ImportMatchResult['count'];
+  errors: ImportMatchResult['errors'];
 }
 
 interface ImportStats {
@@ -20,10 +20,7 @@ interface ImportStats {
 }
 
 interface BackupModule {
-  default: {
-    matches: unknown[];
-    users: unknown[];
-  };
+  default: BackupData;
 }
 
 @Component({
@@ -38,7 +35,7 @@ export class MatchImportComponent implements OnInit {
   importResults: ImportResult[] = [];
   stats: ImportStats | null = null;
 
-  backups: { year: string; data: { matches: unknown[]; users: unknown[] } }[] = [];
+  backups: { year: string; data: BackupData }[] = [];
 
   constructor() {
     // Ще заредим данните динамично
@@ -73,7 +70,7 @@ export class MatchImportComponent implements OnInit {
     this.importResults = [];
 
     try {
-      const results = await this.importService.importAllBackups(this.backups as any);
+      const results = await this.importService.importAllBackups(this.backups);
       this.importResults = results;
       await this.loadStats();
     } catch (error) {
@@ -89,7 +86,7 @@ export class MatchImportComponent implements OnInit {
     const backup = this.backups.find(b => b.year === year);
     
     if (backup) {
-      const result = await this.importService.importMatchesFromBackup(backup.data as any);
+      const result = await this.importService.importMatchesFromBackup(backup.data);
       this.importResults = [{ year, ...result }];
       await this.loadStats();
     }

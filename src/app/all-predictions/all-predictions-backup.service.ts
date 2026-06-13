@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase';
-import { PredictionBackupEntry } from './all-predictions.models';
+import { PredictionBackupEntry, PredictionBackupEventRow } from './all-predictions.models';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsBackupService {
@@ -29,7 +29,7 @@ export class AllPredictionsBackupService {
                 return [];
             }
 
-            return data.map((row: any) => ({
+            return data.map((row: PredictionBackupEventRow) => ({
                 event_id: row.event_id,
                 timestamp: this.formatLocalDateTime(new Date(row.event_timestamp)),
                 action: row.action,

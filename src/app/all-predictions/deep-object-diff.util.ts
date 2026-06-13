@@ -1,21 +1,35 @@
 export type DeepDiffType = 'added' | 'removed' | 'changed' | 'type-changed';
 
+export type DeepDiffValue =
+    | string
+    | number
+    | boolean
+    | bigint
+    | symbol
+    | null
+    | undefined
+    | Date
+    | object
+    | DeepDiffValue[];
+
+export type DeepDiffObject = Record<string, DeepDiffValue>;
+
 export interface DeepDiffEntry {
     path: string;
     type: DeepDiffType;
-    before: unknown;
-    after: unknown;
+    before: DeepDiffValue;
+    after: DeepDiffValue;
 }
 
 const hasOwn = (obj: object, key: string): boolean =>
     Object.prototype.hasOwnProperty.call(obj, key);
 
-const isObjectLike = (value: unknown): value is Record<string, unknown> =>
+const isObjectLike = (value: DeepDiffValue): value is object =>
     typeof value === 'object' && value !== null;
 
-const isDate = (value: unknown): value is Date => value instanceof Date;
+const isDate = (value: DeepDiffValue): value is Date => value instanceof Date;
 
-const isSameReference = (a: unknown, b: unknown): boolean => Object.is(a, b);
+const isSameReference = (a: DeepDiffValue, b: DeepDiffValue): boolean => Object.is(a, b);
 
 const toPath = (base: string, segment: string): string => {
     if (!base) {
@@ -46,11 +60,11 @@ const markVisitedPair = (
     return false;
 };
 
-export function getDeepObjectDifferences(left: unknown, right: unknown): DeepDiffEntry[] {
+export function getDeepObjectDifferences(left: DeepDiffValue, right: DeepDiffValue): DeepDiffEntry[] {
     const differences: DeepDiffEntry[] = [];
     const visitedPairs = new WeakMap<object, WeakSet<object>>();
 
-    const walk = (leftNode: unknown, rightNode: unknown, path: string): void => {
+    const walk = (leftNode: DeepDiffValue, rightNode: DeepDiffValue, path: string): void => {
         if (isSameReference(leftNode, rightNode)) {
             return;
         }
@@ -116,22 +130,25 @@ export function getDeepObjectDifferences(left: unknown, right: unknown): DeepDif
                 return;
             }
 
+            const leftRecord = leftNode as DeepDiffObject;
+            const rightRecord = rightNode as DeepDiffObject;
+
             const keys = new Set<string>([
-                ...Object.keys(leftNode),
-                ...Object.keys(rightNode),
+                ...Object.keys(leftRecord),
+                ...Object.keys(rightRecord),
             ]);
 
             for (const key of keys) {
                 const keyPath = toPath(path, key);
-                const leftHasKey = hasOwn(leftNode, key);
-                const rightHasKey = hasOwn(rightNode, key);
+                const leftHasKey = hasOwn(leftRecord, key);
+                const rightHasKey = hasOwn(rightRecord, key);
 
                 if (!leftHasKey && rightHasKey) {
                     differences.push({
                         path: keyPath,
                         type: 'added',
                         before: undefined,
-                        after: rightNode[key],
+                        after: rightRecord[key],
                     });
                     continue;
                 }
@@ -140,13 +157,13 @@ export function getDeepObjectDifferences(left: unknown, right: unknown): DeepDif
                     differences.push({
                         path: keyPath,
                         type: 'removed',
-                        before: leftNode[key],
+                        before: leftRecord[key],
                         after: undefined,
                     });
                     continue;
                 }
 
-                walk(leftNode[key], rightNode[key], keyPath);
+                walk(leftRecord[key], rightRecord[key], keyPath);
             }
 
             return;
