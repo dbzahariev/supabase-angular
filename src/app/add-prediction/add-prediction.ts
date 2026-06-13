@@ -93,7 +93,7 @@ export class AddPrediction implements OnInit, OnDestroy {
   private readonly elRef = inject(ElementRef);
   private readonly supabaseService = inject(SupabaseService);
   private readonly chatService = inject(SupabaseChatService);
-  private socket: Socket;
+  private socket!: Socket;
   isLocal = false;
   betsToShow: BetsToShow[] = [];
   loading = true;
