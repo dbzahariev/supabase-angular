@@ -173,7 +173,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         "past" | "next10" | "next20" | "later" {
 
         const now = new Date();
-        console.log(now.toUTCString())
         const target = new Date(utcTime);
 
         const diffMs = target.getTime() - now.getTime();
