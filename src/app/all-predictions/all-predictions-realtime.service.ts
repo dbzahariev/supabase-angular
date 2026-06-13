@@ -6,45 +6,45 @@ import { SupabaseService } from '../supabase';
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsRealtimeService {
     createMatchesSocket(onUpdate: (data: any) => void): Socket {
-    console.log('[socket] Creating new socket...');
-    
-    const socket = io('https://simple-node-proxy.onrender.com', {
-        transports: ['websocket'],
-        upgrade: false,
-        reconnection: true,
-        reconnectionAttempts: Infinity,
-        reconnectionDelay: 1000,
-        timeout: 10000,
-    });
+        console.log('[socket] Creating new socket...');
 
-    socket.on('connect', () => {
-        console.log('[socket] Connected:', socket.id);
-    });
-
-    socket.on('connect_error', (err: Error) => {
-        console.error('[socket] Connect error:', err.message);
-    });
-
-    socket.on('disconnect', (reason: string) => {
-        console.log('[socket] Disconnected:', reason);
-    });
-
-    // Винаги регистрирай listener (премахни hasListeners проверката)
-    socket.on('matchesUpdate', (data) => {
-        console.log('[socket] matchesUpdate received', {
-            timestamp: new Date().toISOString(),
-            dataType: typeof data,
-            isArray: Array.isArray(data),
+        const socket = io('https://simple-node-proxy.onrender.com', {
+            transports: ['websocket'],
+            upgrade: false,
+            reconnection: true,
+            reconnectionAttempts: Infinity,
+            reconnectionDelay: 1000,
+            timeout: 10000,
         });
-        try {
-            onUpdate(data);
-        } catch (err) {
-            console.error('[socket] Error in onUpdate callback:', err);
-        }
-    });
 
-    return socket;
-}
+        socket.on('connect', () => {
+            console.log('[socket] Connected:', socket.id);
+        });
+
+        socket.on('connect_error', (err: Error) => {
+            console.error('[socket] Connect error:', err.message);
+        });
+
+        socket.on('disconnect', (reason: string) => {
+            console.log('[socket] Disconnected:', reason);
+        });
+
+        // Винаги регистрирай listener (премахни hasListeners проверката)
+        socket.on('matchesUpdate', (data) => {
+            console.log('[socket] matchesUpdate received', {
+                timestamp: new Date().toISOString(),
+                dataType: typeof data,
+                isArray: Array.isArray(data),
+            });
+            try {
+                onUpdate(data);
+            } catch (err) {
+                console.error('[socket] Error in onUpdate callback:', err);
+            }
+        });
+
+        return socket;
+    }
 
     subscribeToPredictions(supabaseService: SupabaseService, onChange: () => void): RealtimeChannel {
         return supabaseService.subscribeToTable('predictions', () => {
