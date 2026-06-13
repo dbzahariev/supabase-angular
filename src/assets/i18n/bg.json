@@ -27,6 +27,7 @@
     "DOWNLOAD_EXCEL_FULL": "Изтегли пълен Excel",
     "SEARCH_KEYWORD": "Търсене",
     "SHEET_NAME": "Бекъп",
+    "EXPORT_FILE_PREFIX": "backup",
     "ID": "Код",
     "NAME": "Име",
     "CATEGORY": "Категория",

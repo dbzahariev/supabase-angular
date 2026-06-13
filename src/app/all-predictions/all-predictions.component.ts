@@ -345,15 +345,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     downloadTableAsExcel() {
-        const isLngBg = this.getLng() === 'bg-BG';
-
         const exportResult = this.exportService.exportToExcel({
-            isLngBg,
             allUsersNames: this.allUsersNames,
             betsToShow: this.betsToShow,
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
             getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
+            translate: (key: string) => this.translate.instant(key),
             translateGroup: (groupKey: string) => this.translate.instant(groupKey),
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
             getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),
@@ -382,13 +380,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     downloadTableAsExcelMini() {
-        const isLngBg = this.getLng() === 'bg-BG';
         const timedBetsToShow = this.betsToShow.filter((bet: Bet) =>
             String(bet.matchStatus).toUpperCase() === "FINISHED"
         );
 
         const exportResult = this.exportService.exportToExcel({
-            isLngBg,
             allUsersNames: this.allUsersNames,
             betsToShow: timedBetsToShow,
             includeDateTimeAndGroup: false,
@@ -396,6 +392,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
             getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
+            translate: (key: string) => this.translate.instant(key),
             translateGroup: (groupKey: string) => this.translate.instant(groupKey),
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
             getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),

@@ -12,12 +12,12 @@ export interface ExportWorksheetData {
 }
 
 export interface ExportPredictionsInput {
-    isLngBg: boolean;
     allUsersNames: User[];
     betsToShow: Bet[];
     isShowRow: (bet: Bet) => boolean;
     getNameFromUser: (user: User) => string;
     getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => string;
+    translate: (key: string) => string;
     translateGroup: (groupKey: string) => string;
     translateWinnerShort: (winner: string) => string;
     getCycleLabelFromBet: (bet: Bet) => string;
@@ -30,15 +30,16 @@ export interface ExportPredictionsInput {
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsExportService {
     exportToExcel(input: ExportPredictionsInput): ExportWorksheetData {
+        const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
         const wsData = this.buildWorksheetData(input);
         const ws = XLSX.utils.aoa_to_sheet(wsData);
-        ws['!merges'] = this.buildMerges(wsData, input.allUsersNames.length);
+        ws['!merges'] = this.buildMerges(wsData, input.allUsersNames.length, includeDateTimeAndGroup, input.translate('TABLE.GROUPS_PHASE'));
         ws['!cols'] = this.calculateColumnWidths(wsData);
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, input.getSheetName());
 
-        const fileName = `backup-${input.formatLocalDateTime(new Date(), 'filename')}.xlsx`;
+        const fileName = `${input.translate('TABLE.EXPORT_FILE_PREFIX')}-${input.formatLocalDateTime(new Date(), 'filename')}.xlsx`;
         XLSX.writeFile(wb, fileName);
 
         return {
@@ -51,26 +52,38 @@ export class AllPredictionsExportService {
         const visibleBets = input.betsToShow.filter(input.isShowRow);
         const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
         const includePhaseRows = input.includePhaseRows ?? true;
+        const rowIndexLabel = input.translate('TABLE.ROW_INDEX');
+        const dateLabel = input.translate('TABLE.DATE');
+        const timeLabel = input.translate('TABLE.TIME');
+        const groupLabel = input.translate('TABLE.GROUP');
+        const homeTeamLabel = input.translate('TABLE.HOME_TEAM');
+        const awayTeamLabel = input.translate('TABLE.AWAY_TEAM');
+        const resultLabel = input.translate('TABLE.RESULT');
+        const homeShortLabel = input.translate('TABLE.HOME_TEAM_SHORT');
+        const awayShortLabel = input.translate('TABLE.AWAY_TEAM_SHORT');
+        const winnerShortLabel = input.translate('TABLE.WINNER_SHORT');
+        const pointsShortLabel = input.translate('TABLE.POINTS_SHORT');
+        const groupsPhaseLabel = input.translate('TABLE.GROUPS_PHASE');
 
         const baseHeaders = includeDateTimeAndGroup
             ? [
-                '#',
-                input.isLngBg ? 'Дата' : 'Date',
-                input.isLngBg ? 'Час' : 'Time',
-                input.isLngBg ? 'Група' : 'Group',
-                input.isLngBg ? 'Домакин' : 'Home team',
-                input.isLngBg ? 'Резултат' : 'Result',
+                rowIndexLabel,
+                dateLabel,
+                timeLabel,
+                groupLabel,
+                homeTeamLabel,
+                awayTeamLabel,
+                resultLabel,
                 '',
                 '',
-                input.isLngBg ? 'Гост' : 'Away team',
             ]
             : [
-                '#',
-                input.isLngBg ? 'Домакин' : 'Home team',
-                input.isLngBg ? 'Резултат' : 'Result',
+                rowIndexLabel,
+                homeTeamLabel,
+                awayTeamLabel,
+                resultLabel,
                 '',
                 '',
-                input.isLngBg ? 'Гост' : 'Away team',
             ];
 
         const mainHeaders = [
@@ -90,27 +103,27 @@ export class AllPredictionsExportService {
                 '',
                 '',
                 '',
-                input.isLngBg ? 'Д' : 'H',
-                input.isLngBg ? 'Г' : 'A',
-                input.isLngBg ? 'П' : 'W',
                 '',
+                homeShortLabel,
+                awayShortLabel,
+                winnerShortLabel,
             ]
             : [
                 '',
                 '',
-                input.isLngBg ? 'Д' : 'H',
-                input.isLngBg ? 'Г' : 'A',
-                input.isLngBg ? 'П' : 'W',
                 '',
+                homeShortLabel,
+                awayShortLabel,
+                winnerShortLabel,
             ];
 
         const subHeaders = [
             ...baseSubHeaders,
             ...input.allUsersNames.flatMap(() => [
-                input.isLngBg ? 'Д' : 'H',
-                input.isLngBg ? 'Г' : 'A',
-                input.isLngBg ? 'П' : 'W',
-                input.isLngBg ? 'Т' : 'Pts',
+                homeShortLabel,
+                awayShortLabel,
+                winnerShortLabel,
+                pointsShortLabel,
             ]),
         ];
 
@@ -120,10 +133,9 @@ export class AllPredictionsExportService {
         for (const bet of visibleBets) {
             if (includePhaseRows && bet.phase !== lastPhase) {
                 lastPhase = bet.phase;
-                const groupStageLabel = input.isLngBg ? 'Групова фаза' : 'Group Stage';
                 const cycleLabel = input.getCycleLabelFromBet(bet);
                 const phaseRow: WorksheetRow = new Array(mainHeaders.length).fill('');
-                phaseRow[0] = cycleLabel ? `${groupStageLabel} - ${cycleLabel}` : groupStageLabel;
+                phaseRow[0] = cycleLabel ? `${groupsPhaseLabel} - ${cycleLabel}` : groupsPhaseLabel;
                 groupedRows.push(phaseRow);
             }
 
@@ -134,18 +146,18 @@ export class AllPredictionsExportService {
                     bet.match_time,
                     input.translateGroup(bet.group),
                     bet.home_team,
+                    bet.away_team,
                     bet.score?.fullTime.home ?? '',
                     bet.score?.fullTime.away ?? '',
                     bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
-                    bet.away_team,
                 ]
                 : [
                     bet.row_index,
                     bet.home_team,
+                    bet.away_team,
                     bet.score?.fullTime.home ?? '',
                     bet.score?.fullTime.away ?? '',
                     bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
-                    bet.away_team,
                 ];
 
             for (const user of input.allUsersNames) {
@@ -163,12 +175,10 @@ export class AllPredictionsExportService {
         return [mainHeaders, subHeaders, ...groupedRows];
     }
 
-    private buildMerges(wsData: WorksheetData, usersCount: number): XLSX.Range[] {
-        const hasDateColumn = wsData[0]?.[1] === 'Date' || wsData[0]?.[1] === 'Дата';
+    private buildMerges(wsData: WorksheetData, usersCount: number, hasDateColumn: boolean, groupsPhaseLabel: string): XLSX.Range[] {
         const userStartCol = hasDateColumn ? 9 : 6;
-        const resultStartCol = hasDateColumn ? 5 : 2;
-        const awayTeamCol = hasDateColumn ? 8 : 5;
-        const verticalMergeCols = hasDateColumn ? [0, 1, 2, 3, 4, awayTeamCol] : [0, 1, awayTeamCol];
+        const resultStartCol = hasDateColumn ? 6 : 3;
+        const verticalMergeCols = hasDateColumn ? [0, 1, 2, 3, 4, 5] : [0, 1, 2];
 
         const merges: XLSX.Range[] = [
             ...verticalMergeCols.map((col) => ({ s: { r: 0, c: col }, e: { r: 1, c: col } })),
@@ -183,7 +193,7 @@ export class AllPredictionsExportService {
         for (let rowIdx = 2; rowIdx < wsData.length; rowIdx++) {
             const row = wsData[rowIdx];
             const firstCell = row?.[0]?.toString?.() || '';
-            if (firstCell.includes('Групова фаза') || firstCell.includes('Group Stage')) {
+            if (firstCell.startsWith(groupsPhaseLabel)) {
                 merges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: row.length - 1 } });
             }
         }

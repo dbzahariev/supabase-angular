@@ -27,6 +27,7 @@
     "DOWNLOAD_EXCEL_FULL": "Download Full Excel",
     "SEARCH_KEYWORD": "Search",
     "SHEET_NAME": "Backup",
+    "EXPORT_FILE_PREFIX": "backup",
     "GROUPS_PHASE": "Groups Phase",
     "GROUP_STAGE": {
       "CICLE_1_TITLE": "Group stage - Round 1",
