@@ -33,6 +33,8 @@ export interface ImportMatchResult {
   errors: Array<Error | { message?: string; details?: string; code?: string }>;
 }
 
+type ImportMatchError = ImportMatchResult['errors'][number];
+
 interface ImportStats {
   total: number;
   byGroup: Record<string, number>;
@@ -45,6 +47,23 @@ interface ImportStats {
 export class MatchImportService {
   private readonly supabase = inject(SupabaseService);
   private teamsMap = new Map<string, number>();
+
+  private normalizeImportError(error: unknown): ImportMatchError {
+    if (error instanceof Error) {
+      return error;
+    }
+
+    if (typeof error === 'object' && error !== null) {
+      const candidate = error as { message?: unknown; details?: unknown; code?: unknown };
+      return {
+        message: typeof candidate.message === 'string' ? candidate.message : undefined,
+        details: typeof candidate.details === 'string' ? candidate.details : undefined,
+        code: typeof candidate.code === 'string' ? candidate.code : undefined,
+      };
+    }
+
+    return { message: String(error) };
+  }
 
   /**
    * Зарежда отборите от базата данни и създава map от име към ID
@@ -127,7 +146,7 @@ export class MatchImportService {
       return { success: true, count: data?.length || 0, errors: [] };
     } catch (err) {
       console.error('❌ Неочаквана грешка:', err);
-      return { success: false, count: 0, errors: [err] };
+      return { success: false, count: 0, errors: [this.normalizeImportError(err)] };
     }
   }
 

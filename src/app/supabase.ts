@@ -96,61 +96,112 @@ export class SupabaseService {
     return this.httpClient.get<Match[]>('https://simple-node-proxy.onrender.com/api/matches')
   }
 
-  getAllTeams(): Promise<SupabaseResponse<Team>> {
-    return this.supabase
-      .from('teams')
-      .select('*') as Promise<SupabaseResponse<Team>>
+  private normalizeError(error: { message: string; details?: string | null } | null): SupabaseResponse<never>['error'] {
+    if (!error) {
+      return null
+    }
+
+    return {
+      message: error.message,
+      details: error.details ?? undefined,
+    }
   }
 
-  getPredictions(): Promise<SupabaseResponse<Prediction>> {
-    return this.supabase
+  async getAllTeams(): Promise<SupabaseResponse<Team>> {
+    const { data, error } = await this.supabase
+      .from('teams')
+      .select('*')
+
+    return {
+      data: data as Team[] | null,
+      error: this.normalizeError(error),
+    }
+  }
+
+  async getPredictions(): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
       .from('predictions')
       .select('*')
-      .order('utc_date', { ascending: false }) as Promise<SupabaseResponse<Prediction>>
+      .order('utc_date', { ascending: false })
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  getPredictionsWithUsers(): Promise<SupabaseResponse<Prediction>> {
-    return this.supabase
+  async getPredictionsWithUsers(): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
       .from('predictions')
       .select(this.predictionsWithUsersSelect)
-      .order('utc_date', { ascending: false }) as Promise<SupabaseResponse<Prediction>>
+      .order('utc_date', { ascending: false })
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  addPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
-    return this.supabase
+  async addPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
       .from('predictions')
       .insert(prediction)
-      .select() as Promise<SupabaseResponse<Prediction>>
+      .select()
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  updatePrediction(id: number, prediction: PredictionWritePayload): Promise<SupabaseResponse<Prediction>> {
-    return this.supabase
+  async updatePrediction(id: number, prediction: PredictionWritePayload): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
       .from('predictions')
       .update(prediction)
       .eq('id', id)
-      .select() as Promise<SupabaseResponse<Prediction>>
+      .select()
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  deletePrediction(id: number): Promise<SupabaseResponse<Prediction>> {
-    return this.supabase
+  async deletePrediction(id: number): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
       .from('predictions')
       .delete()
-      .eq('id', id) as Promise<SupabaseResponse<Prediction>>
+      .eq('id', id)
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  addPredictionBackupEvent(backupEvent: PredictionBackupEventInsert): Promise<SupabaseResponse<PredictionBackupEventRow>> {
-    return this.supabase
+  async addPredictionBackupEvent(backupEvent: PredictionBackupEventInsert): Promise<SupabaseResponse<PredictionBackupEventRow>> {
+    const { data, error } = await this.supabase
       .from('prediction_backup_events')
       .insert(backupEvent)
-      .select('id')
-      .single() as Promise<SupabaseResponse<PredictionBackupEventRow>>
+      .select('*')
+      .single()
+
+    return {
+      data: data ? [data as PredictionBackupEventRow] : null,
+      error: this.normalizeError(error),
+    }
   }
 
-  getPredictionBackupEvents(): Promise<SupabaseResponse<PredictionBackupEventRow>> {
-    return this.supabase
+  async getPredictionBackupEvents(): Promise<SupabaseResponse<PredictionBackupEventRow>> {
+    const { data, error } = await this.supabase
       .from('prediction_backup_events')
       .select('*')
-      .order('event_timestamp', { ascending: true }) as Promise<SupabaseResponse<PredictionBackupEventRow>>
+      .order('event_timestamp', { ascending: true })
+
+    return {
+      data: data as PredictionBackupEventRow[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
   subscribeToTable(table: string, callback: (payload: JsonObject) => void) {
@@ -173,23 +224,38 @@ export class SupabaseService {
     return channel
   }
 
-  getMatches(): Promise<SupabaseResponse<SupabaseMatch>> {
-    return this.supabase
+  async getMatches(): Promise<SupabaseResponse<SupabaseMatch>> {
+    const { data, error } = await this.supabase
       .from('matches')
       .select('*')
-      .order('utc_date', { ascending: true }) as Promise<SupabaseResponse<SupabaseMatch>>
+      .order('utc_date', { ascending: true })
+
+    return {
+      data: data as SupabaseMatch[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  getUsers(): Promise<SupabaseResponse<User>> {
-    return this.supabase
+  async getUsers(): Promise<SupabaseResponse<User>> {
+    const { data, error } = await this.supabase
       .from('users')
-      .select('*') as Promise<SupabaseResponse<User>>
+      .select('*')
+
+    return {
+      data: data as User[] | null,
+      error: this.normalizeError(error),
+    }
   }
 
-  deleteMatch(id: number): Promise<SupabaseResponse<SupabaseMatch>> {
-    return this.supabase
+  async deleteMatch(id: number): Promise<SupabaseResponse<SupabaseMatch>> {
+    const { data, error } = await this.supabase
       .from('matches')
       .delete()
-      .eq('id', id) as Promise<SupabaseResponse<SupabaseMatch>>
+      .eq('id', id)
+
+    return {
+      data: data as SupabaseMatch[] | null,
+      error: this.normalizeError(error),
+    }
   }
 }

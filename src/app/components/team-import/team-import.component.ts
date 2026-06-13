@@ -21,6 +21,8 @@ interface ImportTeamResult {
   error?: Error | { message?: string; details?: string; code?: string };
 }
 
+type ImportTeamError = NonNullable<ImportTeamResult['error']>;
+
 @Component({
   selector: 'app-team-import',
   imports: [CommonModule, ButtonModule, CardModule, ProgressBarModule, MessageModule, TableModule],
@@ -37,6 +39,23 @@ export class TeamImportComponent implements OnInit {
     void this.loadTeams();
   }
 
+  private normalizeImportError(error: unknown): ImportTeamError {
+    if (error instanceof Error) {
+      return error;
+    }
+
+    if (typeof error === 'object' && error !== null) {
+      const candidate = error as { message?: unknown; details?: unknown; code?: unknown };
+      return {
+        message: typeof candidate.message === 'string' ? candidate.message : undefined,
+        details: typeof candidate.details === 'string' ? candidate.details : undefined,
+        code: typeof candidate.code === 'string' ? candidate.code : undefined,
+      };
+    }
+
+    return { message: String(error) };
+  }
+
   async importAllTeams() {
     this.importing = true;
     this.importResult = null;
@@ -50,7 +69,7 @@ export class TeamImportComponent implements OnInit {
       }
     } catch (error) {
       console.error('Грешка при импортиране:', error);
-      this.importResult = { success: false, error };
+      this.importResult = { success: false, error: this.normalizeImportError(error) };
     } finally {
       this.importing = false;
     }
