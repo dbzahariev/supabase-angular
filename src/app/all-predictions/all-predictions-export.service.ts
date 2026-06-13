@@ -22,6 +22,7 @@ export interface ExportPredictionsInput {
     translateWinnerShort: (winner: string) => string;
     getCycleLabelFromBet: (bet: Bet) => string;
     formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => string;
+    getSheetName: () => string;
     includeDateTimeAndGroup?: boolean;
     includePhaseRows?: boolean;
 }
@@ -32,11 +33,12 @@ export class AllPredictionsExportService {
         const wsData = this.buildWorksheetData(input);
         const ws = XLSX.utils.aoa_to_sheet(wsData);
         ws['!merges'] = this.buildMerges(wsData, input.allUsersNames.length);
+        ws['!cols'] = this.calculateColumnWidths(wsData);
 
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, input.isLngBg ? 'Прогнози' : 'Predictions');
+        XLSX.utils.book_append_sheet(wb, ws, input.getSheetName());
 
-        const fileName = `predictions-${input.formatLocalDateTime(new Date(), 'filename')}.xlsx`;
+        const fileName = `backup-${input.formatLocalDateTime(new Date(), 'filename')}.xlsx`;
         XLSX.writeFile(wb, fileName);
 
         return {
@@ -187,5 +189,29 @@ export class AllPredictionsExportService {
         }
 
         return merges;
+    }
+
+    private calculateColumnWidths(wsData: WorksheetData): XLSX.ColInfo[] {
+        const cols: XLSX.ColInfo[] = [];
+
+        // Get max columns
+        const maxCols = Math.max(...wsData.map(row => row.length));
+
+        for (let colIdx = 0; colIdx < maxCols; colIdx++) {
+            let maxLength = 0;
+
+            // Skip first row (mainHeaders) as it's merged and doesn't affect actual width
+            for (let rowIdx = 1; rowIdx < wsData.length; rowIdx++) {
+                const cell = wsData[rowIdx][colIdx];
+                const cellStr = cell !== null && cell !== undefined ? cell.toString() : '';
+                maxLength = Math.max(maxLength, cellStr.length);
+            }
+
+            // Add some padding and apply minimum/maximum widths
+            const width = Math.max(2, Math.min(15, maxLength + 1));
+            cols.push({ wch: width });
+        }
+
+        return cols;
     }
 }

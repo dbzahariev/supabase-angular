@@ -358,6 +358,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
             getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),
             formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => this.backupService.formatLocalDateTime(date, mode),
+            getSheetName: () => this.translate.instant('TABLE.SHEET_NAME'),
         });
 
         void this.persistPredictionBackupRemotely({
@@ -399,6 +400,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
             getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),
             formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => this.backupService.formatLocalDateTime(date, mode),
+            getSheetName: () => this.translate.instant('TABLE.SHEET_NAME'),
         });
 
         void this.persistPredictionBackupRemotely({
