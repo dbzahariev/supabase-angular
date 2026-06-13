@@ -5,6 +5,8 @@ import { SupabaseService } from '../supabase';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsRealtimeService {
+    // В RealtimeService (или каквото е service-а)
+    private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     createMatchesSocket(onUpdate: (data: any) => void): Socket {
         console.log('[socket] Creating new socket...');
 
@@ -19,6 +21,12 @@ export class AllPredictionsRealtimeService {
 
         socket.on('connect', () => {
             console.log('[socket] Connected:', socket.id);
+            // Спираме HTTP polling - WebSocket го замества
+            if (this.matchesPollingInterval) {
+                clearInterval(this.matchesPollingInterval);
+                this.matchesPollingInterval = null;
+                console.log('[socket] HTTP polling stopped');
+            }
         });
 
         socket.on('connect_error', (err: Error) => {

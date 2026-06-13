@@ -164,7 +164,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.fixUsers();
         this.fixTeams();
         this.getAllMatche();
-        this.startMatchesPolling();
         this.subscribeToTestPredictions();
 
         this.translate.onLangChange
@@ -233,16 +232,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             clearInterval(this.matchesPollingInterval);
             this.matchesPollingInterval = null;
         }
-    }
-
-    private startMatchesPolling(): void {
-        if (this.matchesPollingInterval) {
-            return;
-        }
-
-        this.matchesPollingInterval = setInterval(() => {
-            this.getAllMatche();
-        }, this.MATCHES_POLLING_INTERVAL_MS);
     }
 
     subscribeToTestPredictions(): void {
