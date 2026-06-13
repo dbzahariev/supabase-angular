@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-// import { ChatComponent } from './chat/chat.component';
 import { AddPrediction } from './add-prediction/add-prediction';
 import { MatchImportComponent } from './components/match-import/match-import.component';
 import { TeamImportComponent } from './components/team-import/team-import.component';
@@ -12,7 +11,6 @@ import { adminGuard } from './guards/admin.guard';
 const routes: Routes = [
     {path: 'add-prediction', component: AddPrediction},
     { path: 'all-matches', component: AllMatchesComponent },
-    // { path: 'chat', component: ChatComponent }
     { path: 'import-matches', component: MatchImportComponent, canActivate: [adminGuard] },
     { path: 'import-teams', component: TeamImportComponent, canActivate: [adminGuard] },
     { path: '', component: AllPredictionsComponent },

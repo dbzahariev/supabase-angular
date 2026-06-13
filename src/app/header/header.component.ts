@@ -19,8 +19,7 @@ export class HeaderComponent implements OnInit {
   tabs = [
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
     { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' },
-    // { route: 'add-prediction', key: 'ADD_PREDICTION', icon: 'pi pi-plus-circle' },
-    { route: 'chat', key: 'CHAT', icon: 'pi pi-home' },
+    // { route: 'add-prediction', key: 'ADD_PREDICTION', icon: 'pi pi-plus-circle' }
   ];
   isDark = localStorage.getItem('dark-mode') === 'enabled';
   currentRoute = '';

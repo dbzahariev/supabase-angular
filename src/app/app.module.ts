@@ -9,14 +9,12 @@ import Aura from '@primeuix/themes/aura';
 import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
 import { App } from './app';
-import { AuthComponent } from './auth/auth';
 import { AddPrediction } from './add-prediction/add-prediction';
 import { AllMatchesComponent } from './all-matches/all-matches.component';
 import { definePreset } from '@primeuix/themes';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-// import { ChatComponent } from './chat/chat.component';
 import { HeaderComponent } from './header/header.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -62,9 +60,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         RulesComponent,
         FormsModule,
         ButtonModule,
-        // ChatComponent,
         HeaderComponent,
-        AuthComponent,
         AddPrediction,
         AllMatchesComponent,
         ToastModule,

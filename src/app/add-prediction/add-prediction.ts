@@ -157,11 +157,16 @@ export class AddPrediction implements OnInit, OnDestroy {
       console.error('[socket] connect_error:', err.message);
     });
 
-    this.socket.on('matchesUpdate', (data: any) => {
+    this.socket.on('matchesUpdate', (data: unknown) => {
 
       try {
         // Безопасна парсване на структурата
-        const matches = Array.isArray(data) ? data : data?.matches || [];
+        const payload = data as { matches?: unknown };
+        const matches = Array.isArray(data)
+          ? data
+          : Array.isArray(payload.matches)
+            ? payload.matches
+            : [];
 
         if (!matches.length) {
           console.warn('[socket] No matches in data');
