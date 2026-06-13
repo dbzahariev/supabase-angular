@@ -27,9 +27,19 @@
 
 .sticky-group-header {
     position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
-.p-datatable-wrapper {
+:host ::ng-deep .p-datatable-scrollable .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background-color: var(--p-datatable-header-background) !important;
+}
+
+:host ::ng-deep .sticky_top .p-datatable-table-container {
+    max-height: calc(100vh - 135px);
     overflow: auto !important;
 }
 
@@ -39,12 +49,30 @@
 }
 
 .sticky {
+    position: sticky;
+    z-index: 2;
     background-color: var(--p-datatable-header-background) !important;
 }
 
 .col_stage.sticky,
 .col_row_number.sticky{
     left: 0 !important;
+    z-index: 0;
+}
+
+.sticky_top {
+    position: relative;
+}
+
+:host ::ng-deep .sticky_top .p-datatable-thead {
+    position: sticky;
+    top: 0 !important;
+    z-index: 12;
+    background-color: var(--p-datatable-header-background) !important;
+}
+
+:host ::ng-deep .sticky_top .p-datatable-thead > tr > th {
+    background-color: var(--p-datatable-header-background) !important;
 }
 
 .re_home_team.sticky{

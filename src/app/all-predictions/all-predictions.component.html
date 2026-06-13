@@ -2,7 +2,7 @@
 
 <div class="table-container" [style.--theme-background-color]="themeBackground" [style.--theme-color]="themeColor"
     [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
-    <p-table class="foo" #dt [value]="betsToShow" showGridlines rowGroupMode="subheader"
+    <p-table class="foo sticky_top" #dt [value]="betsToShow" showGridlines rowGroupMode="subheader"
         groupRowsBy="phase" [scrollable]="true"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small">
@@ -84,7 +84,7 @@
 
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
-                <td class="col_stage" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'" [attr.colspan]="(allUsersNames.length * 4) + 9">
+                <td class="col_stage"[ngClass]="IS_SMALL_SCREEN ? 'sticky': 'sticky'" [attr.colspan]="IS_SMALL_SCREEN ? 15: 28">
                     <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
                         (keydown.space)="togleGroup(product)" class="font-bold ml-2 cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
