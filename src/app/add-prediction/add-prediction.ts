@@ -113,21 +113,30 @@ export class AddPrediction implements OnInit, OnDestroy {
     name_bg: string
   }[] = [];
   constructor() {
+    console.log('[INIT] Component constructor called at', new Date().toISOString());
     this.initSocket();
+    console.log('[INIT] initSocket() returned');
 
     this.initializeCountryCache();
+    console.log('[INIT] Country cache initialized');
   }
 
   private initSocket(): void {
+    console.log('[INIT] initSocket() started');
+
     const baseUrl = this.isLocal
       ? 'http://localhost:3000'
       : 'https://simple-node-proxy.onrender.com';
 
+    console.log('[INIT] Connecting to:', baseUrl);
+
     if (this.socket) {
+      console.log('[INIT] Cleaning up existing socket');
       this.socket.removeAllListeners();
       this.socket.disconnect();
     }
 
+    console.log('[INIT] Creating new socket');
     this.socket = io(baseUrl, {
       transports: ['websocket'],
       upgrade: false,
@@ -136,6 +145,8 @@ export class AddPrediction implements OnInit, OnDestroy {
       reconnectionDelay: 1000,
       timeout: 10000,
     });
+
+    console.log('[INIT] Socket created, setting up listeners');
 
     this.socket.on('connect', () => {
       console.log('[socket] connected:', this.socket.id);
