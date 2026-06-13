@@ -381,6 +381,47 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         });
     }
 
+    downloadTableAsExcelMini() {
+        const isLngBg = this.getLng() === 'bg-BG';
+        const timedBetsToShow = this.betsToShow.filter((bet: Bet) =>
+            String(bet.matchStatus).toUpperCase() === "FINISHED"
+        );
+
+        const exportResult = this.exportService.exportToExcel({
+            isLngBg,
+            allUsersNames: this.allUsersNames,
+            betsToShow: timedBetsToShow,
+            includeDateTimeAndGroup: false,
+            includePhaseRows: false,
+            isShowRow: (bet: Bet) => this.isShowRow(bet),
+            getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
+            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
+            translateGroup: (groupKey: string) => this.translate.instant(groupKey),
+            translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
+            getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),
+            formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => this.backupService.formatLocalDateTime(date, mode),
+        });
+
+        void this.persistPredictionBackupRemotely({
+            event_id: this.backupService.generateBackupEventId(),
+            timestamp: new Date().toISOString(),
+            action: 'download',
+            user_id: 1,
+            match_id: 202601,
+            prediction_id: null,
+            column_index: -1,
+            input_value: 'excel_export',
+            payload: { table_snapshot: JSON.stringify(exportResult.wsData) },
+        });
+
+        this.messageService.add({
+            severity: 'success',
+            summary: this.translate.instant('TOAST.EXCEL_DOWNLOADED_TITLE'),
+            detail: this.translate.instant('TOAST.EXCEL_DOWNLOADED_MESSAGE'),
+            life: 2500,
+        });
+    }
+
     async downloadPredictionBackup() {
         const entries = await this.backupService.getPredictionBackupEntries(this.supabaseService);
         this.backupService.downloadEntriesAsJson(entries);

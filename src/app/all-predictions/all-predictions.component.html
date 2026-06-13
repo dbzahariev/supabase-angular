@@ -28,9 +28,17 @@
                     <button
                         type="button"
                         class="px-3 py-2 text-sm font-semibold rounded border border-current"
-                        (click)="downloadTableAsExcel()">
+                        (click)="downloadTableAsExcelMini()">
                         {{ 'TABLE.DOWNLOAD_EXCEL' | translate }}
                     </button>
+                    @if (isAdmin()) {
+                    <button
+                        type="button"
+                        class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                        (click)="downloadTableAsExcel()">
+                        {{ 'TABLE.DOWNLOAD_EXCEL_FULL' | translate }}
+                    </button>
+                    }
                     @if (isAdmin()) {
                     <button
                         type="button"
@@ -40,15 +48,6 @@
                     </button>
                     }
                 </div>
-                <!-- <p-iconfield iconPosition="left" class="ml-auto">
-                    <p-inputicon>
-                        <i class="pi pi-search"></i>
-                    </p-inputicon>
-                    <input id="searchInput" #searchInput pInputText type="text"
-                        (input)="dt.filterGlobal(searchInput.value, 'contains')"
-                        placeholder="{{ 'TABLE.SEARCH_KEYWORD' | translate }}" />
-                </p-iconfield> -->
-                <!-- <p-button icon="pi pi-refresh" rounded raised /> -->
             </div>
         </ng-template>
         <ng-template #header>

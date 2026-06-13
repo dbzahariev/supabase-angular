@@ -19,6 +19,8 @@ export interface ExportPredictionsInput {
     translateWinnerShort: (winner: string) => string;
     getCycleLabelFromBet: (bet: Bet) => string;
     formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => string;
+    includeDateTimeAndGroup?: boolean;
+    includePhaseRows?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -42,17 +44,32 @@ export class AllPredictionsExportService {
 
     private buildWorksheetData(input: ExportPredictionsInput): any[][] {
         const visibleBets = input.betsToShow.filter(input.isShowRow);
+        const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
+        const includePhaseRows = input.includePhaseRows ?? true;
+
+        const baseHeaders = includeDateTimeAndGroup
+            ? [
+                '#',
+                input.isLngBg ? 'Дата' : 'Date',
+                input.isLngBg ? 'Час' : 'Time',
+                input.isLngBg ? 'Група' : 'Group',
+                input.isLngBg ? 'Домакин' : 'Home team',
+                input.isLngBg ? 'Резултат' : 'Result',
+                '',
+                '',
+                input.isLngBg ? 'Гост' : 'Away team',
+            ]
+            : [
+                '#',
+                input.isLngBg ? 'Домакин' : 'Home team',
+                input.isLngBg ? 'Резултат' : 'Result',
+                '',
+                '',
+                input.isLngBg ? 'Гост' : 'Away team',
+            ];
 
         const mainHeaders = [
-            '#',
-            input.isLngBg ? 'Дата' : 'Date',
-            input.isLngBg ? 'Час' : 'Time',
-            input.isLngBg ? 'Група' : 'Group',
-            input.isLngBg ? 'Домакин' : 'Home team',
-            input.isLngBg ? 'Резултат' : 'Result',
-            '',
-            '',
-            input.isLngBg ? 'Гост' : 'Away team',
+            ...baseHeaders,
             ...input.allUsersNames.flatMap(u => [
                 `${input.getNameFromUser(u)} (${u.total_points ?? 0})`,
                 '',
@@ -61,16 +78,29 @@ export class AllPredictionsExportService {
             ]),
         ];
 
+        const baseSubHeaders = includeDateTimeAndGroup
+            ? [
+                '',
+                '',
+                '',
+                '',
+                '',
+                input.isLngBg ? 'Д' : 'H',
+                input.isLngBg ? 'Г' : 'A',
+                input.isLngBg ? 'П' : 'W',
+                '',
+            ]
+            : [
+                '',
+                '',
+                input.isLngBg ? 'Д' : 'H',
+                input.isLngBg ? 'Г' : 'A',
+                input.isLngBg ? 'П' : 'W',
+                '',
+            ];
+
         const subHeaders = [
-            '',
-            '',
-            '',
-            '',
-            '',
-            input.isLngBg ? 'Д' : 'H',
-            input.isLngBg ? 'Г' : 'A',
-            input.isLngBg ? 'П' : 'W',
-            '',
+            ...baseSubHeaders,
             ...input.allUsersNames.flatMap(() => [
                 input.isLngBg ? 'Д' : 'H',
                 input.isLngBg ? 'Г' : 'A',
@@ -83,7 +113,7 @@ export class AllPredictionsExportService {
         let lastPhase: string | null = null;
 
         for (const bet of visibleBets) {
-            if (bet.phase !== lastPhase) {
+            if (includePhaseRows && bet.phase !== lastPhase) {
                 lastPhase = bet.phase;
                 const groupStageLabel = input.isLngBg ? 'Групова фаза' : 'Group Stage';
                 const cycleLabel = input.getCycleLabelFromBet(bet);
@@ -92,17 +122,26 @@ export class AllPredictionsExportService {
                 groupedRows.push(phaseRow);
             }
 
-            const row: any[] = [
-                bet.row_index,
-                bet.match_day,
-                bet.match_time,
-                input.translateGroup(bet.group),
-                bet.home_team,
-                bet.score?.fullTime.home ?? '',
-                bet.score?.fullTime.away ?? '',
-                bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
-                bet.away_team,
-            ];
+            const row: any[] = includeDateTimeAndGroup
+                ? [
+                    bet.row_index,
+                    bet.match_day,
+                    bet.match_time,
+                    input.translateGroup(bet.group),
+                    bet.home_team,
+                    bet.score?.fullTime.home ?? '',
+                    bet.score?.fullTime.away ?? '',
+                    bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
+                    bet.away_team,
+                ]
+                : [
+                    bet.row_index,
+                    bet.home_team,
+                    bet.score?.fullTime.home ?? '',
+                    bet.score?.fullTime.away ?? '',
+                    bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
+                    bet.away_team,
+                ];
 
             for (const user of input.allUsersNames) {
                 row.push(
@@ -120,17 +159,17 @@ export class AllPredictionsExportService {
     }
 
     private buildMerges(wsData: any[][], usersCount: number): any[] {
+        const hasDateColumn = wsData[0]?.[1] === 'Date' || wsData[0]?.[1] === 'Дата';
+        const userStartCol = hasDateColumn ? 9 : 6;
+        const resultStartCol = hasDateColumn ? 5 : 2;
+        const awayTeamCol = hasDateColumn ? 8 : 5;
+        const verticalMergeCols = hasDateColumn ? [0, 1, 2, 3, 4, awayTeamCol] : [0, 1, awayTeamCol];
+
         const merges: any[] = [
-            { s: { r: 0, c: 0 }, e: { r: 1, c: 0 } },
-            { s: { r: 0, c: 1 }, e: { r: 1, c: 1 } },
-            { s: { r: 0, c: 2 }, e: { r: 1, c: 2 } },
-            { s: { r: 0, c: 3 }, e: { r: 1, c: 3 } },
-            { s: { r: 0, c: 4 }, e: { r: 1, c: 4 } },
-            { s: { r: 0, c: 5 }, e: { r: 0, c: 7 } },
-            { s: { r: 0, c: 8 }, e: { r: 1, c: 8 } },
+            ...verticalMergeCols.map((col) => ({ s: { r: 0, c: col }, e: { r: 1, c: col } })),
+            { s: { r: 0, c: resultStartCol }, e: { r: 0, c: resultStartCol + 2 } },
         ];
 
-        const userStartCol = 9;
         for (let i = 0; i < usersCount; i++) {
             const colStart = userStartCol + (i * 4);
             merges.push({ s: { r: 0, c: colStart }, e: { r: 0, c: colStart + 3 } });
