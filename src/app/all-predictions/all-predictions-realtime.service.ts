@@ -9,8 +9,6 @@ export class AllPredictionsRealtimeService {
     // В RealtimeService (или каквото е service-а)
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     createMatchesSocket(onUpdate: (data: Match[]) => void): Socket {
-        console.log('[socket] Creating new socket...');
-
         const socket = io('https://simple-node-proxy.onrender.com', {
             transports: ['websocket'],
             upgrade: false,
@@ -21,7 +19,6 @@ export class AllPredictionsRealtimeService {
         });
 
         socket.on('connect', () => {
-            console.log('[socket] Connected:', socket.id);
             // Спираме HTTP polling - WebSocket го замества
             if (this.matchesPollingInterval) {
                 clearInterval(this.matchesPollingInterval);
@@ -40,11 +37,6 @@ export class AllPredictionsRealtimeService {
 
         // Винаги регистрирай listener (премахни hasListeners проверката)
         socket.on('matchesUpdate', (data) => {
-            console.log('[socket] matchesUpdate received', {
-                timestamp: new Date().toISOString(),
-                dataType: typeof data,
-                isArray: Array.isArray(data),
-            });
             try {
                 onUpdate(data);
             } catch (err) {

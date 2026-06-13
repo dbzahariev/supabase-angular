@@ -113,7 +113,6 @@ export class AddPrediction implements OnInit, OnDestroy {
     name_bg: string
   }[] = [];
   constructor() {
-    console.log('[INIT] Component constructor called at', new Date().toISOString());
     this.initSocket();
     console.log('[INIT] initSocket() returned');
 
@@ -148,9 +147,7 @@ export class AddPrediction implements OnInit, OnDestroy {
 
     console.log('[INIT] Socket created, setting up listeners');
 
-    this.socket.on('connect', () => {
-      console.log('[socket] connected:', this.socket.id);
-    });
+    this.socket.on('connect', () => { /* Empty */ });
 
     this.socket.on('disconnect', (reason: string) => {
       console.log('[socket] disconnected:', reason);
@@ -161,13 +158,6 @@ export class AddPrediction implements OnInit, OnDestroy {
     });
 
     this.socket.on('matchesUpdate', (data: any) => {
-      console.log('[socket] matchesUpdate received:', {
-        type: typeof data,
-        isArray: Array.isArray(data),
-        hasMatches: data?.matches ? 'yes' : 'no',
-        length: Array.isArray(data) ? data.length : data?.matches?.length,
-        timestamp: new Date().toISOString(),
-      });
 
       try {
         // Безопасна парсване на структурата

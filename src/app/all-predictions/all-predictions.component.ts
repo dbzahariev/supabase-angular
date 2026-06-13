@@ -64,22 +64,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private lastMatchesDataHash = '';
 
     constructor() {
-        console.log('[INIT] Component constructor called');
-
         this.realtimeService.createMatchesSocket((data) => {
-            console.log('[INIT] Callback invoked with data');
             const response = data as MatchesApiResponse;
 
             if (this.isDataChanged(response)) {
-                console.log('changeeeezzzzzzzz', data[0].lastUpdated);
-                console.log('[INIT] Data changed, calling fixAllMatches');
                 this.fixAllMatches(response);
-            } else {
-                console.log('[INIT] Data unchanged');
             }
         });
-
-        console.log('[INIT] Constructor completed');
     }
 
     isAdmin(): boolean {
@@ -177,7 +168,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getAllMatche(): void {
         this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
-            console.log('changeeee', data[0].lastUpdated)
             if (this.isDataChanged(data)) {
                 this.fixAllMatches(data);
             }
@@ -200,7 +190,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     fixAllMatches(data: MatchesApiResponse): void {
-        console.log('[FE] fixAllMatches called, matches count:', data?.length);
         if (!data || data.length === 0) {
             this.allMatches = [];
         } else {
@@ -445,8 +434,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         const differences = getDeepObjectDifferences(previousData, data);
 
         if (differences.length === 0) {
+            console.log('No differences found');
             return false;
         }
+        console.log('Differences found:', differences.filter(diff => diff.before === null));
 
         this.lastMatchesDataHash = hash;
         return true;
