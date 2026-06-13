@@ -15,6 +15,7 @@ import { AllPredictionsExportService } from './all-predictions-export.service';
 import { AllPredictionsBackupService } from './all-predictions-backup.service';
 import { AllPredictionsPredictionFlowService } from './all-predictions-prediction-flow.service';
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
+import { getDeepObjectDifferences } from './deep-object-diff.util';
 import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
 import { AdminService } from '../services/admin.service';
 import { environment } from '../../../environments/environment';
@@ -70,6 +71,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             const response = data as MatchesApiResponse;
 
             if (this.isDataChanged(response)) {
+                console.log('changeeeezzzzzzzz', data[0].lastUpdated);
                 console.log('[INIT] Data changed, calling fixAllMatches');
                 this.fixAllMatches(response);
             } else {
@@ -175,6 +177,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getAllMatche(): void {
         this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
+            console.log('changeeee', data[0].lastUpdated)
             if (this.isDataChanged(data)) {
                 this.fixAllMatches(data);
             }
@@ -431,11 +434,21 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     private isDataChanged(data: MatchesApiResponse): boolean {
         const { changed, hash } = this.realtimeService.hasMatchesDataChanged(data, this.lastMatchesDataHash);
-        const currentHash = JSON.stringify(data);
-        console.log('[FE] Checking if data changed. Current hash:', currentHash, 'Last hash:', this.lastMatchesDataHash, 'Changed:', changed);
-        if (changed) {
-            this.lastMatchesDataHash = hash;
+        if (!changed) {
+            return false;
         }
-        return changed;
+
+        const previousData: MatchesApiResponse = this.lastMatchesDataHash
+            ? JSON.parse(this.lastMatchesDataHash)
+            : [];
+
+        const differences = getDeepObjectDifferences(previousData, data);
+
+        if (differences.length === 0) {
+            return false;
+        }
+
+        this.lastMatchesDataHash = hash;
+        return true;
     }
 }
