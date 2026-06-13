@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { Bet, User } from './all-predictions.models';

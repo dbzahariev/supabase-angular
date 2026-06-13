@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface SupabaseResponse<T> {
     error: { message: string; details?: string } | null;
     data: T[] | null;

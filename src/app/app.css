@@ -1,10 +1,8 @@
 .blue-container {
-    /* width: 98vw; */
     height: 100vh;
 }
 
 .green-container{
-    /* width: 100%; */
     overflow: auto;
 }
 
@@ -24,11 +22,9 @@
     width: max-content;
     align-self: flex-start;
     height: 10vh;
-    /* color: white; */
     box-sizing: border-box;
 }
 
 .element-bottom {
     background-color: rgb(249, 5, 5, 0.5);
-    /* color: white; */
 }

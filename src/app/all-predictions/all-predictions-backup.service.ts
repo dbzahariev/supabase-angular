@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase';
 import { PredictionBackupEntry } from './all-predictions.models';
