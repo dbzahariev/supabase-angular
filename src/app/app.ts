@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core'
 import { SupabaseService } from '../app/supabase'
 import { TranslateService } from '@ngx-translate/core'
 import { ActivatedRoute } from '@angular/router'
+import { NavigationEnd, Router } from '@angular/router'
+import { filter } from 'rxjs'
 import { AdminService } from './services/admin.service'
 
 @Component({
@@ -15,6 +17,7 @@ import { AdminService } from './services/admin.service'
 export class App implements OnInit {
   private translateService = inject(TranslateService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private adminService = inject(AdminService);
 
   constructor() { /* empty */ }
@@ -34,6 +37,11 @@ export class App implements OnInit {
     this.translateService.setDefaultLang(browserLang);
     this.translateService.use(browserLang);
 
+    this.updateScrollMode(this.router.url);
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => this.updateScrollMode(event.urlAfterRedirects));
+
     // Unlock admin mode when navigating to /?set-admin=<key>
     this.route.queryParams.subscribe(params => {
       const key = params['set-admin'];
@@ -41,6 +49,16 @@ export class App implements OnInit {
         this.adminService.tryUnlock(key);
       }
     });
+  }
+
+  private updateScrollMode(url: string): void {
+    const pathname = url.split('?')[0];
+    const isRulesRoute = pathname === '/rules';
+    const html = document.documentElement;
+    const body = document.body;
+
+    html.classList.toggle('rules-scroll-enabled', isRulesRoute);
+    body.classList.toggle('rules-scroll-enabled', isRulesRoute);
   }
 
   toggleDarkMode() {
