@@ -18,6 +18,7 @@ import { AllPredictionsMapperService } from './all-predictions-mapper.service';
 import { getDeepObjectDifferences } from './deep-object-diff.util';
 import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
 import { AdminService } from '../services/admin.service';
+import { ThemeService } from '../services/theme.service';
 import { environment } from '../../../environments/environment';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
@@ -58,6 +59,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private predictionFlowService = inject(AllPredictionsPredictionFlowService);
     private mapperService = inject(AllPredictionsMapperService);
     private adminService = inject(AdminService);
+    private globalThemeService = inject(ThemeService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     private destroyRef = inject(DestroyRef);
@@ -162,6 +164,18 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
                 this.fixBetToShow();
+            });
+
+        this.globalThemeService.themeColor$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                const themeState = this.themeService.buildThemeState();
+                this.themeColor = themeState.themeColor;
+                this.themeTextColor = themeState.themeTextColor;
+                this.themeBackground = themeState.themeBackground;
+                this.mixColor = themeState.mixColor;
+                this.mixPercent = themeState.mixPercent;
+                this.cdr.detectChanges();
             });
     }
 

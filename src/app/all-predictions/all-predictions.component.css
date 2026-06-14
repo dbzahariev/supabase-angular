@@ -100,6 +100,12 @@
     min-width: 40px;
 }
 
+select[aria-label="Players"],
+select[aria-label="Players"] option {
+    background-color: var(--p-datatable-header-background);
+    color: var(--p-datatable-header-color, inherit);
+}
+
 .my-header{
     text-align: left;
 }

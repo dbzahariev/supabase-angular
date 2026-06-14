@@ -9,7 +9,6 @@ export class ThemeService {
   setThemeColor(color: string) {
     localStorage.setItem('theme-color', color);
     this.themeColorSubject.next(color);
-    window.location.reload();
   }
 
   getThemeColor(): string {

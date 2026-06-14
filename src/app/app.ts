@@ -25,6 +25,10 @@ export class App implements OnInit {
       localStorage.setItem('dark-mode', 'disabled')
     }
 
+    if (localStorage.getItem('dark-mode') === 'enabled') {
+      document.querySelector('html')?.classList.add('my-app-dark');
+    }
+
     this.translateService.addLangs(['en', 'bg']);
     const browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
     this.translateService.setDefaultLang(browserLang);

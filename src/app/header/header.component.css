@@ -23,8 +23,10 @@ p-select {
     color:var(--theme-text-color);
 }
 
+.foo-1 select,
 .foo-2 {
-    background-color: var(--theme-color);
+    background-color: var(--p-select-background, var(--p-datatable-header-background, #fff));
+    color: var(--theme-text-color, inherit);
 }
 
 .fl-color {
