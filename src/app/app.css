@@ -3,12 +3,13 @@
 }
 
 .green-container{
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 @media screen and (max-width: 768px) {
     .blue-container {
-        width: 102vw;
+        width: 100vw;
         height: 100vh;
     }
 }
@@ -19,12 +20,12 @@
 }
 
 .element-top {
-    width: max-content;
+    width: 100%;
     align-self: flex-start;
-    height: 10vh;
+    height: auto;
     box-sizing: border-box;
 }
 
 .element-bottom {
-    background-color: rgb(249, 5, 5, 0.5);
+    background-color: transparent;
 }

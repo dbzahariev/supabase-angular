@@ -59,3 +59,21 @@ p-select {
     padding: 0.5rem;
     color: black;
 }
+
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-left: 0.5rem;
+    }
+
+    .header-container p-tabs {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    :host ::ng-deep .header-container .p-tablist {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

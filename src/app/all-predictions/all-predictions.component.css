@@ -1,3 +1,7 @@
+:host {
+    --table-height-offset: 110px;
+}
+
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
     padding: 0.4rem 0.4rem;
     font-size: 0.85rem;
@@ -39,7 +43,10 @@
 }
 
 :host ::ng-deep .sticky_top .p-datatable-table-container {
-    max-height: calc(100vh - 135px);
+    height: calc(100vh - var(--table-height-offset));
+    height: calc(100dvh - var(--table-height-offset));
+    max-height: calc(100vh - var(--table-height-offset));
+    max-height: calc(100dvh - var(--table-height-offset));
     overflow: auto !important;
 }
 
@@ -98,6 +105,10 @@
 }
 
 @media screen and (max-width: 768px) {
+    :host {
+        --table-height-offset: 160px;
+    }
+
     h2 {
         font-size: 1.25rem;
         margin: 0.5rem 0;
@@ -112,7 +123,7 @@
     }
 
     .p-datatable{
-        width: 610px !important;
+        width: 100% !important;
     }
 
     :host ::ng-deep .p-inputtext {
