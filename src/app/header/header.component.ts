@@ -8,7 +8,9 @@ import { TabsModule } from 'primeng/tabs';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { ColorOption } from '../models/match.model';
-import { ThemeService } from '../services/theme.service';
+import { DarkModeSetting, ThemeService } from '../services/theme.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -22,7 +24,8 @@ export class HeaderComponent implements OnInit {
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
     { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' }
   ];
-  isDark = localStorage.getItem('dark-mode') === 'enabled';
+  isDark = false;
+  darkModeSetting: DarkModeSetting = 'disabled';
   currentRoute = '';
   colorOptions: ColorOption[] = [
     { en: 'Green', bg: 'Зелено', code: 'green' },
@@ -37,6 +40,7 @@ export class HeaderComponent implements OnInit {
   private translateService = inject(TranslateService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
+  private destroyRef = inject(DestroyRef);
 
   constructor() {
     this.router.events.subscribe(event => {
@@ -47,19 +51,50 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.themeService.initializeDarkMode();
+
     const isLnlang = localStorage.getItem('lang') === null;
     if (isLnlang) {
       localStorage.setItem('lang', 'bg');
     }
     this.translateService.use(localStorage.getItem('lang') || 'bg');
     this.themeColor = this.themeService.getThemeColor();
-    this.fixTextColor()
+    this.darkModeSetting = this.themeService.getDarkModeSetting();
+    this.isDark = this.themeService.isDarkModeActive();
+    this.fixTextColor(this.isDark)
     // this.themeColorNew = localStorage.getItem('theme-color') || '#ffffff';
 
     const isHaveThemeColor = localStorage.getItem('theme-color') === null
     if (isHaveThemeColor) {
       this.onThemeColorChange(this.colorOptions[0].code);
     }
+
+    this.themeService.darkModeSetting$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((setting) => {
+        this.darkModeSetting = setting;
+      });
+
+    this.themeService.darkModeActive$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isDarkModeActive) => {
+        this.isDark = isDarkModeActive;
+        this.fixTextColor(isDarkModeActive);
+      });
+  }
+
+  get darkModeIcon(): string {
+    if (this.darkModeSetting === 'auto') {
+      return 'desktop';
+    }
+    return this.isDark ? 'moon' : 'sun';
+  }
+
+  get darkModeAriaLabel(): string {
+    if (this.darkModeSetting === 'auto') {
+      return 'Color mode: auto (device)';
+    }
+    return this.isDark ? 'Color mode: dark' : 'Color mode: light';
   }
 
   getColorName(color: ColorOption): string {
@@ -80,15 +115,10 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    const element = document.querySelector('html');
-    element?.classList.toggle('my-app-dark');
-    this.isDark = !this.isDark;
-    localStorage.setItem('dark-mode', this.isDark ? 'enabled' : 'disabled');
-    this.fixTextColor()
+    this.themeService.cycleDarkModeSetting();
   }
 
-  fixTextColor() {
-    const isDark = localStorage.getItem('dark-mode') === 'enabled';
+  fixTextColor(isDark: boolean) {
     if (isDark) {
       this.themeTextColor = '#ffffff';
     } else {

@@ -3,10 +3,10 @@
         variant="outlined"
         [raised]="true"
         (onClick)="toggleDarkMode()"
-        aria-label="Toggle dark mode"
+        [ariaLabel]="darkModeAriaLabel"
         class="mr-2 theme-toggle-btn"
     >
-        <i [class]="`pi pi-${isDark ? 'moon' : 'sun'}`"></i>
+        <i [class]="`pi pi-${darkModeIcon}`"></i>
     </p-button>
 
     <div class="fl-color player-select-wrap header-select-wrap">

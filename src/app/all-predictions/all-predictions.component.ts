@@ -194,6 +194,18 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             });
 
+        this.globalThemeService.darkModeActive$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                const themeState = this.themeService.buildThemeState();
+                this.themeColor = themeState.themeColor;
+                this.themeTextColor = themeState.themeTextColor;
+                this.themeBackground = themeState.themeBackground;
+                this.mixColor = themeState.mixColor;
+                this.mixPercent = themeState.mixPercent;
+                this.cdr.detectChanges();
+            });
+
             setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 

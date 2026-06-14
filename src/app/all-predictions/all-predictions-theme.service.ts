@@ -13,7 +13,7 @@ export class AllPredictionsThemeService {
     buildThemeState(storage: Pick<Storage, 'getItem'> = localStorage): AllPredictionsThemeState {
         const themeColor = storage.getItem('theme-color') ?? '#ffffff';
         const themeTextColor = this.getContrastYIQ(themeColor);
-        const themeBackground = (storage.getItem('dark-mode') ?? 'disabled') === 'enabled' ? '#000000' : '#ffffff';
+        const themeBackground = this.isDarkModeActive(storage) ? '#000000' : '#ffffff';
         const mixColor = themeTextColor === '#000000' ? '#ffffff' : '#000000';
         const mixPercent = themeTextColor === '#000000' ? '85%' : '40%';
 
@@ -42,5 +42,22 @@ export class AllPredictionsThemeService {
         const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
         return yiq >= 128 ? '#000000' : '#ffffff';
+    }
+
+    private isDarkModeActive(storage: Pick<Storage, 'getItem'>): boolean {
+        const mode = storage.getItem('dark-mode') ?? 'disabled';
+        if (mode === 'enabled') {
+            return true;
+        }
+
+        if (mode === 'disabled') {
+            return false;
+        }
+
+        if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+            return false;
+        }
+
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 }

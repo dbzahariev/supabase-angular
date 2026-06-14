@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router'
 import { NavigationEnd, Router } from '@angular/router'
 import { filter } from 'rxjs'
 import { AdminService } from './services/admin.service'
+import { ThemeService } from './services/theme.service'
 
 @Component({
   selector: 'app-root',
@@ -19,18 +20,12 @@ export class App implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private adminService = inject(AdminService);
+  private themeService = inject(ThemeService);
 
   constructor() { /* empty */ }
 
   ngOnInit() {
-    const isDarkModeEnabled = localStorage.getItem('dark-mode') !== null;
-    if (!isDarkModeEnabled) {
-      localStorage.setItem('dark-mode', 'disabled')
-    }
-
-    if (localStorage.getItem('dark-mode') === 'enabled') {
-      document.querySelector('html')?.classList.add('my-app-dark');
-    }
+    this.themeService.initializeDarkMode();
 
     this.translateService.addLangs(['en', 'bg']);
     const browserLang = localStorage.getItem('lang') ?? this.translateService.getBrowserLang() ?? 'bg';
@@ -59,11 +54,5 @@ export class App implements OnInit {
 
     html.classList.toggle('rules-scroll-enabled', isRulesRoute);
     body.classList.toggle('rules-scroll-enabled', isRulesRoute);
-  }
-
-  toggleDarkMode() {
-    const element = document.querySelector('html');
-    element?.classList.toggle('my-app-dark');
-    localStorage.setItem('dark-mode', element?.classList.contains('my-app-dark') ? 'enabled' : 'disabled');
   }
 }
