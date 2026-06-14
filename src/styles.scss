@@ -10,3 +10,18 @@ html.rules-scroll-enabled,
 body.rules-scroll-enabled {
     overflow-y: auto;
 }
+
+.players-select .p-select-option,
+.players-select .p-select-option [data-pc-section="optionlabel"] {
+    font-weight: 400 !important;
+}
+
+.players-select .p-select-option.p-select-option-selected,
+.players-select .p-select-option.p-focus {
+    background-color: color-mix(in srgb, var(--theme-color, #16a34a), #ffffff 85%) !important;
+}
+
+html.my-app-dark .players-select .p-select-option.p-select-option-selected,
+html.my-app-dark .players-select .p-select-option.p-focus {
+    background-color: color-mix(in srgb, var(--theme-color, #16a34a), #111827 45%) !important;
+}

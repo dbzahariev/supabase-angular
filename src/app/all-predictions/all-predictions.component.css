@@ -149,10 +149,16 @@
     min-width: 40px;
 }
 
-select[aria-label="Players"],
-select[aria-label="Players"] option {
+:host ::ng-deep .player-select-wrap .players-select,
+:host ::ng-deep .player-select-wrap .players-select .p-select-overlay,
+:host ::ng-deep .player-select-wrap .players-select .p-select-option {
     background-color: var(--p-datatable-header-background);
     color: var(--p-datatable-header-color, inherit);
+}
+
+:host ::ng-deep .player-select-wrap .players-select .p-select-option .p-select-option-label,
+:host ::ng-deep .player-select-wrap .players-select .p-select-option.p-select-option-selected .p-select-option-label {
+    font-weight: 400 !important;
 }
 
 .my-header{
@@ -197,7 +203,7 @@ select[aria-label="Players"] option {
         width: 100%;
         margin-left: 0;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: fit-content(15rem) minmax(0, 1fr);
         gap: 0.75rem;
         align-items: stretch;
     }
@@ -207,8 +213,22 @@ select[aria-label="Players"] option {
         min-width: 0;
     }
 
-    select[aria-label="Players"] {
+    :host ::ng-deep .player-select-wrap .players-select {
         width: 100%;
+        max-width: 100%;
+    }
+
+    :host ::ng-deep .player-select-wrap .players-select .p-select-overlay {
+        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
+        box-sizing: border-box;
+    }
+
+    :host ::ng-deep .player-select-wrap .players-select .p-select-option-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .caption-actions {

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
@@ -13,9 +14,10 @@ import { ThemeService } from '../services/theme.service';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [ButtonModule, FormsModule, TranslateModule, FloatLabelModule, TabsModule, RouterModule, CommonModule]
+  imports: [ButtonModule, FormsModule, TranslateModule, FloatLabelModule, SelectModule, TabsModule, RouterModule, CommonModule]
 })
 export class HeaderComponent implements OnInit {
+  protected readonly IS_SMALL_SCREEN = window.innerWidth < 768;
   tabs = [
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
     { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' }
@@ -63,6 +65,13 @@ export class HeaderComponent implements OnInit {
   getColorName(color: ColorOption): string {
     const lang = this.translateService.currentLang === 'bg' ? 'bg' : 'en';
     return color[lang];
+  }
+
+  get colorSelectOptions(): Array<{ label: string; value: string }> {
+    return this.colorOptions.map((color) => ({
+      label: this.getColorName(color),
+      value: color.code,
+    }));
   }
 
   changeLanguage(lang: string) {

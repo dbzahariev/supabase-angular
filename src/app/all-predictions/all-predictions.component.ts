@@ -7,6 +7,7 @@ import { SupabaseService } from '../supabase';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SelectModule } from 'primeng/select';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { AllPredictionsPointsService } from './all-predictions-points.service';
 import { AllPredictionsThemeService } from './all-predictions-theme.service';
@@ -28,7 +29,7 @@ const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
     styleUrls: ['./all-predictions.component.css'],
-    imports: [TableModule, ToastModule, TranslateModule, FormsModule, CommonModule],
+    imports: [TableModule, ToastModule, TranslateModule, FormsModule, CommonModule, SelectModule],
     providers: [MessageService]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
@@ -66,6 +67,19 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private lastMatchesDataHash = '';
     private groupHeaderScrollContainer: HTMLElement | null = null;
     private groupHeaderScrollListener: (() => void) | null = null;
+
+    get playerSelectOptions(): Array<{ label: string; value: number | null }> {
+        const allPlayersLabel = this.translate.instant('TABLE.ALL_PLAYERS');
+        return [
+            { label: allPlayersLabel, value: null },
+            ...this.allUsersNames
+                .filter((user) => user.id !== 1)
+                .map((user) => ({
+                    label: this.getNameFromUser(user),
+                    value: user.id,
+                })),
+        ];
+    }
 
     constructor() {
         this.realtimeService.createMatchesSocket((data) => {

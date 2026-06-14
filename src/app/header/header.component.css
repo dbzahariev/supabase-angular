@@ -13,20 +13,45 @@
 }
 
 p-select {
-    border-color: var(--p-primary-800) !important;
     width: 100% !important;
 }
 
-.foo-1 select {
-    background-color: transparent;
-    width: 100px;
-    color:var(--theme-text-color);
-}
-
-.foo-1 select,
-.foo-2 {
+:host ::ng-deep .player-select-wrap .players-select,
+:host ::ng-deep .player-select-wrap .players-select .p-select-overlay,
+:host ::ng-deep .player-select-wrap .players-select .p-select-option {
     background-color: var(--p-select-background, var(--p-datatable-header-background, #fff));
     color: var(--theme-text-color, inherit);
+}
+
+:host ::ng-deep .player-select-wrap .players-select .p-select-option .p-select-option-label,
+:host ::ng-deep .player-select-wrap .players-select .p-select-option.p-select-option-selected .p-select-option-label {
+    font-weight: 400 !important;
+}
+
+.player-select-wrap {
+    min-width: 0;
+}
+
+.header-select-wrap {
+    width: 100px;
+}
+
+:host ::ng-deep .player-select-wrap .players-select {
+    width: 100%;
+    max-width: 100%;
+}
+
+:host ::ng-deep .player-select-wrap .players-select .p-select-overlay {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+:host ::ng-deep .player-select-wrap .players-select .p-select-option-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fl-color {
@@ -55,18 +80,15 @@ p-select {
     margin: 0;
 }
 
-.theme-color-select {
-    border: solid 1px black;
-    border-radius: 4px;
-    padding: 0.5rem;
-    color: black;
-}
-
 @media screen and (max-width: 768px) {
     .header-container {
         flex-wrap: wrap;
         gap: 0.5rem;
         padding-left: 0.5rem;
+    }
+
+    .header-select-wrap {
+        width: 100px;
     }
 
     .header-container p-tabs {

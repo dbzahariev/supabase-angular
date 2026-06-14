@@ -9,20 +9,21 @@
         <i [class]="`pi pi-${isDark ? 'moon' : 'sun'}`"></i>
     </p-button>
 
-    <p-floatlabel class="fl-color theme-color-select foo-1" variant="in">
-        <label for="themeColorSelect" class="sr-only">{{ 'CHOSE_COLOR' | translate }}</label>
-        <select
+    <div class="fl-color player-select-wrap header-select-wrap">
+        <p-select
             id="themeColorSelect"
-            class="w-full"
+            class="players-select"
+            [options]="colorSelectOptions"
+            optionLabel="label"
+            optionValue="value"
             [(ngModel)]="themeColor"
             (ngModelChange)="onThemeColorChange($event)"
-            aria-label="{{ 'CHOSE_COLOR' | translate }}"
-        >
-            @for(color of colorOptions; track color.code){
-                <option class="foo-2" [value]="color.code">{{ getColorName(color) }}</option>
-            }
-        </select>
-    </p-floatlabel>
+            [appendTo]="'self'"
+            [scrollHeight]="IS_SMALL_SCREEN ? '52dvh' : '200px'"
+            [panelStyle]="{ width: '100%', minWidth: '100%' }"
+            [ariaLabel]="'CHOSE_COLOR' | translate">
+        </p-select>
+    </div>
 
     <div class="flex gap-2 ml-2">
         <button class="lang-button" (click)="changeLanguage('bg')" aria-label="Български">
