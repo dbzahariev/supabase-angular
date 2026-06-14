@@ -29,24 +29,33 @@
                     <div class="caption-actions flex gap-2">
                         <button
                             type="button"
-                            class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                            class="caption-action-btn"
+                            [title]="'TABLE.DOWNLOAD_EXCEL' | translate"
+                            [attr.aria-label]="'TABLE.DOWNLOAD_EXCEL' | translate"
                             (click)="downloadTableAsExcelMini()">
-                            {{ 'TABLE.DOWNLOAD_EXCEL' | translate }}
+                            <i class="pi pi-file-excel"></i>
+                            <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL' | translate }}</span>
                         </button>
                         @if (isAdmin()) {
                         <button
                             type="button"
-                            class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                            class="caption-action-btn"
+                            [title]="'TABLE.DOWNLOAD_EXCEL_FULL' | translate"
+                            [attr.aria-label]="'TABLE.DOWNLOAD_EXCEL_FULL' | translate"
                             (click)="downloadTableAsExcel()">
-                            {{ 'TABLE.DOWNLOAD_EXCEL_FULL' | translate }}
+                            <i class="pi pi-file-excel"></i>
+                            <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL_FULL' | translate }}</span>
                         </button>
                         }
                         @if (isAdmin()) {
                         <button
                             type="button"
-                            class="px-3 py-2 text-sm font-semibold rounded border border-current"
+                            class="caption-action-btn"
+                            [title]="'TABLE.DOWNLOAD_BACKUP' | translate"
+                            [attr.aria-label]="'TABLE.DOWNLOAD_BACKUP' | translate"
                             (click)="downloadPredictionBackup()">
-                            {{ 'TABLE.DOWNLOAD_BACKUP' | translate }}
+                            <i class="pi pi-database"></i>
+                            <span class="btn-label">{{ 'TABLE.DOWNLOAD_BACKUP' | translate }}</span>
                         </button>
                         }
                     </div>
