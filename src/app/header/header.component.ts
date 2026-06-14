@@ -85,7 +85,7 @@ export class HeaderComponent implements OnInit {
 
   get darkModeIcon(): string {
     if (this.darkModeSetting === 'auto') {
-      return 'desktop';
+      return this.IS_SMALL_SCREEN ? 'mobile' : 'desktop';
     }
     return this.isDark ? 'moon' : 'sun';
   }
