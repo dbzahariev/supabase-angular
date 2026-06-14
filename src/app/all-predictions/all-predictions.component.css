@@ -1,5 +1,7 @@
 :host {
     --table-height-offset: 110px;
+    --group-header-top: 58px;
+    --group-scroll-x: 0px;
 }
 
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
@@ -14,6 +16,31 @@
 
 .table-container {
     width: 100%;
+}
+
+.caption-bar {
+    flex-wrap: wrap;
+}
+
+.caption-title {
+    display: block;
+}
+
+.caption-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.player-select-wrap {
+    min-width: 0;
+}
+
+.caption-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .my-table{
@@ -31,15 +58,37 @@
 
 .sticky-group-header {
     position: sticky;
-    top: 0;
-    z-index: 5;
+    top: var(--group-header-top);
+    z-index: 7;
+    left: 0;
+    background-color: var(--p-datatable-header-background) !important;
 }
 
 :host ::ng-deep .p-datatable-scrollable .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
     position: sticky;
-    top: 0;
-    z-index: 5;
+    top: var(--group-header-top);
+    z-index: 7;
+    left: 0;
     background-color: var(--p-datatable-header-background) !important;
+}
+
+:host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header {
+    position: sticky;
+    top: var(--group-header-top);
+    z-index: 10;
+}
+
+:host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header > td {
+    position: sticky;
+    top: var(--group-header-top);
+    left: 0;
+    z-index: 11;
+    background-color: var(--p-datatable-header-background) !important;
+}
+
+.group-label {
+    display: block;
+    transform: translateX(var(--group-scroll-x));
 }
 
 :host ::ng-deep .sticky_top .p-datatable-table-container {
@@ -113,6 +162,68 @@ select[aria-label="Players"] option {
 @media screen and (max-width: 768px) {
     :host {
         --table-height-offset: 160px;
+        --group-header-top: 52px;
+    }
+
+    :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header > td,
+    :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
+        background: transparent !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
+        border-bottom: 0 !important;
+    }
+
+    .group-label {
+        width: calc(100vw - 23px);
+        max-width: calc(100vw - 23px);
+        box-sizing: border-box;
+        padding-left: 0.5rem;
+        background-color: var(--p-datatable-header-background) !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
+    }
+
+    .caption-bar {
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .caption-title {
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .caption-controls {
+        width: 100%;
+        margin-left: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+
+    .player-select-wrap {
+        width: 100%;
+        min-width: 0;
+    }
+
+    select[aria-label="Players"] {
+        width: 100%;
+    }
+
+    .caption-actions {
+        width: 100%;
+        grid-column: 2;
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .caption-actions > button {
+        width: 100%;
+        min-width: 0;
     }
 
     h2 {

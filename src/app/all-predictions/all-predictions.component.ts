@@ -64,6 +64,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
+    private groupHeaderScrollContainer: HTMLElement | null = null;
+    private groupHeaderScrollListener: (() => void) | null = null;
 
     constructor() {
         this.realtimeService.createMatchesSocket((data) => {
@@ -177,6 +179,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.mixPercent = themeState.mixPercent;
                 this.cdr.detectChanges();
             });
+
+            setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
     getAllMatche(): void {
@@ -232,6 +236,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
+
+        this.unbindGroupHeaderScrollSync();
 
         if (this.matchesPollingInterval) {
             clearInterval(this.matchesPollingInterval);
@@ -463,6 +469,39 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     fixBetToShow(): void {
         this.betsToShow = this.mapperService.buildBetsToShow(this.allMatches, this.allTeams);
         this.cdr.detectChanges();
+        setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
+    }
+
+    private bindGroupHeaderScrollSync(): void {
+        const host = document.querySelector('.table-container') as HTMLElement | null;
+        const container = document.querySelector('.sticky_top .p-datatable-table-container') as HTMLElement | null;
+        if (!host || !container) {
+            return;
+        }
+
+        if (this.groupHeaderScrollContainer === container && this.groupHeaderScrollListener) {
+            this.groupHeaderScrollListener();
+            return;
+        }
+
+        this.unbindGroupHeaderScrollSync();
+
+        this.groupHeaderScrollListener = () => {
+            host.style.setProperty('--group-scroll-x', `${container.scrollLeft}px`);
+        };
+
+        container.addEventListener('scroll', this.groupHeaderScrollListener, { passive: true });
+        this.groupHeaderScrollContainer = container;
+        this.groupHeaderScrollListener();
+    }
+
+    private unbindGroupHeaderScrollSync(): void {
+        if (this.groupHeaderScrollContainer && this.groupHeaderScrollListener) {
+            this.groupHeaderScrollContainer.removeEventListener('scroll', this.groupHeaderScrollListener);
+        }
+
+        this.groupHeaderScrollContainer = null;
+        this.groupHeaderScrollListener = null;
     }
 
     togleGroup(pro: Bet): void {

@@ -3,7 +3,7 @@
 }
 
 .green-container{
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
 }
 
@@ -24,6 +24,7 @@
     align-self: flex-start;
     height: auto;
     box-sizing: border-box;
+    padding-top: 0.5rem;
 }
 
 .element-bottom {
