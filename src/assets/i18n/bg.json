@@ -1,4 +1,5 @@
 {
+  "INSTALL_APP": "Инсталирай приложението",
   "ROUTE": {
     "ALL_PREDICTIONS": "Всички прогнози",
     "ALL_RULES": "Правила",

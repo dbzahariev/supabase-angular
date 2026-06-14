@@ -147,6 +147,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (playerId === null || playerId === '') {
             this.selectedPlayerId = null;
             localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            this.cdr.markForCheck();
             return;
         }
 
@@ -154,11 +155,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (!Number.isFinite(parsedPlayerId)) {
             this.selectedPlayerId = null;
             localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            this.cdr.markForCheck();
             return;
         }
 
         this.selectedPlayerId = parsedPlayerId;
         localStorage.setItem(SELECTED_USER_ID_STORAGE_KEY, String(parsedPlayerId));
+        this.cdr.markForCheck();
     }
 
     ngOnInit(): void {
@@ -191,7 +194,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.themeBackground = themeState.themeBackground;
                 this.mixColor = themeState.mixColor;
                 this.mixPercent = themeState.mixPercent;
-                this.cdr.detectChanges();
+                this.cdr.markForCheck();
             });
 
         this.globalThemeService.darkModeActive$
@@ -203,7 +206,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.themeBackground = themeState.themeBackground;
                 this.mixColor = themeState.mixColor;
                 this.mixPercent = themeState.mixPercent;
-                this.cdr.detectChanges();
+                this.cdr.markForCheck();
             });
 
             setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
@@ -336,7 +339,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     fixUsers(): void {
         this.supabaseService.getUsers().then((response) => {
             this.allUsersNamesFromDB = response.data ?? [];
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
         })
     }
 
@@ -494,7 +497,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     fixBetToShow(): void {
         this.betsToShow = this.mapperService.buildBetsToShow(this.allMatches, this.allTeams);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
         setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
@@ -536,7 +539,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             ? hiddenGroups.filter((x: string) => x !== pro.phase)
             : [...hiddenGroups, pro.phase];
         localStorage.setItem('hiddenGrops', JSON.stringify(updated));
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
     }
 
     private isDataChanged(data: MatchesApiResponse): boolean {

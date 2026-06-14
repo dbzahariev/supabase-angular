@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
@@ -11,6 +11,12 @@ import { ColorOption } from '../models/match.model';
 import { DarkModeSetting, ThemeService } from '../services/theme.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
+import { skip } from 'rxjs';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 @Component({
   selector: 'app-header',
@@ -27,6 +33,8 @@ export class HeaderComponent implements OnInit {
   isDark = false;
   darkModeSetting: DarkModeSetting = 'disabled';
   currentRoute = '';
+  canInstall = false;
+  private installPrompt: BeforeInstallPromptEvent | null = null;
   colorOptions: ColorOption[] = [
     { en: 'Green', bg: 'Зелено', code: 'green' },
     { en: 'Red', bg: 'Червено', code: 'red' },
@@ -41,6 +49,8 @@ export class HeaderComponent implements OnInit {
   private router = inject(Router);
   private themeService = inject(ThemeService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   constructor() {
     this.router.events.subscribe(event => {
@@ -52,6 +62,22 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.themeService.initializeDarkMode();
+
+    // Listen for PWA install prompt
+    (window as any).addEventListener('beforeinstallprompt', (event: BeforeInstallPromptEvent) => {
+      event.preventDefault();
+      this.ngZone.run(() => {
+        this.installPrompt = event;
+        this.canInstall = true;
+      });
+    });
+
+    (window as any).addEventListener('appinstalled', () => {
+      this.ngZone.run(() => {
+        this.installPrompt = null;
+        this.canInstall = false;
+      });
+    });
 
     const isLnlang = localStorage.getItem('lang') === null;
     if (isLnlang) {
@@ -70,13 +96,13 @@ export class HeaderComponent implements OnInit {
     }
 
     this.themeService.darkModeSetting$
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((setting) => {
         this.darkModeSetting = setting;
       });
 
     this.themeService.darkModeActive$
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((isDarkModeActive) => {
         this.isDark = isDarkModeActive;
         this.fixTextColor(isDarkModeActive);
@@ -129,6 +155,17 @@ export class HeaderComponent implements OnInit {
   onThemeColorChange(code: string) {
     this.themeService.setThemeColor(code);
     this.themeColor = code;
-    // Ако други компоненти са абонирани за themeColor$, ще се обновят автоматично
+  }
+
+  installApp() {
+    if (!this.installPrompt) return;
+
+    this.installPrompt.prompt();
+    this.installPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        this.canInstall = false;
+        this.installPrompt = null;
+      }
+    });
   }
 }

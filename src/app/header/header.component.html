@@ -1,4 +1,16 @@
 <div class="header-container" [style.--theme-color]="themeColor" [style.--theme-text-color]="themeTextColor">
+    @if (canInstall) {
+    <p-button
+        variant="outlined"
+        [raised]="true"
+        (onClick)="installApp()"
+        [ariaLabel]="'INSTALL_APP' | translate"
+        class="mr-2 install-btn"
+    >
+        <i class="pi pi-download"></i>
+    </p-button>
+    }
+
     <p-button
         variant="outlined"
         [raised]="true"

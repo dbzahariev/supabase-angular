@@ -103,6 +103,15 @@ p-select {
     color: inherit !important;
 }
 
+:host ::ng-deep .header-container .install-btn .p-button {
+    color: var(--theme-color) !important;
+    border-color: var(--theme-border-color) !important;
+}
+
+:host ::ng-deep .header-container .install-btn .p-button .pi {
+    color: inherit !important;
+}
+
 :host ::ng-deep .header-container [data-pc-name="tab"][aria-selected="true"],
 :host ::ng-deep .header-container .p-tab[aria-selected="true"] {
     color: var(--theme-color) !important;
