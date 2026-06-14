@@ -80,13 +80,13 @@
             </tr>
             <tr>
                 @for (col of [0,1,2]; track col; let idx = $index) {
-                <th>
+                <th [class.user-separator]="idx === 0" [class.user-separator-right]="idx === 2">
                         {{ getColName(idx) | translate}}
                 </th>
                 }
                 @for (user of allUsersNames; track user.id) {
                     @for (col of [0,1,2,3]; track col; let idx = $index) {
-                    <th>
+                    <th [class.user-separator]="idx === 0" [class.user-separator-right]="idx === 3">
                         {{ getColName(idx) | translate}}
                     </th>
                     }
@@ -117,14 +117,14 @@
                 <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
-                <td class="score-cell">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
+                <td class="score-cell user-separator-right">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
                 </td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
-                <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0"  [class.font-bold]="j === 3"
+                <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" [class.user-separator-right]="j === 3" [class.font-bold]="j === 3"
                     [class.cursor-pointer]="isAloowedToEdit(user, product, j)" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"

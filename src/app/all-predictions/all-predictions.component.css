@@ -17,6 +17,7 @@
 .table-container {
     width: 100%;
     --theme-border-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%));
+    --player-separator-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 55%));
 }
 
 .caption-bar {
@@ -125,6 +126,16 @@
     border: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
 }
 
+:host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th.user-separator,
+:host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td.user-separator {
+    border-left: 3px solid var(--player-separator-color) !important;
+}
+
+:host ::ng-deep .p-datatable-gridlines .p-datatable-thead > tr > th.user-separator-right,
+:host ::ng-deep .p-datatable-gridlines .p-datatable-tbody > tr > td.user-separator-right {
+    border-right: 3px solid var(--player-separator-color) !important;
+}
+
 .sticky {
     position: sticky;
     z-index: 0;
@@ -215,7 +226,6 @@
         box-sizing: border-box;
         padding-left: 0.5rem;
         background-color: var(--p-datatable-header-background) !important;
-        /* border-bottom: 1px solid var(--theme-border-color) !important; */
     }
 
     .caption-bar {
