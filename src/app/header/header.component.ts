@@ -180,6 +180,6 @@ export class HeaderComponent implements OnInit {
   }
 
   openApp() {
-    window.open(window.location.origin + '/', '_blank');
+    window.location.assign(window.location.origin + '/');
   }
 }
