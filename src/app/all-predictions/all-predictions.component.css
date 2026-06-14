@@ -215,7 +215,7 @@
         box-sizing: border-box;
         padding-left: 0.5rem;
         background-color: var(--p-datatable-header-background) !important;
-        border-bottom: 1px solid var(--theme-border-color) !important;
+        /* border-bottom: 1px solid var(--theme-border-color) !important; */
     }
 
     .caption-bar {
