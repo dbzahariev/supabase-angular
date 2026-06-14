@@ -34,7 +34,10 @@ export class HeaderComponent implements OnInit {
   darkModeSetting: DarkModeSetting = 'disabled';
   currentRoute = '';
   canInstall = false;
+  canOpen = false;
   private installPrompt: BeforeInstallPromptEvent | null = null;
+  private readonly IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches
+    || (window.navigator as any).standalone === true;
   colorOptions: ColorOption[] = [
     { en: 'Green', bg: 'Зелено', code: 'green' },
     { en: 'Red', bg: 'Червено', code: 'red' },
@@ -69,6 +72,7 @@ export class HeaderComponent implements OnInit {
       this.ngZone.run(() => {
         this.installPrompt = event;
         this.canInstall = true;
+        this.canOpen = false;
       });
     });
 
@@ -76,8 +80,14 @@ export class HeaderComponent implements OnInit {
       this.ngZone.run(() => {
         this.installPrompt = null;
         this.canInstall = false;
+        localStorage.setItem('pwa-installed', 'true');
       });
     });
+
+    // Show Open button if installed before but opened in browser
+    if (!this.IS_STANDALONE && localStorage.getItem('pwa-installed') === 'true') {
+      this.canOpen = true;
+    }
 
     const isLnlang = localStorage.getItem('lang') === null;
     if (isLnlang) {
@@ -167,5 +177,9 @@ export class HeaderComponent implements OnInit {
         this.installPrompt = null;
       }
     });
+  }
+
+  openApp() {
+    window.open(window.location.origin + '/', '_blank');
   }
 }

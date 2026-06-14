@@ -1,5 +1,6 @@
 {
   "INSTALL_APP": "Install app",
+  "OPEN_APP": "Open app",
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
     "ALL_RULES": "Rules",
