@@ -34,9 +34,7 @@ export class HeaderComponent implements OnInit {
   darkModeSetting: DarkModeSetting = 'disabled';
   currentRoute = '';
   canInstall = false;
-  canOpen = false;
   private installPrompt: BeforeInstallPromptEvent | null = null;
-  private readonly IS_ANDROID = /android/i.test(window.navigator.userAgent);
   private readonly IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches
     || (window.navigator as any).standalone === true;
   colorOptions: ColorOption[] = [
@@ -73,7 +71,6 @@ export class HeaderComponent implements OnInit {
       this.ngZone.run(() => {
         this.installPrompt = event;
         this.canInstall = true;
-        this.canOpen = false;
       });
     });
 
@@ -84,22 +81,6 @@ export class HeaderComponent implements OnInit {
         localStorage.setItem('pwa-installed', 'true');
       });
     });
-
-    const wasInstalled = localStorage.getItem('pwa-installed') === 'true';
-
-    // Show Open button if installed before but opened in browser
-    if (!this.IS_STANDALONE && wasInstalled) {
-      this.canOpen = true;
-    }
-
-    // Fallback for Android: if app was installed before this feature, the local flag may be missing.
-    setTimeout(() => {
-      this.ngZone.run(() => {
-        if (!this.IS_STANDALONE && !this.canInstall) {
-          this.canOpen = wasInstalled || this.IS_ANDROID;
-        }
-      });
-    }, 300);
 
     const isLnlang = localStorage.getItem('lang') === null;
     if (isLnlang) {
@@ -189,9 +170,5 @@ export class HeaderComponent implements OnInit {
         this.installPrompt = null;
       }
     });
-  }
-
-  openApp() {
-    window.location.assign(window.location.origin + '/');
   }
 }

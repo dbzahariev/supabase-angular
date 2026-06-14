@@ -1,7 +1,5 @@
 {
   "INSTALL_APP": "Install app",
-  "OPEN_APP": "Open app",
-  "OPEN_APP_HINT": "If the app does not open, launch it from the home screen icon",
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
     "ALL_RULES": "Rules",
