@@ -64,6 +64,10 @@ p-select {
     text-overflow: ellipsis;
 }
 
+:host ::ng-deep .header-select-wrap .players-select .p-select-label {
+    color: var(--theme-color) !important;
+}
+
 .fl-color {
     width: max-content !important;
 }

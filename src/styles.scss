@@ -25,3 +25,31 @@ html.my-app-dark .players-select .p-select-option.p-select-option-selected,
 html.my-app-dark .players-select .p-select-option.p-focus {
     background-color: color-mix(in srgb, var(--theme-color, #16a34a), #111827 45%) !important;
 }
+
+html.my-app-dark,
+html.my-app-dark body,
+html.my-app-dark .p-component,
+html.my-app-dark .p-component *,
+html.my-app-dark .table-container,
+html.my-app-dark .table-container *,
+html.my-app-dark .header-container,
+html.my-app-dark .header-container * {
+    color: #ffffff !important;
+}
+
+html.my-app-dark .header-select-wrap .players-select .p-select-label,
+html.my-app-dark .player-select-wrap .players-select .p-select-label,
+html.my-app-dark .caption-actions > button,
+html.my-app-dark .caption-title,
+html.my-app-dark .header-container .p-tab[aria-selected="true"],
+html.my-app-dark .header-container .p-tab[aria-selected="true"] span,
+html.my-app-dark .header-container .theme-toggle-btn .p-button,
+html.my-app-dark .header-container .p-tablist-nav-button,
+html.my-app-dark .header-container .p-tablist-nav-button svg {
+    color: #ffffff !important;
+}
+
+html.my-app-dark .table-container .caption-actions > button,
+html.my-app-dark .table-container .caption-actions > button * {
+    color: #ffffff !important;
+}

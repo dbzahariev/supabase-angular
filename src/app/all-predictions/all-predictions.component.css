@@ -21,10 +21,11 @@
 
 .caption-bar {
     flex-wrap: wrap;
+    justify-content: flex-start !important;
 }
 
 .caption-title {
-    display: block;
+    display: inline-block;
     color: var(--theme-color);
 }
 
@@ -32,7 +33,8 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-left: auto;
+    margin-left: 0;
+    flex: 1 1 auto;
     flex-wrap: wrap;
 }
 
@@ -43,11 +45,12 @@
 .caption-actions {
     flex-wrap: wrap;
     justify-content: flex-end;
+    margin-left: auto;
 }
 
 .caption-actions > button {
     background-color: var(--p-datatable-header-background) !important;
-    color: var(--p-datatable-header-color, inherit) !important;
+    color: var(--theme-color) !important;
     border: 1px solid var(--theme-border-color) !important;
     border-radius: 6px !important;
     font-size: 1rem !important;
@@ -167,6 +170,10 @@
 :host ::ng-deep .player-select-wrap .players-select .p-select-option {
     background-color: var(--p-datatable-header-background);
     color: var(--p-datatable-header-color, inherit);
+}
+
+:host ::ng-deep .player-select-wrap .players-select .p-select-label {
+    color: var(--theme-color) !important;
 }
 
 :host ::ng-deep .player-select-wrap .players-select,
