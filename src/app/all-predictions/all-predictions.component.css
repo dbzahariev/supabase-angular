@@ -16,6 +16,7 @@
 
 .table-container {
     width: 100%;
+    --theme-border-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%));
 }
 
 .caption-bar {
@@ -24,6 +25,7 @@
 
 .caption-title {
     display: block;
+    color: var(--theme-color);
 }
 
 .caption-controls {
@@ -41,6 +43,17 @@
 .caption-actions {
     flex-wrap: wrap;
     justify-content: flex-end;
+}
+
+.caption-actions > button {
+    background-color: var(--p-datatable-header-background) !important;
+    color: var(--p-datatable-header-color, inherit) !important;
+    border: 1px solid var(--theme-border-color) !important;
+    border-radius: 6px !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    text-align: left;
 }
 
 .my-table{
@@ -156,6 +169,11 @@
     color: var(--p-datatable-header-color, inherit);
 }
 
+:host ::ng-deep .player-select-wrap .players-select,
+:host ::ng-deep .player-select-wrap .players-select .p-select-overlay {
+    border-color: var(--theme-border-color) !important;
+}
+
 :host ::ng-deep .player-select-wrap .players-select .p-select-option .p-select-option-label,
 :host ::ng-deep .player-select-wrap .players-select .p-select-option.p-select-option-selected .p-select-option-label {
     font-weight: 400 !important;
@@ -185,7 +203,7 @@
         box-sizing: border-box;
         padding-left: 0.5rem;
         background-color: var(--p-datatable-header-background) !important;
-        border-bottom: 1px solid color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%)) !important;
+        border-bottom: 1px solid var(--theme-border-color) !important;
     }
 
     .caption-bar {

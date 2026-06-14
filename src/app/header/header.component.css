@@ -2,6 +2,11 @@
 
 .header-container {
     min-width: 100px;
+    --theme-border-color: color-mix(in srgb, var(--theme-color), #ffffff 78%);
+}
+
+html.my-app-dark .header-container {
+    --theme-border-color: color-mix(in srgb, var(--theme-color), #111827 45%);
 }
 
 .pi-check {
@@ -21,6 +26,11 @@ p-select {
 :host ::ng-deep .player-select-wrap .players-select .p-select-option {
     background-color: var(--p-select-background, var(--p-datatable-header-background, #fff));
     color: var(--theme-text-color, inherit);
+}
+
+:host ::ng-deep .player-select-wrap .players-select,
+:host ::ng-deep .player-select-wrap .players-select .p-select-overlay {
+    border-color: var(--theme-border-color) !important;
 }
 
 :host ::ng-deep .player-select-wrap .players-select .p-select-option .p-select-option-label,
@@ -78,6 +88,38 @@ p-select {
     cursor: pointer;
     padding: 0;
     margin: 0;
+}
+
+:host ::ng-deep .header-container .theme-toggle-btn .p-button {
+    color: var(--theme-color) !important;
+    border-color: var(--theme-border-color) !important;
+}
+
+:host ::ng-deep .header-container .theme-toggle-btn .p-button .pi {
+    color: inherit !important;
+}
+
+:host ::ng-deep .header-container [data-pc-name="tab"][aria-selected="true"],
+:host ::ng-deep .header-container .p-tab[aria-selected="true"] {
+    color: var(--theme-color) !important;
+}
+
+:host ::ng-deep .header-container .p-tablist-nav-button {
+    color: var(--theme-color) !important;
+    border-color: var(--theme-border-color) !important;
+}
+
+:host ::ng-deep .header-container .p-tablist-nav-button svg {
+    color: var(--theme-color) !important;
+}
+
+:host ::ng-deep .header-container .p-tablist-active-bar {
+    background-color: var(--theme-color) !important;
+    border-color: var(--theme-color) !important;
+}
+
+:host ::ng-deep .header-container .p-tablist {
+    border-color: var(--theme-border-color) !important;
 }
 
 @media screen and (max-width: 768px) {
