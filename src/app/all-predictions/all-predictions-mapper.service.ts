@@ -100,7 +100,7 @@ export class AllPredictionsMapperService {
             const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
             const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
             const cicle = this.getCycleLabelByDate(new Date(match.utcDate));
-            
+
             return {
                 row_index: index + 1,
                 match_day: this.formatDateToDDMM(utcDate, curLng, timeZone),
@@ -189,10 +189,15 @@ export class AllPredictionsMapperService {
                     }
                 }
             }
+
+            if (bet.matchStatus === 'TIMED' || bet.matchStatus === 'SCHEDULED') {
+                newResult = ""
+            }
             return newResult;
         }
 
-        return '';
+        // Default value out of range
+        return "";
     }
 
     getNameFromUser(user: User): string {

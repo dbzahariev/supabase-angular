@@ -44,9 +44,9 @@ export class AllPredictionsPointsService {
                 }
             }
 
-            if (match.status === 'IN_PLAY') {
-                result = 0;
-            }
+            // if (match.status === 'IN_PLAY') {
+            //     result = 0;
+            // }
 
             return result;
         }
