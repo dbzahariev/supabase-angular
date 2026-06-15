@@ -14,8 +14,8 @@ export class AllPredictionsRealtimeService {
             upgrade: false,
             reconnection: true,
             reconnectionAttempts: Infinity,
-            reconnectionDelay: 10000, // 10 seconds
-            timeout: 20000, // 20 seconds
+            reconnectionDelay: 30000, // 30 seconds
+            timeout: 60000, // 60 seconds
             autoConnect: true,
         });
 
