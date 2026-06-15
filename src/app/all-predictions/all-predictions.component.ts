@@ -250,6 +250,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     match.score.duration = "REGULAR";
                     match.score.halfTime.home = 0;
                     match.score.halfTime.away = 1;
+                    match.score.winner = "DRAW";
                 }
 
                 if (match.id === 537352){
