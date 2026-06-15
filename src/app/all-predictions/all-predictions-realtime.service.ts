@@ -14,8 +14,9 @@ export class AllPredictionsRealtimeService {
             upgrade: false,
             reconnection: true,
             reconnectionAttempts: Infinity,
-            reconnectionDelay: 1000,
-            timeout: 10000,
+            reconnectionDelay: 10000, // 10 seconds
+            timeout: 20000, // 20 seconds
+            autoConnect: true,
         });
 
         socket.on('connect', () => {
