@@ -189,6 +189,11 @@ export class AllPredictionsMapperService {
                     }
                 }
             }
+
+             if (bet.matchStatus === 'TIMED') {
+                newResult = ""
+            }
+
             return newResult;
         }
 

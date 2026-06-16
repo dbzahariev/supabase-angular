@@ -243,6 +243,23 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
+                 if (match.id ===537333){
+                    match.status = 'FINISHED';
+                    match.score.fullTime.home = 1;
+                    match.score.fullTime.away = 1;
+                    match.score.duration = "REGULAR";
+                    match.score.halfTime.home = 0;
+                    match.score.halfTime.away = 1;
+                    match.score.winner = "DRAW";
+                }
+
+                if (match.id === 537352){
+                    match.status = 'FINISHED';
+                }
+
+                if (match.status!== 'FINISHED' && match.status!== 'TIMED'){
+                    console.log('Match with id ' + match.id + ' has status ' + match.status + ' and is not FINISHED or TIMED');
+                }
                 const inNext10Min = this.getTimeWindow(match.utcDate) === 'next10'
 
                 if (inNext10Min) {
@@ -440,7 +457,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             includePhaseRows: false,
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
-            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
+            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, true),
             translate: (key: string) => this.translate.instant(key),
             translateGroup: (groupKey: string) => this.translate.instant(groupKey),
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
