@@ -36,7 +36,7 @@
                             <i class="pi pi-file-excel"></i>
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL' | translate }}</span>
                         </button>
-                        @if (isAdmin()) {
+                        @if (isAdmin() || selectedPlayerId === 1) {
                         <button
                             type="button"
                             class="caption-action-btn"

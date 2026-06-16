@@ -73,7 +73,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         return [
             { label: allPlayersLabel, value: null },
             ...this.allUsersNames
-                .filter((user) => user.id !== 1)
+                // .filter((user) => user.id !== 1) // Aiko
                 .map((user) => ({
                     label: this.getNameFromUser(user),
                     value: user.id,
@@ -109,13 +109,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (this.selectedPlayerId === user.id) {
             result = true;
         }
-        // Special: user 6 can also edit user 1's column
-        else if (this.selectedPlayerId === 6 && user.id === 1) {
-            result = true;
-        }
-        else {
-            result = false;
-        }
+        // Special: user 6 can also edit user 1's column (ben to edit Aiko)
+        // else if (this.selectedPlayerId === 6 && user.id === 1) {
+        //     result = true;
+        // }
+        // else {
+        //     result = false;
+        // }
 
         // Disallow editing winner for non-admins
         if (j === 2 && !this.isAdmin()) {
@@ -399,7 +399,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             betsToShow: this.betsToShow,
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
-            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, false),
+            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, true),
             translate: (key: string) => this.translate.instant(key),
             translateGroup: (groupKey: string) => this.translate.instant(groupKey),
             translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
