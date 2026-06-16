@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { Socket } from 'socket.io-client';
 import { AllPredictionsPointsService } from './all-predictions-points.service';
 import { AllPredictionsThemeService } from './all-predictions-theme.service';
 import { AllPredictionsRealtimeService } from './all-predictions-realtime.service';
@@ -63,12 +64,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private globalThemeService = inject(ThemeService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
+    private matchesSocket: Socket | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
     private groupHeaderScrollContainer: HTMLElement | null = null;
     private groupHeaderScrollListener: (() => void) | null = null;
 
-    get playerSelectOptions(): Array<{ label: string; value: number | null }> {
+    get playerSelectOptions(): { label: string; value: number | null }[] {
         const allPlayersLabel = this.translate.instant('TABLE.ALL_PLAYERS');
         return [
             { label: allPlayersLabel, value: null },
@@ -82,7 +84,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     constructor() {
-        this.realtimeService.createMatchesSocket((data) => {
+        this.matchesSocket = this.realtimeService.createMatchesSocket((data) => {
             const response = data as MatchesApiResponse;
 
             if (this.isDataChanged(response)) {
@@ -283,6 +285,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
+
+        this.realtimeService.disconnectMatchesSocket();
+        this.matchesSocket = null;
 
         this.unbindGroupHeaderScrollSync();
 

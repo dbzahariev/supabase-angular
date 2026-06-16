@@ -6,9 +6,15 @@ import { SupabaseService } from '../supabase';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsRealtimeService {
-    // В RealtimeService (или каквото е service-а)
-    private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
+    private static socket: Socket | null = null;
+    private lastUpdateTime = 0;
+    private readonly THROTTLE_MS = 30000; // 30 seconds throttle on client side
+
     createMatchesSocket(onUpdate: (data: Match[]) => void): Socket {
+        // Return singleton socket; avoid creating multiple connections
+        if (AllPredictionsRealtimeService.socket) {
+            return AllPredictionsRealtimeService.socket;
+        }
         const socket = io('https://simple-node-proxy.onrender.com', {
             transports: ['websocket'],
             upgrade: false,
@@ -18,14 +24,11 @@ export class AllPredictionsRealtimeService {
             timeout: 60000, // 60 seconds
             autoConnect: true,
         });
+        
+        AllPredictionsRealtimeService.socket = socket;
 
         socket.on('connect', () => {
-            // Спираме HTTP polling - WebSocket го замества
-            if (this.matchesPollingInterval) {
-                clearInterval(this.matchesPollingInterval);
-                this.matchesPollingInterval = null;
-                console.log('[socket] HTTP polling stopped');
-            }
+            console.log('[socket] Connected');
         });
 
         socket.on('connect_error', (err: Error) => {
@@ -37,11 +40,19 @@ export class AllPredictionsRealtimeService {
         });
 
         // Винаги регистрирай listener (премахни hasListeners проверката)
+        // Apply throttle to avoid burst updates on client side
         socket.on('matchesUpdate', (data) => {
-            try {
-                onUpdate(data);
-            } catch (err) {
-                console.error('[socket] Error in onUpdate callback:', err);
+            const now = Date.now();
+            if (now - this.lastUpdateTime >= this.THROTTLE_MS) {
+                try {
+                    console.log('[socket] matchesUpdate received, invoking onUpdate callback', now.toLocaleString());
+                    onUpdate(data);
+                    this.lastUpdateTime = now;
+                } catch (err) {
+                    console.error('[socket] Error in onUpdate callback:', err);
+                }
+            } else {
+                console.log(`[socket] Throttled matchesUpdate (${Math.round((this.THROTTLE_MS - (now - this.lastUpdateTime)) / 1000)}s remaining)`);
             }
         });
 
@@ -57,6 +68,14 @@ export class AllPredictionsRealtimeService {
     stopPredictionsSubscription(channel: RealtimeChannel | null): void {
         if (channel) {
             channel.unsubscribe();
+        }
+    }
+
+    disconnectMatchesSocket(): void {
+        if (AllPredictionsRealtimeService.socket) {
+            AllPredictionsRealtimeService.socket.disconnect();
+            AllPredictionsRealtimeService.socket = null;
+            console.log('[socket] Socket disconnected and cleared');
         }
     }
 
