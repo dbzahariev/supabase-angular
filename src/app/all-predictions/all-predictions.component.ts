@@ -126,6 +126,17 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (j === 3 && !this.isAdmin()) {
             result = false;
         }
+
+        // Disallow for before matches
+        if (product.matchStatus === 'FINISHED'){
+            result = false;
+        }
+
+        // Disallow for playing matches
+        if (product.matchStatus === 'IN_PLAY'){
+            result = false;
+        }
+
         return result
     }
 
