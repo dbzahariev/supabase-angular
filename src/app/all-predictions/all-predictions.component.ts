@@ -104,18 +104,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (this.selectedPlayerId === null) {
             result = false;
         }
+        if (this.selectedPlayerId!== null && user.id !== 1){
+            // debugger;
+        }
 
         // Allow editing own column
         if (this.selectedPlayerId === user.id) {
             result = true;
         }
-        // Special: user 6 can also edit user 1's column (ben to edit Aiko)
-        // else if (this.selectedPlayerId === 6 && user.id === 1) {
-        //     result = true;
-        // }
-        // else {
-        //     result = false;
-        // }
 
         // Disallow editing winner for non-admins
         if (j === 2 && !this.isAdmin()) {
@@ -124,6 +120,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
         // Disallow editing points points for non-admins
         if (j === 3 && !this.isAdmin()) {
+            result = false;
+        }
+
+        //matchStatus: "FINISHED"
+        if (product.matchStatus === 'FINISHED' && !this.isAdmin()) {
             result = false;
         }
         return result
