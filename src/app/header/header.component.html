@@ -49,7 +49,7 @@
 
     <p-tabs [value]="currentRoute">
         <p-tablist>
-            @for(tab of tabs; track tab.route){
+            @for(tab of visibleTabs; track tab.route){
                 <p-tab
                     [value]="tab.route"
                     [routerLink]="tab.route"

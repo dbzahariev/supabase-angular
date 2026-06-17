@@ -33,6 +33,7 @@ export interface Profile {
 export class SupabaseService {
   private supabase: SupabaseClient
   _session: AuthSession | null = null
+  private readonly proxyBaseUrl = 'https://simple-node-proxy.onrender.com'
   private readonly predictionsWithUsersSelect = `
     id,
     utc_date,
@@ -93,7 +94,19 @@ export class SupabaseService {
   }
 
   getAllMatchesFromBE(): Observable<Match[]> {
-    return this.httpClient.get<Match[]>('https://simple-node-proxy.onrender.com/api/matches')
+    return this.httpClient.get<Match[]>(`${this.proxyBaseUrl}/api/matches`)
+  }
+
+  getLiveMatchesFromBE(): Observable<Match[]> {
+    return this.httpClient.get<Match[]>(`${this.proxyBaseUrl}/api/matches/live`, {
+      params: {
+        t: Date.now().toString(),
+      },
+    })
+  }
+
+  getMatchDetailsFromBE(matchId: number): Observable<Record<string, unknown>> {
+    return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/matches/${matchId}`)
   }
 
   private normalizeError(error: { message: string; details?: string | null } | null): SupabaseResponse<never>['error'] {

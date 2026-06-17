@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { ColorOption } from '../models/match.model';
 import { DarkModeSetting, ThemeService } from '../services/theme.service';
+import { AdminService } from '../services/admin.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { skip } from 'rxjs';
@@ -28,7 +29,9 @@ export class HeaderComponent implements OnInit {
   protected readonly IS_SMALL_SCREEN = window.innerWidth < 768;
   tabs = [
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
-    { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' }
+    { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' },
+    { route: 'match-details', key: 'MATCH_DETAILS', icon: 'pi pi-info-circle', adminOnly: true },
+    { route: 'live-monitor', key: 'LIVE_MONITOR', icon: 'pi pi-bolt', adminOnly: true }
   ];
   isDark = false;
   darkModeSetting: DarkModeSetting = 'disabled';
@@ -50,9 +53,14 @@ export class HeaderComponent implements OnInit {
   private translateService = inject(TranslateService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
+  private adminService = inject(AdminService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+
+  get visibleTabs() {
+    return this.tabs.filter(tab => !tab.adminOnly || this.adminService.isAdmin());
+  }
 
   constructor() {
     this.router.events.subscribe(event => {
