@@ -105,6 +105,14 @@ export class SupabaseService {
     })
   }
 
+  getLiveMatchesFullFromBE(): Observable<Match[]> {
+    return this.httpClient.get<Match[]>(`${this.proxyBaseUrl}/api/matches/live/full`, {
+      params: {
+        t: Date.now().toString(),
+      },
+    })
+  }
+
   getMatchDetailsFromBE(matchId: number): Observable<Record<string, unknown>> {
     return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/matches/${matchId}`)
   }

@@ -6,6 +6,7 @@ import { AllPredictionsComponent } from './all-predictions/all-predictions.compo
 import { RulesComponent } from './rules/rules';
 import { MatchDetailsComponent } from './match-details/match-details.component';
 import { LiveMonitorComponent } from './live-monitor/live-monitor.component';
+import { LiveMonitorFullComponent } from './live-monitor/live-monitor-full.component';
 import { adminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
     { path: 'rules', component: RulesComponent },
     { path: 'match-details', component: MatchDetailsComponent, canActivate: [adminGuard] },
     { path: 'live-monitor', component: LiveMonitorComponent, canActivate: [adminGuard] },
+    { path: 'live-monitor-full', component: LiveMonitorFullComponent, canActivate: [adminGuard] },
 ];
 
 @NgModule({

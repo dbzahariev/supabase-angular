@@ -31,7 +31,8 @@ export class HeaderComponent implements OnInit {
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
     { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' },
     { route: 'match-details', key: 'MATCH_DETAILS', icon: 'pi pi-info-circle', adminOnly: true },
-    { route: 'live-monitor', key: 'LIVE_MONITOR', icon: 'pi pi-bolt', adminOnly: true }
+    { route: 'live-monitor', key: 'LIVE_MONITOR', icon: 'pi pi-bolt', adminOnly: true },
+    { route: 'live-monitor-full', key: 'LIVE_MONITOR_FULL', icon: 'pi pi-bolt', adminOnly: true }
   ];
   isDark = false;
   darkModeSetting: DarkModeSetting = 'disabled';
