@@ -367,6 +367,47 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     async changePrediction(user: User, bet: Bet, columnIndex: number, newValue: string) {
+        // OPTIMISTIC UPDATE: Update local state immediately for instant UI feedback
+        const prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id);
+        
+        // Store old values for rollback if needed
+        let oldHome: number | undefined;
+        let oldAway: number | undefined;
+        let oldWinner: string | undefined;
+        
+        if (prediction && columnIndex < 2) {
+            // Save current state for rollback
+            oldHome = prediction.home_ft;
+            oldAway = prediction.away_ft;
+            oldWinner = prediction.winner;
+            
+            // Parse the new value
+            const score = parseInt(newValue, 10);
+            const scoreToSet = isNaN(score) ? -1 : score;
+            
+            // Update the prediction field
+            if (columnIndex === 0) {
+                prediction.home_ft = scoreToSet;
+            } else if (columnIndex === 1) {
+                prediction.away_ft = scoreToSet;
+            }
+            
+            // Recalculate winner based on new values
+            if (prediction.home_ft > prediction.away_ft) {
+                prediction.winner = 'HOME_TEAM';
+            } else if (prediction.away_ft > prediction.home_ft) {
+                prediction.winner = 'AWAY_TEAM';
+            } else if (prediction.home_ft === -1 || prediction.away_ft === -1) {
+                prediction.winner = '';
+            } else {
+                prediction.winner = 'DRAW';
+            }
+            
+            // Trigger immediate UI update
+            this.cdr.markForCheck();
+        }
+        
+        // NOW do the async database operation in the background
         const timestamp = new Date().toISOString();
         const eventId = this.backupService.generateBackupEventId();
 
@@ -407,6 +448,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             }
             // this.fixPredictions();
         } else {
+            // ROLLBACK: Restore old values on error
+            if (prediction && oldHome !== undefined && oldAway !== undefined && oldWinner !== undefined) {
+                prediction.home_ft = oldHome;
+                prediction.away_ft = oldAway;
+                prediction.winner = oldWinner;
+                this.cdr.markForCheck();
+            }
+            
             this.messageService.add({
                 severity: 'error',
                 summary: this.translate.instant('TOAST.ERROR_TITLE'),
