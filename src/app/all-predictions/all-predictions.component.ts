@@ -22,6 +22,7 @@ import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
 import { environment } from '../../../environments/environment';
+import { catchError, of } from 'rxjs';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
@@ -35,6 +36,7 @@ const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
+    private static readonly LIVE_OVERRIDE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.matchesPollingIntervalMs ?? 10000);
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -86,10 +88,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     constructor() {
         this.matchesSocket = this.realtimeService.createMatchesSocket((data) => {
             const response = data as MatchesApiResponse;
-
-            if (this.isDataChanged(response)) {
-                this.fixAllMatches(response);
-            }
+            this.refreshMatchesWithLiveOverlay(response);
         });
     }
 
@@ -217,9 +216,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     getAllMatche(): void {
         this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
-            if (this.isDataChanged(data)) {
-                this.fixAllMatches(data);
-            }
+            this.refreshMatchesWithLiveOverlay(data);
         });
     }
 
@@ -280,6 +277,56 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
 
         this.fixPredictions();
+    }
+
+    private refreshMatchesWithLiveOverlay(baseMatches: MatchesApiResponse): void {
+        this.supabaseService.getLiveMatchesFromBE()
+            .pipe(catchError(() => of([] as Match[])))
+            .subscribe((liveMatches) => {
+                const mergedMatches = this.mergeLiveMatchData(baseMatches, liveMatches);
+                if (this.isDataChanged(mergedMatches)) {
+                    this.fixAllMatches(mergedMatches);
+                }
+            });
+    }
+
+    private mergeLiveMatchData(baseMatches: MatchesApiResponse, liveMatches: Match[]): MatchesApiResponse {
+        if (!Array.isArray(baseMatches) || baseMatches.length === 0) {
+            return [];
+        }
+
+        if (!Array.isArray(liveMatches) || liveMatches.length === 0) {
+            return baseMatches;
+        }
+
+        const liveMatchesById = new Map(
+            liveMatches
+                .filter((match) => this.shouldUseLiveOverride(match))
+                .map((match) => [match.id, match] as const)
+        );
+
+        if (liveMatchesById.size === 0) {
+            return baseMatches;
+        }
+
+        return baseMatches.map((match) => {
+            const liveMatch = liveMatchesById.get(match.id);
+            if (!liveMatch) {
+                return match;
+            }
+
+            return {
+                ...match,
+                status: liveMatch.status ?? match.status,
+                lastUpdated: liveMatch.lastUpdated ?? match.lastUpdated,
+                score: liveMatch.score ?? match.score,
+            };
+        });
+    }
+
+    private shouldUseLiveOverride(match: Match | null | undefined): boolean {
+        const status = String(match?.status ?? '').toUpperCase();
+        return AllPredictionsComponent.LIVE_OVERRIDE_STATUSES.has(status);
     }
 
     ngOnDestroy(): void {
