@@ -225,21 +225,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         });
     }
 
-    getTimeWindow(utcTime: string | Date):
-        "past" | "next10" | "next20" | "later" {
-
-        const now = new Date();
-        const target = new Date(utcTime);
-
-        const diffMs = target.getTime() - now.getTime();
-        const diffMin = diffMs / (1000 * 60);
-
-        if (diffMin < 0) return "past";
-        if (diffMin <= 10) return "next10";
-        if (diffMin <= 20) return "next20";
-        return "later";
-    }
-
     fixAllMatches(data: MatchesApiResponse): void {
         if (!data || data.length === 0) {
             this.allMatches = [];
@@ -260,17 +245,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
                 if (match.id === 537352){
                     match.status = 'FINISHED';
-                }
-
-                if (match.status!== 'FINISHED' && match.status!== 'TIMED'){
-                    console.log('Match with id ' + match.id + ' has status ' + match.status + ' and is not FINISHED or TIMED');
-                }
-                const inNext10Min = this.getTimeWindow(match.utcDate) === 'next10'
-
-                if (inNext10Min) {
-                    match.status = 'IN_PLAY'
-                    match.score.fullTime.home = 0
-                    match.score.fullTime.away = 0
                 }
 
                 return {
