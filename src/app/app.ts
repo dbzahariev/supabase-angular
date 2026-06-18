@@ -37,8 +37,13 @@ export class App implements OnInit {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => this.updateScrollMode(event.urlAfterRedirects));
 
-    // Unlock admin mode when navigating to /?set-admin=<key>
+    // Toggle admin mode with query params:
+    // /?set-admin=<key> to unlock, /?remove-admin to lock.
     this.route.queryParams.subscribe(params => {
+      if (params['remove-admin'] !== undefined) {
+        this.adminService.lock();
+        return;
+      }
       const key = params['set-admin'];
       if (key) {
         this.adminService.tryUnlock(key);

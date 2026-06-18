@@ -8,6 +8,10 @@ export class AdminService {
 
   constructor() {
     const params = new URLSearchParams(window.location.search);
+    if (params.has('remove-admin')) {
+      this.lock();
+      return;
+    }
     const key = params.get('set-admin');
     if (key) {
       this.tryUnlock(key);

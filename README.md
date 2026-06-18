@@ -258,6 +258,12 @@ FROM predictions p
 https://example.com/?set-admin=<admin-key>
 ```
 
+Достъпът може да се деактивира чрез:
+
+```
+https://example.com/?remove-admin
+```
+
 `AdminService` проверява ключа спрямо `environment.adminKey`. При съвпадение записва хеш на ключа в `localStorage` под `admin_unlocked`. Всички последващи заявки към `adminGuard` проверяват само тази стойност — не се налага повторен вход.
 
 За да се **деактивира** достъпът, `AdminService.lock()` изчиства записа от `localStorage`.
