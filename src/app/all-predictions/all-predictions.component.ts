@@ -572,6 +572,38 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
+    private updateGroupHeaderTops(container: HTMLElement, host: HTMLElement): void {
+        const baseTopPx = parseFloat(getComputedStyle(host).getPropertyValue('--group-header-top').trim()) || 58;
+        const groupHeaders = Array.from(
+            container.querySelectorAll('tr.p-datatable-row-group-header')
+        ) as HTMLElement[];
+        if (groupHeaders.length === 0) return;
+        const containerTop = container.getBoundingClientRect().top;
+        let stickyTop = baseTopPx;
+        for (const header of groupHeaders) {
+            header.style.top = `${stickyTop}px`;
+            const td = header.querySelector('td') as HTMLElement | null;
+            if (td) td.style.top = `${stickyTop}px`;
+            const rect = header.getBoundingClientRect();
+            const visualTop = rect.top - containerTop;
+            if (Math.round(visualTop) <= stickyTop + 1) {
+                stickyTop += Math.round(rect.height);
+            }
+        }
+    }
+
+    private syncGroupHeaderTopOffset(host: HTMLElement): void {
+        const stickyHead = document.querySelector('.sticky_top .p-datatable-thead') as HTMLElement | null;
+        if (!stickyHead) {
+            return;
+        }
+
+        const headerHeight = Math.ceil(stickyHead.getBoundingClientRect().height);
+        if (headerHeight > 0) {
+            host.style.setProperty('--group-header-top', `${headerHeight}px`);
+        }
+    }
+
     private bindGroupHeaderScrollSync(): void {
         const host = document.querySelector('.table-container') as HTMLElement | null;
         const container = document.querySelector('.sticky_top .p-datatable-table-container') as HTMLElement | null;
@@ -587,7 +619,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.unbindGroupHeaderScrollSync();
 
         this.groupHeaderScrollListener = () => {
+            this.syncGroupHeaderTopOffset(host);
             host.style.setProperty('--group-scroll-x', `${container.scrollLeft}px`);
+            this.updateGroupHeaderTops(container, host);
         };
 
         container.addEventListener('scroll', this.groupHeaderScrollListener, { passive: true });
