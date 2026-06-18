@@ -125,7 +125,8 @@
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
                 <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" [class.user-separator-right]="j === 3" [class.font-bold]="j === 3"
-                    [class.cursor-pointer]="isAllowedToEdit(user, product, j)" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
+                    [class.cursor-pointer]="isAllowedToEdit(user, product, j)"
+                    [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"

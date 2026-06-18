@@ -35,6 +35,7 @@ export const IS_SMALL_SCREEN = window.innerWidth < 768;
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
+    private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
     allUsersNamesFromDB: User[] = [];
@@ -68,6 +69,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private lastMatchesDataHash = '';
     private groupHeaderScrollContainer: HTMLElement | null = null;
     private groupHeaderScrollListener: (() => void) | null = null;
+    private cellWriteVersions = new Map<string, number>();
+    private activeCellWrites = new Set<string>();
 
     get playerSelectOptions(): { label: string; value: number | null }[] {
         const allPlayersLabel = this.translate.instant('TABLE.ALL_PLAYERS');
@@ -91,6 +94,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     isAllowedToEdit(user: User, product: Bet, j: number): boolean {
+        if (this.activeCellWrites.size > 0) {
+            return false;
+        }
+
         let result = false;
         if (this.selectedPlayerId === null) {
             result = false;
@@ -368,6 +375,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     async changePrediction(user: User, bet: Bet, columnIndex: number, newValue: string) {
         // OPTIMISTIC UPDATE: Update local state immediately for instant UI feedback
         const prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id);
+        const cellKey = this.getCellWriteKey(user.id, bet.id, columnIndex);
+        const writeVersion = (this.cellWriteVersions.get(cellKey) ?? 0) + 1;
+        this.cellWriteVersions.set(cellKey, writeVersion);
         
         // Store old values for rollback if needed
         let oldHome: number | undefined;
@@ -407,6 +417,21 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
         
         // NOW do the async database operation in the background
+        await this.delay(this.cellWriteDebounceMs);
+        if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+            return;
+        }
+
+        while (this.activeCellWrites.has(cellKey)) {
+            await this.delay(30);
+            if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+                return;
+            }
+        }
+
+        this.activeCellWrites.add(cellKey);
+
+        try {
         const timestamp = new Date().toISOString();
         const eventId = this.backupService.generateBackupEventId();
 
@@ -428,6 +453,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+            return;
+        }
+
         if (!result.error && result.shouldRefresh) {
             if (result.isDelete) {
                 this.messageService.add({
@@ -445,8 +474,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     life: 3000
                 });
             }
-            // this.fixPredictions();
+            this.fixPredictions();
         } else {
+            if (this.isConflictLikeError(result.error)) {
+                this.fixPredictions();
+                return;
+            }
+
             // ROLLBACK: Restore old values on error
             if (prediction && oldHome !== undefined && oldAway !== undefined && oldWinner !== undefined) {
                 prediction.home_ft = oldHome;
@@ -462,6 +496,29 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 life: 3000
             });
         }
+        } finally {
+            this.activeCellWrites.delete(cellKey);
+        }
+    }
+
+    private getCellWriteKey(userId: number, betId: number, columnIndex: number): string {
+        return `${userId}:${betId}:${columnIndex}`;
+    }
+
+    private delay(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    private isConflictLikeError(error: { message?: string; details?: string } | null): boolean {
+        if (!error) {
+            return false;
+        }
+
+        const raw = `${error.message ?? ''} ${error.details ?? ''}`.toLowerCase();
+        return raw.includes('409')
+            || raw.includes('conflict')
+            || raw.includes('duplicate')
+            || raw.includes('unique constraint');
     }
 
     downloadTableAsExcel() {
