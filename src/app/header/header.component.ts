@@ -10,6 +10,7 @@ import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { ColorOption } from '../models/match.model';
 import { DarkModeSetting, ThemeService } from '../services/theme.service';
 import { AdminService } from '../services/admin.service';
+import { UiPreferencesService } from '../services/ui-preferences.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { skip } from 'rxjs';
@@ -50,11 +51,13 @@ export class HeaderComponent implements OnInit {
   themeColor!: string;
   themeTextColor = '#000000';
   themeColorNew = '#ffffff';
+  showStatsCards = true;
 
   private translateService = inject(TranslateService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
   private adminService = inject(AdminService);
+  private uiPreferencesService = inject(UiPreferencesService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
@@ -96,6 +99,7 @@ export class HeaderComponent implements OnInit {
       localStorage.setItem('lang', 'bg');
     }
     this.translateService.use(localStorage.getItem('lang') || 'bg');
+    this.showStatsCards = this.uiPreferencesService.getShowStatsCards();
     this.themeColor = this.themeService.getThemeColor();
     this.darkModeSetting = this.themeService.getDarkModeSetting();
     this.isDark = this.themeService.isDarkModeActive();
@@ -117,6 +121,13 @@ export class HeaderComponent implements OnInit {
       .subscribe((isDarkModeActive) => {
         this.isDark = isDarkModeActive;
         this.fixTextColor(isDarkModeActive);
+      });
+
+    this.uiPreferencesService.showStatsCards$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((showStatsCards) => {
+        this.showStatsCards = showStatsCards;
+        this.cdr.markForCheck();
       });
   }
 
@@ -166,6 +177,10 @@ export class HeaderComponent implements OnInit {
   onThemeColorChange(code: string) {
     this.themeService.setThemeColor(code);
     this.themeColor = code;
+  }
+
+  onStatsVisibilityChange(show: boolean) {
+    this.uiPreferencesService.setShowStatsCards(show);
   }
 
   installApp() {

@@ -34,7 +34,8 @@ export class SupabaseService {
   private supabase: SupabaseClient
   _session: AuthSession | null = null
   private readonly proxyBaseUrl = 'https://simple-node-proxy.onrender.com'
-  private readonly liveMatchesFullArchiveStorageKey = 'liveMatchesFullArchive'
+  private readonly liveMatchesFullArchiveLegacyStorageKey = 'liveMatchesFullArchive'
+  private readonly liveMatchesFullArchiveStorageKey = 'live-matches-full-archive'
   private readonly liveMatchesFullArchiveMaxEntries = 8
   private readonly liveMatchesFullArchiveTtlMs = 10 * 60 * 1000
   private readonly predictionsWithUsersSelect = `
@@ -86,6 +87,8 @@ export class SupabaseService {
         }
       }
     })
+
+    this.migrateLiveMatchesFullArchiveStorageKey()
   }
 
   get client(): SupabaseClient {
@@ -365,6 +368,24 @@ export class SupabaseService {
         .filter((entry) => entry.ts > 0 && entry.data.length > 0)
     } catch {
       return []
+    }
+  }
+
+  private migrateLiveMatchesFullArchiveStorageKey(): void {
+    try {
+      const legacyValue = localStorage.getItem(this.liveMatchesFullArchiveLegacyStorageKey)
+      if (legacyValue === null) {
+        return
+      }
+
+      const currentValue = localStorage.getItem(this.liveMatchesFullArchiveStorageKey)
+      if (currentValue === null) {
+        localStorage.setItem(this.liveMatchesFullArchiveStorageKey, legacyValue)
+      }
+
+      localStorage.removeItem(this.liveMatchesFullArchiveLegacyStorageKey)
+    } catch {
+      // Ignore storage errors (quota/privacy mode).
     }
   }
 }

@@ -38,6 +38,19 @@
         </p-select>
     </div>
 
+    <!-- <div class="header-stats-toggle">
+        <label class="stats-toggle-label" for="header-stats-visibility-toggle">{{ 'TABLE.SHOW_STATS' | translate }}</label>
+        <label class="switch" for="header-stats-visibility-toggle">
+            <input
+                id="header-stats-visibility-toggle"
+                type="checkbox"
+                [ngModel]="showStatsCards"
+                (ngModelChange)="onStatsVisibilityChange($event)"
+                [attr.aria-label]="'TABLE.SHOW_STATS' | translate">
+            <span class="slider"></span>
+        </label>
+    </div> -->
+
     <div class="flex gap-2 ml-2">
         <button class="lang-button" (click)="changeLanguage('bg')" aria-label="Български">
             <span class="fi fi-bg fis"></span>

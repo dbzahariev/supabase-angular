@@ -1,5 +1,39 @@
 <p-toast></p-toast>
 
+<!-- Stats Cards Section -->
+@if (showStatsCards) {
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.TOTAL_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ totalMatches }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.FINISHED_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ finishedMatchesDisplay }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🔜</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.UPCOMING_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ upcomingMatches }}</div>
+        </div>
+    </div>
+    <div class="stat-card accuracy-card" [class.high-accuracy]="userAccuracy >= 70" [class.medium-accuracy]="userAccuracy >= 50 && userAccuracy < 70" [class.low-accuracy]="userAccuracy < 50">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.ACCURACY' | translate }}</div>
+            <div class="stat-value">{{ userAccuracy }}%</div>
+        </div>
+    </div>
+</div>
+}
+
 <div class="table-container" [style.--theme-background-color]="themeBackground" [style.--theme-color]="themeColor"
     [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
     <p-table class="foo sticky_top" #dt [value]="betsToShow" showGridlines rowGroupMode="subheader"
@@ -113,8 +147,16 @@
                 <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
                 <td>{{ product?.group | translate}}</td>
-                <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.home_team }}</td>
-                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
+                <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">
+                    <span class="team-with-flag">
+                        {{ product?.home_team }}
+                    </span>
+                </td>
+                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">
+                    <span class="team-with-flag">
+                        {{ product?.away_team }}
+                    </span>
+                </td>
                 <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
                 <td class="score-cell">{{product?.score?.fullTime.away}}</td>
                 <td class="score-cell user-separator-right">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
@@ -124,10 +166,14 @@
                 } -->
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
-                <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" [class.user-separator-right]="j === 3" [class.font-bold]="j === 3"
+                <td (click)="editCell(user, product, j)" 
+                    [class.user-separator]="j === 0" 
+                    [class.user-separator-right]="j === 3" 
+                    [class.font-bold]="j === 3"
                     [class.cursor-pointer]="isAllowedToEdit(user, product, j)"
                     [class.cell-saving]="isCellSaving(user, product, j)"
                     [class.cell-saved]="isCellSaved(user, product, j)"
+                    [ngClass]="getCellColorClass(user, product, j)"
                     [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"

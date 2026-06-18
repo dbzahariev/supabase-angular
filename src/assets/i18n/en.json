@@ -82,6 +82,11 @@
     "SEARCH_KEYWORD": "Search",
     "SHEET_NAME": "Backup",
     "EXPORT_FILE_PREFIX": "backup",
+    "TOTAL_MATCHES": "Total matches",
+    "FINISHED_MATCHES": "Finished matches",
+    "UPCOMING_MATCHES": "Upcoming matches",
+    "ACCURACY": "Accuracy",
+    "SHOW_STATS": "Show stats",
     "GROUPS_PHASE": "Groups Phase",
     "GROUP_STAGE": {
       "CYCLE_1_TITLE": "Group stage - Round 1",

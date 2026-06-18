@@ -22,6 +22,7 @@ import { SupabaseService } from '../supabase';
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
 import { SelectedUserService } from '../services/selected-user.service';
+import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
@@ -49,6 +50,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     themeTextColor = '#000000';
     mixColor = '#ffffff';
     mixPercent = '85%';
+    // Stats properties
+    totalMatches = 0;
+    finishedMatches = 0;
+    inProgressMatches = 0;
+    upcomingMatches = 0;
+    userAccuracy = 0;
+    showStatsCards = true;
 
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -64,6 +72,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private adminService = inject(AdminService);
     private globalThemeService = inject(ThemeService);
     private selectedUserService = inject(SelectedUserService);
+    private uiPreferencesService = inject(UiPreferencesService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     private destroyRef = inject(DestroyRef);
@@ -73,6 +82,170 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private cellWriteVersions = new Map<string, number>();
     private activeCellWrites = new Set<string>();
     private recentlySavedCells = new Set<string>();
+
+    // Method to calculate stats
+    calculateStats(): void {
+        if (!this.allMatches || this.allMatches.length === 0) {
+            this.totalMatches = 0;
+            this.finishedMatches = 0;
+            this.inProgressMatches = 0;
+            this.upcomingMatches = 0;
+            this.userAccuracy = 0;
+            return;
+        }
+
+        this.totalMatches = this.allMatches.length;
+        
+        this.finishedMatches = this.allMatches.filter((match) => this.isFinishedMatchStatus(match.status)).length;
+        this.inProgressMatches = this.allMatches.filter((match) => this.isInProgressMatchStatus(match.status)).length;
+
+        this.upcomingMatches = Math.max(0, this.totalMatches - this.finishedMatches - this.inProgressMatches);
+
+        this.userAccuracy = this.selectedPlayerId === null
+            ? this.getAllPlayersAverageAccuracy()
+            : this.getSelectedPlayerAccuracy();
+
+        this.cdr.markForCheck();
+    }
+
+    get finishedMatchesDisplay(): string {
+        if (this.inProgressMatches > 0) {
+            return `${this.finishedMatches} + ${this.inProgressMatches}`;
+        }
+
+        return `${this.finishedMatches}`;
+    }
+
+    private isInProgressMatchStatus(status: string | null | undefined): boolean {
+        const normalized = String(status ?? '').toUpperCase();
+        return normalized === 'IN_PLAY'
+            || normalized === 'PAUSED'
+            || normalized === 'EXTRA_TIME'
+            || normalized === 'PENALTY_SHOOTOUT'
+            || normalized === 'SUSPENDED'
+            || normalized === 'LIVE';
+    }
+
+    private isFinishedMatchStatus(status: string | null | undefined): boolean {
+        return String(status ?? '').toUpperCase() === 'FINISHED';
+    }
+
+    // Normalize prediction values for comparison
+    private normalizeValue(value: string | undefined | null): string {
+        if (!value) return '';
+        const str = String(value).toUpperCase().trim();
+        if (str === 'HOME_TEAM') return 'H';
+        if (str === 'AWAY_TEAM') return 'A';
+        if (str === 'DRAW') return 'D';
+        if (str === 'H' || str === 'Д') return 'H';
+        if (str === 'A' || str === 'Г') return 'A';
+        if (str === 'D' || str === 'П' || str === 'DRAW') return 'D';
+        return str;
+    }
+
+    // Method to determine cell background color
+    getCellColorClass(user: User, bet: Bet, j: number): string {
+        // Only color the points column (j === 3)
+        if (j !== 3) {
+            return '';
+        }
+
+        // Get the predicted value (points)
+        const prediction = this.getUserPredictionValue(user, bet, j, false);
+        if (!prediction) {
+            return '';
+        }
+
+        // Parse the points value
+        const points = parseInt(prediction, 10);
+        if (isNaN(points)) {
+            return '';
+        }
+
+        // Return color class based on points
+        if (points === 3) {
+            return 'points-3'; // Green for 3 points
+        } else if (points === 2) {
+            return 'points-2'; // Yellow for 2 points
+        } else if (points === 1) {
+            return 'points-1'; // Blue for 1 point
+        } else if (points === 0) {
+            return 'points-0'; // Red for 0 points
+        }
+
+        return '';
+    }
+
+    // Calculates weighted accuracy for the selected player based on earned points (0..3 per finished match).
+    private getSelectedPlayerAccuracy(): number {
+        if (this.selectedPlayerId === null) {
+            return 0;
+        }
+
+        return this.getPlayerAccuracyById(this.selectedPlayerId);
+    }
+
+    private getAllPlayersAverageAccuracy(): number {
+        if (!this.allUsersNames || this.allUsersNames.length === 0) {
+            return 0;
+        }
+
+        const accuracies = this.allUsersNames
+            .map((user) => this.getPlayerAccuracyById(user.id))
+            .filter((accuracy) => Number.isFinite(accuracy));
+
+        if (accuracies.length === 0) {
+            return 0;
+        }
+
+        const total = accuracies.reduce((sum, accuracy) => sum + accuracy, 0);
+        return Math.round(total / accuracies.length);
+    }
+
+    private getPlayerAccuracyById(playerId: number): number {
+        if (!this.allPredictions || this.allPredictions.length === 0 || !this.allMatches || this.allMatches.length === 0) {
+            return 0;
+        }
+
+        const selectedId = Number(playerId);
+        if (!Number.isFinite(selectedId)) {
+            return 0;
+        }
+
+        const selectedUserPredictions = this.allPredictions.filter((prediction) => Number(prediction.users?.id) === selectedId);
+        if (selectedUserPredictions.length === 0) {
+            return 0;
+        }
+
+        const matchesById = new Map<number, Match>(
+            this.allMatches.map((match) => [Number(match.myId ?? match.id), match])
+        );
+
+        let earnedPoints = 0;
+        let evaluatedPredictions = 0;
+
+        for (const prediction of selectedUserPredictions) {
+            const predictionMatchId = Number(prediction.matches?.id);
+            const match = matchesById.get(predictionMatchId);
+            const score = match?.score?.fullTime;
+
+            // Only evaluate matches with final full-time score.
+            if (!score || typeof score.home !== 'number' || typeof score.away !== 'number' || score.home < 0 || score.away < 0) {
+                continue;
+            }
+
+            const points = this.pointsService.calculatePredictionPoints(match, prediction);
+            if (points < 0) {
+                continue;
+            }
+
+            earnedPoints += points;
+            evaluatedPredictions++;
+        }
+
+        const maxPossiblePoints = evaluatedPredictions * 3;
+        return maxPossiblePoints > 0 ? Math.round((earnedPoints / maxPossiblePoints) * 100) : 0;
+    }
 
     get playerSelectOptions(): { label: string; value: number | null }[] {
         const allPlayersLabel = this.translate.instant('TABLE.ALL_PLAYERS');
@@ -156,6 +329,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (playerId === null || playerId === '') {
             this.selectedPlayerId = null;
             this.selectedUserService.clearSelectedUserId();
+            this.calculateStats();
             this.cdr.markForCheck();
             return;
         }
@@ -164,16 +338,20 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         if (!Number.isFinite(parsedPlayerId)) {
             this.selectedPlayerId = null;
             this.selectedUserService.clearSelectedUserId();
+            this.calculateStats();
             this.cdr.markForCheck();
             return;
         }
 
         this.selectedPlayerId = parsedPlayerId;
         this.selectedUserService.setSelectedUserId(parsedPlayerId);
+        this.calculateStats();
         this.cdr.markForCheck();
     }
 
     ngOnInit(): void {
+        this.showStatsCards = this.uiPreferencesService.getShowStatsCards();
+
         const themeState = this.themeService.buildThemeState();
         this.themeColor = themeState.themeColor;
         this.themeTextColor = themeState.themeTextColor;
@@ -214,6 +392,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                 this.themeBackground = themeState.themeBackground;
                 this.mixColor = themeState.mixColor;
                 this.mixPercent = themeState.mixPercent;
+                this.cdr.markForCheck();
+            });
+
+        this.uiPreferencesService.showStatsCards$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((showStatsCards) => {
+                this.showStatsCards = showStatsCards;
                 this.cdr.markForCheck();
             });
 
@@ -617,6 +802,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     fixBetToShow(): void {
         this.betsToShow = this.mapperService.buildBetsToShow(this.allMatches, this.allTeams);
+        this.calculateStats();
         this.cdr.markForCheck();
         setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
