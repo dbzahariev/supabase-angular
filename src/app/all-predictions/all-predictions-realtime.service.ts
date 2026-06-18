@@ -27,9 +27,7 @@ export class AllPredictionsRealtimeService {
         
         AllPredictionsRealtimeService.socket = socket;
 
-        socket.on('connect', () => {
-            console.log('[socket] Connected');
-        });
+        socket.on('connect', () => { /* EMPTY */ });
 
         socket.on('connect_error', (err: Error) => {
             console.error('[socket] Connect error:', err.message);
@@ -45,7 +43,6 @@ export class AllPredictionsRealtimeService {
             const now = Date.now();
             if (now - this.lastUpdateTime >= this.THROTTLE_MS) {
                 try {
-                    console.log('[socket] matchesUpdate received, invoking onUpdate callback', now.toLocaleString());
                     onUpdate(data);
                     this.lastUpdateTime = now;
                 } catch (err) {
