@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { Socket } from 'socket.io-client';
 import { AllPredictionsPointsService } from './all-predictions-points.service';
 import { AllPredictionsThemeService } from './all-predictions-theme.service';
 import { AllPredictionsRealtimeService } from './all-predictions-realtime.service';
@@ -22,7 +21,6 @@ import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
 import { environment } from '../../../environments/environment';
-import { catchError, of } from 'rxjs';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
 const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
@@ -36,7 +34,6 @@ const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
-    private static readonly LIVE_OVERRIDE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.matchesPollingIntervalMs ?? 10000);
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -66,7 +63,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private globalThemeService = inject(ThemeService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
-    private matchesSocket: Socket | null = null;
     private destroyRef = inject(DestroyRef);
     private lastMatchesDataHash = '';
     private groupHeaderScrollContainer: HTMLElement | null = null;
@@ -83,13 +79,6 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     value: user.id,
                 })),
         ];
-    }
-
-    constructor() {
-        this.matchesSocket = this.realtimeService.createMatchesSocket((data) => {
-            const response = data as MatchesApiResponse;
-            this.refreshMatchesWithLiveOverlay(response);
-        });
     }
 
     isAdmin(): boolean {
@@ -179,6 +168,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.fixUsers();
         this.fixTeams();
         this.getAllMatches();
+        this.startMatchesPolling();
         this.subscribeToTestPredictions();
 
         this.translate.onLangChange
@@ -215,7 +205,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     getAllMatches(): void {
-        this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
+        this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
             this.refreshMatchesWithLiveOverlay(data);
         });
     }
@@ -280,61 +270,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     private refreshMatchesWithLiveOverlay(baseMatches: MatchesApiResponse): void {
-        this.supabaseService.getLiveMatchesFromBE()
-            .pipe(catchError(() => of([] as Match[])))
-            .subscribe((liveMatches) => {
-                const mergedMatches = this.mergeLiveMatchData(baseMatches, liveMatches);
-                if (this.isDataChanged(mergedMatches)) {
-                    this.fixAllMatches(mergedMatches);
-                }
-            });
-    }
-
-    private mergeLiveMatchData(baseMatches: MatchesApiResponse, liveMatches: Match[]): MatchesApiResponse {
-        if (!Array.isArray(baseMatches) || baseMatches.length === 0) {
-            return [];
+        if (this.isDataChanged(baseMatches)) {
+            this.fixAllMatches(baseMatches);
         }
-
-        if (!Array.isArray(liveMatches) || liveMatches.length === 0) {
-            return baseMatches;
-        }
-
-        const liveMatchesById = new Map(
-            liveMatches
-                .filter((match) => this.shouldUseLiveOverride(match))
-                .map((match) => [match.id, match] as const)
-        );
-
-        if (liveMatchesById.size === 0) {
-            return baseMatches;
-        }
-
-        return baseMatches.map((match) => {
-            const liveMatch = liveMatchesById.get(match.id);
-            if (!liveMatch) {
-                return match;
-            }
-
-            return {
-                ...match,
-                status: liveMatch.status ?? match.status,
-                lastUpdated: liveMatch.lastUpdated ?? match.lastUpdated,
-                score: liveMatch.score ?? match.score,
-            };
-        });
-    }
-
-    private shouldUseLiveOverride(match: Match | null | undefined): boolean {
-        const status = String(match?.status ?? '').toUpperCase();
-        return AllPredictionsComponent.LIVE_OVERRIDE_STATUSES.has(status);
     }
 
     ngOnDestroy(): void {
         this.realtimeService.stopPredictionsSubscription(this.predictionsChannel);
         this.predictionsChannel = null;
-
-        this.realtimeService.disconnectMatchesSocket();
-        this.matchesSocket = null;
 
         this.unbindGroupHeaderScrollSync();
 
@@ -349,6 +292,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             return;
         }
         this.predictionsChannel = this.realtimeService.subscribeToPredictions(this.supabaseService, () => this.fixPredictions());
+    }
+
+    private startMatchesPolling(): void {
+        if (this.matchesPollingInterval) {
+            return;
+        }
+
+        this.matchesPollingInterval = setInterval(() => {
+            this.getAllMatches();
+        }, this.MATCHES_POLLING_INTERVAL_MS);
     }
 
     getNameFromUser(user: User): string {
