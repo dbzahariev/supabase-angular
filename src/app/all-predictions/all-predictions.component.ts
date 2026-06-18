@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -25,8 +25,6 @@ import { SelectedUserService } from '../services/selected-user.service';
 import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
 
-export const IS_SMALL_SCREEN = window.innerWidth < 768;
-
 @Component({
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
@@ -35,7 +33,7 @@ export const IS_SMALL_SCREEN = window.innerWidth < 768;
     providers: [MessageService]
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
-    protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
+    protected IS_SMALL_SCREEN = this.computeIsSmallScreen();
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
     private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
@@ -258,6 +256,32 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     value: user.id,
                 })),
         ];
+    }
+
+    get playerSelectScrollHeight(): string {
+        const viewportHeight = typeof window === 'undefined' ? 900 : window.innerHeight;
+        const optionCount = this.allUsersNames.length + 1;
+        const optionHeight = this.IS_SMALL_SCREEN ? 46 : 44;
+        const panelPadding = 16;
+        const minHeight = this.IS_SMALL_SCREEN ? 280 : 264;
+        const maxViewportRatio = this.IS_SMALL_SCREEN ? 0.85 : 0.7;
+        const maxHeight = Math.floor(viewportHeight * maxViewportRatio);
+        const maxVisibleRows = Math.max(1, Math.floor((maxHeight - panelPadding) / optionHeight));
+        const visibleRows = Math.max(1, Math.min(optionCount, maxVisibleRows));
+        const desiredHeight = visibleRows * optionHeight + panelPadding;
+        const clampedHeight = Math.min(maxHeight, Math.max(minHeight, desiredHeight));
+
+        return `${clampedHeight}px`;
+    }
+
+    @HostListener('window:resize')
+    onWindowResize(): void {
+        const nextIsSmallScreen = this.computeIsSmallScreen();
+        if (nextIsSmallScreen !== this.IS_SMALL_SCREEN) {
+            this.IS_SMALL_SCREEN = nextIsSmallScreen;
+        }
+
+        this.cdr.markForCheck();
     }
 
     isAdmin(): boolean {
@@ -900,5 +924,9 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
         this.lastMatchesDataHash = hash;
         return true;
+    }
+
+    private computeIsSmallScreen(): boolean {
+        return typeof window !== 'undefined' && window.innerWidth < 768;
     }
 }

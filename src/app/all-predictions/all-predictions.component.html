@@ -54,7 +54,7 @@
                             [ngModel]="selectedPlayerId"
                             (ngModelChange)="onPlayerSelect($event)"
                             [appendTo]="'self'"
-                            [scrollHeight]="IS_SMALL_SCREEN ? '52dvh' : '200px'"
+                            [scrollHeight]="playerSelectScrollHeight"
                             [panelStyle]="{ width: '100%', minWidth: '100%' }"
                             ariaLabel="Players">
                         </p-select>
