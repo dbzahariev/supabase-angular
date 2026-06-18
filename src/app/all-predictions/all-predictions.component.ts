@@ -1,14 +1,14 @@
 import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef } from '@angular/core';
-import { TableModule } from "primeng/table";
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SupabaseService } from '../supabase';
+import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { SelectModule } from 'primeng/select';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { MessageService } from 'primeng/api';
+import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+
 import { AllPredictionsPointsService } from './all-predictions-points.service';
 import { AllPredictionsThemeService } from './all-predictions-theme.service';
 import { AllPredictionsRealtimeService } from './all-predictions-realtime.service';
@@ -18,6 +18,7 @@ import { AllPredictionsPredictionFlowService } from './all-predictions-predictio
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
 import { getDeepObjectDifferences } from './deep-object-diff.util';
 import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
+import { SupabaseService } from '../supabase';
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
 import { SelectedUserService } from '../services/selected-user.service';

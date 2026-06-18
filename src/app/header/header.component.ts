@@ -100,7 +100,6 @@ export class HeaderComponent implements OnInit {
     this.darkModeSetting = this.themeService.getDarkModeSetting();
     this.isDark = this.themeService.isDarkModeActive();
     this.fixTextColor(this.isDark)
-    // this.themeColorNew = localStorage.getItem('theme-color') || '#ffffff';
 
     const isThemeColorDefined = localStorage.getItem('theme-color') === null
     if (isThemeColorDefined) {
