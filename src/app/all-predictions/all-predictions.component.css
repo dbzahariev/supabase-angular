@@ -4,6 +4,16 @@
     --group-scroll-x: 0px;
 }
 
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.cell-saving {
+    background-color: color-mix(in srgb, #f59e0b 18%, transparent) !important;
+    transition: background-color 0.15s ease;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.cell-saved {
+    background-color: color-mix(in srgb, #22c55e 22%, transparent) !important;
+    transition: background-color 0.25s ease;
+}
+
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td {
     padding: 0.4rem 0.4rem;
     font-size: 0.85rem;

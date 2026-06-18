@@ -71,6 +71,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private groupHeaderScrollListener: (() => void) | null = null;
     private cellWriteVersions = new Map<string, number>();
     private activeCellWrites = new Set<string>();
+    private recentlySavedCells = new Set<string>();
 
     get playerSelectOptions(): { label: string; value: number | null }[] {
         const allPlayersLabel = this.translate.instant('TABLE.ALL_PLAYERS');
@@ -126,6 +127,14 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             result = false;
         }
         return result
+    }
+
+    isCellSaving(user: User, bet: Bet, j: number): boolean {
+        return this.activeCellWrites.has(this.getCellWriteKey(user.id, bet.id, j));
+    }
+
+    isCellSaved(user: User, bet: Bet, j: number): boolean {
+        return this.recentlySavedCells.has(this.getCellWriteKey(user.id, bet.id, j));
     }
 
     editCell(user: User, product: Bet, j: number): void {
@@ -430,6 +439,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
 
         this.activeCellWrites.add(cellKey);
+        this.cdr.markForCheck();
+        await this.delay(30);
 
         try {
         const timestamp = new Date().toISOString();
@@ -474,6 +485,11 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
                     life: 3000
                 });
             }
+            this.recentlySavedCells.add(cellKey);
+            setTimeout(() => {
+                this.recentlySavedCells.delete(cellKey);
+                this.cdr.markForCheck();
+            }, 1500);
             this.fixPredictions();
         } else {
             if (this.isConflictLikeError(result.error)) {
@@ -498,6 +514,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         }
         } finally {
             this.activeCellWrites.delete(cellKey);
+            this.cdr.markForCheck();
         }
     }
 
