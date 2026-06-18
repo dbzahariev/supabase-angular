@@ -15,11 +15,11 @@ export class AdminService {
   }
 
   isAdmin(): boolean {
-    return localStorage.getItem(ADMIN_STORAGE_KEY) === this.simpleHash(environment.adminKey);
+    return localStorage.getItem(ADMIN_STORAGE_KEY) === this.simpleHash(environment.ADMIN_KEY);
   }
 
   tryUnlock(key: string): boolean {
-    if (key === environment.adminKey) {
+    if (key === environment.ADMIN_KEY) {
       localStorage.setItem(ADMIN_STORAGE_KEY, this.simpleHash(key));
       return true;
     }

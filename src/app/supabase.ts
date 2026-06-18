@@ -70,7 +70,7 @@ export class SupabaseService {
   private httpClient = inject(HttpClient);
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+    this.supabase = createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
@@ -79,10 +79,10 @@ export class SupabaseService {
       },
       realtime: {
         headers: {
-          apikey: environment.supabaseKey
+          apikey: environment.SUPABASE_KEY
         },
         params: {
-          apikey: environment.supabaseKey
+          apikey: environment.SUPABASE_KEY
         }
       }
     })

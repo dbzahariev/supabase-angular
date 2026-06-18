@@ -34,7 +34,7 @@ const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 })
 export class AllPredictionsComponent implements OnInit, OnDestroy {
     protected readonly IS_SMALL_SCREEN = IS_SMALL_SCREEN;
-    private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.matchesPollingIntervalMs ?? 10000);
+    private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
     allUsersNamesFromDB: User[] = [];
