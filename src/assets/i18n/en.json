@@ -2,6 +2,7 @@
   "INSTALL_APP": "Install app",
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
+    "KNOCKOUT_BRACKET": "Knockout Bracket",
     "ALL_RULES": "Rules",
     "CHAT": "Chat",
     "MATCH_DETAILS": "Match Details",
@@ -169,5 +170,12 @@
     "FINAL": "Final",
     "FUN_TITLE": "And most importantly:",
     "FUN_TEXT": "Have fun!"
+  },
+  "KNOCKOUT": {
+    "TITLE": "Knockout Bracket",
+    "SUBTITLE": "All matches from the knockout phase",
+    "LOADING": "Loading bracket...",
+    "EMPTY": "No knockout matches available",
+    "TBD": "To be decided"
   }
 }

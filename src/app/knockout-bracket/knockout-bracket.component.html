@@ -1,0 +1,187 @@
+<section class="bracket-page" [style.--theme-color]="themeColorHex" [style.--theme-text-color]="themeTextColor">
+  <header class="bracket-header">
+    <div class="header-kicker">FIFA World Cup</div>
+    <h2>{{ 'KNOCKOUT.TITLE' | translate }}</h2>
+    <p>{{ 'KNOCKOUT.SUBTITLE' | translate }}</p>
+  </header>
+
+  <div class="bracket-toolbar" role="toolbar" aria-label="Bracket controls">
+    <div class="toolbar-section left-tools">
+      <span class="toolbar-hint">Плъзни схемата хоризонтално за навигация</span>
+    </div>
+
+    <div class="toolbar-section zoom-tools">
+      <button type="button" class="zoom-btn" (click)="zoomOut()" aria-label="Zoom out">−</button>
+      <span class="zoom-label">{{ (zoomLevel * 100).toFixed(0) }}%</span>
+      <button type="button" class="zoom-btn" (click)="zoomIn()" aria-label="Zoom in">+</button>
+      <button type="button" class="zoom-reset" (click)="resetZoom()">Reset</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="bracket-state">{{ 'KNOCKOUT.LOADING' | translate }}</div>
+  } @else if (stageColumns.length === 0 && !finalMatch && !thirdPlaceMatch) {
+    <div class="bracket-state">{{ 'KNOCKOUT.EMPTY' | translate }}</div>
+  } @else {
+    <div
+      class="bracket-scroll"
+      [class.dragging]="isPanning"
+      (pointerdown)="onPanStart($event)"
+      (pointermove)="onPanMove($event)"
+      (pointerup)="onPanEnd($event)"
+      (pointercancel)="onPanEnd($event)"
+    >
+      <div class="bracket-layout" [style.zoom]="zoomLevel">
+        <div class="bracket-side left">
+          @for (column of stageColumns; track trackByStage($index, column); let i = $index) {
+            <div class="stage-column" [style.--stage-index]="i" [attr.data-stage]="column.stage">
+              <div class="stage-title">
+                <span>{{ ('TABLE.' + column.stage) | translate }}</span>
+                <!-- <span class="stage-round-badge">{{ getStageRoundLabel(column.stage) }}</span> -->
+              </div>
+
+              <div class="matches-stack">
+                @for (match of column.left; track trackByMatch($index, match)) {
+                  <article class="match-card" [style.grid-row]="getGridRow(column.stage, $index)">
+                    <div class="card-topline">
+                      <span class="match-id">{{ match.dateLabel }} • {{ match.timeLabel }}</span>
+                      <span class="match-status" [attr.data-status]="match.status">{{ match.statusLabel }}</span>
+                    </div>
+                    <div class="teams">
+                      <div class="team-row">
+                        <span class="team-label">
+                          @if (match.homeTeamCrest) {
+                            <img class="team-flag" [src]="match.homeTeamCrest" alt="" loading="lazy" />
+                          }
+                          <span class="team-name">{{ match.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                        </span>
+                        <span class="team-score">{{ match.homeScore }}</span>
+                      </div>
+                      <div class="team-row">
+                        <span class="team-label">
+                          @if (match.awayTeamCrest) {
+                            <img class="team-flag" [src]="match.awayTeamCrest" alt="" loading="lazy" />
+                          }
+                          <span class="team-name">{{ match.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                        </span>
+                        <span class="team-score">{{ match.awayScore }}</span>
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="bracket-center">
+          @if (finalMatch) {
+            <div class="center-block">
+              <div class="stage-title">{{ 'TABLE.FINAL_TITLE' | translate }}</div>
+              <article class="match-card final-card">
+                <div class="card-topline">
+                  <span class="match-id">{{ finalMatch.dateLabel }} • {{ finalMatch.timeLabel }}</span>
+                  <span class="match-status" [attr.data-status]="finalMatch.status">{{ finalMatch.statusLabel }}</span>
+                </div>
+                <div class="teams">
+                  <div class="team-row">
+                    <span class="team-label">
+                      @if (finalMatch.homeTeamCrest) {
+                        <img class="team-flag" [src]="finalMatch.homeTeamCrest" alt="" loading="lazy" />
+                      }
+                      <span class="team-name">{{ finalMatch.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                    </span>
+                    <span class="team-score">{{ finalMatch.homeScore }}</span>
+                  </div>
+                  <div class="team-row">
+                    <span class="team-label">
+                      @if (finalMatch.awayTeamCrest) {
+                        <img class="team-flag" [src]="finalMatch.awayTeamCrest" alt="" loading="lazy" />
+                      }
+                      <span class="team-name">{{ finalMatch.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                    </span>
+                    <span class="team-score">{{ finalMatch.awayScore }}</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          }
+
+          @if (thirdPlaceMatch) {
+            <div class="center-block third-place-block">
+              <div class="stage-title">{{ 'TABLE.THIRD_PLACE_TITLE' | translate }}</div>
+              <article class="match-card third-place-card">
+                <div class="card-topline">
+                  <span class="match-id">{{ thirdPlaceMatch.dateLabel }} • {{ thirdPlaceMatch.timeLabel }}</span>
+                  <span class="match-status" [attr.data-status]="thirdPlaceMatch.status">{{ thirdPlaceMatch.statusLabel }}</span>
+                </div>
+                <div class="teams">
+                  <div class="team-row">
+                    <span class="team-label">
+                      @if (thirdPlaceMatch.homeTeamCrest) {
+                        <img class="team-flag" [src]="thirdPlaceMatch.homeTeamCrest" alt="" loading="lazy" />
+                      }
+                      <span class="team-name">{{ thirdPlaceMatch.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                    </span>
+                    <span class="team-score">{{ thirdPlaceMatch.homeScore }}</span>
+                  </div>
+                  <div class="team-row">
+                    <span class="team-label">
+                      @if (thirdPlaceMatch.awayTeamCrest) {
+                        <img class="team-flag" [src]="thirdPlaceMatch.awayTeamCrest" alt="" loading="lazy" />
+                      }
+                      <span class="team-name">{{ thirdPlaceMatch.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                    </span>
+                    <span class="team-score">{{ thirdPlaceMatch.awayScore }}</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          }
+        </div>
+
+        <div class="bracket-side right">
+          @for (column of rightStageColumns; track trackByStage($index, column); let i = $index) {
+            <div class="stage-column" [style.--stage-index]="i" [attr.data-stage]="column.stage">
+              <div class="stage-title">
+                <span>{{ ('TABLE.' + column.stage) | translate }}</span>
+                <!-- <span class="stage-round-badge">{{ getStageRoundLabel(column.stage) }}</span> -->
+              </div>
+
+              <div class="matches-stack">
+                @for (match of column.right; track trackByMatch($index, match)) {
+                  <article class="match-card" [style.grid-row]="getGridRow(column.stage, $index)">
+                    <div class="card-topline">
+                      <span class="match-id">{{ match.dateLabel }} • {{ match.timeLabel }}</span>
+                      <span class="match-status" [attr.data-status]="match.status">{{ match.statusLabel }}</span>
+                    </div>
+                    <div class="teams">
+                      <div class="team-row">
+                        <span class="team-label">
+                          @if (match.homeTeamCrest) {
+                            <img class="team-flag" [src]="match.homeTeamCrest" alt="" loading="lazy" />
+                          }
+                          <span class="team-name">{{ match.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                        </span>
+                        <span class="team-score">{{ match.homeScore }}</span>
+                      </div>
+                      <div class="team-row">
+                        <span class="team-label">
+                          @if (match.awayTeamCrest) {
+                            <img class="team-flag" [src]="match.awayTeamCrest" alt="" loading="lazy" />
+                          }
+                          <span class="team-name">{{ match.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
+                        </span>
+                        <span class="team-score">{{ match.awayScore }}</span>
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</section>
