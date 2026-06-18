@@ -20,10 +20,10 @@ import { getDeepObjectDifferences } from './deep-object-diff.util';
 import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
+import { SelectedUserService } from '../services/selected-user.service';
 import { environment } from '../../../environments/environment';
 
 export const IS_SMALL_SCREEN = window.innerWidth < 768;
-const SELECTED_USER_ID_STORAGE_KEY = 'selectedUserId';
 
 @Component({
     selector: 'app-all-predictions',
@@ -61,6 +61,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private mapperService = inject(AllPredictionsMapperService);
     private adminService = inject(AdminService);
     private globalThemeService = inject(ThemeService);
+    private selectedUserService = inject(SelectedUserService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
     private destroyRef = inject(DestroyRef);
@@ -137,7 +138,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     onPlayerSelect(playerId: number | string | null): void {
         if (playerId === null || playerId === '') {
             this.selectedPlayerId = null;
-            localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            this.selectedUserService.clearSelectedUserId();
             this.cdr.markForCheck();
             return;
         }
@@ -145,13 +146,13 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         const parsedPlayerId = Number(playerId);
         if (!Number.isFinite(parsedPlayerId)) {
             this.selectedPlayerId = null;
-            localStorage.removeItem(SELECTED_USER_ID_STORAGE_KEY);
+            this.selectedUserService.clearSelectedUserId();
             this.cdr.markForCheck();
             return;
         }
 
         this.selectedPlayerId = parsedPlayerId;
-        localStorage.setItem(SELECTED_USER_ID_STORAGE_KEY, String(parsedPlayerId));
+        this.selectedUserService.setSelectedUserId(parsedPlayerId);
         this.cdr.markForCheck();
     }
 
@@ -162,9 +163,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.themeBackground = themeState.themeBackground;
         this.mixColor = themeState.mixColor;
         this.mixPercent = themeState.mixPercent;
-        const savedPlayerId =
-            localStorage.getItem(SELECTED_USER_ID_STORAGE_KEY) ?? localStorage.getItem('selectedPlayerId');
-        this.selectedPlayerId = savedPlayerId ? Number(savedPlayerId) : null;
+        this.selectedPlayerId = this.selectedUserService.getSelectedUserId();
         this.fixUsers();
         this.fixTeams();
         this.getAllMatches();
