@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
   canInstall = false;
   private installPrompt: BeforeInstallPromptEvent | null = null;
   private readonly IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches
-    || (window.navigator as any).standalone === true;
+    || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
   colorOptions: ColorOption[] = [
     { en: 'Green', bg: 'Зелено', code: 'green' },
     { en: 'Red', bg: 'Червено', code: 'red' },
@@ -75,24 +75,24 @@ export class HeaderComponent implements OnInit {
     this.themeService.initializeDarkMode();
 
     // Listen for PWA install prompt
-    (window as any).addEventListener('beforeinstallprompt', (event: BeforeInstallPromptEvent) => {
-      event.preventDefault();
-      this.ngZone.run(() => {
-        this.installPrompt = event;
+    window.addEventListener('beforeinstallprompt', (event: Event) => {
+      const installEvent = event as BeforeInstallPromptEvent;
+      this.deferInstallStateUpdate(() => {
+        this.installPrompt = installEvent;
         this.canInstall = true;
       });
     });
 
-    (window as any).addEventListener('appinstalled', () => {
-      this.ngZone.run(() => {
+    window.addEventListener('appinstalled', () => {
+      this.deferInstallStateUpdate(() => {
         this.installPrompt = null;
         this.canInstall = false;
         localStorage.setItem('pwa-installed', 'true');
       });
     });
 
-    const isLnlang = localStorage.getItem('lang') === null;
-    if (isLnlang) {
+    const isLanguageNotSet = localStorage.getItem('lang') === null;
+    if (isLanguageNotSet) {
       localStorage.setItem('lang', 'bg');
     }
     this.translateService.use(localStorage.getItem('lang') || 'bg');
@@ -102,8 +102,8 @@ export class HeaderComponent implements OnInit {
     this.fixTextColor(this.isDark)
     // this.themeColorNew = localStorage.getItem('theme-color') || '#ffffff';
 
-    const isHaveThemeColor = localStorage.getItem('theme-color') === null
-    if (isHaveThemeColor) {
+    const isThemeColorDefined = localStorage.getItem('theme-color') === null
+    if (isThemeColorDefined) {
       this.onThemeColorChange(this.colorOptions[0].code);
     }
 
@@ -140,7 +140,7 @@ export class HeaderComponent implements OnInit {
     return color[lang];
   }
 
-  get colorSelectOptions(): Array<{ label: string; value: string }> {
+  get colorSelectOptions(): { label: string; value: string }[] {
     return this.colorOptions.map((color) => ({
       label: this.getColorName(color),
       value: color.code,
@@ -175,9 +175,20 @@ export class HeaderComponent implements OnInit {
     this.installPrompt.prompt();
     this.installPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
-        this.canInstall = false;
-        this.installPrompt = null;
+        this.deferInstallStateUpdate(() => {
+          this.canInstall = false;
+          this.installPrompt = null;
+        });
       }
+    });
+  }
+
+  private deferInstallStateUpdate(updateFn: () => void): void {
+    this.ngZone.run(() => {
+      setTimeout(() => {
+        updateFn();
+        this.cdr.markForCheck();
+      }, 0);
     });
   }
 }

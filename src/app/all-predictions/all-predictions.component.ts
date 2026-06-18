@@ -708,10 +708,8 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         const differences = getDeepObjectDifferences(previousData, data);
 
         if (differences.length === 0) {
-            console.log('No differences found');
             return false;
         }
-        console.log('Differences found:', differences.filter(diff => diff.before === null));
 
         this.lastMatchesDataHash = hash;
         return true;
