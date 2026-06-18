@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef, DestroyRef, HostListener } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, AfterViewInit, ElementRef, ChangeDetectorRef, DestroyRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ import { environment } from '../../../environments/environment';
     imports: [TableModule, ToastModule, TranslateModule, FormsModule, CommonModule, SelectModule],
     providers: [MessageService]
 })
-export class AllPredictionsComponent implements OnInit, OnDestroy {
+export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy {
     protected IS_SMALL_SCREEN = this.computeIsSmallScreen();
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
     private readonly cellWriteDebounceMs = 180;
@@ -58,6 +58,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
 
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
+    private el = inject(ElementRef);
     private translate = inject(TranslateService);
     private messageService = inject(MessageService);
     private pointsService = inject(AllPredictionsPointsService);
@@ -80,6 +81,16 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     private cellWriteVersions = new Map<string, number>();
     private activeCellWrites = new Set<string>();
     private recentlySavedCells = new Set<string>();
+    ngAfterViewInit(): void {
+        setTimeout(() => this.syncGroupHeaderTop());
+    }
+
+    private syncGroupHeaderTop(): void {
+        const thead = this.el.nativeElement.querySelector('.p-datatable-thead');
+        if (thead) {
+            this.el.nativeElement.style.setProperty('--group-header-top', `${thead.offsetHeight}px`);
+        }
+    }
 
     // Method to calculate stats
     calculateStats(): void {
@@ -122,6 +133,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             || normalized === 'PENALTY_SHOOTOUT'
             || normalized === 'SUSPENDED'
             || normalized === 'LIVE';
+    }
+
+    protected isMatchInProgress(bet: Bet | null | undefined): boolean {
+        return this.isInProgressMatchStatus(bet?.matchStatus);
     }
 
     private isFinishedMatchStatus(status: string | null | undefined): boolean {
@@ -281,6 +296,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             this.IS_SMALL_SCREEN = nextIsSmallScreen;
         }
 
+        this.syncGroupHeaderTop();
         this.cdr.markForCheck();
     }
 
@@ -828,7 +844,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.betsToShow = this.mapperService.buildBetsToShow(this.allMatches, this.allTeams);
         this.calculateStats();
         this.cdr.markForCheck();
-        setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
+        setTimeout(() => {
+            this.syncGroupHeaderTop();
+            this.bindGroupHeaderScrollSync();
+        }, 0);
     }
 
     private updateGroupHeaderTops(container: HTMLElement, host: HTMLElement): void {

@@ -157,9 +157,9 @@
                         {{ product?.away_team }}
                     </span>
                 </td>
-                <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
-                <td class="score-cell">{{product?.score?.fullTime.away}}</td>
-                <td class="score-cell user-separator-right">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
+                <td class="score-cell user-separator" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.home}}</td>
+                <td class="score-cell" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.away}}</td>
+                <td class="score-cell user-separator-right" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
                 </td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>

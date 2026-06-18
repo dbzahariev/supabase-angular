@@ -1,6 +1,8 @@
 :host {
-    --table-height-offset: 120px;
-    --group-header-top: 58px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
     --group-scroll-x: 0px;
 }
 
@@ -25,7 +27,9 @@
 }
 
 .table-container {
-    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     --theme-border-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%));
     --player-separator-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 55%));
 }
@@ -83,6 +87,13 @@
     background-color: var(--p-datatable-header-background) !important;
 }
 
+:host ::ng-deep .foo.p-datatable,
+:host ::ng-deep .foo {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .group-header-td {
     padding: 0 !important;
     border: 0;
@@ -90,7 +101,7 @@
 
 .sticky-group-header {
     position: sticky;
-    top: var(--group-header-top);
+    top: var(--group-header-top, 0px);
     z-index: 7;
     left: 0;
     background-color: var(--p-datatable-header-background) !important;
@@ -98,7 +109,7 @@
 
 :host ::ng-deep .p-datatable-scrollable .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
     position: sticky;
-    top: var(--group-header-top);
+    top: var(--group-header-top, 0px);
     z-index: 7;
     left: 0;
     background-color: var(--p-datatable-header-background) !important;
@@ -106,13 +117,13 @@
 
 :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header {
     position: sticky;
-    top: var(--group-header-top);
+    top: var(--group-header-top, 0px);
     z-index: 10;
 }
 
 :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header > td {
     position: sticky;
-    top: var(--group-header-top);
+    top: var(--group-header-top, 0px);
     left: 0;
     z-index: 11;
     background-color: var(--p-datatable-header-background) !important;
@@ -124,10 +135,8 @@
 }
 
 :host ::ng-deep .sticky_top .p-datatable-table-container {
-    height: calc(100vh - var(--table-height-offset));
-    height: calc(100dvh - var(--table-height-offset));
-    max-height: calc(100vh - var(--table-height-offset));
-    max-height: calc(100dvh - var(--table-height-offset));
+    height: 100%;
+    max-height: 100%;
     overflow: auto !important;
 }
 
@@ -191,6 +200,10 @@
     min-width: 40px;
 }
 
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.live-result-cell {
+    background-color: color-mix(in srgb, #ef4444 14%, transparent) !important;
+}
+
 :host ::ng-deep .player-select-wrap .players-select,
 :host ::ng-deep .player-select-wrap .players-select .p-select-overlay,
 :host ::ng-deep .player-select-wrap .players-select .p-select-option {
@@ -217,11 +230,6 @@
 }
 
 @media screen and (max-width: 768px) {
-    :host {
-        --table-height-offset: 160px;
-        --group-header-top: 52px;
-    }
-
     :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header > td,
     :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
         background: transparent !important;
@@ -432,6 +440,14 @@
 }
 
 @media screen and (max-width: 768px) {
+    .btn-label {
+        display: none;
+    }
+
+    .caption-title {
+        font-size: 1rem !important;
+    }
+
     .stats-container {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.55rem;

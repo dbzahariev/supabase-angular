@@ -2,9 +2,12 @@
     height: 100vh;
 }
 
-.green-container{
-    overflow-y: hidden;
-    overflow-x: hidden;
+.green-container {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100vh; /* fallback */
+    overflow: hidden;
 }
 
 @media screen and (max-width: 768px) {
@@ -28,5 +31,8 @@
 }
 
 .element-bottom {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
     background-color: transparent;
 }
