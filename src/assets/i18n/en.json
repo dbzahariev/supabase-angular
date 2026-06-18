@@ -5,7 +5,8 @@
     "ALL_RULES": "Rules",
     "CHAT": "Chat",
     "MATCH_DETAILS": "Match Details",
-    "LIVE_MONITOR": "Live Monitor"
+    "LIVE_MONITOR": "Live Monitor",
+    "LIVE_MONITOR_FULL": "Live Monitor (Full Screen)"
   },
   "LIVE_MONITOR": {
     "TITLE": "Live Matches Monitor",
@@ -37,7 +38,7 @@
     "LAST_UPDATED": "Last updated",
     "STAGE": "Stage",
     "GROUP": "Group",
-    "MATCHDAY": "Matchday",
+    "match_day": "Round",
     "VENUE": "Venue",
     "ATTENDANCE": "Attendance",
     "MINUTE": "Minute",
@@ -83,9 +84,9 @@
     "EXPORT_FILE_PREFIX": "backup",
     "GROUPS_PHASE": "Groups Phase",
     "GROUP_STAGE": {
-      "CICLE_1_TITLE": "Group stage - Round 1",
-      "CICLE_2_TITLE": "Group stage - Round 2",
-      "CICLE_3_TITLE": "Group stage - Round 3"
+      "CYCLE_1_TITLE": "Group stage - Round 1",
+      "CYCLE_2_TITLE": "Group stage - Round 2",
+      "CYCLE_3_TITLE": "Group stage - Round 3"
     },
     "ID": "ID",
     "NAME": "Name",
@@ -143,7 +144,7 @@
     "PREDICTIONS_HIDDEN": "Individual participant predictions are hidden from other participants until the match starts. This does not apply to Aiko's predictions, which are always visible.",
     "PREDICTIONS_SUBMISSION": "Predictions for all matches are given on the website",
     "LATE_SUBMISSION": "If a prediction is not entered by the start of the match, it can be given up to 15 minutes after the match starts, but then only 50% of the points awarded are given.",
-    "CONTACT_DIMITUR": "For valid reasons, you can call Dimitur and he will enter them into the system.",
+    "CONTACT_DIMITAR": "For valid reasons, you can call Dimitar and he will enter them into the system.",
     "KNOCKOUT_PREDICTION": "After the group stage, a prediction is given for the winner of the match after regular time in case of a draw, with an additional 1 point for predicting the correct team that advances in the tournament.",
     "MULTIPLIER_EXPLANATION": "After the Round of 32, the points are multiplied by a coefficient:",
     "POINTS_TITLE": "Scoring System",

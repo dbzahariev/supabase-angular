@@ -7,10 +7,10 @@ import { SelectedUserService } from '../services/selected-user.service';
 export class AllPredictionsMapperService {
     private translate = inject(TranslateService);
     private selectedUserService = inject(SelectedUserService);
-    private cicles = [
-        { label: 'cicle_1', dateFrom: new Date('2026-06-11T19:00:00Z'), dateTo: new Date('2026-06-18T10:59:59Z') },
-        { label: 'cicle_2', dateFrom: new Date('2026-06-18T11:00:00Z'), dateTo: new Date('2026-06-24T06:59:59Z') },
-        { label: 'cicle_3', dateFrom: new Date('2026-06-24T07:00:00Z'), dateTo: new Date('2026-06-28T02:00:00Z') },
+    private cycles = [
+        { label: 'cycle_1', dateFrom: new Date('2026-06-11T19:00:00Z'), dateTo: new Date('2026-06-18T10:59:59Z') },
+        { label: 'cycle_2', dateFrom: new Date('2026-06-18T11:00:00Z'), dateTo: new Date('2026-06-24T06:59:59Z') },
+        { label: 'cycle_3', dateFrom: new Date('2026-06-24T07:00:00Z'), dateTo: new Date('2026-06-28T02:00:00Z') },
     ];
 
     getLng(): 'bg-BG' | 'en-US' {
@@ -20,15 +20,15 @@ export class AllPredictionsMapperService {
 
     getCycleLabelFromBet(bet: Bet): string {
         const isLngBg = this.getLng() === 'bg-BG';
-        if (bet.stage?.includes('CICLE_1')) return isLngBg ? 'Кръг 1' : 'Round 1';
-        if (bet.stage?.includes('CICLE_2')) return isLngBg ? 'Кръг 2' : 'Round 2';
-        if (bet.stage?.includes('CICLE_3')) return isLngBg ? 'Кръг 3' : 'Round 3';
+        if (bet.stage?.includes('CYCLE_1')) return isLngBg ? 'Кръг 1' : 'Round 1';
+        if (bet.stage?.includes('CYCLE_2')) return isLngBg ? 'Кръг 2' : 'Round 2';
+        if (bet.stage?.includes('CYCLE_3')) return isLngBg ? 'Кръг 3' : 'Round 3';
         return '';
     }
 
-    getPhaseMap(isToBeTranslate = true, cicle = ''): Record<string, string> {
-        const cicleStr = cicle.length > 0 ? `.${cicle}` : '';
-        const groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE' + cicleStr;
+    getPhaseMap(isToBeTranslate = true, cycle = ''): Record<string, string> {
+        const cycleStr = cycle.length > 0 ? `.${cycle}` : '';
+        const groupStage = isToBeTranslate ? this.translate.instant('TABLE.GROUPS_PHASE') : 'GROUP_STAGE' + cycleStr;
 
         return {
             'GROUP_STAGE': groupStage,
@@ -48,7 +48,7 @@ export class AllPredictionsMapperService {
     getCycleLabelByDate(targetDate: Date | string): string | undefined {
         const t = new Date(targetDate).getTime();
 
-        const cycle = this.cicles.find(c => {
+        const cycle = this.cycles.find(c => {
             const from = new Date(c.dateFrom).getTime();
             const to = new Date(c.dateTo).getTime();
             return t >= from && t <= to;
@@ -57,7 +57,7 @@ export class AllPredictionsMapperService {
         return cycle?.label.toUpperCase() ?? undefined;
     }
 
-    formatDateToDDMM(date: Date | null, locale = 'en-GB', timeZone?: string): string {
+    formatDateToStandard(date: Date | null, locale = 'en-GB', timeZone?: string): string {
         if (!date) return '';
         return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', timeZone });
     }
@@ -89,15 +89,15 @@ export class AllPredictionsMapperService {
             const isLngBg = this.getLng() === 'bg-BG';
             const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
             const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
-            const cicle = this.getCycleLabelByDate(new Date(match.utcDate));
+            const cycleLabel = this.getCycleLabelByDate(new Date(match.utcDate));
             
             return {
                 row_index: index + 1,
-                match_day: this.formatDateToDDMM(utcDate, curLng, timeZone),
+                match_day: this.formatDateToStandard(utcDate, curLng, timeZone),
                 match_time: this.formatTimeToHHmm(utcDate, curLng, timeZone),
                 group: this.getPhase(match.stage, match.group),
-                stage: cicle ? `TABLE.${match.stage}.${cicle}` : `TABLE.${match.stage}`,
-                phase: this.getPhaseMap(false, cicle)[match.stage],
+                stage: cycleLabel ? `TABLE.${match.stage}.${cycleLabel}` : `TABLE.${match.stage}`,
+                phase: this.getPhaseMap(false, cycleLabel)[match.stage],
                 id: match.myId,
                 home_team: (isLngBg ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || '',
                 away_team: (isLngBg ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || '',
