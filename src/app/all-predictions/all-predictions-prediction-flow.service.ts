@@ -69,9 +69,7 @@ export class AllPredictionsPredictionFlowService {
         if (shouldDelete) {
             ({ error } = await supabaseService.deletePrediction(prediction.id));
         } else if (shouldUpsert) {
-            ({ error } = isNew
-                ? await supabaseService.addPrediction(payload)
-                : await supabaseService.updatePrediction(prediction.id, payload));
+            ({ error } = await supabaseService.upsertPrediction(payload));
         }
 
         return {

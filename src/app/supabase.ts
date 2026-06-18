@@ -191,6 +191,18 @@ export class SupabaseService {
     }
   }
 
+  async upsertPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
+      .from('predictions')
+      .upsert(prediction, { onConflict: 'user_id,match_id' })
+      .select()
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
+  }
+
   async updatePrediction(id: number, prediction: PredictionWritePayload): Promise<SupabaseResponse<Prediction>> {
     const { data, error } = await this.supabase
       .from('predictions')
