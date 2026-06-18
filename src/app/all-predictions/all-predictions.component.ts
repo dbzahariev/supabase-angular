@@ -97,10 +97,10 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     isShowRow(product: Bet): boolean {
-        return !JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]').includes(product.phase)
+        return !JSON.parse(localStorage.getItem('hiddenGroups') ?? '[]').includes(product.phase)
     }
 
-    isAloowedToEdit(user: User, product: Bet, j: number): boolean {
+    isAllowedToEdit(user: User, product: Bet, j: number): boolean {
         let result = false;
         if (this.selectedPlayerId === null) {
             result = false;
@@ -132,7 +132,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
     }
 
     editCell(user: User, product: Bet, j: number): void {
-        if (!this.isAloowedToEdit(user, product, j)) {
+        if (!this.isAllowedToEdit(user, product, j)) {
             return;
         }
 
@@ -178,7 +178,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.selectedPlayerId = savedPlayerId ? Number(savedPlayerId) : null;
         this.fixUsers();
         this.fixTeams();
-        this.getAllMatche();
+        this.getAllMatches();
         this.subscribeToTestPredictions();
 
         this.translate.onLangChange
@@ -214,7 +214,7 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
             setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
-    getAllMatche(): void {
+    getAllMatches(): void {
         this.supabaseService.getAllMatchesFromBE().subscribe((data) => {
             this.refreshMatchesWithLiveOverlay(data);
         });
@@ -652,12 +652,12 @@ export class AllPredictionsComponent implements OnInit, OnDestroy {
         this.groupHeaderScrollListener = null;
     }
 
-    togleGroup(pro: Bet): void {
-        const hiddenGroups = JSON.parse(localStorage.getItem('hiddenGrops') ?? '[]') as string[];
+    toggleGroup(pro: Bet): void {
+        const hiddenGroups = JSON.parse(localStorage.getItem('hiddenGroups') ?? '[]') as string[];
         const updated = hiddenGroups.includes(pro.phase)
             ? hiddenGroups.filter((x: string) => x !== pro.phase)
             : [...hiddenGroups, pro.phase];
-        localStorage.setItem('hiddenGrops', JSON.stringify(updated));
+        localStorage.setItem('hiddenGroups', JSON.stringify(updated));
         this.cdr.markForCheck();
     }
 
