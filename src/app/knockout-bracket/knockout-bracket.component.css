@@ -309,24 +309,33 @@
   flex-direction: column;
   gap: 6px;
   position: relative;
-  /* height: calc(var(--row-unit) * 3 - 2px); */
   justify-content: flex-start;
   transition: transform 160ms ease, box-shadow 180ms ease, border-color 180ms ease;
   animation: cardIn 420ms ease both;
 }
 
-.match-card.fooLAST_32 {
-  padding-right: 10px;
-}
+/* ─── Padding за карти с конектори ─────────────────────────────────── */
 
-.match-card.fooLAST_16 {
-  padding-left: 10px;
-}
+.bracket-side.left .fooLAST_32     { padding-right: 10px; }
+.bracket-side.left .fooLAST_16     { padding-left: 10px; padding-right: 10px; }
+.bracket-side.left .fooQUARTER_FINALS { padding-left: 10px; }
+.bracket-side.left .fooSEMI_FINALS  { padding-left: 10px; }
 
-/* Обща база за всички конектори */
-.match-card.fooLAST_32::before,
-.match-card.fooLAST_32::after,
-.fooLAST_16::before {
+.bracket-side.right .fooLAST_32    { padding-left: 10px; }
+.bracket-side.right .fooLAST_16    { padding-left: 10px; padding-right: 10px; }
+.bracket-side.right .fooQUARTER_FINALS { padding-right: 10px; }
+.bracket-side.right .fooSEMI_FINALS { padding-right: 10px; }
+
+/* ─── Обща база за всички конектори ────────────────────────────────── */
+
+.bracket-side .fooLAST_32::before,
+.bracket-side .fooLAST_32::after,
+.bracket-side .fooLAST_16::before,
+.bracket-side .fooLAST_16::after,
+.bracket-side .fooQUARTER_FINALS::before,
+.bracket-side .fooQUARTER_FINALS::after,
+.bracket-side .fooSEMI_FINALS::before,
+.bracket-side .fooSEMI_FINALS::after {
   content: '';
   position: absolute;
   transform: translateY(-50%);
@@ -334,85 +343,117 @@
   border-radius: 999px;
 }
 
-/* Хоризонтални конектори */
-.match-card.fooLAST_32::after,
-.fooLAST_16::before {
+/* ─── Хоризонтални стубове — обща форма ────────────────────────────── */
+
+.bracket-side .fooLAST_32::after,
+.bracket-side .fooLAST_16::before,
+.bracket-side .fooLAST_16::after,
+.bracket-side .fooQUARTER_FINALS::before,
+.bracket-side .fooSEMI_FINALS::before {
   top: 50%;
   width: 7%;
   height: 4px;
 }
 
-.match-card.fooLAST_32::after {
-  right: -14px;
+/* ─── Конектори: Полуфинали → Финал ────────────────────────────────── */
+
+/* Хоризонтални стубове от SEMI_FINALS картите към центъра */
+.bracket-side.left  .stage-column:nth-child(3)::before { right: -7%; top: 27.5%; }
+.bracket-side.left  .stage-column:nth-child(3)::after  { right: -7%; top: 74.5%; }
+.bracket-side.right .stage-column:nth-child(3)::before { left: -7%;  top: 27.5%; }
+.bracket-side.right .stage-column:nth-child(3)::after  { left: -7%;  top: 74.5%; }
+
+.bracket-side .stage-column:nth-child(3)::before,
+.bracket-side .stage-column:nth-child(3)::after {
+  content: '';
+  position: absolute;
+  transform: translateY(-50%);
+  width: 7%;
+  height: 4px;
+  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
+  border-radius: 999px;
 }
 
-.fooLAST_16::before {
-  left: -14px;
+/* Хоризонтални стубове от центъра към SEMI_FINALS картите */
+.bracket-center::before,
+.bracket-center::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.8%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 999px;
 }
 
-/* Вертикален конектор */
-.match-card.fooLAST_32::before {
+.bracket-center::before { right: 57.5%; }
+.bracket-center::after  { left:  57.5%; }
+
+/* ─── ЛЯВО (→ към центъра) ──────────────────────────────────────────── */
+
+/* Десни стубове: 16/32→ и 8/16→ */
+.bracket-side.left .fooLAST_32::after,
+.bracket-side.left .fooLAST_16::after  { right: -14px; }
+
+/* Леви стубове: ←8/16, ←4/8, ←2/4 */
+.bracket-side.left .fooLAST_16::before,
+.bracket-side.left .fooQUARTER_FINALS::before,
+.bracket-side.left .fooSEMI_FINALS::before { left: -14px; }
+
+/* Вертикален bracket — 16/32 (две рамена, nth-child) */
+.bracket-side.left .fooLAST_32::before { right: -16px; width: 2%; }
+.bracket-side.left .fooLAST_32:nth-child(even)::before { top: 18%; height: 55px; }
+.bracket-side.left .fooLAST_32:nth-child(odd)::before  { top: 85%; height: 55px; }
+
+/* Вертикален конектор — 8/16→4/8 (208 px = 8 × 26 px) */
+.bracket-side.left .fooQUARTER_FINALS::after {
+  top: 50%;
+  left: -16px;
+  width: 2%;
+  height: 208px;
+}
+
+/* Вертикален конектор — 4/8→2/4 (416 px = 16 × 26 px) */
+.bracket-side.left .fooSEMI_FINALS::after {
+  top: 50%;
+  left: -16px;
+  width: 2%;
+  height: 416px;
+}
+
+/* ─── ДЯСНО (← към центъра, огледало) ──────────────────────────────── */
+
+/* Леви стубове: ←16/32 и ←8/16 (към центъра) */
+.bracket-side.right .fooLAST_32::after,
+.bracket-side.right .fooLAST_16::after  { left: -14px; }
+
+/* Десни стубове: 8/16→, 4/8→, 2/4→ (към периферията) */
+.bracket-side.right .fooLAST_16::before,
+.bracket-side.right .fooQUARTER_FINALS::before,
+.bracket-side.right .fooSEMI_FINALS::before { right: -14px; }
+
+/* Вертикален bracket — 16/32 (огледало) */
+.bracket-side.right .fooLAST_32::before { left: -16px; width: 2%; }
+.bracket-side.right .fooLAST_32:nth-child(even)::before { top: 18%; height: 55px; }
+.bracket-side.right .fooLAST_32:nth-child(odd)::before  { top: 85%; height: 55px; }
+
+/* Вертикален конектор — 8/16→4/8 (208 px, огледало) */
+.bracket-side.right .fooQUARTER_FINALS::after {
+  top: 50%;
   right: -16px;
   width: 2%;
+  height: 208px;
 }
 
-.match-card.fooLAST_32:nth-child(even)::before {
-  top: 18%;
-  height: 55px;
-}
-
-.match-card.fooLAST_32:nth-child(odd)::before {
-  top: 85%;
-  height: 55px;
-}
-
-
-/* .match-card.fooLAST_16::after {
-  content: '';
-  position: absolute;
+/* Вертикален конектор — 4/8→2/4 (416 px, огледало) */
+.bracket-side.right .fooSEMI_FINALS::after {
   top: 50%;
-  right: -7%;
-  width: 7%;
-  height: 4px;
-  transform: translateY(-50%);
-  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
-  background: red;
-  border-radius: 999px;
-}
-
-.match-card.fooLAST_16:nth-child(even)::after {
-  top: 18%;
-  height: 55px;
-}
-
-.match-card.fooLAST_16:nth-child(odd)::after {
-  top: 85%;
-  height: 55px;
-} */
-
-
-/* .match-card.fooLAST_16::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: -7%;
-  width: 7%;
-  height: 4px;
-  transform: translateY(-50%);
-  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
-  border-radius: 999px;
-}
-
-.fooFirst:nth-child(1)::after{
-  content: '';
-  position: absolute;
   right: -16px;
   width: 2%;
-  transform: translateY(-50%);
-  background: red;
-  /* background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%); */
-  /* border-radius: 999px; */
-/* } */
+  height: 416px;
+}
+
 
 .match-card:hover {
   transform: translateY(-2px);
@@ -671,6 +712,15 @@
   align-items: stretch;
   gap: 20px;
   padding: 0 6px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-image: linear-gradient(
+    to bottom,
+    transparent 42%,
+    green 42%,
+    green 59.8%,
+    transparent 59.8%
+  ) 1;
 }
 
 .center-block {
