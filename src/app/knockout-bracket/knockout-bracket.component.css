@@ -193,7 +193,7 @@
 .bracket-side {
   display: grid;
   grid-template-columns: repeat(4, minmax(180px, 1fr));
-  gap: 18px;
+  gap: 28px;
 }
 
 .bracket-side.right {
@@ -309,7 +309,7 @@
   flex-direction: column;
   gap: 6px;
   position: relative;
-  height: calc(var(--row-unit) * 3 - 2px);
+  /* height: calc(var(--row-unit) * 3 - 2px); */
   justify-content: flex-start;
   transition: transform 160ms ease, box-shadow 180ms ease, border-color 180ms ease;
   animation: cardIn 420ms ease both;
@@ -371,64 +371,53 @@
   background: rgba(109, 161, 255, 0.18);
 }
 
-.bracket-side.left .match-card::after {
+.bracket-side .match-card::after,
+.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
+.bracket-side .matches-stack .match-card:nth-child(even)::before {
   content: '';
   position: absolute;
-  right: calc(var(--connector-arm) * -1);
+  opacity: 0.96;
+}
+
+.bracket-side .match-card::after {
   top: 50%;
   width: var(--connector-arm);
   border-top: 2px solid var(--connector-color);
-  opacity: 0.96;
 }
 
-.bracket-side.right .match-card::after {
-  content: '';
-  position: absolute;
-  left: calc(var(--connector-arm) * -1);
-  top: 50%;
-  width: var(--connector-arm);
-  border-top: 2px solid var(--connector-color);
-  opacity: 0.96;
-}
-
-.bracket-side.left .matches-stack .match-card:nth-child(odd):not(:last-child)::before {
-  content: '';
-  position: absolute;
-  right: calc(var(--connector-arm) * -1);
-  top: 50%;
-  height: var(--connector-vertical);
-  border-right: 2px solid var(--connector-color);
-  opacity: 0.96;
-}
-
+.bracket-side.left .match-card::after,
+.bracket-side.left .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
 .bracket-side.left .matches-stack .match-card:nth-child(even)::before {
-  content: '';
-  position: absolute;
   right: calc(var(--connector-arm) * -1);
-  bottom: 50%;
-  height: var(--connector-vertical);
-  border-right: 2px solid var(--connector-color);
-  opacity: 0.96;
 }
 
-.bracket-side.right .matches-stack .match-card:nth-child(odd):not(:last-child)::before {
-  content: '';
-  position: absolute;
-  left: calc(var(--connector-arm) * -1);
-  top: 50%;
-  height: var(--connector-vertical);
-  border-left: 2px solid var(--connector-color);
-  opacity: 0.96;
-}
-
+.bracket-side.right .match-card::after,
+.bracket-side.right .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
 .bracket-side.right .matches-stack .match-card:nth-child(even)::before {
-  content: '';
-  position: absolute;
   left: calc(var(--connector-arm) * -1);
-  bottom: 50%;
+}
+
+.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
+.bracket-side .matches-stack .match-card:nth-child(even)::before {
   height: var(--connector-vertical);
+}
+
+.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before {
+  top: 50%;
+}
+
+.bracket-side .matches-stack .match-card:nth-child(even)::before {
+  bottom: 50%;
+}
+
+.bracket-side.left .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
+.bracket-side.left .matches-stack .match-card:nth-child(even)::before {
+  border-right: 2px solid var(--connector-color);
+}
+
+.bracket-side.right .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
+.bracket-side.right .matches-stack .match-card:nth-child(even)::before {
   border-left: 2px solid var(--connector-color);
-  opacity: 0.96;
 }
 
 .teams {

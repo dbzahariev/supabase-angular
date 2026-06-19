@@ -12,8 +12,6 @@ interface KnockoutMatchView {
   stage: string;
   homeTeamName: string | null;
   awayTeamName: string | null;
-  homeTeamCrest: string | null;
-  awayTeamCrest: string | null;
   homeScore: string;
   awayScore: string;
   dateLabel: string;
@@ -103,11 +101,11 @@ export class KnockoutBracketComponent implements OnInit, OnDestroy {
   }
 
   zoomIn(): void {
-    this.zoomLevel = Math.min(1.45, Number((this.zoomLevel + 0.1).toFixed(2)));
+    this.zoomLevel = Math.min(1.50, Number((this.zoomLevel + 0.1).toFixed(2)));
   }
 
   zoomOut(): void {
-    this.zoomLevel = Math.max(0.75, Number((this.zoomLevel - 0.1).toFixed(2)));
+    this.zoomLevel = Math.max(0.50, Number((this.zoomLevel - 0.1).toFixed(2)));
   }
 
   resetZoom(): void {
@@ -351,8 +349,6 @@ export class KnockoutBracketComponent implements OnInit, OnDestroy {
       stage: match.stage,
       homeTeamName: match.homeTeam?.name ?? null,
       awayTeamName: match.awayTeam?.name ?? null,
-      homeTeamCrest: match.homeTeam?.crest ?? null,
-      awayTeamCrest: match.awayTeam?.crest ?? null,
       homeScore: homeScore !== null && homeScore !== undefined ? String(homeScore) : '-',
       awayScore: awayScore !== null && awayScore !== undefined ? String(awayScore) : '-',
       dateLabel,

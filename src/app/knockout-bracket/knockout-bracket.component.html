@@ -37,7 +37,6 @@
             <div class="stage-column" [style.--stage-index]="i" [attr.data-stage]="column.stage">
               <div class="stage-title">
                 <span>{{ ('TABLE.' + column.stage) | translate }}</span>
-                <!-- <span class="stage-round-badge">{{ getStageRoundLabel(column.stage) }}</span> -->
               </div>
 
               <div class="matches-stack">
@@ -50,18 +49,12 @@
                     <div class="teams">
                       <div class="team-row">
                         <span class="team-label">
-                          @if (match.homeTeamCrest) {
-                            <img class="team-flag" [src]="match.homeTeamCrest" alt="" loading="lazy" />
-                          }
                           <span class="team-name">{{ match.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                         </span>
                         <span class="team-score">{{ match.homeScore }}</span>
                       </div>
                       <div class="team-row">
                         <span class="team-label">
-                          @if (match.awayTeamCrest) {
-                            <img class="team-flag" [src]="match.awayTeamCrest" alt="" loading="lazy" />
-                          }
                           <span class="team-name">{{ match.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                         </span>
                         <span class="team-score">{{ match.awayScore }}</span>
@@ -86,18 +79,12 @@
                 <div class="teams">
                   <div class="team-row">
                     <span class="team-label">
-                      @if (finalMatch.homeTeamCrest) {
-                        <img class="team-flag" [src]="finalMatch.homeTeamCrest" alt="" loading="lazy" />
-                      }
                       <span class="team-name">{{ finalMatch.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                     </span>
                     <span class="team-score">{{ finalMatch.homeScore }}</span>
                   </div>
                   <div class="team-row">
                     <span class="team-label">
-                      @if (finalMatch.awayTeamCrest) {
-                        <img class="team-flag" [src]="finalMatch.awayTeamCrest" alt="" loading="lazy" />
-                      }
                       <span class="team-name">{{ finalMatch.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                     </span>
                     <span class="team-score">{{ finalMatch.awayScore }}</span>
@@ -118,18 +105,12 @@
                 <div class="teams">
                   <div class="team-row">
                     <span class="team-label">
-                      @if (thirdPlaceMatch.homeTeamCrest) {
-                        <img class="team-flag" [src]="thirdPlaceMatch.homeTeamCrest" alt="" loading="lazy" />
-                      }
                       <span class="team-name">{{ thirdPlaceMatch.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                     </span>
                     <span class="team-score">{{ thirdPlaceMatch.homeScore }}</span>
                   </div>
                   <div class="team-row">
                     <span class="team-label">
-                      @if (thirdPlaceMatch.awayTeamCrest) {
-                        <img class="team-flag" [src]="thirdPlaceMatch.awayTeamCrest" alt="" loading="lazy" />
-                      }
                       <span class="team-name">{{ thirdPlaceMatch.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                     </span>
                     <span class="team-score">{{ thirdPlaceMatch.awayScore }}</span>
@@ -145,7 +126,6 @@
             <div class="stage-column" [style.--stage-index]="i" [attr.data-stage]="column.stage">
               <div class="stage-title">
                 <span>{{ ('TABLE.' + column.stage) | translate }}</span>
-                <!-- <span class="stage-round-badge">{{ getStageRoundLabel(column.stage) }}</span> -->
               </div>
 
               <div class="matches-stack">
@@ -158,18 +138,12 @@
                     <div class="teams">
                       <div class="team-row">
                         <span class="team-label">
-                          @if (match.homeTeamCrest) {
-                            <img class="team-flag" [src]="match.homeTeamCrest" alt="" loading="lazy" />
-                          }
                           <span class="team-name">{{ match.homeTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                         </span>
                         <span class="team-score">{{ match.homeScore }}</span>
                       </div>
                       <div class="team-row">
                         <span class="team-label">
-                          @if (match.awayTeamCrest) {
-                            <img class="team-flag" [src]="match.awayTeamCrest" alt="" loading="lazy" />
-                          }
                           <span class="team-name">{{ match.awayTeamName || ('KNOCKOUT.TBD' | translate) }}</span>
                         </span>
                         <span class="team-score">{{ match.awayScore }}</span>
