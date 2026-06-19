@@ -31,7 +31,7 @@
       (pointerup)="onPanEnd($event)"
       (pointercancel)="onPanEnd($event)"
     >
-      <div class="bracket-layout" [style.zoom]="zoomLevel">
+      <div class="bracket-layout" [style.zoom]="zoomLevel" [style.--zoom-level]="zoomLevel">
         <div class="bracket-side left">
           @for (column of stageColumns; track trackByStage($index, column); let i = $index) {
             <div class="stage-column" [style.--stage-index]="i" [attr.data-stage]="column.stage">

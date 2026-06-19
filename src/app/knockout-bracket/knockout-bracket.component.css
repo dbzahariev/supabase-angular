@@ -324,7 +324,6 @@
     0 0 0 1px rgba(255, 255, 255, 0.32);
 }
 
-
 .card-topline {
   display: flex;
   justify-content: space-between;
@@ -369,55 +368,6 @@
   color: #2d4274;
   border-color: rgba(68, 106, 174, 0.34);
   background: rgba(109, 161, 255, 0.18);
-}
-
-.bracket-side .match-card::after,
-.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side .matches-stack .match-card:nth-child(even)::before {
-  content: '';
-  position: absolute;
-  opacity: 0.96;
-}
-
-.bracket-side .match-card::after {
-  top: 50%;
-  width: var(--connector-arm);
-  border-top: 2px solid var(--connector-color);
-}
-
-.bracket-side.left .match-card::after,
-.bracket-side.left .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side.left .matches-stack .match-card:nth-child(even)::before {
-  right: calc(var(--connector-arm) * -1);
-}
-
-.bracket-side.right .match-card::after,
-.bracket-side.right .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side.right .matches-stack .match-card:nth-child(even)::before {
-  left: calc(var(--connector-arm) * -1);
-}
-
-.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side .matches-stack .match-card:nth-child(even)::before {
-  height: var(--connector-vertical);
-}
-
-.bracket-side .matches-stack .match-card:nth-child(odd):not(:last-child)::before {
-  top: 50%;
-}
-
-.bracket-side .matches-stack .match-card:nth-child(even)::before {
-  bottom: 50%;
-}
-
-.bracket-side.left .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side.left .matches-stack .match-card:nth-child(even)::before {
-  border-right: 2px solid var(--connector-color);
-}
-
-.bracket-side.right .matches-stack .match-card:nth-child(odd):not(:last-child)::before,
-.bracket-side.right .matches-stack .match-card:nth-child(even)::before {
-  border-left: 2px solid var(--connector-color);
 }
 
 .teams {
