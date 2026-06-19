@@ -315,6 +315,105 @@
   animation: cardIn 420ms ease both;
 }
 
+.match-card.fooLAST_32 {
+  padding-right: 10px;
+}
+
+.match-card.fooLAST_16 {
+  padding-left: 10px;
+}
+
+/* Обща база за всички конектори */
+.match-card.fooLAST_32::before,
+.match-card.fooLAST_32::after,
+.fooLAST_16::before {
+  content: '';
+  position: absolute;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
+  border-radius: 999px;
+}
+
+/* Хоризонтални конектори */
+.match-card.fooLAST_32::after,
+.fooLAST_16::before {
+  top: 50%;
+  width: 7%;
+  height: 4px;
+}
+
+.match-card.fooLAST_32::after {
+  right: -14px;
+}
+
+.fooLAST_16::before {
+  left: -14px;
+}
+
+/* Вертикален конектор */
+.match-card.fooLAST_32::before {
+  right: -16px;
+  width: 2%;
+}
+
+.match-card.fooLAST_32:nth-child(even)::before {
+  top: 18%;
+  height: 55px;
+}
+
+.match-card.fooLAST_32:nth-child(odd)::before {
+  top: 85%;
+  height: 55px;
+}
+
+
+/* .match-card.fooLAST_16::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -7%;
+  width: 7%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
+  background: red;
+  border-radius: 999px;
+}
+
+.match-card.fooLAST_16:nth-child(even)::after {
+  top: 18%;
+  height: 55px;
+}
+
+.match-card.fooLAST_16:nth-child(odd)::after {
+  top: 85%;
+  height: 55px;
+} */
+
+
+/* .match-card.fooLAST_16::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -7%;
+  width: 7%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%);
+  border-radius: 999px;
+}
+
+.fooFirst:nth-child(1)::after{
+  content: '';
+  position: absolute;
+  right: -16px;
+  width: 2%;
+  transform: translateY(-50%);
+  background: red;
+  /* background: color-mix(in srgb, var(--stage-accent), #1f3d66 35%); */
+  /* border-radius: 999px; */
+/* } */
+
 .match-card:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--stage-accent), #274f80 44%);

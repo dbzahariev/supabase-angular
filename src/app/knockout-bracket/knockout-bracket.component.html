@@ -41,9 +41,9 @@
 
               <div class="matches-stack">
                 @for (match of column.left; track trackByMatch($index, match)) {
-                  <article class="match-card" [style.grid-row]="getGridRow(column.stage, $index)">
+                  <article class="match-card" [ngClass]="('foo' + column.stage) + ' ' + ('foo' + (($index === 0 || $index === 1) ? 'First' : 'Other'))" [style.grid-row]="getGridRow(column.stage, $index)">
                     <div class="card-topline">
-                      <span class="match-id">{{ match.dateLabel }} • {{ match.timeLabel }}</span>
+                      <span class="match-id" >{{ match.dateLabel }} • {{ match.timeLabel }}</span>
                       <span class="match-status" [attr.data-status]="match.status">{{ match.statusLabel }}</span>
                     </div>
                     <div class="teams">
@@ -130,7 +130,7 @@
 
               <div class="matches-stack">
                 @for (match of column.right; track trackByMatch($index, match)) {
-                  <article class="match-card" [style.grid-row]="getGridRow(column.stage, $index)">
+                  <article class="match-card" [ngClass]="('foo' + column.stage) + ' ' + ('foo' + ($index === 0 ? 'first' : 'other'))" [style.grid-row]="getGridRow(column.stage, $index)">
                     <div class="card-topline">
                       <span class="match-id">{{ match.dateLabel }} • {{ match.timeLabel }}</span>
                       <span class="match-status" [attr.data-status]="match.status">{{ match.statusLabel }}</span>
