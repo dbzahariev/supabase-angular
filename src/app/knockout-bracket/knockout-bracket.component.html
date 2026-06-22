@@ -1,14 +1,16 @@
 <section class="bracket-page" [style.--theme-color]="themeColorHex" [style.--theme-text-color]="themeTextColor">
-  <header class="bracket-header">
-    <div class="header-kicker">FIFA World Cup</div>
-    <h2>{{ 'KNOCKOUT.TITLE' | translate }}</h2>
-    <p>{{ 'KNOCKOUT.SUBTITLE' | translate }}</p>
-  </header>
+  <!-- <header class="bracket-header"> -->
+    <!-- <div class="header-kicker">FIFA World Cup</div> -->
+    
+    <!-- <p>{{ 'KNOCKOUT.SUBTITLE' | translate }}</p> -->
+  <!-- </header> -->
 
   <div class="bracket-toolbar" role="toolbar" aria-label="Bracket controls">
-    <div class="toolbar-section left-tools">
+    <!-- <div class="toolbar-section left-tools">
       <span class="toolbar-hint">Плъзни схемата хоризонтално за навигация</span>
-    </div>
+    </div> -->
+
+<p class="bracket-header">{{ 'KNOCKOUT.TITLE' | translate }}</p>
 
     <div class="toolbar-section zoom-tools">
       <button type="button" class="zoom-btn" (click)="zoomOut()" aria-label="Zoom out">−</button>

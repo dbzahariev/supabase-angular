@@ -64,12 +64,17 @@
   );
 }
 
+.bracket-page {
+  padding-top: 0px;
+}
+
 .bracket-header {
-  margin-bottom: 18px;
+  margin: 10px;
+  /* margin-bottom: 18px; */
   text-align: center;
   position: relative;
   z-index: 1;
-  animation: heroRise 460ms ease-out;
+  /* animation: heroRise 460ms ease-out; */
 }
 
 .header-kicker {
@@ -102,8 +107,11 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
-  padding: 7px 10px;
+  margin-bottom: 7px;
+  margin-top: 3px;
+  padding-right: 7px;
+  /* padding-top: 3px; */
+  /* padding: 7px 10px; */
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.6);
   border: 1px solid color-mix(in srgb, var(--theme-color, #22c55e), #8daed8 65%);

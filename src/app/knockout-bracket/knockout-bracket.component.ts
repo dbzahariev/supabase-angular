@@ -45,7 +45,8 @@ export class KnockoutBracketComponent implements OnInit, OnDestroy {
   loading = true;
   themeColorHex = '#22c55e';
   themeTextColor = '#0f1d38';
-  zoomLevel = 1;
+  defaultZoomLevel = 0.7;
+  zoomLevel = this.defaultZoomLevel;
   isPanning = false;
   private panPointerId: number | null = null;
   private panStartX = 0;
@@ -109,7 +110,7 @@ export class KnockoutBracketComponent implements OnInit, OnDestroy {
   }
 
   resetZoom(): void {
-    this.zoomLevel = 1;
+    this.zoomLevel = this.defaultZoomLevel;
   }
 
   onPanStart(event: PointerEvent): void {
