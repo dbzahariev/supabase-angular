@@ -1,53 +1,10 @@
 import { Injectable } from '@angular/core';
 import { RealtimeChannel } from '@supabase/supabase-js';
-import { io, Socket } from 'socket.io-client';
 import { Match } from './all-predictions.models';
 import { SupabaseService } from '../supabase';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsRealtimeService {
-    // В RealtimeService (или каквото е service-а)
-    private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
-    createMatchesSocket(onUpdate: (data: Match[]) => void): Socket {
-        const socket = io('https://simple-node-proxy.onrender.com', {
-            transports: ['websocket'],
-            upgrade: false,
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            reconnectionDelay: 30000, // 30 seconds
-            timeout: 60000, // 60 seconds
-            autoConnect: true,
-        });
-
-        socket.on('connect', () => {
-            // Спираме HTTP polling - WebSocket го замества
-            if (this.matchesPollingInterval) {
-                clearInterval(this.matchesPollingInterval);
-                this.matchesPollingInterval = null;
-                console.log('[socket] HTTP polling stopped');
-            }
-        });
-
-        socket.on('connect_error', (err: Error) => {
-            console.error('[socket] Connect error:', err.message);
-        });
-
-        socket.on('disconnect', (reason: string) => {
-            console.log('[socket] Disconnected:', reason);
-        });
-
-        // Винаги регистрирай listener (премахни hasListeners проверката)
-        socket.on('matchesUpdate', (data) => {
-            try {
-                onUpdate(data);
-            } catch (err) {
-                console.error('[socket] Error in onUpdate callback:', err);
-            }
-        });
-
-        return socket;
-    }
-
     subscribeToPredictions(supabaseService: SupabaseService, onChange: () => void): RealtimeChannel {
         return supabaseService.subscribeToTable('predictions', () => {
             onChange();

@@ -1,8 +1,88 @@
 <p-toast></p-toast>
 
+@if (showFeaturesNoticeMain) {
+<div
+    class="features-notice"
+    role="status"
+    aria-live="polite"
+    [style.--theme-color]="themeColor"
+    [style.--theme-text-color]="themeTextColor"
+    [style.--theme-background-color]="themeBackground">
+    <div class="features-notice-content">
+        <i class="pi pi-megaphone"></i>
+        <span>{{ 'TABLE.FEATURES_NOTICE.MESSAGE' | translate }}</span>
+    </div>
+    <button
+        type="button"
+        class="features-notice-close"
+        [attr.aria-label]="'TABLE.FEATURES_NOTICE.CLOSE_ARIA' | translate"
+        [title]="'TABLE.FEATURES_NOTICE.CLOSE_TITLE' | translate"
+        (click)="dismissFeaturesNoticeMain()">
+        <i class="pi pi-times"></i>
+    </button>
+</div>
+}
+
+@if (showFeaturesNoticePhase) {
+<div
+    class="features-notice"
+    role="status"
+    aria-live="polite"
+    [style.--theme-color]="themeColor"
+    [style.--theme-text-color]="themeTextColor"
+    [style.--theme-background-color]="themeBackground">
+    <div class="features-notice-content">
+        <i class="pi pi-info-circle"></i>
+        <span>{{ 'TABLE.FEATURES_NOTICE.PHASE_MESSAGE' | translate }}</span>
+    </div>
+    <button
+        type="button"
+        class="features-notice-close"
+        [attr.aria-label]="'TABLE.FEATURES_NOTICE.CLOSE_ARIA' | translate"
+        [title]="'TABLE.FEATURES_NOTICE.CLOSE_TITLE' | translate"
+        (click)="dismissFeaturesNoticePhase()">
+        <i class="pi pi-times"></i>
+    </button>
+</div>
+}
+
+<!-- Stats Cards Section -->
+@if (showStatsCards) {
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.TOTAL_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ totalMatches }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.FINISHED_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ finishedMatchesDisplay }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🔜</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.UPCOMING_MATCHES' | translate }}</div>
+            <div class="stat-value">{{ upcomingMatches }}</div>
+        </div>
+    </div>
+    <div class="stat-card accuracy-card" [class.high-accuracy]="userAccuracy >= 70" [class.medium-accuracy]="userAccuracy >= 50 && userAccuracy < 70" [class.low-accuracy]="userAccuracy < 50">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+            <div class="stat-label">{{ 'TABLE.ACCURACY' | translate }}</div>
+            <div class="stat-value">{{ userAccuracy }}%</div>
+        </div>
+    </div>
+</div>
+}
+
 <div class="table-container" [style.--theme-background-color]="themeBackground" [style.--theme-color]="themeColor"
     [style.--theme-text-color]="themeTextColor" [style.--mix-color]="mixColor" [style.--mix-percent]="mixPercent">
-    <p-table class="foo sticky_top" #dt [value]="betsToShow" showGridlines rowGroupMode="subheader"
+    <p-table class="foo sticky_top" #dt [value]="filteredBetsToShow" showGridlines rowGroupMode="subheader"
         groupRowsBy="phase" [scrollable]="true"
         [globalFilterFields]="['row_index','group','country.name', 'representative.name', 'status']"
         [resizableColumns]="true" size="small">
@@ -20,13 +100,37 @@
                             [ngModel]="selectedPlayerId"
                             (ngModelChange)="onPlayerSelect($event)"
                             [appendTo]="'self'"
-                            [scrollHeight]="IS_SMALL_SCREEN ? '52dvh' : '200px'"
+                            [scrollHeight]="playerSelectScrollHeight"
                             [panelStyle]="{ width: '100%', minWidth: '100%' }"
                             ariaLabel="Players">
                         </p-select>
                     </div>
 
                     <div class="caption-actions flex gap-2">
+                        @if (selectedGroupFilter) {
+                        <button
+                            type="button"
+                            class="caption-action-btn"
+                            [title]="'Филтър по група: ' + selectedGroupFilterLabel"
+                            [attr.aria-label]="'Изчисти филтъра по група'"
+                            (click)="clearGroupFilter()">
+                            <i class="pi pi-filter-fill"></i>
+                            <span class="btn-label">{{ selectedGroupFilterLabel }}</span>
+                            <i class="pi pi-times"></i>
+                        </button>
+                        }
+                        @if (selectedTeamFilter) {
+                        <button
+                            type="button"
+                            class="caption-action-btn"
+                            [title]="'Филтър по отбор: ' + selectedTeamFilterLabel"
+                            [attr.aria-label]="'Изчисти филтъра по отбор'"
+                            (click)="clearTeamFilter()">
+                            <i class="pi pi-flag-fill"></i>
+                            <span class="btn-label">{{ selectedTeamFilterLabel }}</span>
+                            <i class="pi pi-times"></i>
+                        </button>
+                        }
                         <button
                             type="button"
                             class="caption-action-btn"
@@ -97,8 +201,8 @@
         <ng-template #groupheader let-product>
             <tr pRowGroupHeader>
                 <td class="col_stage sticky-group-header" [attr.colspan]="9 + allUsersNames.length * 4">
-                    <div (click)="togleGroup(product)" (keydown.enter)="togleGroup(product)"
-                        (keydown.space)="togleGroup(product)" class="group-label font-bold cursor-pointer"
+                    <div (click)="toggleGroup(product)" (keydown.enter)="toggleGroup(product)"
+                        (keydown.space)="toggleGroup(product)" class="group-label font-bold cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
                         {{ (product.stage + '_TITLE') | translate }}
                     </div>
@@ -112,20 +216,60 @@
                 <td class="col_row_number" [ngClass]="'sticky'">{{ product?.row_index}}</td>
                 <td class="col_date">{{ product?.match_day }}</td>
                 <td>{{ product?.match_time }}</td>
-                <td>{{ product?.group | translate}}</td>
-                <td class="re_home_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.home_team }}</td>
-                <td class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ product?.away_team }}</td>
-                <td class="score-cell user-separator">{{product?.score?.fullTime.home}}</td>
-                <td class="score-cell">{{product?.score?.fullTime.away}}</td>
-                <td class="score-cell user-separator-right">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
+                <td class="group-filter-cell"
+                    [class.group-filter-cell-active]="selectedGroupFilter === product?.group"
+                    (click)="onGroupClick(product?.group)"
+                    (keydown.enter)="onGroupClick(product?.group)"
+                    (keydown.space)="onGroupClick(product?.group)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="('Филтрирай по група ' + (product?.group | translate))">
+                    {{ product?.group | translate}}
+                </td>
+                <td class="re_home_team team-filter-cell"
+                    [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'"
+                    [class.team-filter-cell-active]="selectedTeamFilter === product?.home_team"
+                    (click)="onTeamClick(product?.home_team)"
+                    (keydown.enter)="onTeamClick(product?.home_team)"
+                    (keydown.space)="onTeamClick(product?.home_team)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="'Филтрирай по отбор ' + product?.home_team">
+                    <span class="team-with-flag">
+                        {{ product?.home_team }}
+                    </span>
+                </td>
+                <td class="re_away_team team-filter-cell"
+                    [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'"
+                    [class.team-filter-cell-active]="selectedTeamFilter === product?.away_team"
+                    (click)="onTeamClick(product?.away_team)"
+                    (keydown.enter)="onTeamClick(product?.away_team)"
+                    (keydown.space)="onTeamClick(product?.away_team)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="'Филтрирай по отбор ' + product?.away_team">
+                    <span class="team-with-flag">
+                        {{ product?.away_team }}
+                    </span>
+                </td>
+                <td class="score-cell user-separator" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.home}}</td>
+                <td class="score-cell" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.away}}</td>
+                <td class="score-cell user-separator-right" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
                 </td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
                 @for (user of allUsersNames; let idx = $index; track user.id) {
                 @for (j of [0, 1, 2, 3]; track j) {
-                <td (click)="editCell(user, product, j)" [class.user-separator]="j === 0" [class.user-separator-right]="j === 3" [class.font-bold]="j === 3"
-                    [class.cursor-pointer]="isAloowedToEdit(user, product, j)" [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
+                <td (click)="editCell(user, product, j)" 
+                    [class.user-separator]="j === 0" 
+                    [class.user-separator-right]="j === 3" 
+                    [class.font-bold]="j === 3"
+                    [class.cursor-pointer]="isAllowedToEdit(user, product, j)"
+                    [class.cell-saving]="isCellSaving(user, product, j)"
+                    [class.cell-saved]="isCellSaved(user, product, j)"
+                    [ngClass]="getCellColorClass(user, product, j)"
+                    [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
                     <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"

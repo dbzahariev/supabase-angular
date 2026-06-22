@@ -72,6 +72,81 @@ p-select {
     width: max-content !important;
 }
 
+.header-stats-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stats-toggle-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--theme-color);
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    border-radius: 999px;
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--theme-color), #ffffff 86%),
+        color-mix(in srgb, var(--theme-color), #ffffff 72%)
+    );
+    border: 1px solid color-mix(in srgb, var(--theme-color), #ffffff 58%);
+    transition: all 0.25s ease;
+}
+
+.slider:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+    transition: transform 0.25s ease;
+}
+
+.switch input:checked + .slider {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--theme-color), #ffffff 12%),
+        color-mix(in srgb, var(--theme-color), #ffffff 32%)
+    );
+    border-color: color-mix(in srgb, var(--theme-color), #ffffff 10%);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-color), transparent 75%), 0 0 12px color-mix(in srgb, var(--theme-color), transparent 68%);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.switch input:focus-visible + .slider {
+    outline: 2px solid color-mix(in srgb, var(--theme-color), #ffffff 14%);
+    outline-offset: 2px;
+}
+
 .header-container {
     display: flex;
     align-items: center;
@@ -164,6 +239,23 @@ html.my-app-dark :host ::ng-deep .header-container .install-btn .p-button {
         width: auto !important;
     }
 
+    .header-stats-toggle {
+        order: 2;
+        flex: 1 1 100%;
+        justify-content: space-between;
+        padding: 0.125rem 0.125rem 0;
+        gap: 0.35rem;
+    }
+
+    .stats-toggle-label {
+        display: inline-block;
+        font-size: 1rem;
+        letter-spacing: 0.1px;
+        opacity: 0.95;
+        text-transform: none;
+        white-space: normal;
+    }
+
     .fl-color {
         width: auto !important;
     }
@@ -187,6 +279,7 @@ html.my-app-dark :host ::ng-deep .header-container .install-btn .p-button {
 
     /* Row 2: tabs full width */
     .header-container p-tabs {
+        order: 3;
         flex: 1 1 100%;
         min-width: 0;
     }

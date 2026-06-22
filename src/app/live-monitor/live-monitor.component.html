@@ -1,0 +1,66 @@
+<div class="live-monitor-page">
+  <div class="toolbar">
+    <h2>{{ 'LIVE_MONITOR.TITLE' | translate }}</h2>
+    <div class="actions">
+      <p-button [label]="'LIVE_MONITOR.REFRESH' | translate" (onClick)="loadLiveMatches()"></p-button>
+      <p-button
+        [label]="autoRefresh ? ('LIVE_MONITOR.AUTO_ON' | translate) : ('LIVE_MONITOR.AUTO_OFF' | translate)"
+        [outlined]="true"
+        (onClick)="toggleAutoRefresh()">
+      </p-button>
+    </div>
+  </div>
+
+  @if (lastRefreshAt) {
+    <p class="state-text">{{ 'LIVE_MONITOR.LAST_REFRESH' | translate }}: {{ formatTime(lastRefreshAt) }}</p>
+  }
+
+  @if (autoRefresh && nextRefreshInSec !== null) {
+    <p class="state-text">{{ 'LIVE_MONITOR.NEXT_REFRESH' | translate }}: {{ nextRefreshInSec }}s</p>
+  }
+
+  @if (loading) {
+    <p class="state-text">{{ 'LIVE_MONITOR.LOADING' | translate }}</p>
+  }
+
+  @if (!loading && errorMessage) {
+    <p class="state-text error">{{ errorMessage }}</p>
+  }
+
+  @if (!loading && !errorMessage) {
+    <p class="state-text">{{ 'LIVE_MONITOR.COUNT' | translate }}: {{ liveMatches.length }}</p>
+
+    @if (liveMatches.length === 0) {
+      <p class="state-text">{{ 'LIVE_MONITOR.EMPTY' | translate }}</p>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ 'LIVE_MONITOR.MATCH_ID' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.DATE' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.STATUS' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.HOME' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.AWAY' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.SCORE' | translate }}</th>
+              <th>{{ 'LIVE_MONITOR.LAST_UPDATED' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (match of liveMatches; track match.id) {
+              <tr>
+                <td>{{ match.id }}</td>
+                <td>{{ formatDate(match.utcDate) }}</td>
+                <td>{{ match.status || '-' }}</td>
+                <td>{{ match.homeTeam.name || '-' }}</td>
+                <td>{{ match.awayTeam.name || '-' }}</td>
+                <td>{{ scoreLabel(match) }}</td>
+                <td>{{ formatDate(match.lastUpdated) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

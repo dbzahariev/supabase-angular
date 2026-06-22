@@ -2,8 +2,62 @@
   "INSTALL_APP": "Install app",
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
+    "KNOCKOUT_BRACKET": "Knockout Bracket",
     "ALL_RULES": "Rules",
-    "CHAT": "Chat"
+    "CHAT": "Chat",
+    "MATCH_DETAILS": "Match Details",
+    "LIVE_MONITOR": "Live Monitor",
+    "LIVE_MONITOR_FULL": "Live Monitor (Full Screen)"
+  },
+  "LIVE_MONITOR": {
+    "TITLE": "Live Matches Monitor",
+    "REFRESH": "Refresh",
+    "AUTO_ON": "Auto: ON",
+    "AUTO_OFF": "Auto: OFF",
+    "LOADING": "Loading live matches...",
+    "RATE_LIMITED": "Request rate limit reached. Retrying automatically in 60 seconds.",
+    "COUNT": "Matches count",
+    "EMPTY": "No active live matches right now",
+    "MATCH_ID": "ID",
+    "DATE": "Date",
+    "STATUS": "Status",
+    "HOME": "Home",
+    "AWAY": "Away",
+    "SCORE": "Score",
+    "LAST_UPDATED": "Last updated",
+    "LAST_REFRESH": "Last refresh",
+    "NEXT_REFRESH": "Next refresh in"
+  },
+  "MATCH_DETAILS": {
+    "MATCH_ID": "Match ID",
+    "LOAD": "Load",
+    "LOADING": "Loading...",
+    "OVERVIEW": "Overview",
+    "RESULT": "Result",
+    "STATUS": "Status",
+    "DATE": "Date",
+    "LAST_UPDATED": "Last updated",
+    "STAGE": "Stage",
+    "GROUP": "Group",
+    "match_day": "Round",
+    "VENUE": "Venue",
+    "ATTENDANCE": "Attendance",
+    "MINUTE": "Minute",
+    "INJURY_TIME": "Injury time",
+    "HALF_TIME": "Half-time",
+    "WINNER": "Winner",
+    "DURATION": "Duration",
+    "GOALS": "Goals",
+    "BOOKINGS": "Bookings",
+    "SUBSTITUTIONS": "Substitutions",
+    "REFEREES": "Referees",
+    "LINEUPS": "Lineups",
+    "STARTING": "Starting",
+    "BENCH": "Bench",
+    "ODDS": "Odds",
+    "HOME_WIN": "Home win",
+    "DRAW": "Draw",
+    "AWAY_WIN": "Away win"
   },
   "TOAST": {
     "PREDICTION_DELETED_TITLE": "Info",
@@ -29,11 +83,16 @@
     "SEARCH_KEYWORD": "Search",
     "SHEET_NAME": "Backup",
     "EXPORT_FILE_PREFIX": "backup",
+    "TOTAL_MATCHES": "Total matches",
+    "FINISHED_MATCHES": "Finished matches",
+    "UPCOMING_MATCHES": "Upcoming matches",
+    "ACCURACY": "Accuracy",
+    "SHOW_STATS": "Show stats",
     "GROUPS_PHASE": "Groups Phase",
     "GROUP_STAGE": {
-      "CICLE_1_TITLE": "Group stage - Round 1",
-      "CICLE_2_TITLE": "Group stage - Round 2",
-      "CICLE_3_TITLE": "Group stage - Round 3"
+      "CYCLE_1_TITLE": "Group stage - Round 1",
+      "CYCLE_2_TITLE": "Group stage - Round 2",
+      "CYCLE_3_TITLE": "Group stage - Round 3"
     },
     "ID": "ID",
     "NAME": "Name",
@@ -73,7 +132,7 @@
     "GROUP_L": "L",
     "UNKNOWN_GROUP": "Unknown Group",
     "LAST_32": "16/32",
-    "LAST_32_TITLE": "First Round",
+    "LAST_32_TITLE": "Round of 32",
     "LAST_16": "8/16",
     "LAST_16_TITLE": "Round of 16",
     "QUARTER_FINALS": "4/8",
@@ -83,7 +142,13 @@
     "THIRD_PLACE": "1/2",
     "THIRD_PLACE_TITLE": "Third Place",
     "FINAL": "1/2",
-    "FINAL_TITLE": "Final"
+    "FINAL_TITLE": "Final",
+    "FEATURES_NOTICE": {
+      "MESSAGE": "New: You can filter matches by clicking Group or Team (home/away). Your filters are saved automatically.",
+      "PHASE_MESSAGE": "You can also click \"Group stage - Round 1\" (or another round) to filter the entire round.",
+      "CLOSE_ARIA": "Close message",
+      "CLOSE_TITLE": "Close"
+    }
   },
   "RULES": {
     "TITLE": "Game Rules",
@@ -91,7 +156,7 @@
     "PREDICTIONS_HIDDEN": "Individual participant predictions are hidden from other participants until the match starts. This does not apply to Aiko's predictions, which are always visible.",
     "PREDICTIONS_SUBMISSION": "Predictions for all matches are given on the website",
     "LATE_SUBMISSION": "If a prediction is not entered by the start of the match, it can be given up to 15 minutes after the match starts, but then only 50% of the points awarded are given.",
-    "CONTACT_DIMITUR": "For valid reasons, you can call Dimitur and he will enter them into the system.",
+    "CONTACT_DIMITAR": "For valid reasons, you can call Dimitar and he will enter them into the system.",
     "KNOCKOUT_PREDICTION": "After the group stage, a prediction is given for the winner of the match after regular time in case of a draw, with an additional 1 point for predicting the correct team that advances in the tournament.",
     "MULTIPLIER_EXPLANATION": "After the Round of 32, the points are multiplied by a coefficient:",
     "POINTS_TITLE": "Scoring System",
@@ -111,5 +176,12 @@
     "FINAL": "Final",
     "FUN_TITLE": "And most importantly:",
     "FUN_TEXT": "Have fun!"
+  },
+  "KNOCKOUT": {
+    "TITLE": "Knockout Bracket",
+    "SUBTITLE": "All matches from the knockout phase",
+    "LOADING": "Loading bracket...",
+    "EMPTY": "No knockout matches available",
+    "TBD": "To be decided"
   }
 }

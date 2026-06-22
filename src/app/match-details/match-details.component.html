@@ -1,0 +1,139 @@
+<div class="match-details-page">
+  <div class="toolbar">
+    <label for="matchIdInput">{{ 'MATCH_DETAILS.MATCH_ID' | translate }}</label>
+    <input id="matchIdInput" type="number" min="1" [(ngModel)]="matchId" />
+    <p-button [label]="'MATCH_DETAILS.LOAD' | translate" [disabled]="loading || isLoadDisabled" (onClick)="loadMatch()"></p-button>
+  </div>
+
+  @if (isLoadDisabled && loadCooldownSec !== null) {
+    <p class="state-text">Следващ опит след: {{ loadCooldownSec }}s</p>
+  }
+
+  @if (loading) {
+    <p class="state-text">{{ 'MATCH_DETAILS.LOADING' | translate }}</p>
+  }
+
+  @if (!loading && errorMessage) {
+    <p class="state-text error">{{ errorMessage }}</p>
+  }
+
+  @if (!loading && matchDetails) {
+    <div class="grid">
+      <p-card [header]="'MATCH_DETAILS.OVERVIEW' | translate" class="card">
+        <div class="kv">
+          <span>{{ 'MATCH_DETAILS.MATCH_ID' | translate }}</span><strong>{{ matchDetails.id }}</strong>
+          <span>{{ 'MATCH_DETAILS.STATUS' | translate }}</span><strong>{{ matchDetails.status || '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.DATE' | translate }}</span><strong>{{ formatDate(matchDetails.utcDate) }}</strong>
+          <span>{{ 'MATCH_DETAILS.LAST_UPDATED' | translate }}</span><strong>{{ formatDate(matchDetails.lastUpdated) }}</strong>
+          <span>{{ 'MATCH_DETAILS.STAGE' | translate }}</span><strong>{{ matchDetails.stage || '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.GROUP' | translate }}</span><strong>{{ matchDetails.group || '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.match_day' | translate }}</span><strong>{{ matchDetails.matchday ?? '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.VENUE' | translate }}</span><strong>{{ matchDetails.venue || '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.ATTENDANCE' | translate }}</span><strong>{{ matchDetails.attendance ?? '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.MINUTE' | translate }}</span><strong>{{ matchDetails.minute ?? '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.INJURY_TIME' | translate }}</span><strong>{{ matchDetails.injuryTime ?? '-' }}</strong>
+        </div>
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.RESULT' | translate" class="card">
+        <div class="teams">
+          <div>
+            <h3>{{ matchDetails.homeTeam?.name || '-' }}</h3>
+            <p>{{ matchDetails.homeTeam?.formation || '-' }}</p>
+          </div>
+          <div class="score-block">
+            <div class="score-main">{{ scoreLabel(matchDetails.score?.fullTime) }}</div>
+            <div>{{ 'MATCH_DETAILS.HALF_TIME' | translate }}: {{ scoreLabel(matchDetails.score?.halfTime) }}</div>
+            <div>{{ 'MATCH_DETAILS.WINNER' | translate }}: {{ matchDetails.score?.winner || '-' }}</div>
+            <div>{{ 'MATCH_DETAILS.DURATION' | translate }}: {{ matchDetails.score?.duration || '-' }}</div>
+          </div>
+          <div>
+            <h3>{{ matchDetails.awayTeam?.name || '-' }}</h3>
+            <p>{{ matchDetails.awayTeam?.formation || '-' }}</p>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.GOALS' | translate" class="card">
+        @if (matchDetails.goals?.length) {
+          <ul>
+            @for (goal of matchDetails.goals; track $index) {
+              <li>
+                {{ goal.minute ?? '-' }}' {{ goal.injuryTime ? ('+' + goal.injuryTime) : '' }}
+                · {{ personName(goal.scorer) }}
+                · {{ teamName(goal.team) }}
+                · {{ goal.type || '-' }}
+                · {{ scoreLabel(goal.score ?? null) }}
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>-</p>
+        }
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.BOOKINGS' | translate" class="card">
+        @if (matchDetails.bookings?.length) {
+          <ul>
+            @for (booking of matchDetails.bookings; track $index) {
+              <li>
+                {{ booking.minute ?? '-' }}'
+                · {{ personName(booking.player) }}
+                · {{ teamName(booking.team) }}
+                · {{ booking.card || '-' }}
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>-</p>
+        }
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.SUBSTITUTIONS' | translate" class="card">
+        @if (matchDetails.substitutions?.length) {
+          <ul>
+            @for (sub of matchDetails.substitutions; track $index) {
+              <li>
+                {{ sub.minute ?? '-' }}'
+                · {{ personName(sub.playerOut) }} → {{ personName(sub.playerIn) }}
+                · {{ teamName(sub.team) }}
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>-</p>
+        }
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.REFEREES' | translate" class="card">
+        @if (matchDetails.referees?.length) {
+          <ul>
+            @for (ref of matchDetails.referees; track ref.id) {
+              <li>{{ ref.name || '-' }} · {{ ref.type || '-' }} · {{ ref.nationality || '-' }}</li>
+            }
+          </ul>
+        } @else {
+          <p>-</p>
+        }
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.LINEUPS' | translate" class="card">
+        <h4>{{ matchDetails.homeTeam?.name || '-' }}</h4>
+        <p>{{ 'MATCH_DETAILS.STARTING' | translate }}: {{ matchDetails.homeTeam?.lineup?.length ?? 0 }}</p>
+        <p>{{ 'MATCH_DETAILS.BENCH' | translate }}: {{ matchDetails.homeTeam?.bench?.length ?? 0 }}</p>
+
+        <h4>{{ matchDetails.awayTeam?.name || '-' }}</h4>
+        <p>{{ 'MATCH_DETAILS.STARTING' | translate }}: {{ matchDetails.awayTeam?.lineup?.length ?? 0 }}</p>
+        <p>{{ 'MATCH_DETAILS.BENCH' | translate }}: {{ matchDetails.awayTeam?.bench?.length ?? 0 }}</p>
+      </p-card>
+
+      <p-card [header]="'MATCH_DETAILS.ODDS' | translate" class="card">
+        <div class="kv">
+          <span>{{ 'MATCH_DETAILS.HOME_WIN' | translate }}</span><strong>{{ matchDetails.odds?.homeWin ?? '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.DRAW' | translate }}</span><strong>{{ matchDetails.odds?.draw ?? '-' }}</strong>
+          <span>{{ 'MATCH_DETAILS.AWAY_WIN' | translate }}</span><strong>{{ matchDetails.odds?.awayWin ?? '-' }}</strong>
+        </div>
+      </p-card>
+    </div>
+  }
+</div>

@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import {
   AuthSession,
   createClient,
   SupabaseClient,
 } from '@supabase/supabase-js'
 import { environment } from '../../environments/environment'
-import { Observable } from 'rxjs'
+import { Observable, catchError, of, tap, throwError } from 'rxjs'
 import {
   JsonObject,
   Match,
@@ -33,6 +33,11 @@ export interface Profile {
 export class SupabaseService {
   private supabase: SupabaseClient
   _session: AuthSession | null = null
+  private readonly proxyBaseUrl = 'https://simple-node-proxy.onrender.com'
+  private readonly liveMatchesFullArchiveLegacyStorageKey = 'liveMatchesFullArchive'
+  private readonly liveMatchesFullArchiveStorageKey = 'live-matches-full-archive'
+  private readonly liveMatchesFullArchiveMaxEntries = 8
+  private readonly liveMatchesFullArchiveTtlMs = 10 * 60 * 1000
   private readonly predictionsWithUsersSelect = `
     id,
     utc_date,
@@ -66,7 +71,7 @@ export class SupabaseService {
   private httpClient = inject(HttpClient);
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+    this.supabase = createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
@@ -75,13 +80,15 @@ export class SupabaseService {
       },
       realtime: {
         headers: {
-          apikey: environment.supabaseKey
+          apikey: environment.SUPABASE_KEY
         },
         params: {
-          apikey: environment.supabaseKey
+          apikey: environment.SUPABASE_KEY
         }
       }
     })
+
+    this.migrateLiveMatchesFullArchiveStorageKey()
   }
 
   get client(): SupabaseClient {
@@ -92,8 +99,41 @@ export class SupabaseService {
     return this.supabase.auth.signInWithOtp({ email })
   }
 
-  getAllMatchesFromBE(): Observable<Match[]> {
-    return this.httpClient.get<Match[]>('https://simple-node-proxy.onrender.com/api/matches')
+  getLiveMatchesFromBE(): Observable<Match[]> {
+    return this.httpClient.get<Match[]>(`${this.proxyBaseUrl}/api/matches/live`, {
+      params: {
+        t: Date.now().toString(),
+      },
+    })
+  }
+
+  getLiveMatchesFullFromBE(): Observable<Match[]> {
+    return this.httpClient
+      .get<Match[]>(`${this.proxyBaseUrl}/api/matches/live/full`, {
+        params: {
+          t: Date.now().toString(),
+        },
+      })
+      .pipe(
+        tap((matches) => {
+          this.saveLiveMatchesFullArchive(matches)
+        }),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 429) {
+            const archivedMatches = this.readLatestLiveMatchesFullArchive()
+            if (archivedMatches && archivedMatches.length > 0) {
+              console.warn('[matches/live/full] 429 received. Falling back to archived snapshot.')
+              return of(archivedMatches)
+            }
+          }
+
+          return throwError(() => error)
+        })
+      )
+  }
+
+  getMatchDetailsFromBE(matchId: number): Observable<Record<string, unknown>> {
+    return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/matches/${matchId}`)
   }
 
   private normalizeError(error: { message: string; details?: string | null } | null): SupabaseResponse<never>['error'] {
@@ -146,6 +186,18 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .from('predictions')
       .insert(prediction)
+      .select()
+
+    return {
+      data: data as Prediction[] | null,
+      error: this.normalizeError(error),
+    }
+  }
+
+  async upsertPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
+    const { data, error } = await this.supabase
+      .from('predictions')
+      .upsert(prediction, { onConflict: 'user_id,match_id' })
       .select()
 
     return {
@@ -256,6 +308,84 @@ export class SupabaseService {
     return {
       data: data as SupabaseMatch[] | null,
       error: this.normalizeError(error),
+    }
+  }
+
+  private saveLiveMatchesFullArchive(matches: Match[]): void {
+    if (!Array.isArray(matches) || matches.length === 0) {
+      return
+    }
+
+    const storedEntries = this
+      .getLiveMatchesFullArchiveEntries()
+      .filter((entry) => this.isArchiveEntryFresh(entry.ts))
+    const nextEntries = [...storedEntries, { ts: Date.now(), data: matches }]
+      .slice(-this.liveMatchesFullArchiveMaxEntries)
+
+    try {
+      localStorage.setItem(this.liveMatchesFullArchiveStorageKey, JSON.stringify(nextEntries))
+    } catch {
+      // Ignore storage errors (quota/privacy mode) and keep network data path intact.
+    }
+  }
+
+  private readLatestLiveMatchesFullArchive(): Match[] | null {
+    const entries = this
+      .getLiveMatchesFullArchiveEntries()
+      .filter((entry) => this.isArchiveEntryFresh(entry.ts))
+    if (entries.length === 0) {
+      return null
+    }
+
+    return entries[entries.length - 1]?.data ?? null
+  }
+
+  private isArchiveEntryFresh(timestamp: number): boolean {
+    return Date.now() - timestamp <= this.liveMatchesFullArchiveTtlMs
+  }
+
+  private getLiveMatchesFullArchiveEntries(): { ts: number; data: Match[] }[] {
+    try {
+      const raw = localStorage.getItem(this.liveMatchesFullArchiveStorageKey)
+      if (!raw) {
+        return []
+      }
+
+      const parsed = JSON.parse(raw) as unknown
+      if (!Array.isArray(parsed)) {
+        return []
+      }
+
+      return parsed
+        .filter((entry) => entry && typeof entry === 'object')
+        .map((entry) => {
+          const safeEntry = entry as { ts?: unknown; data?: unknown }
+          return {
+            ts: typeof safeEntry.ts === 'number' ? safeEntry.ts : 0,
+            data: Array.isArray(safeEntry.data) ? (safeEntry.data as Match[]) : [],
+          }
+        })
+        .filter((entry) => entry.ts > 0 && entry.data.length > 0)
+    } catch {
+      return []
+    }
+  }
+
+  private migrateLiveMatchesFullArchiveStorageKey(): void {
+    try {
+      const legacyValue = localStorage.getItem(this.liveMatchesFullArchiveLegacyStorageKey)
+      if (legacyValue === null) {
+        return
+      }
+
+      const currentValue = localStorage.getItem(this.liveMatchesFullArchiveStorageKey)
+      if (currentValue === null) {
+        localStorage.setItem(this.liveMatchesFullArchiveStorageKey, legacyValue)
+      }
+
+      localStorage.removeItem(this.liveMatchesFullArchiveLegacyStorageKey)
+    } catch {
+      // Ignore storage errors (quota/privacy mode).
     }
   }
 }
