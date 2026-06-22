@@ -35,6 +35,11 @@ import { environment } from '../../../environments/environment';
 export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy {
     protected IS_SMALL_SCREEN = this.computeIsSmallScreen();
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
+    private readonly GROUP_FILTER_STORAGE_KEY = 'all_predictions.selected_group_filter';
+    private readonly TEAM_FILTER_STORAGE_KEY = 'all_predictions.selected_team_filter';
+    private readonly PHASE_FILTER_STORAGE_KEY = 'all_predictions.selected_phase_filter';
+    private readonly FEATURES_NOTICE_MAIN_STORAGE_KEY = 'all_predictions.features_notice.main.v1.dismissed';
+    private readonly FEATURES_NOTICE_PHASE_STORAGE_KEY = 'all_predictions.features_notice.phase.v1.dismissed';
     private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -55,6 +60,11 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     upcomingMatches = 0;
     userAccuracy = 0;
     showStatsCards = true;
+    selectedGroupFilter: string | null = null;
+    selectedTeamFilter: string | null = null;
+    selectedPhaseFilter: string | null = null;
+    showFeaturesNoticeMain = false;
+    showFeaturesNoticePhase = false;
 
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -289,6 +299,39 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         return `${clampedHeight}px`;
     }
 
+    get filteredBetsToShow(): Bet[] {
+        if (!this.selectedGroupFilter && !this.selectedTeamFilter && !this.selectedPhaseFilter) {
+            return this.betsToShow;
+        }
+
+        return this.betsToShow.filter((bet) => {
+            const isGroupMatch = !this.selectedGroupFilter || bet.group === this.selectedGroupFilter;
+            const isTeamMatch = !this.selectedTeamFilter || bet.home_team === this.selectedTeamFilter || bet.away_team === this.selectedTeamFilter;
+            const isPhaseMatch = !this.selectedPhaseFilter || bet.stage === this.selectedPhaseFilter;
+            return isGroupMatch && isTeamMatch && isPhaseMatch;
+        });
+    }
+
+    get selectedGroupFilterLabel(): string {
+        if (!this.selectedGroupFilter) {
+            return '';
+        }
+
+        return this.translate.instant(this.selectedGroupFilter);
+    }
+
+    get selectedTeamFilterLabel(): string {
+        return this.selectedTeamFilter ?? '';
+    }
+
+    get selectedPhaseFilterLabel(): string {
+        if (!this.selectedPhaseFilter) {
+            return '';
+        }
+
+        return this.translate.instant(`${this.selectedPhaseFilter}_TITLE`);
+    }
+
     @HostListener('window:resize')
     onWindowResize(): void {
         const nextIsSmallScreen = this.computeIsSmallScreen();
@@ -391,6 +434,10 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
     ngOnInit(): void {
         this.showStatsCards = this.uiPreferencesService.getShowStatsCards();
+        this.selectedGroupFilter = this.loadSelectedGroupFilter();
+        this.selectedTeamFilter = this.loadSelectedTeamFilter();
+        this.showFeaturesNoticeMain = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_MAIN_STORAGE_KEY);
+        this.showFeaturesNoticePhase = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_PHASE_STORAGE_KEY);
 
         const themeState = this.themeService.buildThemeState();
         this.themeColor = themeState.themeColor;
@@ -923,6 +970,96 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             : [...hiddenGroups, pro.phase];
         localStorage.setItem('hiddenGroups', JSON.stringify(updated));
         this.cdr.markForCheck();
+    }
+
+    onGroupClick(groupKey: string | null | undefined): void {
+        if (!groupKey) {
+            this.selectedGroupFilter = null;
+            this.persistSelectedGroupFilter();
+            this.cdr.markForCheck();
+            return;
+        }
+
+        this.selectedGroupFilter = this.selectedGroupFilter === groupKey ? null : groupKey;
+        this.persistSelectedGroupFilter();
+        this.cdr.markForCheck();
+    }
+
+    clearGroupFilter(): void {
+        if (this.selectedGroupFilter === null) {
+            return;
+        }
+
+        this.selectedGroupFilter = null;
+        this.persistSelectedGroupFilter();
+        this.cdr.markForCheck();
+    }
+
+    onTeamClick(teamName: string | null | undefined): void {
+        if (!teamName) {
+            this.selectedTeamFilter = null;
+            this.persistSelectedTeamFilter();
+            this.cdr.markForCheck();
+            return;
+        }
+
+        this.selectedTeamFilter = this.selectedTeamFilter === teamName ? null : teamName;
+        this.persistSelectedTeamFilter();
+        this.cdr.markForCheck();
+    }
+
+    clearTeamFilter(): void {
+        if (this.selectedTeamFilter === null) {
+            return;
+        }
+
+        this.selectedTeamFilter = null;
+        this.persistSelectedTeamFilter();
+        this.cdr.markForCheck();
+    }
+
+    dismissFeaturesNoticeMain(): void {
+        this.showFeaturesNoticeMain = false;
+        localStorage.setItem(this.FEATURES_NOTICE_MAIN_STORAGE_KEY, '1');
+        this.cdr.markForCheck();
+    }
+
+    dismissFeaturesNoticePhase(): void {
+        this.showFeaturesNoticePhase = false;
+        localStorage.setItem(this.FEATURES_NOTICE_PHASE_STORAGE_KEY, '1');
+        this.cdr.markForCheck();
+    }
+
+    private loadSelectedGroupFilter(): string | null {
+        const storedValue = localStorage.getItem(this.GROUP_FILTER_STORAGE_KEY);
+        return storedValue ? storedValue : null;
+    }
+
+    private persistSelectedGroupFilter(): void {
+        if (!this.selectedGroupFilter) {
+            localStorage.removeItem(this.GROUP_FILTER_STORAGE_KEY);
+            return;
+        }
+
+        localStorage.setItem(this.GROUP_FILTER_STORAGE_KEY, this.selectedGroupFilter);
+    }
+
+    private loadSelectedTeamFilter(): string | null {
+        const storedValue = localStorage.getItem(this.TEAM_FILTER_STORAGE_KEY);
+        return storedValue ? storedValue : null;
+    }
+
+    private persistSelectedTeamFilter(): void {
+        if (!this.selectedTeamFilter) {
+            localStorage.removeItem(this.TEAM_FILTER_STORAGE_KEY);
+            return;
+        }
+
+        localStorage.setItem(this.TEAM_FILTER_STORAGE_KEY, this.selectedTeamFilter);
+    }
+
+    private loadShouldShowFeaturesNotice(storageKey: string): boolean {
+        return localStorage.getItem(storageKey) !== '1';
     }
 
     private isDataChanged(data: MatchesApiResponse): boolean {

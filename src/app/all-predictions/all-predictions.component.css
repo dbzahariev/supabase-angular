@@ -26,6 +26,90 @@
     white-space: nowrap;
 }
 
+.features-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0.5rem 0 0.75rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--theme-color, #16a34a), var(--theme-background-color, #ffffff) 72%);
+    background: color-mix(in srgb, var(--theme-color, #16a34a), var(--theme-background-color, #ffffff) 88%);
+    border-radius: 10px;
+}
+
+.features-notice-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #111827;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.features-notice-lines {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.features-notice-content .pi {
+    color: color-mix(in srgb, var(--theme-color, #16a34a), #1f2937 20%);
+}
+
+.features-notice-close {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--theme-color, #16a34a), var(--theme-background-color, #ffffff) 64%);
+    background: transparent;
+    color: #111827;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.features-notice-close:hover {
+    background: color-mix(in srgb, var(--theme-color, #16a34a), var(--theme-background-color, #ffffff) 78%);
+}
+
+html.my-app-dark .features-notice {
+    border-color: color-mix(in srgb, var(--theme-color, #22c55e), #7f9bc9 68%);
+    background: color-mix(in srgb, var(--theme-color, #22c55e), #0f172a 78%);
+}
+
+html.my-app-dark .features-notice-content {
+    color: #ffffff;
+}
+
+html.my-app-dark .features-notice-content .pi {
+    color: color-mix(in srgb, var(--theme-color, #22c55e), #e2e8f0 35%);
+}
+
+html.my-app-dark .features-notice-close {
+    border-color: color-mix(in srgb, var(--theme-color, #22c55e), #88a6d8 72%);
+    color: #ffffff;
+}
+
+html.my-app-dark .features-notice-close:hover {
+    background: color-mix(in srgb, var(--theme-color, #22c55e), #111827 68%);
+}
+
+:host-context(.my-app-dark) .features-notice-content,
+:host-context(.my-app-dark) .features-notice-content span,
+:host-context(.my-app-dark) .features-notice-content .pi,
+:host-context(.my-app-dark) .features-notice-close,
+:host-context(.my-app-dark) .features-notice-close .pi {
+    color: #ffffff !important;
+}
+
+:host-context(.my-app-dark) .features-notice {
+    border-color: color-mix(in srgb, var(--theme-color, #22c55e), #88a6d8 68%);
+    background: color-mix(in srgb, var(--theme-color, #22c55e), #0f172a 78%);
+}
+
 .table-container {
     flex: 1;
     min-height: 0;
@@ -200,6 +284,34 @@
     min-width: 40px;
 }
 
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.group-filter-cell {
+    cursor: pointer;
+    user-select: none;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.group-filter-cell:hover {
+    background-color: color-mix(in srgb, var(--theme-color), transparent 90%) !important;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.group-filter-cell.group-filter-cell-active {
+    background-color: color-mix(in srgb, var(--theme-color), transparent 82%) !important;
+    font-weight: 700;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.team-filter-cell {
+    cursor: pointer;
+    user-select: none;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.team-filter-cell:hover {
+    background-color: color-mix(in srgb, var(--theme-color), transparent 90%) !important;
+}
+
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.team-filter-cell.team-filter-cell-active {
+    background-color: color-mix(in srgb, var(--theme-color), transparent 82%) !important;
+    font-weight: 700;
+}
+
 :host ::ng-deep .p-datatable-sm .p-datatable-tbody > tr > td.live-result-cell {
     background-color: color-mix(in srgb, #ef4444 14%, transparent) !important;
 }
@@ -230,6 +342,29 @@
 }
 
 @media screen and (max-width: 768px) {
+    .features-notice {
+        margin: 0.35rem 0 0.55rem;
+        padding: 0.5rem 0.6rem;
+        border-radius: 8px;
+        gap: 0.5rem;
+    }
+
+    .features-notice-content {
+        font-size: 0.82rem;
+        line-height: 1.3;
+        gap: 0.4rem;
+    }
+
+    .features-notice-close {
+        width: 1.75rem;
+        height: 1.75rem;
+        min-width: 1.75rem;
+    }
+
+    .features-notice-close .pi {
+        font-size: 0.8rem;
+    }
+
     :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-datatable-row-group-header > td,
     :host ::ng-deep .sticky_top .p-datatable-tbody > tr.p-rowgroup-header > td.sticky-group-header {
         background: transparent !important;

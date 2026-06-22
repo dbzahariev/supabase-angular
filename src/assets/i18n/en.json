@@ -142,7 +142,13 @@
     "THIRD_PLACE": "1/2",
     "THIRD_PLACE_TITLE": "Third Place",
     "FINAL": "1/2",
-    "FINAL_TITLE": "Final"
+    "FINAL_TITLE": "Final",
+    "FEATURES_NOTICE": {
+      "MESSAGE": "New: You can filter matches by clicking Group or Team (home/away). Your filters are saved automatically.",
+      "PHASE_MESSAGE": "You can also click \"Group stage - Round 1\" (or another round) to filter the entire round.",
+      "CLOSE_ARIA": "Close message",
+      "CLOSE_TITLE": "Close"
+    }
   },
   "RULES": {
     "TITLE": "Game Rules",
