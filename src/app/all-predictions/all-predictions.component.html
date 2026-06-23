@@ -46,6 +46,29 @@
 </div>
 }
 
+@if (showFeaturesNoticeGroupsTab) {
+<div
+    class="features-notice"
+    role="status"
+    aria-live="polite"
+    [style.--theme-color]="themeColor"
+    [style.--theme-text-color]="themeTextColor"
+    [style.--theme-background-color]="themeBackground">
+    <div class="features-notice-content">
+        <i class="pi pi-table"></i>
+        <span>{{ 'TABLE.FEATURES_NOTICE.GROUPS_TAB_MESSAGE' | translate }}</span>
+    </div>
+    <button
+        type="button"
+        class="features-notice-close"
+        [attr.aria-label]="'TABLE.FEATURES_NOTICE.CLOSE_ARIA' | translate"
+        [title]="'TABLE.FEATURES_NOTICE.CLOSE_TITLE' | translate"
+        (click)="dismissFeaturesNoticeGroupsTab()">
+        <i class="pi pi-times"></i>
+    </button>
+</div>
+}
+
 <!-- Stats Cards Section -->
 @if (showStatsCards) {
 <div class="stats-container">

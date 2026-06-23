@@ -2,6 +2,7 @@
   "INSTALL_APP": "Install app",
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
+    "GROUP_STANDINGS": "Group Standings",
     "KNOCKOUT_BRACKET": "Knockout Bracket",
     "ALL_RULES": "Rules",
     "CHAT": "Chat",
@@ -58,6 +59,26 @@
     "HOME_WIN": "Home win",
     "DRAW": "Draw",
     "AWAY_WIN": "Away win"
+  },
+  "GROUP_STANDINGS": {
+    "GROUP": "Group",
+    "REFRESH": "Refresh",
+    "LAST_UPDATED": "Last updated",
+    "LOADING": "Loading standings...",
+    "EMPTY": "No standings data available",
+    "TEAM": "Team",
+    "PLAYED": "P",
+    "WON": "W",
+    "DRAW": "D",
+    "LOST": "L",
+    "GOALS": "G",
+    "GD": "GD",
+    "POINTS": "P",
+    "LEGEND": {
+      "GUARANTEED": "Guaranteed qualified",
+      "NEAR": "Nearly qualified",
+      "NEAR_RULE": "Nearly qualified: currently top 2, not mathematically guaranteed, at most 3 realistic contenders remain, and lead is >= 3 pts or >= 2 pts with at least +4 goal-difference edge over 3rd place."
+    }
   },
   "TOAST": {
     "PREDICTION_DELETED_TITLE": "Info",
@@ -146,6 +167,7 @@
     "FEATURES_NOTICE": {
       "MESSAGE": "New: You can filter matches by clicking Group or Team (home/away). Your filters are saved automatically.",
       "PHASE_MESSAGE": "You can also click \"Group stage - Round 1\" (or another round) to filter the entire round.",
+      "GROUPS_TAB_MESSAGE": "New groups tab added: \"Group Standings\".",
       "CLOSE_ARIA": "Close message",
       "CLOSE_TITLE": "Close"
     }

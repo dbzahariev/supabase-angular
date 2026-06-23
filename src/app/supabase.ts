@@ -136,6 +136,14 @@ export class SupabaseService {
     return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/matches/${matchId}`)
   }
 
+  getCompetitionStandingsFromBE(): Observable<Record<string, unknown>> {
+    return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/standings`, {
+      params: {
+        t: Date.now().toString(),
+      },
+    })
+  }
+
   private normalizeError(error: { message: string; details?: string | null } | null): SupabaseResponse<never>['error'] {
     if (!error) {
       return null

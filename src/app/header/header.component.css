@@ -288,4 +288,21 @@ html.my-app-dark :host ::ng-deep .header-container .install-btn .p-button {
         overflow-x: auto;
         white-space: nowrap;
     }
+
+    :host ::ng-deep .header-container .p-tab {
+        min-width: max-content;
+        padding-left: 0.45rem !important;
+        padding-right: 0.45rem !important;
+    }
+
+    :host ::ng-deep .header-container .p-tab span {
+        display: inline;
+        font-size: 0.78rem;
+        line-height: 1.15;
+    }
+
+    :host ::ng-deep .header-container .p-tab .pi {
+        font-size: 0.9rem;
+        margin: 0 !important;
+    }
 }

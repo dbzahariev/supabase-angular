@@ -1,0 +1,128 @@
+<div class="group-standings-page" [style.--theme-color]="themeColor">
+  <div class="top-controls">
+    <div class="toolbar">
+      <p-button
+        [label]="'GROUP_STANDINGS.REFRESH' | translate"
+        [disabled]="loading"
+        (onClick)="loadStandings()"></p-button>
+      <!-- @if (groupedStandings.length > 0 && !loading) {
+        <span class="count-chip">{{ groupedStandings.length }} {{ 'GROUP_STANDINGS.GROUP' | translate }}</span>
+      } -->
+    </div>
+
+    @if (lastUpdated) {
+      <p class="meta">{{ 'GROUP_STANDINGS.LAST_UPDATED' | translate }}: {{ formatDate(lastUpdated) }}</p>
+    }
+
+    @if (!loading && groupedStandings.length > 0) {
+      <div class="qualification-legend" aria-label="qualification legend">
+        <span class="legend-item">
+          <span class="legend-swatch guaranteed"></span>
+          <span>{{ 'GROUP_STANDINGS.LEGEND.GUARANTEED' | translate }}</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-swatch near"></span>
+          <span>{{ 'GROUP_STANDINGS.LEGEND.NEAR' | translate }}</span>
+        </span>
+        <span class="legend-note">{{ 'GROUP_STANDINGS.LEGEND.NEAR_RULE' | translate }}</span>
+      </div>
+    }
+
+    @if (loading) {
+      <p class="state-text">{{ 'GROUP_STANDINGS.LOADING' | translate }}</p>
+    }
+
+    @if (!loading && errorMessage) {
+      <p class="state-text error">{{ errorMessage }}</p>
+    }
+
+    @if (!loading && !errorMessage && groupedStandings.length === 0) {
+      <p class="state-text">{{ 'GROUP_STANDINGS.EMPTY' | translate }}</p>
+    }
+  </div>
+
+  @if (!loading && groupedStandings.length > 0) {
+    <div class="groups-scroll">
+      <div class="groups-grid">
+        @for (group of groupedStandings; track group.group) {
+          <section class="group-card">
+            <div class="group-header">
+              <h3>{{'TABLE.GROUP' | translate }} {{ getGroupName(group.group) | translate }}</h3>
+              <!-- <span class="group-subtitle">{{ group.rows.length }} {{ 'GROUP_STANDINGS.TEAM' | translate }}</span> -->
+            </div>
+
+            <div class="table-wrap desktop-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>{{ 'GROUP_STANDINGS.TEAM' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.PLAYED' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.WON' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.DRAW' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.LOST' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.GOALS' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.GD' | translate }}</th>
+                    <th>{{ 'GROUP_STANDINGS.POINTS' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of group.rows; track row.team.id) {
+                    <tr
+                      [class.qualified-guaranteed]="isGuaranteedQualified(group.rows, row)"
+                      [class.qualified-near]="isNearlyQualified(group.rows, row)"
+                      [attr.title]="isNearlyQualified(group.rows, row) ? getNearQualificationTooltip(group.rows, row) : null">
+                      <td>{{ row.position }}</td>
+                      <td class="team-cell">
+                        @if (row.team.crest) {
+                          <img [src]="row.team.crest" [alt]="getDisplayTeamName(row.team)" loading="lazy" />
+                        }
+                        <span>{{ getDisplayTeamName(row.team) }}</span>
+                      </td>
+                      <td>{{ row.playedGames }}</td>
+                      <td>{{ row.won }}</td>
+                      <td>{{ row.draw }}</td>
+                      <td>{{ row.lost }}</td>
+                      <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
+                      <td [class.positive]="row.goalDifference > 0" [class.negative]="row.goalDifference < 0">{{ row.goalDifference }}</td>
+                      <td><span class="points-pill">{{ row.points }}</span></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mobile-team-list">
+              @for (row of group.rows; track row.team.id) {
+                <article
+                  class="mobile-team-row"
+                  [class.qualified-guaranteed]="isGuaranteedQualified(group.rows, row)"
+                  [class.qualified-near]="isNearlyQualified(group.rows, row)"
+                  [attr.title]="isNearlyQualified(group.rows, row) ? getNearQualificationTooltip(group.rows, row) : null">
+                  <div class="mobile-row-top">
+                    <div class="mobile-rank">#{{ row.position }}</div>
+                    <div class="mobile-team">
+                      @if (row.team.crest) {
+                        <img [src]="row.team.crest" [alt]="getDisplayTeamName(row.team)" loading="lazy" />
+                      }
+                      <span>{{ getDisplayTeamName(row.team) }}</span>
+                    </div>
+                    <span class="points-pill">{{ row.points }} {{ 'GROUP_STANDINGS.POINTS' | translate }}</span>
+                  </div>
+                  <div class="mobile-row-stats">
+                    <span>M {{ row.playedGames }}</span>
+                    <span>П {{ row.won }}</span>
+                    <span>Р {{ row.draw }}</span>
+                    <span>З {{ row.lost }}</span>
+                    <span>ГР {{ row.goalsFor }}:{{ row.goalsAgainst }}</span>
+                    <span [class.positive]="row.goalDifference > 0" [class.negative]="row.goalDifference < 0">+/- {{ row.goalDifference }}</span>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+  }
+</div>
