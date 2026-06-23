@@ -114,7 +114,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         this.totalMatches = this.allMatches.length;
-        
+
         this.finishedMatches = this.allMatches.filter((match) => this.isFinishedMatchStatus(match.status)).length;
         this.inProgressMatches = this.allMatches.filter((match) => this.isInProgressMatchStatus(match.status)).length;
 
@@ -123,6 +123,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.userAccuracy = this.selectedPlayerId === null
             ? this.getAllPlayersAverageAccuracy()
             : this.getSelectedPlayerAccuracy();
+
 
         this.cdr.markForCheck();
     }
@@ -360,9 +361,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         if (this.selectedPlayerId === null) {
             result = false;
         }
-        if (this.selectedPlayerId!== null && user.id !== 1){
-            // debugger;
-        }
 
         // Allow editing own column
         if (this.selectedPlayerId === user.id) {
@@ -413,6 +411,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             this.selectedPlayerId = null;
             this.selectedUserService.clearSelectedUserId();
             this.calculateStats();
+            this.fixPredictions();
             this.cdr.markForCheck();
             return;
         }
@@ -422,6 +421,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             this.selectedPlayerId = null;
             this.selectedUserService.clearSelectedUserId();
             this.calculateStats();
+            this.fixPredictions();
             this.cdr.markForCheck();
             return;
         }
@@ -429,6 +429,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.selectedPlayerId = parsedPlayerId;
         this.selectedUserService.setSelectedUserId(parsedPlayerId);
         this.calculateStats();
+        this.fixPredictions();
         this.cdr.markForCheck();
     }
 
@@ -489,7 +490,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 this.cdr.markForCheck();
             });
 
-            setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
+        setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
     getAllMatches(): void {
@@ -506,7 +507,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
-                 if (match.id ===537333){
+                if (match.id === 537333) {
                     match.status = 'FINISHED';
                     match.score.fullTime.home = 1;
                     match.score.fullTime.away = 1;
@@ -516,7 +517,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     match.score.winner = "DRAW";
                 }
 
-                if (match.id === 537352){
+                if (match.id === 537352) {
                     match.status = 'FINISHED';
                 }
 
@@ -601,7 +602,8 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             const result = this.pointsService.applyPointsAndRankings(
                 this.allPredictions,
                 this.allMatches,
-                this.allUsersNamesFromDB
+                this.allUsersNamesFromDB,
+                this.selectedPlayerId
             );
 
             this.allPredictions = result.predictions;
@@ -634,29 +636,29 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         const cellKey = this.getCellWriteKey(user.id, bet.id, columnIndex);
         const writeVersion = (this.cellWriteVersions.get(cellKey) ?? 0) + 1;
         this.cellWriteVersions.set(cellKey, writeVersion);
-        
+
         // Store old values for rollback if needed
         let oldHome: number | undefined;
         let oldAway: number | undefined;
         let oldWinner: string | undefined;
-        
+
         if (prediction && columnIndex < 2) {
             // Save current state for rollback
             oldHome = prediction.home_ft;
             oldAway = prediction.away_ft;
             oldWinner = prediction.winner;
-            
+
             // Parse the new value
             const score = parseInt(newValue, 10);
             const scoreToSet = isNaN(score) ? -1 : score;
-            
+
             // Update the prediction field
             if (columnIndex === 0) {
                 prediction.home_ft = scoreToSet;
             } else if (columnIndex === 1) {
                 prediction.away_ft = scoreToSet;
             }
-            
+
             // Recalculate winner based on new values
             if (prediction.home_ft > prediction.away_ft) {
                 prediction.winner = 'HOME_TEAM';
@@ -667,11 +669,11 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             } else {
                 prediction.winner = 'DRAW';
             }
-            
+
             // Trigger immediate UI update
             this.cdr.markForCheck();
         }
-        
+
         // NOW do the async database operation in the background
         await this.delay(this.cellWriteDebounceMs);
         if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
@@ -690,75 +692,75 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         await this.delay(30);
 
         try {
-        const timestamp = new Date().toISOString();
-        const eventId = this.backupService.generateBackupEventId();
+            const timestamp = new Date().toISOString();
+            const eventId = this.backupService.generateBackupEventId();
 
-        const result = await this.predictionFlowService.applyChange({
-            supabaseService: this.supabaseService,
-            user,
-            bet,
-            columnIndex,
-            newValue,
-            allMatches: this.allMatches,
-            allPredictions: this.allPredictions,
-            eventId,
-            timestamp,
-        });
+            const result = await this.predictionFlowService.applyChange({
+                supabaseService: this.supabaseService,
+                user,
+                bet,
+                columnIndex,
+                newValue,
+                allMatches: this.allMatches,
+                allPredictions: this.allPredictions,
+                eventId,
+                timestamp,
+            });
 
-        void this.persistPredictionBackupRemotely(result.backupEntry);
+            void this.persistPredictionBackupRemotely(result.backupEntry);
 
-        if (result.isSkip) {
-            return;
-        }
-
-        if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
-            return;
-        }
-
-        if (!result.error && result.shouldRefresh) {
-            if (result.isDelete) {
-                this.messageService.add({
-                    severity: 'info',
-                    summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
-                    detail: this.translate.instant('TOAST.PREDICTION_DELETED_MESSAGE'),
-                    life: 3000,
-                });
-            }
-            else {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: this.translate.instant('TOAST.PREDICTION_SAVED_TITLE'),
-                    detail: this.translate.instant('TOAST.PREDICTION_SAVED_MESSAGE'),
-                    life: 3000
-                });
-            }
-            this.recentlySavedCells.add(cellKey);
-            setTimeout(() => {
-                this.recentlySavedCells.delete(cellKey);
-                this.cdr.markForCheck();
-            }, 1500);
-            this.fixPredictions();
-        } else {
-            if (this.isConflictLikeError(result.error)) {
-                this.fixPredictions();
+            if (result.isSkip) {
                 return;
             }
 
-            // ROLLBACK: Restore old values on error
-            if (prediction && oldHome !== undefined && oldAway !== undefined && oldWinner !== undefined) {
-                prediction.home_ft = oldHome;
-                prediction.away_ft = oldAway;
-                prediction.winner = oldWinner;
-                this.cdr.markForCheck();
+            if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+                return;
             }
-            
-            this.messageService.add({
-                severity: 'error',
-                summary: this.translate.instant('TOAST.ERROR_TITLE'),
-                detail: this.translate.instant('TOAST.ERROR_MESSAGE'),
-                life: 3000
-            });
-        }
+
+            if (!result.error && result.shouldRefresh) {
+                if (result.isDelete) {
+                    this.messageService.add({
+                        severity: 'info',
+                        summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
+                        detail: this.translate.instant('TOAST.PREDICTION_DELETED_MESSAGE'),
+                        life: 3000,
+                    });
+                }
+                else {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('TOAST.PREDICTION_SAVED_TITLE'),
+                        detail: this.translate.instant('TOAST.PREDICTION_SAVED_MESSAGE'),
+                        life: 3000
+                    });
+                }
+                this.recentlySavedCells.add(cellKey);
+                setTimeout(() => {
+                    this.recentlySavedCells.delete(cellKey);
+                    this.cdr.markForCheck();
+                }, 1500);
+                this.fixPredictions();
+            } else {
+                if (this.isConflictLikeError(result.error)) {
+                    this.fixPredictions();
+                    return;
+                }
+
+                // ROLLBACK: Restore old values on error
+                if (prediction && oldHome !== undefined && oldAway !== undefined && oldWinner !== undefined) {
+                    prediction.home_ft = oldHome;
+                    prediction.away_ft = oldAway;
+                    prediction.winner = oldWinner;
+                    this.cdr.markForCheck();
+                }
+
+                this.messageService.add({
+                    severity: 'error',
+                    summary: this.translate.instant('TOAST.ERROR_TITLE'),
+                    detail: this.translate.instant('TOAST.ERROR_MESSAGE'),
+                    life: 3000
+                });
+            }
         } finally {
             this.activeCellWrites.delete(cellKey);
             this.cdr.markForCheck();

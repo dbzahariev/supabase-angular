@@ -52,7 +52,7 @@ export class AllPredictionsPointsService {
         }
     }
 
-    applyPointsAndRankings(predictions: Prediction[], matches: Match[], usersFromDb: User[]): { predictions: Prediction[]; users: User[] } {
+    applyPointsAndRankings(predictions: Prediction[], matches: Match[], usersFromDb: User[], selectedUserId: User['id'] | null): { predictions: Prediction[]; users: User[] } {
         const users = usersFromDb.map(u => ({ ...u, total_points: 0 }));
 
         const predictionsWithPoints = predictions.map((prediction: Prediction) => {
@@ -68,13 +68,13 @@ export class AllPredictionsPointsService {
             return nextPrediction;
         });
 
-        const restUsers = [...users.sort((a, b) => (b.total_points || 0) - (a.total_points || 0))].filter(u => u.id !== 1);
-        const AIUser = users.find(u => u.id === 1);
-        const sortedUsers = AIUser ? [AIUser, ...restUsers] : restUsers;
+        const firstUser = users.find(u => u.id === selectedUserId);
+        const restUsers = [...users.sort((a, b) => (b.total_points || 0) - (a.total_points || 0))].filter(u => u.id !== firstUser?.id);
+        const sortedUsers = firstUser ? [firstUser, ...restUsers] : restUsers;
 
         return {
             predictions: predictionsWithPoints,
-            users :sortedUsers,
+            users: sortedUsers,
         };
     }
 }
