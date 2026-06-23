@@ -25,6 +25,7 @@
     "@primeuix/themes": "^2.0.3",
     "@supabase/supabase-js": "^2.93.3",
     "flag-icons": "^7.5.0",
+    "gojs": "^4.0.0",
     "i18n-iso-countries": "^7.14.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.1",
