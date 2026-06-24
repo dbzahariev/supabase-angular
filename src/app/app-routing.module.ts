@@ -10,12 +10,15 @@ import { LiveMonitorFullComponent } from './live-monitor/live-monitor-full.compo
 import { KnockoutBracketComponent } from './knockout-bracket/knockout-bracket.component';
 import { adminGuard } from './guards/admin.guard';
 import { GroupStandingsComponent } from './group-standings/group-standings.component';
+import { EliminationsComponent } from './eliminations/eliminations.component';
 
 const routes: Routes = [
     { path: 'import-matches', component: MatchImportComponent, canActivate: [adminGuard] },
     { path: 'import-teams', component: TeamImportComponent, canActivate: [adminGuard] },
     { path: '', component: AllPredictionsComponent },
     { path: 'group-standings', component: GroupStandingsComponent },
+    { path: 'eliminations', component: EliminationsComponent },
+    // { path: 'eliminations', component: KnockoutBracketComponent },
     { path: 'knockout-bracket', component: KnockoutBracketComponent },
     { path: 'rules', component: RulesComponent },
     { path: 'match-details', component: MatchDetailsComponent, canActivate: [adminGuard] },

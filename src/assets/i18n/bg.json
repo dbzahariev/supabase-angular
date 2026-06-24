@@ -3,6 +3,7 @@
   "ROUTE": {
     "ALL_PREDICTIONS": "Всички прогнози",
     "GROUP_STANDINGS": "Класиране по групи",
+    "ELIMINATIONS": "Елиминации",
     "KNOCKOUT_BRACKET": "Нокаут схема",
     "ALL_RULES": "Правила",
     "CHAT": "Чат",
@@ -205,5 +206,11 @@
     "LOADING": "Зареждане на схема...",
     "EMPTY": "Няма налични мачове за нокаут фазата",
     "TBD": "Ще се определи"
+  },
+  "ELIMINATIONS": {
+    "GROUP_SIDE_LEFT": "Лява група",
+    "GROUP_SIDE_CENTER": "Централна група",
+    "GROUP_SIDE_RIGHT": "Дясна група",
+    "GROUP_ROUND": "Кръг"
   }
 }

@@ -37,7 +37,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly MATCHES_POLLING_INTERVAL_MS = Math.max(1000, environment.MATCHES_POLLING_INTERVAL_MS ?? 10000);
     private readonly GROUP_FILTER_STORAGE_KEY = 'all_predictions.selected_group_filter';
     private readonly TEAM_FILTER_STORAGE_KEY = 'all_predictions.selected_team_filter';
-    private readonly PHASE_FILTER_STORAGE_KEY = 'all_predictions.selected_phase_filter';
     private readonly FEATURES_NOTICE_MAIN_STORAGE_KEY = 'all_predictions.features_notice.main.v1.dismissed';
     private readonly FEATURES_NOTICE_PHASE_STORAGE_KEY = 'all_predictions.features_notice.phase.v1.dismissed';
     private readonly FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY = 'all_predictions.features_notice.groups_tab.v1.dismissed';
