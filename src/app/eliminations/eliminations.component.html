@@ -1,118 +1,82 @@
 <section class="eliminations">
-  <div class="eliminations__header">
-    <h2>{{ title }}</h2>
-    <p>Редактирай мачовете в списъка и дървото се обновява веднага.</p>
-  </div>
-
-  <div class="eliminations__layout">
-    <!-- <aside class="eliminations__editor">
-      <div class="eliminations__editor-actions">
-        <button type="button" (click)="addMatch()">+ Добави мач</button>
-        <button type="button" (click)="loadDummyMatches()">Dummy мачове</button>
-      </div>
-
-      <div class="eliminations__table-head">
-        <span>ID</span>
-        <span>Side</span>
-        <span>R</span>
-        <span>O</span>
-        <span>Дата</span>
-        <span>Home</span>
-        <span>Away</span>
-        <span>Parent</span>
-        <span></span>
-      </div>
-
-      <div class="eliminations__table-body">
-        <div class="eliminations__row" *ngFor="let match of editableMatches; trackBy: trackByEditable">
-          <input type="number" [(ngModel)]="match.id" (ngModelChange)="onMatchChange(match)" min="1" />
-
-          <select [(ngModel)]="match.side" (ngModelChange)="onMatchChange(match)">
-            <option value="left">left</option>
-            <option value="right">right</option>
-            <option value="center">center</option>
-          </select>
-
-          <input type="number" [(ngModel)]="match.round" (ngModelChange)="onMatchChange(match)" min="1" />
-          <input type="number" [(ngModel)]="match.order" (ngModelChange)="onMatchChange(match)" min="1" />
-
-          <input type="text" [(ngModel)]="match.dateTime" (ngModelChange)="onMatchChange(match)" />
-          <input type="text" [(ngModel)]="match.homeTeam" (ngModelChange)="onMatchChange(match)" />
-          <input type="text" [(ngModel)]="match.awayTeam" (ngModelChange)="onMatchChange(match)" />
-
-          <select [(ngModel)]="match.parentId" (ngModelChange)="onMatchChange(match)">
-            <option [ngValue]="null">none</option>
-            <option *ngFor="let parent of getParentOptions(match.id)" [ngValue]="parent.id">
-              #{{ parent.id }} {{ parent.side }} R{{ parent.round }}
-            </option>
-          </select>
-
-          <button type="button" class="danger" (click)="removeMatch(match.id)">x</button>
-        </div>
-      </div>
-    </aside>-->
-      
-
-    <div class="eliminations__surface">
-      <div class="eliminations__zoom-controls">
-        <button type="button" (click)="zoomOut()" aria-label="Zoom out">-</button>
-        <button type="button" (click)="resetZoom()" aria-label="Reset zoom">{{ zoomPercent }}%</button>
-        <button type="button" (click)="zoomIn()" aria-label="Zoom in">+</button>
-      </div>
-
-      <div
-        #zoomViewport
-        class="eliminations__viewport"
-        [class.is-panning]="isPanning"
-        (wheel)="onViewportWheel($event)"
-        (pointerdown)="onViewportPointerDown($event)"
-        (pointermove)="onViewportPointerMove($event)"
-        (pointerup)="onViewportPointerUp($event)"
-        (pointercancel)="onViewportPointerUp($event)"
+  <div class="eliminations__surface">
+    <div class="eliminations__group-toggles">
+      <button
+        type="button"
+        class="eliminations__toggle-reset"
+        (click)="clearCollapsedGroups()"
+        [disabled]="!isAnyGroupCollapsed"
       >
-        <div
-          #zoomContent
-          class="eliminations__board"
-          [style.width.px]="canvasWidth"
-          [style.height.px]="canvasHeight"
-          [style.transform]="boardTransform"
-        >
-          @for (label of groupLabels; track trackByGroupLabel($index, label)) {
+        Покажи всички
+      </button>
+
+      <div class="eliminations__toggle-chips">
+        @for (item of groupToggleItems; track item.key) {
+          <button
+            type="button"
+            class="eliminations__toggle-chip"
+            [class.is-collapsed]="isToggleItemCollapsed(item)"
+            (click)="onToggleItemClick(item)"
+          >
+            <span>{{ item.row1 | translate }}</span>
+            @if (item.row2) {
+              <span> · {{ item.row2 | translate }}</span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="eliminations__zoom-controls">
+      <button type="button" (click)="zoomOut()" aria-label="Zoom out">-</button>
+      <button type="button" (click)="resetZoom()" aria-label="Reset zoom">{{ zoomPercent }}%</button>
+      <button type="button" (click)="zoomIn()" aria-label="Zoom in">+</button>
+    </div>
+
+    <div #zoomViewport class="eliminations__viewport" [class.is-panning]="isPanning" (wheel)="onViewportWheel($event)"
+      (pointerdown)="onViewportPointerDown($event)" (pointermove)="onViewportPointerMove($event)"
+      (pointerup)="onViewportPointerUp($event)" (pointercancel)="onViewportPointerUp($event)">
+      <div #zoomContent class="eliminations__board" [style.width.px]="canvasWidth" [style.height.px]="canvasHeight"
+        [style.transform]="boardTransform">
+        @for (label of groupLabels; track trackByGroupLabel($index, label)) {
+          @if (!isGroupLabelCollapsed(label)) {
             <div
               class="eliminations__group-label"
               [style.left.px]="label.left"
               [style.top.px]="label.top"
+              role="button"
+              tabindex="0"
+              (click)="onGroupLabelClick(label)"
             >
-              {{ label.sideLabelKey | translate }} · {{ 'ELIMINATIONS.GROUP_ROUND' | translate }} {{ label.round }}
+              @if (getLabelFullName(label); as fullName) {
+                <p>
+                  <span>{{ fullName.row1 | translate }}</span>
+                  @if (fullName.row2) {
+                    <br>
+                    <span>{{ fullName.row2 | translate }}</span>
+                  }
+                </p>
+              }
             </div>
           }
+        }
 
-          <svg
-            class="eliminations__lines"
-            [attr.width]="canvasWidth"
-            [attr.height]="canvasHeight"
-            [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight"
-            preserveAspectRatio="xMinYMin meet"
-            aria-hidden="true"
-          >
-            @for (path of paths; track trackByPath($index, path)) {
-              <path [attr.d]="path.d"></path>
-            }
-          </svg>
-
-          @for (node of nodes; track trackByNode($index, node)) {
-            <article
-              class="eliminations__match"
-              [style.left.px]="node.left"
-              [style.top.px]="node.top"
-            >
-              <p class="eliminations__datetime">{{ node.dateTime }}</p>
-              <p class="eliminations__team">{{ node.homeTeam }}</p>
-              <p class="eliminations__team">{{ node.awayTeam }}</p>
-              <p class="eliminations__meta">#{{ node.id }} · {{ node.side }} · R{{ node.round }}</p>
-            </article>
+        <svg class="eliminations__lines" [attr.width]="canvasWidth" [attr.height]="canvasHeight"
+          [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight" preserveAspectRatio="xMinYMin meet"
+          aria-hidden="true">
+          @for (path of paths; track trackByPath($index, path)) {
+          <path [attr.d]="path.d"></path>
           }
-        </div>
+        </svg>
+
+        @for (node of nodes; track trackByNode($index, node)) {
+        <article class="eliminations__match" [style.left.px]="node.left" [style.top.px]="node.top">
+          <p class="eliminations__datetime">{{ node.dateTime }}</p>
+          <p class="eliminations__team">{{ node.homeTeam }}</p>
+          <p class="eliminations__team">{{ node.awayTeam }}</p>
+          <p class="eliminations__meta">#{{ node.id }} · {{ node.side }} · R{{ node.round }}</p>
+        </article>
+        }
       </div>
     </div>
   </div>

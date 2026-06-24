@@ -37,6 +37,13 @@ interface GroupLabel {
   sideLabelKey: string;
 }
 
+interface GroupToggleItem {
+  key: string;
+  row1: string;
+  row2?: string;
+  labelKeys: string[];
+}
+
 @Component({
   selector: 'app-eliminations',
   imports: [CommonModule, FormsModule, TranslateModule],
@@ -50,7 +57,6 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
 
-  readonly title = 'Елиминации';
   canvasWidth = 1400;
   canvasHeight = 760;
   zoomScale = 1;
@@ -69,6 +75,8 @@ export class EliminationsComponent implements AfterViewInit {
   private zoomAnimationFrameId: number | null = null;
   private readonly activePointers = new Map<number, { x: number; y: number }>();
   groupLabels: GroupLabel[] = [];
+  private readonly collapsedLabelKeys = new Set<string>();
+  private readonly collapsedLabelsStorageKey = 'eliminations-collapsed-labels';
 
   private readonly desktopNodeWidth = 220;
   private readonly desktopNodeHeight = 92;
@@ -92,6 +100,7 @@ export class EliminationsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
+    this.loadCollapsedGroups();
     this.loadDummyMatches();
   }
 
@@ -109,6 +118,78 @@ export class EliminationsComponent implements AfterViewInit {
 
   trackByGroupLabel(_: number, label: GroupLabel): string {
     return label.key;
+  }
+
+  onGroupLabelClick(label: GroupLabel): void {
+    this.toggleGroupVisibility(this.getLinkedLabelKeys(label.key));
+  }
+
+  isGroupLabelCollapsed(label: GroupLabel): boolean {
+    return this.collapsedLabelKeys.has(label.key);
+  }
+
+  get groupToggleItems(): GroupToggleItem[] {
+    const byKey = new Map<string, GroupToggleItem>();
+
+    this.groupLabels.forEach((label) => {
+      const side = label.key.split('-')[0] as 'left' | 'right' | 'center';
+      const full = this.getLabelFullName(label);
+      const groupKey = side === 'center' ? label.key : `round-${label.round}`;
+
+      if (!byKey.has(groupKey)) {
+        byKey.set(groupKey, {
+          key: groupKey,
+          row1: full.row1,
+          row2: full.row2,
+          labelKeys: [],
+        });
+      }
+
+      byKey.get(groupKey)?.labelKeys.push(label.key);
+    });
+
+    return Array.from(byKey.values()).sort((a, b) => {
+      const aRound = Number(a.key.replace('round-', ''));
+      const bRound = Number(b.key.replace('round-', ''));
+      const aIsRound = Number.isFinite(aRound);
+      const bIsRound = Number.isFinite(bRound);
+
+      if (aIsRound && bIsRound) {
+        return aRound - bRound;
+      }
+
+      if (aIsRound) {
+        return -1;
+      }
+
+      if (bIsRound) {
+        return 1;
+      }
+
+      return a.key.localeCompare(b.key);
+    });
+  }
+
+  onToggleItemClick(item: GroupToggleItem): void {
+    this.toggleGroupVisibility(item.labelKeys);
+  }
+
+  isToggleItemCollapsed(item: GroupToggleItem): boolean {
+    return item.labelKeys.every((key) => this.collapsedLabelKeys.has(key));
+  }
+
+  get isAnyGroupCollapsed(): boolean {
+    return this.collapsedLabelKeys.size > 0;
+  }
+
+  clearCollapsedGroups(): void {
+    if (!this.isAnyGroupCollapsed) {
+      return;
+    }
+
+    this.collapsedLabelKeys.clear();
+    this.persistCollapsedGroups();
+    this.rebuildBracket();
   }
 
   addMatch(): void {
@@ -165,15 +246,15 @@ export class EliminationsComponent implements AfterViewInit {
       { id: 206, side: 'left', round: 2, order: 6, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 303 },
       { id: 207, side: 'left', round: 2, order: 7, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 304 },
       { id: 208, side: 'left', round: 2, order: 8, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 304 },
-      
+
       { id: 301, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 401 },
       { id: 302, side: 'left', round: 3, order: 2, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 401 },
       { id: 303, side: 'left', round: 3, order: 3, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 402 },
       { id: 304, side: 'left', round: 3, order: 4, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 402 },
-     
+
       { id: 401, side: 'left', round: 4, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
       { id: 402, side: 'left', round: 4, order: 2, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
-      
+
 
 
 
@@ -204,12 +285,12 @@ export class EliminationsComponent implements AfterViewInit {
       { id: 607, side: 'right', round: 2, order: 7, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 704 },
       { id: 608, side: 'right', round: 2, order: 8, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 704 },
 
-      
+
       { id: 701, side: 'right', round: 3, order: 1, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 801 },
       { id: 702, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 801 },
       { id: 703, side: 'right', round: 3, order: 3, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 802 },
       { id: 704, side: 'right', round: 3, order: 4, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 802 },
-      
+
       { id: 801, side: 'right', round: 4, order: 1, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
       { id: 802, side: 'right', round: 4, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
 
@@ -464,13 +545,25 @@ export class EliminationsComponent implements AfterViewInit {
       return;
     }
 
+    const hiddenMatchIds = this.getHiddenMatchIds();
+    const visiblePositionedNodes = positionedNodes.filter((node) => !hiddenMatchIds.has(node.id));
+
+    if (visiblePositionedNodes.length === 0) {
+      this.nodes = [];
+      this.paths = [];
+      this.groupLabels = this.buildGroupLabels(positionedNodes, this.canvasPadding);
+      this.cdr.detectChanges();
+      requestAnimationFrame(() => this.fitToViewport());
+      return;
+    }
+
     const nodeWidth = this.getNodeWidth();
     const nodeHeight = this.getNodeHeight();
 
-    const minX = Math.min(...positionedNodes.map((node) => node.x - nodeWidth / 2));
-    const maxX = Math.max(...positionedNodes.map((node) => node.x + nodeWidth / 2));
-    const minY = Math.min(...positionedNodes.map((node) => node.y - nodeHeight / 2));
-    const maxY = Math.max(...positionedNodes.map((node) => node.y + nodeHeight / 2));
+    const minX = Math.min(...visiblePositionedNodes.map((node) => node.x - nodeWidth / 2));
+    const maxX = Math.max(...visiblePositionedNodes.map((node) => node.x + nodeWidth / 2));
+    const minY = Math.min(...visiblePositionedNodes.map((node) => node.y - nodeHeight / 2));
+    const maxY = Math.max(...visiblePositionedNodes.map((node) => node.y + nodeHeight / 2));
 
     const width = maxX - minX + this.canvasPadding * 2;
     const height = maxY - minY + this.canvasPadding * 2;
@@ -483,7 +576,8 @@ export class EliminationsComponent implements AfterViewInit {
 
     const centerMap = new Map<number, { x: number; y: number }>();
 
-    this.nodes = positionedNodes.map((node) => {
+    this.nodes = visiblePositionedNodes
+      .map((node) => {
       const cx = node.x + offsetX;
       const cy = node.y + offsetY;
       centerMap.set(node.id, { x: cx, y: cy });
@@ -493,12 +587,12 @@ export class EliminationsComponent implements AfterViewInit {
         left: cx - nodeWidth / 2,
         top: cy - nodeHeight / 2,
       };
-    });
+      });
 
     this.groupLabels = this.buildGroupLabels(positionedNodes, offsetX);
 
     this.paths = this.editableMatches
-      .filter((match) => match.parentId !== null)
+      .filter((match) => match.parentId !== null && !hiddenMatchIds.has(match.id) && !hiddenMatchIds.has(match.parentId as number))
       .map((match, index) => {
         const from = centerMap.get(match.id);
         const to = centerMap.get(match.parentId as number);
@@ -522,6 +616,73 @@ export class EliminationsComponent implements AfterViewInit {
     requestAnimationFrame(() => this.fitToViewport());
   }
 
+  private getHiddenMatchIds(): Set<number> {
+    const hiddenIds = new Set<number>();
+
+    this.editableMatches.forEach((match) => {
+      if (this.collapsedLabelKeys.has(`${match.side}-${match.round}`)) {
+        hiddenIds.add(match.id);
+      }
+    });
+
+    return hiddenIds;
+  }
+
+  private toggleGroupVisibility(labelKeys: string[]): void {
+    const shouldCollapse = labelKeys.some((key) => !this.collapsedLabelKeys.has(key));
+
+    labelKeys.forEach((key) => {
+      if (shouldCollapse) {
+        this.collapsedLabelKeys.add(key);
+      } else {
+        this.collapsedLabelKeys.delete(key);
+      }
+    });
+
+    this.persistCollapsedGroups();
+    this.rebuildBracket();
+  }
+
+  private getLinkedLabelKeys(labelKey: string): string[] {
+    const [side, round] = labelKey.split('-');
+
+    if (side === 'center') {
+      return [labelKey];
+    }
+
+    return this.groupLabels
+      .filter((label) => {
+        const [labelSide, labelRound] = label.key.split('-');
+        return labelRound === round && (labelSide === 'left' || labelSide === 'right');
+      })
+      .map((label) => label.key);
+  }
+
+  private loadCollapsedGroups(): void {
+    try {
+      const raw = localStorage.getItem(this.collapsedLabelsStorageKey);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as unknown;
+      if (!Array.isArray(parsed)) {
+        return;
+      }
+
+      this.collapsedLabelKeys.clear();
+      parsed
+        .filter((item): item is string => typeof item === 'string')
+        .forEach((item) => this.collapsedLabelKeys.add(item));
+    } catch {
+      this.collapsedLabelKeys.clear();
+    }
+  }
+
+  private persistCollapsedGroups(): void {
+    localStorage.setItem(this.collapsedLabelsStorageKey, JSON.stringify(Array.from(this.collapsedLabelKeys)));
+  }
+
   private buildGroupLabels(positionedNodes: PositionedMatch[], offsetX: number): GroupLabel[] {
     const groups = new Map<string, { x: number; round: number; side: EditableMatch['side'] }>();
     const labelTop = this.canvasPadding - this.groupLabelOffsetFromFirstRow;
@@ -542,6 +703,31 @@ export class EliminationsComponent implements AfterViewInit {
         sideLabelKey: this.getSideLabelKey(value.side),
       }))
       .sort((a, b) => a.left - b.left);
+  }
+
+  getLabelFullName(label: GroupLabel): { row1: string; row2?: string; } {
+    const side: 'left' | 'right' | 'center' = label.key.split('-')[0] as 'left' | 'right' | 'center';
+    const round = Number(label.key.split('-')[1]);
+
+    if (side === 'center') {
+      return {
+        row1: 'TABLE.FINAL_TITLE',
+        row2: 'TABLE.THIRD_PLACE_TITLE',
+      };
+    }
+
+    switch (round) {
+      case 1:
+        return { row1: 'TABLE.LAST_32_TITLE' };
+      case 2:
+        return { row1: 'TABLE.LAST_16_TITLE' };
+      case 3:
+        return { row1: 'TABLE.QUARTER_FINALS_TITLE' };
+      case 4:
+        return { row1: 'TABLE.SEMI_FINALS_TITLE' };
+      default:
+        return { row1: label.sideLabelKey };
+    }
   }
 
   private getSideLabelKey(side: EditableMatch['side']): string {
