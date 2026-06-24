@@ -31,7 +31,8 @@ export class HeaderComponent implements OnInit {
   tabs = [
     { route: '', key: 'ALL_PREDICTIONS', icon: 'pi pi-chart-line' },
     { route: 'group-standings', key: 'GROUP_STANDINGS', icon: 'pi pi-table' },
-    { route: 'knockout-bracket', key: 'KNOCKOUT_BRACKET', icon: 'pi pi-sitemap' },
+    { route: 'eliminations', key: 'ELIMINATIONS', icon: 'pi pi-sitemap' },
+    // { route: 'knockout-bracket', key: 'KNOCKOUT_BRACKET', icon: 'pi pi-sitemap' },
     { route: 'rules', key: 'ALL_RULES', icon: 'pi pi-paperclip' },
     { route: 'match-details', key: 'MATCH_DETAILS', icon: 'pi pi-info-circle', adminOnly: true },
     { route: 'live-monitor', key: 'LIVE_MONITOR', icon: 'pi pi-bolt', adminOnly: true },

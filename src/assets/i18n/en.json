@@ -3,6 +3,7 @@
   "ROUTE": {
     "ALL_PREDICTIONS": "All Predictions",
     "GROUP_STANDINGS": "Group Standings",
+    "ELIMINATIONS": "Eliminations",
     "KNOCKOUT_BRACKET": "Knockout Bracket",
     "ALL_RULES": "Rules",
     "CHAT": "Chat",
@@ -205,5 +206,11 @@
     "LOADING": "Loading bracket...",
     "EMPTY": "No knockout matches available",
     "TBD": "To be decided"
+  },
+  "ELIMINATIONS": {
+    "GROUP_SIDE_LEFT": "Left Group",
+    "GROUP_SIDE_CENTER": "Center Group",
+    "GROUP_SIDE_RIGHT": "Right Group",
+    "GROUP_ROUND": "Round"
   }
 }
