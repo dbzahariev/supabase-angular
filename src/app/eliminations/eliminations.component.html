@@ -7,7 +7,7 @@
         (click)="clearCollapsedGroups()"
         [disabled]="!isAnyGroupCollapsed"
       >
-        Покажи всички
+        {{ 'ELIMINATIONS.SHOW_ALL' | translate }}
       </button>
 
       <div class="eliminations__toggle-chips">
@@ -74,7 +74,7 @@
           <p class="eliminations__datetime">{{ node.dateTime }}</p>
           <p class="eliminations__team">{{ node.homeTeam }}</p>
           <p class="eliminations__team">{{ node.awayTeam }}</p>
-          <p class="eliminations__meta">#{{ node.id }} · M{{ node.mId }} · {{ node.side }} · R{{ node.round }}</p>
+          <p class="eliminations__meta">M{{ node.mId }}</p>
         </article>
         }
       </div>

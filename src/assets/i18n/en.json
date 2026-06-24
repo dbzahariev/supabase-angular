@@ -169,6 +169,7 @@
       "MESSAGE": "New: You can filter matches by clicking Group or Team (home/away). Your filters are saved automatically.",
       "PHASE_MESSAGE": "You can also click \"Group stage - Round 1\" (or another round) to filter the entire round.",
       "GROUPS_TAB_MESSAGE": "New groups tab added: \"Group Standings\".",
+      "ELIMINATIONS_TAB_MESSAGE": "Eliminations tab has been added and fixed.",
       "CLOSE_ARIA": "Close message",
       "CLOSE_TITLE": "Close"
     }
@@ -208,6 +209,7 @@
     "TBD": "To be decided"
   },
   "ELIMINATIONS": {
+    "SHOW_ALL": "Show all",
     "GROUP_SIDE_LEFT": "Left Group",
     "GROUP_SIDE_CENTER": "Center Group",
     "GROUP_SIDE_RIGHT": "Right Group",

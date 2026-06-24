@@ -40,6 +40,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly FEATURES_NOTICE_MAIN_STORAGE_KEY = 'all_predictions.features_notice.main.v1.dismissed';
     private readonly FEATURES_NOTICE_PHASE_STORAGE_KEY = 'all_predictions.features_notice.phase.v1.dismissed';
     private readonly FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY = 'all_predictions.features_notice.groups_tab.v1.dismissed';
+    private readonly FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY = 'all_predictions.features_notice.eliminations_tab.v1.dismissed';
     private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -66,6 +67,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     showFeaturesNoticeMain = false;
     showFeaturesNoticePhase = false;
     showFeaturesNoticeGroupsTab = false;
+    showFeaturesNoticeEliminationsTab = false;
 
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -441,6 +443,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.showFeaturesNoticeMain = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_MAIN_STORAGE_KEY);
         this.showFeaturesNoticePhase = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_PHASE_STORAGE_KEY);
         this.showFeaturesNoticeGroupsTab = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY);
+        this.showFeaturesNoticeEliminationsTab = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY);
 
         const themeState = this.themeService.buildThemeState();
         this.themeColor = themeState.themeColor;
@@ -1037,6 +1040,12 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     dismissFeaturesNoticeGroupsTab(): void {
         this.showFeaturesNoticeGroupsTab = false;
         localStorage.setItem(this.FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY, '1');
+        this.cdr.markForCheck();
+    }
+
+    dismissFeaturesNoticeEliminationsTab(): void {
+        this.showFeaturesNoticeEliminationsTab = false;
+        localStorage.setItem(this.FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY, '1');
         this.cdr.markForCheck();
     }
 
