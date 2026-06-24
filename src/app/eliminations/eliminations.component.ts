@@ -85,11 +85,11 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly desktopDefaultScale = 1.07;
   private readonly desktopFirstMatchLeftPadding = 3;
   private readonly desktopPanOffsetXRatio = 0.2297;
-  private readonly desktopPanOffsetYRatio = 0.5313;
+  private readonly desktopPanOffsetYRatio = 0.5583;
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
-  private readonly groupLabelOffsetFromFirstRow = 24;
+  private readonly groupLabelOffsetFromFirstRow = 34;
 
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
