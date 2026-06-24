@@ -89,6 +89,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
+  private readonly groupLabelOffsetFromFirstRow = 34;
 
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
@@ -489,6 +490,7 @@ export class EliminationsComponent implements AfterViewInit {
 
   private buildGroupLabels(positionedNodes: PositionedMatch[], offsetX: number): GroupLabel[] {
     const groups = new Map<string, { x: number; round: number; side: EditableMatch['side'] }>();
+    const labelTop = this.canvasPadding - this.groupLabelOffsetFromFirstRow;
 
     positionedNodes.forEach((node) => {
       const key = `${node.side}-${node.round}`;
@@ -501,7 +503,7 @@ export class EliminationsComponent implements AfterViewInit {
       .map(([key, value]) => ({
         key,
         left: value.x,
-        top: 42,
+        top: labelTop,
         round: value.round,
         sideLabelKey: this.getSideLabelKey(value.side),
       }))
