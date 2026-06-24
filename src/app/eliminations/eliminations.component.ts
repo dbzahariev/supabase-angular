@@ -1,10 +1,13 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SupabaseService } from '../supabase';
+import { Team } from '../all-predictions/all-predictions.models';
 
 interface EditableMatch {
   id: number;
+  mId?: number;
   side: 'left' | 'right' | 'center';
   round: number;
   order: number;
@@ -56,6 +59,7 @@ export class EliminationsComponent implements AfterViewInit {
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
+  private readonly translateService = inject(TranslateService);
 
   canvasWidth = 1400;
   canvasHeight = 760;
@@ -67,6 +71,8 @@ export class EliminationsComponent implements AfterViewInit {
   editableMatches: EditableMatch[] = [];
   nodes: RenderNode[] = [];
   paths: RenderPath[] = [];
+  
+  allTeams: Team[] = [];
 
   private panPointerId: number | null = null;
   private panLastX = 0;
@@ -98,10 +104,15 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly mobileViewportPaddingTop = 118;
   private readonly groupLabelOffsetFromFirstRow = 34;
 
+  
+  private supabaseService = inject(SupabaseService);
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
     this.loadCollapsedGroups();
-    this.loadDummyMatches();
+    this.supabaseService.getAllTeams().then((response) => {
+      this.allTeams = response.data || [];
+      this.loadDummyMatches();
+    })
   }
 
   trackByEditable(_: number, match: EditableMatch): number {
@@ -197,12 +208,13 @@ export class EliminationsComponent implements AfterViewInit {
 
     this.editableMatches.push({
       id: nextId,
+      mId: nextId,
       side: 'left',
       round: 1,
       order: this.getNextOrder('left', 1),
       dateTime: '--.-- - --:--',
-      homeTeam: 'Нов отбор A',
-      awayTeam: 'Нов отбор B',
+      homeTeam: 'РќРѕРІ РѕС‚Р±РѕСЂ A',
+      awayTeam: 'РќРѕРІ РѕС‚Р±РѕСЂ B',
       parentId: null,
     });
 
@@ -221,84 +233,117 @@ export class EliminationsComponent implements AfterViewInit {
 
   loadDummyMatches(): void {
     this.editableMatches = [
-      { id: 101, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 201 },
-      { id: 102, side: 'left', round: 1, order: 2, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 201 },
-      { id: 103, side: 'left', round: 1, order: 3, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 202 },
-      { id: 104, side: 'left', round: 1, order: 4, dateTime: '29.06 - 20:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 202 },
-      { id: 105, side: 'left', round: 1, order: 5, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 203 },
-      { id: 106, side: 'left', round: 1, order: 6, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 203 },
-      { id: 107, side: 'left', round: 1, order: 7, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 204 },
-      { id: 108, side: 'left', round: 1, order: 8, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 204 },
-      { id: 109, side: 'left', round: 1, order: 9, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 205 },
-      { id: 110, side: 'left', round: 1, order: 10, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 205 },
-      { id: 111, side: 'left', round: 1, order: 11, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 206 },
-      { id: 112, side: 'left', round: 1, order: 12, dateTime: '29.06 - 20:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 206 },
-      { id: 113, side: 'left', round: 1, order: 13, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 207 },
-      { id: 114, side: 'left', round: 1, order: 14, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 207 },
-      { id: 115, side: 'left', round: 1, order: 15, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 208 },
-      { id: 116, side: 'left', round: 1, order: 16, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 208 },
+      { id: 101, mId: 74, side: 'left', round: 1, order: 1, dateTime: '06/29/2026 23:30', homeTeam: 'Germany', awayTeam: '3ABCDF', parentId: 201 },
+      { id: 102, mId: 77, side: 'left', round: 1, order: 2, dateTime: '07/01/2026 00:00', homeTeam: '1I', awayTeam: '3CDFGH', parentId: 201 },
+      { id: 103, mId: 73, side: 'left', round: 1, order: 3, dateTime: '06/28/2026 22:00', homeTeam: '2A', awayTeam: '2B', parentId: 202 },
+      { id: 104, mId: 75, side: 'left', round: 1, order: 4, dateTime: '06/30/2026 04:00', homeTeam: '1F', awayTeam: '2C', parentId: 202 },
+      { id: 105, mId: 83, side: 'left', round: 1, order: 5, dateTime: '07/03/2026 02:00', homeTeam: '2K', awayTeam: '2L', parentId: 203 },
+      { id: 106, mId: 84, side: 'left', round: 1, order: 6, dateTime: '07/02/2026 22:00', homeTeam: '1H', awayTeam: '2J', parentId: 203 },
+      { id: 107, mId: 81, side: 'left', round: 1, order: 7, dateTime: '07/02/2026 03:00', homeTeam: 'United States', awayTeam: '3BEFIJ', parentId: 204 },
+      { id: 108, mId: 82, side: 'left', round: 1, order: 8, dateTime: '07/01/2026 23:00', homeTeam: '1G', awayTeam: '3AEHIJ', parentId: 204 },
 
-      { id: 201, side: 'left', round: 2, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 301 },
-      { id: 202, side: 'left', round: 2, order: 2, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 301 },
-      { id: 203, side: 'left', round: 2, order: 3, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
-      { id: 204, side: 'left', round: 2, order: 4, dateTime: '29.06 - 20:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
-      { id: 205, side: 'left', round: 2, order: 5, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 303 },
-      { id: 206, side: 'left', round: 2, order: 6, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 303 },
-      { id: 207, side: 'left', round: 2, order: 7, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 304 },
-      { id: 208, side: 'left', round: 2, order: 8, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 304 },
+      { id: 201, mId: 89, side: 'left', round: 2, order: 1, dateTime: '07/05/2026 00:00', homeTeam: 'W74', awayTeam: 'W77', parentId: 301 },
+      { id: 202, mId: 90, side: 'left', round: 2, order: 2, dateTime: '07/04/2026 20:00', homeTeam: 'W73', awayTeam: 'W75', parentId: 301 },
+      { id: 203, mId: 93, side: 'left', round: 2, order: 3, dateTime: '07/06/2026 22:00', homeTeam: 'W83', awayTeam: 'W84', parentId: 302 },
+      { id: 204, mId: 94, side: 'left', round: 2, order: 4, dateTime: '07/07/2026 03:00', homeTeam: 'W81', awayTeam: 'W82', parentId: 302 },
 
-      { id: 301, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 401 },
-      { id: 302, side: 'left', round: 3, order: 2, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 401 },
-      { id: 303, side: 'left', round: 3, order: 3, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 402 },
-      { id: 304, side: 'left', round: 3, order: 4, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 402 },
+      { id: 301, mId: 97, side: 'left', round: 3, order: 1, dateTime: '07/09/2026 23:00', homeTeam: 'W89', awayTeam: 'W90', parentId: 401 },
+      { id: 302, mId: 98, side: 'left', round: 3, order: 2, dateTime: '07/10/2026 22:00', homeTeam: 'W93', awayTeam: 'W94', parentId: 401 },
 
-      { id: 401, side: 'left', round: 4, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
-      { id: 402, side: 'left', round: 4, order: 2, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
+      { id: 401, mId: 101, side: 'left', round: 4, order: 1, dateTime: '07/14/2026 22:00', homeTeam: 'W97', awayTeam: 'W98', parentId: 901 },
 
+      { id: 501, mId: 76, side: 'right', round: 1, order: 1, dateTime: '06/29/2026 20:00', homeTeam: '1C', awayTeam: '2F', parentId: 601 },
+      { id: 502, mId: 78, side: 'right', round: 1, order: 2, dateTime: '06/30/2026 20:00', homeTeam: '2E', awayTeam: '2I', parentId: 601 },
+      { id: 503, mId: 79, side: 'right', round: 1, order: 3, dateTime: '07/01/2026 04:00', homeTeam: 'Mexico', awayTeam: '3CEFH', parentId: 602 },
+      { id: 504, mId: 80, side: 'right', round: 1, order: 4, dateTime: '07/01/2026 19:00', homeTeam: '1L', awayTeam: '3EHIJK', parentId: 602 },
+      { id: 505, mId: 86, side: 'right', round: 1, order: 5, dateTime: '07/04/2026 01:00', homeTeam: 'ARG', awayTeam: '2H', parentId: 603 },
+      { id: 506, mId: 88, side: 'right', round: 1, order: 6, dateTime: '07/03/2026 21:00', homeTeam: '2D', awayTeam: '2G', parentId: 603 },
+      { id: 507, mId: 85, side: 'right', round: 1, order: 7, dateTime: '07/03/2026 06:00', homeTeam: '1B', awayTeam: '3EFGIJ', parentId: 604 },
+      { id: 508, mId: 87, side: 'right', round: 1, order: 8, dateTime: '07/04/2026 04:30', homeTeam: '1K', awayTeam: '3DEIJL', parentId: 604 },
 
+      { id: 601, mId: 91, side: 'right', round: 2, order: 1, dateTime: '07/05/2026 23:00', homeTeam: 'W76', awayTeam: 'W78', parentId: 701 },
+      { id: 602, mId: 92, side: 'right', round: 2, order: 2, dateTime: '07/06/2026 03:00', homeTeam: 'W79', awayTeam: 'W80', parentId: 701 },
+      { id: 603, mId: 95, side: 'right', round: 2, order: 3, dateTime: '07/07/2026 19:00', homeTeam: 'W86', awayTeam: 'W88', parentId: 702 },
+      { id: 604, mId: 96, side: 'right', round: 2, order: 4, dateTime: '07/07/2026 23:00', homeTeam: 'W85', awayTeam: 'W87', parentId: 702 },
 
+      { id: 701, mId: 99, side: 'right', round: 3, order: 1, dateTime: '07/12/2026 00:00', homeTeam: 'W91', awayTeam: 'W92', parentId: 801 },
+      { id: 702, mId: 100, side: 'right', round: 3, order: 2, dateTime: '07/12/2026 04:00', homeTeam: 'W95', awayTeam: 'W96', parentId: 801 },
 
+      { id: 801, mId: 102, side: 'right', round: 4, order: 1, dateTime: '07/15/2026 22:00', homeTeam: 'W99', awayTeam: 'W100', parentId: 901 },
 
-      { id: 501, side: 'right', round: 1, order: 1, dateTime: '02.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 601 },
-      { id: 502, side: 'right', round: 1, order: 2, dateTime: '03.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 601 },
-      { id: 503, side: 'right', round: 1, order: 3, dateTime: '04.07 - 01:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 602 },
-      { id: 504, side: 'right', round: 1, order: 4, dateTime: '04.07 - 04:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 602 },
-      { id: 505, side: 'right', round: 1, order: 5, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 603 },
-      { id: 506, side: 'right', round: 1, order: 6, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 603 },
-      { id: 507, side: 'right', round: 1, order: 7, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 604 },
-      { id: 508, side: 'right', round: 1, order: 8, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 604 },
-      { id: 509, side: 'right', round: 1, order: 9, dateTime: '02.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 605 },
-      { id: 510, side: 'right', round: 1, order: 10, dateTime: '03.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 605 },
-      { id: 511, side: 'right', round: 1, order: 11, dateTime: '04.07 - 01:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 606 },
-      { id: 512, side: 'right', round: 1, order: 12, dateTime: '04.07 - 04:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 606 },
-      { id: 513, side: 'right', round: 1, order: 13, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 607 },
-      { id: 514, side: 'right', round: 1, order: 14, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 607 },
-      { id: 515, side: 'right', round: 1, order: 15, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 608 },
-      { id: 516, side: 'right', round: 1, order: 16, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 608 },
+      { id: 901, mId: 104, side: 'center', round: 1, order: 1, dateTime: '07/19/2026 22:00', homeTeam: 'W101', awayTeam: 'W102', parentId: null },
+      { id: 902, mId: 103, side: 'center', round: 1, order: 2, dateTime: '07/19/2026 00:00', homeTeam: 'RU101', awayTeam: 'RU102', parentId: null },
+    ].map((match) => {
+      const newMatch: EditableMatch = { ...match } as EditableMatch;
+      newMatch.dateTime = this.formatDateTime(newMatch.dateTime);
 
-      { id: 601, side: 'right', round: 2, order: 1, dateTime: '02.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 701 },
-      { id: 602, side: 'right', round: 2, order: 2, dateTime: '03.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 701 },
-      { id: 603, side: 'right', round: 2, order: 3, dateTime: '04.07 - 01:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
-      { id: 604, side: 'right', round: 2, order: 4, dateTime: '04.07 - 04:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
-      { id: 605, side: 'right', round: 2, order: 5, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 703 },
-      { id: 606, side: 'right', round: 2, order: 6, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 703 },
-      { id: 607, side: 'right', round: 2, order: 7, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 704 },
-      { id: 608, side: 'right', round: 2, order: 8, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 704 },
+      newMatch.homeTeam = this.getTeamName(newMatch).home;
+      newMatch.awayTeam = this.getTeamName(newMatch).away;
+      return newMatch;
+    });
 
-
-      { id: 701, side: 'right', round: 3, order: 1, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 801 },
-      { id: 702, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 801 },
-      { id: 703, side: 'right', round: 3, order: 3, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 802 },
-      { id: 704, side: 'right', round: 3, order: 4, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 802 },
-
-      { id: 801, side: 'right', round: 4, order: 1, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
-      { id: 802, side: 'right', round: 4, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
-
-      { id: 901, side: 'center', round: 1, order: 1, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
-      { id: 902, side: 'center', round: 1, order: 2, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
-    ];
 
     this.rebuildBracket();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTeamName(match: any): { home: string; away: string } {
+    const teamHome = this.allTeams.find((team: Team) => team.name_en === match?.homeTeam)
+    const teamAway = this.allTeams.find((team: Team) => team.name_en === match?.awayTeam)
+
+    const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
+    const teamHomeName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam : teamHome?.name_en) || ''
+    const teamAwayName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam : teamAway?.name_en) || ''
+    return {home: teamHomeName, away: teamAwayName};
+  }
+
+  private formatDateTime(value: string): string {
+    if (!value || value.trim().length === 0) {
+      return '--.-- - --:--';
+    }
+
+    const lang = this.translateService.currentLang || localStorage.getItem('lang') || 'bg';
+    const isBg = lang === 'bg';
+    const locale = isBg ? 'bg-BG' : 'en-GB';
+    const timeZone = isBg ? 'Europe/Sofia' : 'Europe/Brussels';
+
+    const parsed = this.parseDateTime(value);
+    if (!parsed) {
+      return value;
+    }
+
+    const dateLabel = parsed.toLocaleDateString(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      timeZone,
+    });
+    const timeLabel = parsed.toLocaleTimeString(locale, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone,
+    });
+
+    return `${dateLabel} - ${timeLabel}`;
+  }
+
+  private parseDateTime(value: string): Date | null {
+    const trimmed = value.trim();
+    const usFormat = /^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/;
+    const usMatch = trimmed.match(usFormat);
+
+    if (usMatch) {
+      const month = Number(usMatch[1]);
+      const day = Number(usMatch[2]);
+      const year = Number(usMatch[3]);
+      const hours = Number(usMatch[4]);
+      const minutes = Number(usMatch[5]);
+      const utcDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+      return Number.isNaN(utcDate.getTime()) ? null : utcDate;
+    }
+
+    const parsed = new Date(trimmed);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   onMatchChange(match: EditableMatch): void {
@@ -578,15 +623,15 @@ export class EliminationsComponent implements AfterViewInit {
 
     this.nodes = visiblePositionedNodes
       .map((node) => {
-      const cx = node.x + offsetX;
-      const cy = node.y + offsetY;
-      centerMap.set(node.id, { x: cx, y: cy });
+        const cx = node.x + offsetX;
+        const cy = node.y + offsetY;
+        centerMap.set(node.id, { x: cx, y: cy });
 
-      return {
-        ...node,
-        left: cx - nodeWidth / 2,
-        top: cy - nodeHeight / 2,
-      };
+        return {
+          ...node,
+          left: cx - nodeWidth / 2,
+          top: cy - nodeHeight / 2,
+        };
       });
 
     this.groupLabels = this.buildGroupLabels(positionedNodes, offsetX);
@@ -953,3 +998,4 @@ export class EliminationsComponent implements AfterViewInit {
     host.style.setProperty('--eliminations-available-height', `${available}px`);
   }
 }
+
