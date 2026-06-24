@@ -84,8 +84,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly zoomAnimationDurationMs = 140;
   private readonly desktopDefaultScale = 1.07;
   private readonly desktopFirstMatchLeftPadding = 3;
-  private readonly desktopPanOffsetXRatio = 0.2297;
-  private readonly desktopPanOffsetYRatio = 0.5583;
+  private readonly desktopViewportPaddingTop = 128;
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
@@ -629,13 +628,12 @@ export class EliminationsComponent implements AfterViewInit {
     }
 
     const scale = Math.max(this.minScale, Math.min(this.maxScale, this.desktopDefaultScale));
-    const centeredY = Math.round((availableHeight - this.canvasHeight * scale) / 2);
-    const adaptiveOffsetY = Math.round(availableHeight * this.desktopPanOffsetYRatio);
+    const minNodeTop = this.nodes.length > 0 ? Math.min(...this.nodes.map((node) => node.top)) : 0;
     const minNodeLeft = this.nodes.length > 0 ? Math.min(...this.nodes.map((node) => node.left)) : 0;
 
     this.zoomScale = scale;
     this.panX = Math.round(this.desktopFirstMatchLeftPadding - minNodeLeft * scale);
-    this.panY = centeredY + adaptiveOffsetY;
+    this.panY = Math.round(this.desktopViewportPaddingTop - minNodeTop * scale);
     this.cdr.markForCheck();
   }
 
