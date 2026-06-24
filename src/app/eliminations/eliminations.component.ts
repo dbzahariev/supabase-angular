@@ -66,6 +66,7 @@ export class EliminationsComponent implements AfterViewInit {
   private panLastX = 0;
   private panLastY = 0;
   private pinchLastDistance: number | null = null;
+  private zoomAnimationFrameId: number | null = null;
   private readonly activePointers = new Map<number, { x: number; y: number }>();
   groupLabels: GroupLabel[] = [];
 
@@ -79,7 +80,8 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly yGap = 160;
   private readonly minScale = 0.35;
   private readonly maxScale = 2.8;
-  private readonly zoomStep = 0.14;
+  private readonly zoomStep = 0.03;
+  private readonly zoomAnimationDurationMs = 140;
   private readonly desktopDefaultScale = 1.07;
   private readonly desktopFirstMatchLeftPadding = 3;
   private readonly desktopPanOffsetXRatio = 0.2297;
@@ -224,7 +226,7 @@ export class EliminationsComponent implements AfterViewInit {
     event.preventDefault();
 
     const delta = event.deltaY > 0 ? -this.zoomStep : this.zoomStep;
-    this.setZoom(this.zoomScale + delta);
+    this.setZoom(this.zoomScale + delta, true);
   }
 
   onViewportPointerDown(event: PointerEvent): void {
@@ -635,11 +637,50 @@ export class EliminationsComponent implements AfterViewInit {
     this.cdr.markForCheck();
   }
 
-  private setZoom(next: number): void {
+  private setZoom(next: number, smooth = true): void {
     const viewport = this.zoomViewport.nativeElement;
     const anchorX = viewport.clientWidth / 2;
     const anchorY = viewport.clientHeight / 2;
+
+    if (smooth) {
+      this.animateZoomAt(next, anchorX, anchorY);
+      return;
+    }
+
     this.setZoomAt(next, anchorX, anchorY);
+  }
+
+  private animateZoomAt(targetScale: number, anchorX: number, anchorY: number): void {
+    const startScale = this.zoomScale;
+    const clampedTarget = Math.max(this.minScale, Math.min(this.maxScale, Number(targetScale.toFixed(3))));
+
+    if (Math.abs(clampedTarget - startScale) < 0.001) {
+      return;
+    }
+
+    if (this.zoomAnimationFrameId !== null) {
+      cancelAnimationFrame(this.zoomAnimationFrameId);
+      this.zoomAnimationFrameId = null;
+    }
+
+    const startedAt = performance.now();
+
+    const tick = (now: number): void => {
+      const elapsed = now - startedAt;
+      const progress = Math.min(1, elapsed / this.zoomAnimationDurationMs);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = startScale + (clampedTarget - startScale) * eased;
+
+      this.setZoomAt(current, anchorX, anchorY);
+
+      if (progress < 1) {
+        this.zoomAnimationFrameId = requestAnimationFrame(tick);
+      } else {
+        this.zoomAnimationFrameId = null;
+      }
+    };
+
+    this.zoomAnimationFrameId = requestAnimationFrame(tick);
   }
 
   private setZoomAt(next: number, anchorX: number, anchorY: number): void {
