@@ -142,8 +142,8 @@ export class EliminationsComponent implements AfterViewInit {
       { id: 203, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
       { id: 204, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
      
-      { id: 301, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
-      { id: 302, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+      { id: 301, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
+      { id: 302, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
       
 
 
@@ -163,11 +163,11 @@ export class EliminationsComponent implements AfterViewInit {
       { id: 603, side: 'right', round: 2, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
       { id: 604, side: 'right', round: 2, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
       
-      { id: 701, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
-      { id: 702, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+      { id: 701, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
+      { id: 702, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 901 },
 
-
-      { id: 900, side: 'center', round: 1, order: 1, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
+      { id: 901, side: 'center', round: 1, order: 1, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
+      { id: 902, side: 'center', round: 1, order: 2, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
     ];
 
     this.rebuildBracket();
