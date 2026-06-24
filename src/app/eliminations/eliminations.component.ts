@@ -84,7 +84,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly zoomAnimationDurationMs = 140;
   private readonly desktopDefaultScale = 1.07;
   private readonly desktopFirstMatchLeftPadding = 3;
-  private readonly desktopViewportPaddingTop = 128;
+  private readonly desktopViewportPaddingTop = 90;
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
