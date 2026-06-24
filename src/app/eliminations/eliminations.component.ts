@@ -69,14 +69,24 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly activePointers = new Map<number, { x: number; y: number }>();
   groupLabels: GroupLabel[] = [];
 
-  private readonly nodeWidth = 220;
-  private readonly nodeHeight = 92;
+  private readonly desktopNodeWidth = 220;
+  private readonly desktopNodeHeight = 92;
+  private readonly mobileNodeWidth = 200;
+  private readonly mobileNodeHeight = 88;
+  private readonly mobileBreakpoint = 900;
   private readonly canvasPadding = 90;
   private readonly roundGap = 280;
   private readonly yGap = 160;
   private readonly minScale = 0.35;
   private readonly maxScale = 2.8;
   private readonly zoomStep = 0.14;
+  private readonly desktopDefaultScale = 1.07;
+  private readonly desktopFirstMatchLeftPadding = 3;
+  private readonly desktopPanOffsetXRatio = 0.2297;
+  private readonly desktopPanOffsetYRatio = 0.5313;
+  private readonly mobileDefaultScale = 0.91;
+  private readonly mobileViewportPaddingLeft = 26;
+  private readonly mobileViewportPaddingTop = 118;
 
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
@@ -417,10 +427,13 @@ export class EliminationsComponent implements AfterViewInit {
       return;
     }
 
-    const minX = Math.min(...positionedNodes.map((node) => node.x - this.nodeWidth / 2));
-    const maxX = Math.max(...positionedNodes.map((node) => node.x + this.nodeWidth / 2));
-    const minY = Math.min(...positionedNodes.map((node) => node.y - this.nodeHeight / 2));
-    const maxY = Math.max(...positionedNodes.map((node) => node.y + this.nodeHeight / 2));
+    const nodeWidth = this.getNodeWidth();
+    const nodeHeight = this.getNodeHeight();
+
+    const minX = Math.min(...positionedNodes.map((node) => node.x - nodeWidth / 2));
+    const maxX = Math.max(...positionedNodes.map((node) => node.x + nodeWidth / 2));
+    const minY = Math.min(...positionedNodes.map((node) => node.y - nodeHeight / 2));
+    const maxY = Math.max(...positionedNodes.map((node) => node.y + nodeHeight / 2));
 
     const width = maxX - minX + this.canvasPadding * 2;
     const height = maxY - minY + this.canvasPadding * 2;
@@ -440,8 +453,8 @@ export class EliminationsComponent implements AfterViewInit {
 
       return {
         ...node,
-        left: cx - this.nodeWidth / 2,
-        top: cy - this.nodeHeight / 2,
+        left: cx - nodeWidth / 2,
+        top: cy - nodeHeight / 2,
       };
     });
 
@@ -458,8 +471,8 @@ export class EliminationsComponent implements AfterViewInit {
         }
 
         const fromRight = from.x < to.x;
-        const fromX = fromRight ? from.x + this.nodeWidth / 2 : from.x - this.nodeWidth / 2;
-        const toX = fromRight ? to.x - this.nodeWidth / 2 : to.x + this.nodeWidth / 2;
+        const fromX = fromRight ? from.x + nodeWidth / 2 : from.x - nodeWidth / 2;
+        const toX = fromRight ? to.x - nodeWidth / 2 : to.x + nodeWidth / 2;
 
         return {
           key: `path-${match.id}-${match.parentId}-${index}`,
@@ -486,7 +499,7 @@ export class EliminationsComponent implements AfterViewInit {
       .map(([key, value]) => ({
         key,
         left: value.x,
-        top: 10,
+        top: 42,
         round: value.round,
         sideLabelKey: this.getSideLabelKey(value.side),
       }))
@@ -506,13 +519,28 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   private buildOrthogonalPath(fromX: number, fromY: number, toX: number, toY: number): string {
-    if (fromX === toX) {
-      const midY = (fromY + toY) / 2;
-      return `M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}`;
+    const snap = (value: number): number => Math.round(value) + 0.5;
+
+    const x1 = snap(fromX);
+    const y1 = snap(fromY);
+    const x2 = snap(toX);
+    const y2 = snap(toY);
+
+    if (x1 === x2) {
+      const midY = snap((y1 + y2) / 2);
+      return `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
     }
 
-    const midX = (fromX + toX) / 2;
-    return `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`;
+    const midX = snap((x1 + x2) / 2);
+    return `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+  }
+
+  private getNodeWidth(): number {
+    return window.innerWidth <= this.mobileBreakpoint ? this.mobileNodeWidth : this.desktopNodeWidth;
+  }
+
+  private getNodeHeight(): number {
+    return window.innerWidth <= this.mobileBreakpoint ? this.mobileNodeHeight : this.desktopNodeHeight;
   }
 
   private spreadY(count: number): number[] {
@@ -582,13 +610,28 @@ export class EliminationsComponent implements AfterViewInit {
       return;
     }
 
-    const scaleX = (availableWidth - 24) / this.canvasWidth;
-    const scaleY = (availableHeight - 24) / this.canvasHeight;
-    const scale = Math.max(this.minScale, Math.min(1, Math.min(scaleX, scaleY)));
+    const isMobileViewport = window.innerWidth <= this.mobileBreakpoint;
+
+    if (isMobileViewport && this.nodes.length > 0) {
+      const minNodeLeft = Math.min(...this.nodes.map((node) => node.left));
+      const minNodeTop = Math.min(...this.nodes.map((node) => node.top));
+      const mobileScale = Math.max(this.minScale, Math.min(this.maxScale, this.mobileDefaultScale));
+
+      this.zoomScale = mobileScale;
+      this.panX = Math.round(this.mobileViewportPaddingLeft - minNodeLeft * mobileScale);
+      this.panY = Math.round(this.mobileViewportPaddingTop - minNodeTop * mobileScale);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const scale = Math.max(this.minScale, Math.min(this.maxScale, this.desktopDefaultScale));
+    const centeredY = Math.round((availableHeight - this.canvasHeight * scale) / 2);
+    const adaptiveOffsetY = Math.round(availableHeight * this.desktopPanOffsetYRatio);
+    const minNodeLeft = this.nodes.length > 0 ? Math.min(...this.nodes.map((node) => node.left)) : 0;
 
     this.zoomScale = scale;
-    this.panX = Math.round((availableWidth - this.canvasWidth * scale) / 2);
-    this.panY = Math.round((availableHeight - this.canvasHeight * scale) / 2);
+    this.panX = Math.round(this.desktopFirstMatchLeftPadding - minNodeLeft * scale);
+    this.panY = centeredY + adaptiveOffsetY;
     this.cdr.markForCheck();
   }
 
