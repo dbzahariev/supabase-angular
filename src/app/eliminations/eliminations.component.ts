@@ -128,26 +128,46 @@ export class EliminationsComponent implements AfterViewInit {
 
   loadDummyMatches(): void {
     this.editableMatches = [
-      { id: 101, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 107 },
-      { id: 102, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 107 },
-      { id: 103, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 107 },
-      { id: 104, side: 'left', round: 1, order: 2, dateTime: '29.06 - 20:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 107 },
-      { id: 105, side: 'left', round: 1, order: 3, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 106 },
-      { id: 106, side: 'left', round: 1, order: 4, dateTime: '01.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 106 },
-      { id: 107, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
-      { id: 109, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
-      { id: 110, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
-      { id: 111, side: 'left', round: 2, order: 2, dateTime: '10.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
-      { id: 112, side: 'left', round: 2, order: 2, dateTime: '10.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
+      { id: 101, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 201 },
+      { id: 102, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 201 },
+      { id: 103, side: 'left', round: 1, order: 1, dateTime: '28.06 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 202 },
+      { id: 104, side: 'left', round: 1, order: 2, dateTime: '29.06 - 20:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 202 },
+      { id: 105, side: 'left', round: 1, order: 3, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 203 },
+      { id: 106, side: 'left', round: 1, order: 3, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 203 },
+      { id: 107, side: 'left', round: 1, order: 3, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 204 },
+      { id: 108, side: 'left', round: 1, order: 3, dateTime: '29.06 - 23:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 204 },
+      
+      { id: 201, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 301 },
+      { id: 202, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 301 },
+      { id: 203, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
+      { id: 204, side: 'left', round: 2, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 302 },
+     
+      { id: 301, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+      { id: 302, side: 'left', round: 3, order: 1, dateTime: '09.07 - 23:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+      
 
-      { id: 201, side: 'right', round: 1, order: 1, dateTime: '02.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 205 },
-      { id: 202, side: 'right', round: 1, order: 2, dateTime: '03.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 205 },
-      { id: 203, side: 'right', round: 1, order: 3, dateTime: '04.07 - 01:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 206 },
-      { id: 204, side: 'right', round: 1, order: 4, dateTime: '04.07 - 04:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 206 },
-      { id: 205, side: 'right', round: 2, order: 1, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
-      { id: 206, side: 'right', round: 2, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 500 },
 
-      { id: 500, side: 'center', round: 1, order: 1, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
+
+      { id: 501, side: 'right', round: 1, order: 1, dateTime: '02.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 601 },
+      { id: 502, side: 'right', round: 1, order: 1, dateTime: '03.07 - 02:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 601 },
+      { id: 503, side: 'right', round: 1, order: 2, dateTime: '04.07 - 01:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 602 },
+      { id: 504, side: 'right', round: 1, order: 2, dateTime: '04.07 - 04:30', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 602 },
+      { id: 505, side: 'right', round: 1, order: 3, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 603 },
+      { id: 506, side: 'right', round: 1, order: 3, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 603 },
+      { id: 507, side: 'right', round: 1, order: 4, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 604 },
+      { id: 508, side: 'right', round: 1, order: 4, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 604 },
+
+      
+      { id: 601, side: 'right', round: 2, order: 1, dateTime: '12.07 - 00:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 701 },
+      { id: 602, side: 'right', round: 2, order: 1, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 701 },
+      { id: 603, side: 'right', round: 2, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
+      { id: 604, side: 'right', round: 2, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 702 },
+      
+      { id: 701, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+      { id: 702, side: 'right', round: 3, order: 2, dateTime: '12.07 - 04:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: 900 },
+
+
+      { id: 900, side: 'center', round: 1, order: 1, dateTime: '19.07 - 22:00', homeTeam: 'Ще се определи', awayTeam: 'Ще се определи', parentId: null },
     ];
 
     this.rebuildBracket();
