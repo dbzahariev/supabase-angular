@@ -18,7 +18,7 @@ interface StandingTeam {
   crest?: string | null;
 }
 
-interface StandingRow {
+export interface StandingRow {
   position: number;
   team: StandingTeam;
   playedGames: number;
@@ -38,7 +38,7 @@ interface StandingGroup {
   table?: StandingRow[];
 }
 
-interface CompetitionStandingsResponse {
+export interface CompetitionStandingsResponse {
   competition?: {
     name?: string;
     code?: string;

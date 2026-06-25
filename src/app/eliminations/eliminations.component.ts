@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { Match, Team } from '../all-predictions/all-predictions.models';
+import { CompetitionStandingsResponse, StandingRow } from '../group-standings/group-standings.component';
 
 interface EditableMatch {
   id: number;
@@ -74,6 +75,7 @@ export class EliminationsComponent implements AfterViewInit {
 
   allTeams: Team[] = [];
   allMatches: Match[] = [];
+  groupedStandings: { group: string; rows: StandingRow[] }[] = [];
 
   private panPointerId: number | null = null;
   private panLastX = 0;
@@ -84,6 +86,7 @@ export class EliminationsComponent implements AfterViewInit {
   groupLabels: GroupLabel[] = [];
   private readonly collapsedLabelKeys = new Set<string>();
   private readonly collapsedLabelsStorageKey = 'eliminations-collapsed-labels';
+
 
   private readonly desktopNodeWidth = 220;
   private readonly desktopNodeHeight = 92;
@@ -97,9 +100,9 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly maxScale = 2.8;
   private readonly zoomStep = 0.03;
   private readonly zoomAnimationDurationMs = 140;
-  private readonly desktopDefaultScale = 1.07;
-  private readonly desktopFirstMatchLeftPadding = 3;
-  private readonly desktopViewportPaddingTop = 90;
+  private readonly desktopDefaultScale = 0.53;
+  private readonly desktopFirstMatchLeftPadding = 80;
+  private readonly desktopViewportPaddingTop = 65;
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
@@ -116,12 +119,33 @@ export class EliminationsComponent implements AfterViewInit {
         this.allMatches = data as Match[]
 
         this.allMatches.map((dbMatch, index) => {
-          let newMatch = dbMatch
+          const newMatch = dbMatch
           const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
           newMatch.myId = myId
+          newMatch.lastUpdated = ''
           return newMatch
         })
-        this.loadDummyMatches();
+
+
+        this.supabaseService
+          .getCompetitionStandingsFromBE()
+          .subscribe((response) => {
+            const data = response as CompetitionStandingsResponse;
+            const standings = Array.isArray(data.standings) ? data.standings : [];
+
+            this.groupedStandings = standings
+              .filter((standing) => (standing.group ?? '').length > 0)
+              .map((standing) => ({
+                group: standing.group ?? '',
+                rows: standing.table ?? [],
+              }))
+              .sort((left, right) => left.group.localeCompare(right.group));
+
+
+              
+            this.loadDummyMatches();
+          });
+
       });
     })
   }
@@ -257,28 +281,20 @@ export class EliminationsComponent implements AfterViewInit {
       { id: 901, mId: 104, side: 'center', round: 1, order: 1, dateTime: '07/19/2026 22:00', homeTeam: 'W101', awayTeam: 'W102', parentId: null },
       { id: 902, mId: 103, side: 'center', round: 1, order: 2, dateTime: '07/19/2026 00:00', homeTeam: 'RU101', awayTeam: 'RU102', parentId: null },
     ]
-      .map(match => {
-        let newMatch = { ...match } as EditableMatch
-
-        let matchId = Number("2026" + (newMatch.mId < 9 ? "0" + (newMatch.mId + 1) : (newMatch.mId + 1).toString()));
-
-        let matchFromDb = this.allMatches.find(dbMatch => dbMatch.myId === matchId)
-        if (matchFromDb?.homeTeam.name) {
-          newMatch.homeTeam = matchFromDb?.homeTeam.name
-        }
-
-        if (matchFromDb?.awayTeam.name) {
-          newMatch.awayTeam = matchFromDb?.awayTeam.name
-        }
-
-        return newMatch
-      })
       .map((match) => {
-        const newMatch: EditableMatch = { ...match } as EditableMatch;
-        newMatch.dateTime = this.formatDateTime(newMatch.dateTime);
 
-        newMatch.homeTeam = this.getTeamName(newMatch).home;
-        newMatch.awayTeam = this.getTeamName(newMatch).away;
+
+        const newMatch = { ...match } as EditableMatch;
+        const suffix = (newMatch.mId + 1).toString().padStart(2, '0');
+        const matchId = Number(`2026${suffix}`);
+
+        const matchFromDb1 = this.allMatches.find((dbMatch) => dbMatch.myId === matchId);
+
+        const matchFromDb = matchFromDb1
+        newMatch.dateTime = this.formatDateTimeFromUtc(matchFromDb?.utcDate)
+
+        newMatch.homeTeam =this.getTeamByStand(newMatch).homeTeam
+        newMatch.awayTeam =this.getTeamByStand(newMatch).awayTeam
 
         return newMatch;
       });
@@ -287,8 +303,33 @@ export class EliminationsComponent implements AfterViewInit {
     this.rebuildBracket();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getTeamName(match: any): { home: string; away: string } {
+  getTeamByStand(newMatch: EditableMatch){
+    const homeTeamDetails = this.getTeamFromMatch(newMatch.homeTeam)
+    const awayTeamDetails = this.getTeamFromMatch(newMatch.awayTeam)
+
+    const homeTeamDetails2 = this.getTeamName({ homeTeam: homeTeamDetails, awayTeam: awayTeamDetails }).home
+    const awayTeamDetails2 = this.getTeamName({ homeTeam: homeTeamDetails, awayTeam: awayTeamDetails }).away
+    return { homeTeam: homeTeamDetails2, awayTeam: awayTeamDetails2 }
+  }
+
+  getTeamFromMatch(teamName: string) {
+    const teamNameArr = teamName.split('')
+    if (teamNameArr.length > 2) {
+      return teamName
+    }
+    const teamGroupPosition = Number(teamNameArr[0])
+    const teamGroupAbrv = teamNameArr[1]
+    const matchGroup = this.groupedStandings.find((group => group.group === `Group ${teamGroupAbrv}`))
+    const matchGroupRows = matchGroup?.rows || []
+    const kkk = matchGroupRows.find((row => row.position === teamGroupPosition && (row.points >= 6 || row.playedGames === 3)))
+    if (kkk === undefined) {
+      return teamName
+    }
+    const selectedTeamRow = kkk?.team.name || teamName
+    return selectedTeamRow
+  }
+
+  getTeamName(match: { homeTeam: string; awayTeam: string }): { home: string; away: string } {
     const teamHome = this.allTeams.find((team: Team) => team.name_en === match?.homeTeam)
     const teamAway = this.allTeams.find((team: Team) => team.name_en === match?.awayTeam)
 
@@ -296,6 +337,37 @@ export class EliminationsComponent implements AfterViewInit {
     const teamHomeName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam : teamHome?.name_en) || ''
     const teamAwayName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam : teamAway?.name_en) || ''
     return { home: teamHomeName, away: teamAwayName };
+  }
+
+  formatDateTimeFromUtc(utcDate: string | undefined): string {
+    if (!utcDate || utcDate.trim().length === 0) {
+      return '--.-- - --:--';
+    }
+
+    const isLngBg = this.getLng() === 'bg-BG';
+    const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
+    const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
+
+    const utcDateFormat = new Date(utcDate);
+    const match_day = this.formatDateToStandard(utcDateFormat, curLng, timeZone);
+    const match_time = this.formatTimeToHHmm(utcDateFormat, curLng, timeZone);
+
+    return `${match_day} - ${match_time}`;
+  }
+
+  getLng(): 'bg-BG' | 'en-US' {
+    const lang = localStorage.getItem('lang') || 'bg';
+    return lang === 'bg' ? 'bg-BG' : 'en-US';
+  }
+
+  formatDateToStandard(date: Date | null, locale = 'en-GB', timeZone?: string): string {
+    if (!date) return '';
+    return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', timeZone });
+  }
+
+  formatTimeToHHmm(date: Date | null, locale = 'en-GB', timeZone?: string): string {
+    if (!date) return '00:00';
+    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone });
   }
 
   private formatDateTime(value: string): string {
