@@ -90,7 +90,7 @@ export class AllPredictionsMapperService {
             const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
             const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
             const cycleLabel = this.getCycleLabelByDate(new Date(match.utcDate));
-            
+
             return {
                 row_index: index + 1,
                 match_day: this.formatDateToStandard(utcDate, curLng, timeZone),
@@ -138,10 +138,14 @@ export class AllPredictionsMapperService {
         const selectedPredict = predictions.find(pred => pred.matches.id === bet.id && pred.users.id === user.id);
         const selectedUserId = this.selectedUserService.getSelectedUserId() ?? -1;
 
+        // Finish match without predict
+        if (selectedPredict === undefined && columnIndex === 3 && bet.matchStatus === "FINISHED") {
+            return "0"
+        }
+
         if (selectedPredict === undefined) {
             return '';
         }
-
         if (columnIndex === 0) {
             let homeMatchPredictionValue = selectedPredict.home_ft === -1 ? '' : selectedPredict.home_ft.toString();
             if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
@@ -180,7 +184,7 @@ export class AllPredictionsMapperService {
                 }
             }
 
-             if (bet.matchStatus === 'TIMED') {
+            if (bet.matchStatus === 'TIMED') {
                 newResult = ""
             }
 
