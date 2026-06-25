@@ -580,10 +580,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         return this.mapperService.getLng();
     }
 
-    getCycleLabelFromBet(bet: Bet): string {
-        return this.mapperService.getCycleLabelFromBet(bet);
-    }
-
     getUserPredictionValue(user: User, bet: Bet, columnIndex: number, hidden: boolean): string {
         return this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, hidden);
     }

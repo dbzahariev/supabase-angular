@@ -214,34 +214,6 @@ export class EliminationsComponent implements AfterViewInit {
     this.rebuildBracket();
   }
 
-  addMatch(): void {
-    const nextId = this.getNextId();
-
-    this.editableMatches.push({
-      id: nextId,
-      mId: nextId,
-      side: 'left',
-      round: 1,
-      order: this.getNextOrder('left', 1),
-      dateTime: '--.-- - --:--',
-      homeTeam: 'РќРѕРІ РѕС‚Р±РѕСЂ A',
-      awayTeam: 'РќРѕРІ РѕС‚Р±РѕСЂ B',
-      parentId: null,
-    });
-
-    this.rebuildBracket();
-  }
-
-  removeMatch(matchId: number): void {
-    this.editableMatches = this.editableMatches.filter((item) => item.id !== matchId);
-    this.editableMatches = this.editableMatches.map((item) => ({
-      ...item,
-      parentId: item.parentId === matchId ? null : item.parentId,
-    }));
-
-    this.rebuildBracket();
-  }
-
   loadDummyMatches(): void {
     this.editableMatches = [
       { id: 101, mId: 74, side: 'left', round: 1, order: 1, dateTime: '06/29/2026 23:30', homeTeam: '1E', awayTeam: '3ABCDF', parentId: 201 },
@@ -373,17 +345,6 @@ export class EliminationsComponent implements AfterViewInit {
 
     const parsed = new Date(trimmed);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
-
-  onMatchChange(match: EditableMatch): void {
-    match.round = Math.max(1, Number(match.round) || 1);
-    match.order = Math.max(1, Number(match.order) || 1);
-
-    if (match.parentId === match.id || this.isDescendant(match.parentId, match.id)) {
-      match.parentId = null;
-    }
-
-    this.rebuildBracket();
   }
 
   getParentOptions(currentId: number): EditableMatch[] {
@@ -847,48 +808,6 @@ export class EliminationsComponent implements AfterViewInit {
 
   private avg(values: number[]): number {
     return values.reduce((sum, value) => sum + value, 0) / values.length;
-  }
-
-  private getNextId(): number {
-    if (this.editableMatches.length === 0) {
-      return 1;
-    }
-
-    return Math.max(...this.editableMatches.map((item) => item.id)) + 1;
-  }
-
-  private getNextOrder(side: EditableMatch['side'], round: number): number {
-    const sameBucket = this.editableMatches.filter((item) => item.side === side && item.round === round);
-    if (sameBucket.length === 0) {
-      return 1;
-    }
-
-    return Math.max(...sameBucket.map((item) => item.order)) + 1;
-  }
-
-  private isDescendant(parentCandidateId: number | null, childId: number): boolean {
-    if (parentCandidateId === null) {
-      return false;
-    }
-
-    let currentParentId: number | null = parentCandidateId;
-    const guard = new Set<number>();
-
-    while (currentParentId !== null) {
-      if (currentParentId === childId) {
-        return true;
-      }
-
-      if (guard.has(currentParentId)) {
-        return true;
-      }
-
-      guard.add(currentParentId);
-      const parent = this.editableMatches.find((item) => item.id === currentParentId);
-      currentParentId = parent?.parentId ?? null;
-    }
-
-    return false;
   }
 
   private isInteractiveTarget(target: EventTarget | null): boolean {
