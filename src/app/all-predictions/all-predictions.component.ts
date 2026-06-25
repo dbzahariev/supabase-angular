@@ -498,13 +498,13 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         setTimeout(() => this.bindGroupHeaderScrollSync(), 0);
     }
 
-    getAllMatches(): void {
+    private getAllMatches(): void {
         this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
             this.refreshMatchesWithLiveOverlay(data);
         });
     }
 
-    fixAllMatches(data: MatchesApiResponse): void {
+    private fixAllMatches(data: MatchesApiResponse): void {
         if (!data || data.length === 0) {
             this.allMatches = [];
         } else {
@@ -555,7 +555,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    subscribeToTestPredictions(): void {
+    private subscribeToTestPredictions(): void {
         if (this.predictionsChannel) {
             return;
         }
@@ -572,28 +572,16 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }, this.MATCHES_POLLING_INTERVAL_MS);
     }
 
-    getNameFromUser(user: User): string {
+    public getNameFromUser(user: User): string {
         return this.mapperService.getNameFromUser(user);
     }
 
-    getLng(): 'bg-BG' | 'en-US' {
-        return this.mapperService.getLng();
-    }
-
-    getUserPredictionValue(user: User, bet: Bet, columnIndex: number, hidden: boolean): string {
+    public getUserPredictionValue(user: User, bet: Bet, columnIndex: number, hidden: boolean): string {
         return this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, hidden);
     }
 
-    getColName(idx: number): string {
+    public getColName(idx: number): string {
         return this.mapperService.getColName(idx);
-    }
-
-    returnTranslateFromWin(winner: string | null): string {
-        return this.mapperService.returnTranslateFromWin(winner);
-    }
-
-    getProductResultRow(bet: Bet, index: number): string {
-        return this.mapperService.getProductResultRow(bet, index);
     }
 
     fixPredictions(): void {
@@ -613,11 +601,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         })
     }
 
-    getPointFromMatch(bet: Match | undefined, prediction: Prediction): number {
-        return this.pointsService.calculatePredictionPoints(bet, prediction);
-    }
-
-    fixTeams(): void {
+    private fixTeams(): void {
         this.supabaseService.getAllTeams().then((response) => {
             this.allTeams = response.data || [];
             this.fixBetToShow();
