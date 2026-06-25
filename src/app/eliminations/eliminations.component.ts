@@ -3,11 +3,11 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
-import { Team } from '../all-predictions/all-predictions.models';
+import { Match, Team } from '../all-predictions/all-predictions.models';
 
 interface EditableMatch {
   id: number;
-  mId?: number;
+  mId: number;
   side: 'left' | 'right' | 'center';
   round: number;
   order: number;
@@ -71,8 +71,9 @@ export class EliminationsComponent implements AfterViewInit {
   editableMatches: EditableMatch[] = [];
   nodes: RenderNode[] = [];
   paths: RenderPath[] = [];
-  
+
   allTeams: Team[] = [];
+  allMatches: Match[] = [];
 
   private panPointerId: number | null = null;
   private panLastX = 0;
@@ -104,14 +105,24 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly mobileViewportPaddingTop = 118;
   private readonly groupLabelOffsetFromFirstRow = 34;
 
-  
+
   private supabaseService = inject(SupabaseService);
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
     this.loadCollapsedGroups();
     this.supabaseService.getAllTeams().then((response) => {
       this.allTeams = response.data || [];
-      this.loadDummyMatches();
+      this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
+        this.allMatches = data as Match[]
+
+        this.allMatches.map((dbMatch, index) => {
+          let newMatch = dbMatch
+          const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
+          newMatch.myId = myId
+          return newMatch
+        })
+        this.loadDummyMatches();
+      });
     })
   }
 
@@ -233,13 +244,13 @@ export class EliminationsComponent implements AfterViewInit {
 
   loadDummyMatches(): void {
     this.editableMatches = [
-      { id: 101, mId: 74, side: 'left', round: 1, order: 1, dateTime: '06/29/2026 23:30', homeTeam: 'Germany', awayTeam: '3ABCDF', parentId: 201 },
+      { id: 101, mId: 74, side: 'left', round: 1, order: 1, dateTime: '06/29/2026 23:30', homeTeam: '1E', awayTeam: '3ABCDF', parentId: 201 },
       { id: 102, mId: 77, side: 'left', round: 1, order: 2, dateTime: '07/01/2026 00:00', homeTeam: '1I', awayTeam: '3CDFGH', parentId: 201 },
       { id: 103, mId: 73, side: 'left', round: 1, order: 3, dateTime: '06/28/2026 22:00', homeTeam: '2A', awayTeam: '2B', parentId: 202 },
       { id: 104, mId: 75, side: 'left', round: 1, order: 4, dateTime: '06/30/2026 04:00', homeTeam: '1F', awayTeam: '2C', parentId: 202 },
       { id: 105, mId: 83, side: 'left', round: 1, order: 5, dateTime: '07/03/2026 02:00', homeTeam: '2K', awayTeam: '2L', parentId: 203 },
       { id: 106, mId: 84, side: 'left', round: 1, order: 6, dateTime: '07/02/2026 22:00', homeTeam: '1H', awayTeam: '2J', parentId: 203 },
-      { id: 107, mId: 81, side: 'left', round: 1, order: 7, dateTime: '07/02/2026 03:00', homeTeam: 'United States', awayTeam: '3BEFIJ', parentId: 204 },
+      { id: 107, mId: 81, side: 'left', round: 1, order: 7, dateTime: '07/02/2026 03:00', homeTeam: '1D', awayTeam: '3BEFIJ', parentId: 204 },
       { id: 108, mId: 82, side: 'left', round: 1, order: 8, dateTime: '07/01/2026 23:00', homeTeam: '1G', awayTeam: '3AEHIJ', parentId: 204 },
 
       { id: 201, mId: 89, side: 'left', round: 2, order: 1, dateTime: '07/05/2026 00:00', homeTeam: 'W74', awayTeam: 'W77', parentId: 301 },
@@ -254,9 +265,9 @@ export class EliminationsComponent implements AfterViewInit {
 
       { id: 501, mId: 76, side: 'right', round: 1, order: 1, dateTime: '06/29/2026 20:00', homeTeam: '1C', awayTeam: '2F', parentId: 601 },
       { id: 502, mId: 78, side: 'right', round: 1, order: 2, dateTime: '06/30/2026 20:00', homeTeam: '2E', awayTeam: '2I', parentId: 601 },
-      { id: 503, mId: 79, side: 'right', round: 1, order: 3, dateTime: '07/01/2026 04:00', homeTeam: 'Mexico', awayTeam: '3CEFH', parentId: 602 },
+      { id: 503, mId: 79, side: 'right', round: 1, order: 3, dateTime: '07/01/2026 04:00', homeTeam: '1A', awayTeam: '3CEFH', parentId: 602 },
       { id: 504, mId: 80, side: 'right', round: 1, order: 4, dateTime: '07/01/2026 19:00', homeTeam: '1L', awayTeam: '3EHIJK', parentId: 602 },
-      { id: 505, mId: 86, side: 'right', round: 1, order: 5, dateTime: '07/04/2026 01:00', homeTeam: 'ARG', awayTeam: '2H', parentId: 603 },
+      { id: 505, mId: 86, side: 'right', round: 1, order: 5, dateTime: '07/04/2026 01:00', homeTeam: '1J', awayTeam: '2H', parentId: 603 },
       { id: 506, mId: 88, side: 'right', round: 1, order: 6, dateTime: '07/03/2026 21:00', homeTeam: '2D', awayTeam: '2G', parentId: 603 },
       { id: 507, mId: 85, side: 'right', round: 1, order: 7, dateTime: '07/03/2026 06:00', homeTeam: '1B', awayTeam: '3EFGIJ', parentId: 604 },
       { id: 508, mId: 87, side: 'right', round: 1, order: 8, dateTime: '07/04/2026 04:30', homeTeam: '1K', awayTeam: '3DEIJL', parentId: 604 },
@@ -273,14 +284,32 @@ export class EliminationsComponent implements AfterViewInit {
 
       { id: 901, mId: 104, side: 'center', round: 1, order: 1, dateTime: '07/19/2026 22:00', homeTeam: 'W101', awayTeam: 'W102', parentId: null },
       { id: 902, mId: 103, side: 'center', round: 1, order: 2, dateTime: '07/19/2026 00:00', homeTeam: 'RU101', awayTeam: 'RU102', parentId: null },
-    ].map((match) => {
-      const newMatch: EditableMatch = { ...match } as EditableMatch;
-      newMatch.dateTime = this.formatDateTime(newMatch.dateTime);
+    ]
+      .map(match => {
+        let newMatch = { ...match } as EditableMatch
 
-      newMatch.homeTeam = this.getTeamName(newMatch).home;
-      newMatch.awayTeam = this.getTeamName(newMatch).away;
-      return newMatch;
-    });
+        let matchId = Number("2026" + (newMatch.mId < 9 ? "0" + (newMatch.mId + 1) : (newMatch.mId + 1).toString()));
+
+        let matchFromDb = this.allMatches.find(dbMatch => dbMatch.myId === matchId)
+        if (matchFromDb?.homeTeam.name) {
+          newMatch.homeTeam = matchFromDb?.homeTeam.name
+        }
+
+        if (matchFromDb?.awayTeam.name) {
+          newMatch.awayTeam = matchFromDb?.awayTeam.name
+        }
+
+        return newMatch
+      })
+      .map((match) => {
+        const newMatch: EditableMatch = { ...match } as EditableMatch;
+        newMatch.dateTime = this.formatDateTime(newMatch.dateTime);
+
+        newMatch.homeTeam = this.getTeamName(newMatch).home;
+        newMatch.awayTeam = this.getTeamName(newMatch).away;
+
+        return newMatch;
+      });
 
 
     this.rebuildBracket();
@@ -294,7 +323,7 @@ export class EliminationsComponent implements AfterViewInit {
     const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
     const teamHomeName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam : teamHome?.name_en) || ''
     const teamAwayName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam : teamAway?.name_en) || ''
-    return {home: teamHomeName, away: teamAwayName};
+    return { home: teamHomeName, away: teamAwayName };
   }
 
   private formatDateTime(value: string): string {
