@@ -5,10 +5,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '../supabase';
 import { Match, Team } from '../all-predictions/all-predictions.models';
 import { CompetitionStandingsResponse, StandingRow } from '../group-standings/group-standings.component';
+import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
 
 interface EditableMatch {
+  utcDate: string;
   id: number;
   mId: number;
+  fifaId: number;
   side: 'left' | 'right' | 'center';
   round: number;
   order: number;
@@ -61,6 +64,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly translateService = inject(TranslateService);
+  private readonly fifaCalendarService = inject(FifaCalendarService);
 
   canvasWidth = 1400;
   canvasHeight = 760;
@@ -76,6 +80,7 @@ export class EliminationsComponent implements AfterViewInit {
   allTeams: Team[] = [];
   allMatches: Match[] = [];
   groupedStandings: { group: string; rows: StandingRow[] }[] = [];
+  responseFromFifa: FifaCalendarMatch[] = [];
 
   private panPointerId: number | null = null;
   private panLastX = 0;
@@ -113,41 +118,44 @@ export class EliminationsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
     this.loadCollapsedGroups();
-    this.supabaseService.getAllTeams().then((response) => {
-      this.allTeams = response.data || [];
-      this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
-        this.allMatches = data as Match[]
+    this.fifaCalendarService.getSeasonMatchesResult()
+      .subscribe((responseFromFifa) => {
+        this.responseFromFifa = responseFromFifa;
 
-        this.allMatches.map((dbMatch, index) => {
-          const newMatch = dbMatch
-          const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
-          newMatch.myId = myId
-          newMatch.lastUpdated = ''
-          return newMatch
-        })
+        this.supabaseService.getAllTeams().then((response) => {
+          this.allTeams = response.data || [];
+          this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
+            this.allMatches = data as Match[]
 
-
-        this.supabaseService
-          .getCompetitionStandingsFromBE()
-          .subscribe((response) => {
-            const data = response as CompetitionStandingsResponse;
-            const standings = Array.isArray(data.standings) ? data.standings : [];
-
-            this.groupedStandings = standings
-              .filter((standing) => (standing.group ?? '').length > 0)
-              .map((standing) => ({
-                group: standing.group ?? '',
-                rows: standing.table ?? [],
-              }))
-              .sort((left, right) => left.group.localeCompare(right.group));
+            this.allMatches.map((dbMatch, index) => {
+              const newMatch = dbMatch
+              const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
+              newMatch.myId = myId
+              newMatch.lastUpdated = ''
+              return newMatch
+            })
 
 
-              
-            this.loadDummyMatches();
+            this.supabaseService
+              .getCompetitionStandingsFromBE()
+              .subscribe((response) => {
+                const data = response as CompetitionStandingsResponse;
+                const standings = Array.isArray(data.standings) ? data.standings : [];
+
+                this.groupedStandings = standings
+                  .filter((standing) => (standing.group ?? '').length > 0)
+                  .map((standing) => ({
+                    group: standing.group ?? '',
+                    rows: standing.table ?? [],
+                  }))
+                  .sort((left, right) => left.group.localeCompare(right.group));
+
+                this.loadDummyMatches();
+              });
+
           });
-
+        })
       });
-    })
   }
 
   trackByEditable(_: number, match: EditableMatch): number {
@@ -240,70 +248,120 @@ export class EliminationsComponent implements AfterViewInit {
 
   loadDummyMatches(): void {
     this.editableMatches = [
-      { id: 101, mId: 74, side: 'left', round: 1, order: 1, dateTime: '06/29/2026 23:30', homeTeam: '1E', awayTeam: '3ABCDF', parentId: 201 },
-      { id: 102, mId: 77, side: 'left', round: 1, order: 2, dateTime: '07/01/2026 00:00', homeTeam: '1I', awayTeam: '3CDFGH', parentId: 201 },
-      { id: 103, mId: 73, side: 'left', round: 1, order: 3, dateTime: '06/28/2026 22:00', homeTeam: '2A', awayTeam: '2B', parentId: 202 },
-      { id: 104, mId: 75, side: 'left', round: 1, order: 4, dateTime: '06/30/2026 04:00', homeTeam: '1F', awayTeam: '2C', parentId: 202 },
-      { id: 105, mId: 83, side: 'left', round: 1, order: 5, dateTime: '07/03/2026 02:00', homeTeam: '2K', awayTeam: '2L', parentId: 203 },
-      { id: 106, mId: 84, side: 'left', round: 1, order: 6, dateTime: '07/02/2026 22:00', homeTeam: '1H', awayTeam: '2J', parentId: 203 },
-      { id: 107, mId: 81, side: 'left', round: 1, order: 7, dateTime: '07/02/2026 03:00', homeTeam: '1D', awayTeam: '3BEFIJ', parentId: 204 },
-      { id: 108, mId: 82, side: 'left', round: 1, order: 8, dateTime: '07/01/2026 23:00', homeTeam: '1G', awayTeam: '3AEHIJ', parentId: 204 },
+      { id: 101, mId: 75, side: 'left', round: 1, order: 1, parentId: 201 },
+      { id: 102, mId: 80, side: 'left', round: 1, order: 2, parentId: 201 },
+      { id: 103, mId: 73, side: 'left', round: 1, order: 3, parentId: 202 },
+      { id: 104, mId: 76, side: 'left', round: 1, order: 4, parentId: 202 },
+      { id: 105, mId: 84, side: 'left', round: 1, order: 5, parentId: 203 },
+      { id: 106, mId: 83, side: 'left', round: 1, order: 6, parentId: 203 },
+      { id: 107, mId: 82, side: 'left', round: 1, order: 7, parentId: 204 },
+      { id: 108, mId: 81, side: 'left', round: 1, order: 8, parentId: 204 },
 
-      { id: 201, mId: 89, side: 'left', round: 2, order: 1, dateTime: '07/05/2026 00:00', homeTeam: 'W74', awayTeam: 'W77', parentId: 301 },
-      { id: 202, mId: 90, side: 'left', round: 2, order: 2, dateTime: '07/04/2026 20:00', homeTeam: 'W73', awayTeam: 'W75', parentId: 301 },
-      { id: 203, mId: 93, side: 'left', round: 2, order: 3, dateTime: '07/06/2026 22:00', homeTeam: 'W83', awayTeam: 'W84', parentId: 302 },
-      { id: 204, mId: 94, side: 'left', round: 2, order: 4, dateTime: '07/07/2026 03:00', homeTeam: 'W81', awayTeam: 'W82', parentId: 302 },
+      { id: 201, mId: 90, side: 'left', round: 2, order: 1, parentId: 301 },
+      { id: 202, mId: 89, side: 'left', round: 2, order: 2, parentId: 301 },
+      { id: 203, mId: 93, side: 'left', round: 2, order: 3, parentId: 302 },
+      { id: 204, mId: 94, side: 'left', round: 2, order: 4, parentId: 302 },
 
-      { id: 301, mId: 97, side: 'left', round: 3, order: 1, dateTime: '07/09/2026 23:00', homeTeam: 'W89', awayTeam: 'W90', parentId: 401 },
-      { id: 302, mId: 98, side: 'left', round: 3, order: 2, dateTime: '07/10/2026 22:00', homeTeam: 'W93', awayTeam: 'W94', parentId: 401 },
+      { id: 301, mId: 97, side: 'left', round: 3, order: 1, parentId: 401 },
+      { id: 302, mId: 98, side: 'left', round: 3, order: 2, parentId: 401 },
 
-      { id: 401, mId: 101, side: 'left', round: 4, order: 1, dateTime: '07/14/2026 22:00', homeTeam: 'W97', awayTeam: 'W98', parentId: 901 },
+      { id: 401, mId: 101, side: 'left', round: 4, order: 1, parentId: 901 },
 
-      { id: 501, mId: 76, side: 'right', round: 1, order: 1, dateTime: '06/29/2026 20:00', homeTeam: '1C', awayTeam: '2F', parentId: 601 },
-      { id: 502, mId: 78, side: 'right', round: 1, order: 2, dateTime: '06/30/2026 20:00', homeTeam: '2E', awayTeam: '2I', parentId: 601 },
-      { id: 503, mId: 79, side: 'right', round: 1, order: 3, dateTime: '07/01/2026 04:00', homeTeam: '1A', awayTeam: '3CEFH', parentId: 602 },
-      { id: 504, mId: 80, side: 'right', round: 1, order: 4, dateTime: '07/01/2026 19:00', homeTeam: '1L', awayTeam: '3EHIJK', parentId: 602 },
-      { id: 505, mId: 86, side: 'right', round: 1, order: 5, dateTime: '07/04/2026 01:00', homeTeam: '1J', awayTeam: '2H', parentId: 603 },
-      { id: 506, mId: 88, side: 'right', round: 1, order: 6, dateTime: '07/03/2026 21:00', homeTeam: '2D', awayTeam: '2G', parentId: 603 },
-      { id: 507, mId: 85, side: 'right', round: 1, order: 7, dateTime: '07/03/2026 06:00', homeTeam: '1B', awayTeam: '3EFGIJ', parentId: 604 },
-      { id: 508, mId: 87, side: 'right', round: 1, order: 8, dateTime: '07/04/2026 04:30', homeTeam: '1K', awayTeam: '3DEIJL', parentId: 604 },
+      { id: 501, mId: 74, side: 'right', round: 1, order: 1, parentId: 601 },
+      { id: 502, mId: 77, side: 'right', round: 1, order: 2, parentId: 601 },
+      { id: 503, mId: 79, side: 'right', round: 1, order: 3, parentId: 602 },
+      { id: 504, mId: 78, side: 'right', round: 1, order: 4, parentId: 602 },
+      { id: 505, mId: 87, side: 'right', round: 1, order: 5, parentId: 603 },
+      { id: 506, mId: 86, side: 'right', round: 1, order: 6, parentId: 603 },
+      { id: 507, mId: 85, side: 'right', round: 1, order: 7, parentId: 604 },
+      { id: 508, mId: 88, side: 'right', round: 1, order: 8, parentId: 604 },
 
-      { id: 601, mId: 91, side: 'right', round: 2, order: 1, dateTime: '07/05/2026 23:00', homeTeam: 'W76', awayTeam: 'W78', parentId: 701 },
-      { id: 602, mId: 92, side: 'right', round: 2, order: 2, dateTime: '07/06/2026 03:00', homeTeam: 'W79', awayTeam: 'W80', parentId: 701 },
-      { id: 603, mId: 95, side: 'right', round: 2, order: 3, dateTime: '07/07/2026 19:00', homeTeam: 'W86', awayTeam: 'W88', parentId: 702 },
-      { id: 604, mId: 96, side: 'right', round: 2, order: 4, dateTime: '07/07/2026 23:00', homeTeam: 'W85', awayTeam: 'W87', parentId: 702 },
+      { id: 601, mId: 91, side: 'right', round: 2, order: 1, parentId: 701 },
+      { id: 602, mId: 92, side: 'right', round: 2, order: 2, parentId: 701 },
+      { id: 603, mId: 95, side: 'right', round: 2, order: 3, parentId: 702 },
+      { id: 604, mId: 96, side: 'right', round: 2, order: 4, parentId: 702 },
 
-      { id: 701, mId: 99, side: 'right', round: 3, order: 1, dateTime: '07/12/2026 00:00', homeTeam: 'W91', awayTeam: 'W92', parentId: 801 },
-      { id: 702, mId: 100, side: 'right', round: 3, order: 2, dateTime: '07/12/2026 04:00', homeTeam: 'W95', awayTeam: 'W96', parentId: 801 },
+      { id: 701, mId: 99, side: 'right', round: 3, order: 1, parentId: 801 },
+      { id: 702, mId: 100, side: 'right', round: 3, order: 2, parentId: 801 },
 
-      { id: 801, mId: 102, side: 'right', round: 4, order: 1, dateTime: '07/15/2026 22:00', homeTeam: 'W99', awayTeam: 'W100', parentId: 901 },
+      { id: 801, mId: 102, side: 'right', round: 4, order: 1, parentId: 901 },
 
-      { id: 901, mId: 104, side: 'center', round: 1, order: 1, dateTime: '07/19/2026 22:00', homeTeam: 'W101', awayTeam: 'W102', parentId: null },
-      { id: 902, mId: 103, side: 'center', round: 1, order: 2, dateTime: '07/19/2026 00:00', homeTeam: 'RU101', awayTeam: 'RU102', parentId: null },
+      { id: 901, mId: 104, side: 'center', round: 1, order: 1, parentId: null },
+      { id: 902, mId: 103, side: 'center', round: 1, order: 2, parentId: null },
     ]
-      .map((match) => {
-
-
+      .map((match, _, editableMatches2) => {
         const newMatch = { ...match } as EditableMatch;
-        const suffix = (newMatch.mId + 1).toString().padStart(2, '0');
+        const suffix = (newMatch.mId).toString().padStart(2, '0');
         const matchId = Number(`2026${suffix}`);
 
         const matchFromDb1 = this.allMatches.find((dbMatch) => dbMatch.myId === matchId);
 
         const matchFromDb = matchFromDb1
         newMatch.dateTime = this.formatDateTimeFromUtc(matchFromDb?.utcDate)
+        newMatch.utcDate = matchFromDb?.utcDate || ''
 
-        newMatch.homeTeam =this.getTeamByStand(newMatch).homeTeam
-        newMatch.awayTeam =this.getTeamByStand(newMatch).awayTeam
+        newMatch.fifaId = Number(this.getMatchFromFifaByDate(newMatch.utcDate)?.MatchNumber ?? newMatch.mId);
+
+        newMatch.homeTeam = this.getHomeName('home', newMatch, editableMatches2 as EditableMatch[]);
+        newMatch.awayTeam = this.getHomeName('away', newMatch, editableMatches2 as EditableMatch[]);
 
         return newMatch;
-      });
-
+      })
 
     this.rebuildBracket();
   }
 
-  getTeamByStand(newMatch: EditableMatch){
+  getHomeName(type: 'home' | 'away', newMatch: EditableMatch, editableMatches: EditableMatch[]) {
+    const fifaMatch = this.responseFromFifa.find((fifaMatch) => Number(fifaMatch.MatchNumber) === newMatch.fifaId);
+    const parentMatchChildrenIds = this.getChildFromParent(editableMatches, newMatch);
+
+    let result = ''
+    if (type === 'home') {
+      result = fifaMatch?.Home?.TeamName
+        ? fifaMatch.Home.TeamName[0].Description
+        : parentMatchChildrenIds.home || fifaMatch?.PlaceHolderA || ''
+    } else {
+      result = fifaMatch?.Away?.TeamName
+        ? fifaMatch.Away.TeamName[0].Description
+        : parentMatchChildrenIds.away || fifaMatch?.PlaceHolderB || ''
+    }
+
+    const selectedTeam = this.replaceNameAndGetTeam(result)
+    const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
+    result = (isLngBg ? selectedTeam?.name_bg ?? result : selectedTeam?.name_en) || ''
+
+    if (result === '') {
+      if (type === 'home') {
+        result = newMatch.homeTeam
+      } else {
+        result = newMatch.awayTeam
+      }
+    }
+
+    return result
+  }
+
+  getChildFromParent(editableMatches: EditableMatch[], newMatch:EditableMatch): { home: string | undefined; away: string | undefined } {
+    const parentIdParam = newMatch.parentId
+
+    const parentId = newMatch.id
+    const fifaMatch = this.responseFromFifa.find((fifaMatch) => Number(fifaMatch.MatchNumber) === newMatch.fifaId)
+
+    const prefixFromFifaHome = fifaMatch?.PlaceHolderA?.slice(0, 1)
+    const prefixFromFifaAway = fifaMatch?.PlaceHolderB?.slice(0, 1)
+    const filteredMatchIds = editableMatches.filter((match) => match.parentId === parentId).map((match) => match.mId);
+    if (filteredMatchIds.length === 0 || parentIdParam === undefined || parentIdParam === null) {
+      return { home: undefined, away: undefined }
+    }
+    
+    return { home: `${prefixFromFifaHome}${String(filteredMatchIds[0])}` || undefined, away: `${prefixFromFifaAway}${String(filteredMatchIds[1])}` || undefined };
+  }
+
+  getMatchFromFifaByDate(date: string) {
+    return this.responseFromFifa.find(match => match.Date === date)
+  }
+
+  getTeamByStand(newMatch: EditableMatch) {
     const homeTeamDetails = this.getTeamFromMatch(newMatch.homeTeam)
     const awayTeamDetails = this.getTeamFromMatch(newMatch.awayTeam)
 
@@ -318,8 +376,8 @@ export class EliminationsComponent implements AfterViewInit {
       return teamName
     }
     const teamGroupPosition = Number(teamNameArr[0])
-    const teamGroupAbrv = teamNameArr[1]
-    const matchGroup = this.groupedStandings.find((group => group.group === `Group ${teamGroupAbrv}`))
+    const teamAbbreviation = teamNameArr[1]
+    const matchGroup = this.groupedStandings.find((group => group.group === `Group ${teamAbbreviation}`))
     const matchGroupRows = matchGroup?.rows || []
     const kkk = matchGroupRows.find((row => row.position === teamGroupPosition && (row.points >= 6 || row.playedGames === 3)))
     if (kkk === undefined) {
@@ -330,13 +388,19 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   getTeamName(match: { homeTeam: string; awayTeam: string }): { home: string; away: string } {
-    const teamHome = this.allTeams.find((team: Team) => team.name_en === match?.homeTeam)
-    const teamAway = this.allTeams.find((team: Team) => team.name_en === match?.awayTeam)
+    const homeTeam = match?.homeTeam ? this.replaceNameAndGetTeam(match.homeTeam) : { name_bg: '', name_en: '' };
+    const awayTeam = match?.awayTeam ? this.replaceNameAndGetTeam(match.awayTeam) : { name_bg: '', name_en: '' };
 
     const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
-    const teamHomeName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam : teamHome?.name_en) || ''
-    const teamAwayName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam : teamAway?.name_en) || ''
+    const teamHomeName = (isLngBg ? homeTeam?.name_bg ?? match.homeTeam : homeTeam?.name_en) || ''
+    const teamAwayName = (isLngBg ? awayTeam?.name_bg ?? match.awayTeam : awayTeam?.name_en) || ''
     return { home: teamHomeName, away: teamAwayName };
+  }
+
+  replaceNameAndGetTeam(string: string): Team | undefined {
+    const countryName = string.replace('USA', 'United States').replace('Bosnia and Herzegovina', 'Bosnia-Herzegovina');
+    const team =  this.allTeams.find((team: Team) => team.name_en === countryName)
+    return team;
   }
 
   formatDateTimeFromUtc(utcDate: string | undefined): string {
@@ -451,6 +515,20 @@ export class EliminationsComponent implements AfterViewInit {
     const delta = event.deltaY > 0 ? -this.zoomStep : this.zoomStep;
     this.setZoom(this.zoomScale + delta, true);
   }
+
+  // private loadFifaMatchNumbers(): void {
+  //   // this.fifaCalendarService.getSeasonMatchesResult().subscribe({
+  //   //   next: (response) => {
+  //   const proxyMatch = this.allMatches[0]
+
+  //   this.fifaCalendarService.getSeasonMatchesFilteredByDate(proxyMatch.utcDate).subscribe({
+  //     next: (fifaMatch) => {
+  //       debugger
+  //     },
+  //   });
+  //   // },
+  //   // });
+  // }
 
   onViewportPointerDown(event: PointerEvent): void {
     if ((event.pointerType === 'mouse' && event.button !== 0) || this.isInteractiveTarget(event.target)) {
