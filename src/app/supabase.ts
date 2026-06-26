@@ -33,7 +33,9 @@ export interface Profile {
 export class SupabaseService {
   private supabase: SupabaseClient
   _session: AuthSession | null = null
-  private readonly proxyBaseUrl = 'https://simple-node-proxy.onrender.com'
+  private readonly remoteProxyBaseUrl = 'https://simple-node-proxy.onrender.com'
+  private readonly isLocalHost = this.resolveIsLocalHost()
+  private readonly proxyBaseUrl = this.resolveProxyBaseUrl()
   private readonly liveMatchesFullArchiveLegacyStorageKey = 'liveMatchesFullArchive'
   private readonly liveMatchesFullArchiveStorageKey = 'live-matches-full-archive'
   private readonly liveMatchesFullArchiveMaxEntries = 8
@@ -100,16 +102,26 @@ export class SupabaseService {
   }
 
   getLiveMatchesFromBE(): Observable<Match[]> {
-    return this.httpClient.get<Match[]>(`${this.proxyBaseUrl}/api/matches/live`, {
-      params: {
-        t: Date.now().toString(),
-      },
-    })
+    return this.getWithRemoteFallback<Match[]>('/api/matches/live', {
+        params: {
+          t: Date.now().toString(),
+        },
+      })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          const archivedMatches = this.readLatestLiveMatchesFullArchive()
+          if (archivedMatches && archivedMatches.length > 0) {
+            console.warn('[matches/live] Request failed. Falling back to archived snapshot.')
+            return of(archivedMatches)
+          }
+
+          return throwError(() => error)
+        })
+      )
   }
 
   getLiveMatchesFullFromBE(): Observable<Match[]> {
-    return this.httpClient
-      .get<Match[]>(`${this.proxyBaseUrl}/api/matches/live/full`, {
+    return this.getWithRemoteFallback<Match[]>('/api/matches/live/full', {
         params: {
           t: Date.now().toString(),
         },
@@ -119,12 +131,10 @@ export class SupabaseService {
           this.saveLiveMatchesFullArchive(matches)
         }),
         catchError((error: HttpErrorResponse) => {
-          if (error.status === 429) {
-            const archivedMatches = this.readLatestLiveMatchesFullArchive()
-            if (archivedMatches && archivedMatches.length > 0) {
-              console.warn('[matches/live/full] 429 received. Falling back to archived snapshot.')
-              return of(archivedMatches)
-            }
+          const archivedMatches = this.readLatestLiveMatchesFullArchive()
+          if (archivedMatches && archivedMatches.length > 0) {
+            console.warn(`[matches/live/full] Request failed (status=${error.status}). Falling back to archived snapshot.`)
+            return of(archivedMatches)
           }
 
           return throwError(() => error)
@@ -133,15 +143,49 @@ export class SupabaseService {
   }
 
   getMatchDetailsFromBE(matchId: number): Observable<Record<string, unknown>> {
-    return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/matches/${matchId}`)
+    return this.getWithRemoteFallback<Record<string, unknown>>(`/api/matches/${matchId}`)
   }
 
   getCompetitionStandingsFromBE(): Observable<Record<string, unknown>> {
-    return this.httpClient.get<Record<string, unknown>>(`${this.proxyBaseUrl}/api/standings`, {
+    return this.getWithRemoteFallback<Record<string, unknown>>('/api/standings', {
       params: {
         t: Date.now().toString(),
       },
     })
+  }
+
+  private getWithRemoteFallback<T>(path: string, options?: { params?: Record<string, string> }): Observable<T> {
+    const localOrPrimaryUrl = `${this.proxyBaseUrl}${path}`
+    const primaryRequest = this.httpClient.get<T>(localOrPrimaryUrl, options)
+
+    if (!this.isLocalHost) {
+      return primaryRequest
+    }
+
+    return primaryRequest.pipe(
+      catchError((localError: HttpErrorResponse) => {
+        const remoteUrl = `${this.remoteProxyBaseUrl}${path}`
+        console.warn(`[API Fallback] Local proxy failed for ${path} (status=${localError.status}). Retrying via remote proxy.`)
+
+        return this.httpClient.get<T>(remoteUrl, options).pipe(
+          catchError(() => throwError(() => localError))
+        )
+      })
+    )
+  }
+
+  private resolveProxyBaseUrl(): string {
+    if (this.isLocalHost) {
+      // During local development we use Angular's proxy (/api -> localhost:3000).
+      return ''
+    }
+
+    return this.remoteProxyBaseUrl
+  }
+
+  private resolveIsLocalHost(): boolean {
+    const hostname = globalThis.location?.hostname?.toLowerCase()
+    return hostname === 'localhost' || hostname === '127.0.0.1'
   }
 
   private normalizeError(error: { message: string; details?: string | null } | null): SupabaseResponse<never>['error'] {
