@@ -384,7 +384,12 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         if (product.matchStatus === 'FINISHED' && !this.isAdmin()) {
             result = false;
         }
-        return result
+
+        if (product.stage === 'TABLE.LAST_32' || product.stage === 'TABLE.QUARTER_FINALS' || product.stage === 'TABLE.LAST_16' || product.stage === 'TABLE.SEMI_FINALS' || product.stage === 'TABLE.THIRD_PLACE' || product.stage === 'TABLE.FINAL') {
+            result = false;
+        }
+
+        return result;
     }
 
     isCellSaving(user: User, bet: Bet, j: number): boolean {
