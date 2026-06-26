@@ -5,6 +5,18 @@
 }
 
 .group-standings-page {
+  --gs-page-text: var(--t-gs-page-text);
+  --gs-muted-text: var(--t-gs-muted-text);
+  --gs-subtle-text: var(--t-gs-subtle-text);
+  --gs-error-text: var(--t-gs-error-text);
+  --gs-card-bg: var(--t-gs-card-bg);
+  --gs-card-border: var(--t-gs-card-border);
+  --gs-legend-bg: var(--t-gs-legend-bg);
+  --gs-legend-border: var(--t-gs-legend-border);
+  --gs-table-border: var(--t-gs-table-border);
+  --gs-positive: var(--t-gs-positive);
+  --gs-negative: var(--t-gs-negative);
+
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -12,7 +24,7 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #0f172a;
+  color: var(--gs-page-text);
   background:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--theme-color, #22c55e), #ffffff 93%) 0, transparent 48%),
     #f8fafc;
@@ -46,7 +58,7 @@
 .meta {
   margin: 0;
   font-size: 0.92rem;
-  color: #64748b;
+  color: var(--gs-muted-text);
 }
 
 .state-text {
@@ -54,7 +66,7 @@
 }
 
 .state-text.error {
-  color: #b91c1c;
+  color: var(--gs-error-text);
 }
 
 .qualification-legend {
@@ -63,9 +75,9 @@
   flex-wrap: wrap;
   gap: 0.65rem 1rem;
   padding: 0.35rem 0.55rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--gs-legend-border);
   border-radius: 8px;
-  background: #ffffffcc;
+  background: var(--gs-legend-bg);
 }
 
 .legend-item {
@@ -73,13 +85,13 @@
   align-items: center;
   gap: 0.38rem;
   font-size: 0.82rem;
-  color: #334155;
+  color: var(--gs-subtle-text);
 }
 
 .legend-note {
   flex: 1 1 100%;
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--gs-muted-text);
 }
 
 .legend-swatch {
@@ -119,10 +131,10 @@
 }
 
 .group-card {
-  border: 1px solid #d9e2ef;
+  border: 1px solid var(--gs-card-border);
   border-radius: 12px;
   padding: 0.75rem;
-  background: #ffffff;
+  background: var(--gs-card-bg);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
 
@@ -141,7 +153,7 @@
 
 .group-subtitle {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--gs-muted-text);
 }
 
 .desktop-table-wrap {
@@ -160,14 +172,14 @@ table {
 th,
 td {
   padding: 0.6rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--gs-table-border);
   text-align: left;
   white-space: nowrap;
 }
 
 th {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--gs-page-text);
   letter-spacing: 0.01em;
 }
 
@@ -209,17 +221,17 @@ th {
 }
 
 .positive {
-  color: #047857;
+  color: var(--gs-positive);
   font-weight: 700;
 }
 
 .negative {
-  color: #b91c1c;
+  color: var(--gs-negative);
   font-weight: 700;
 }
 
 :host-context(.my-app-dark) .group-standings-page {
-  color: #ffffff;
+  color: var(--gs-page-text);
   background:
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--theme-color, #22c55e), #0f172a 82%) 0, transparent 52%),
     #0f172a;
@@ -237,37 +249,37 @@ th {
 :host-context(.my-app-dark) .legend-note,
 :host-context(.my-app-dark) .mobile-rank,
 :host-context(.my-app-dark) .mobile-row-stats {
-  color: #cbd5e1;
+  color: var(--gs-muted-text);
 }
 
 :host-context(.my-app-dark) .state-text.error,
 :host-context(.my-app-dark) .negative {
-  color: #f87171;
+  color: var(--gs-error-text);
 }
 
 :host-context(.my-app-dark) .qualification-legend {
-  border-color: #334155;
-  background: rgba(17, 24, 39, 0.82);
+  border-color: var(--gs-legend-border);
+  background: var(--gs-legend-bg);
 }
 
 :host-context(.my-app-dark) .group-card {
-  border-color: #334155;
-  background: #111827;
+  border-color: var(--gs-card-border);
+  background: var(--gs-card-bg);
   box-shadow: 0 10px 24px rgba(2, 6, 23, 0.5);
 }
 
 :host-context(.my-app-dark) th,
 :host-context(.my-app-dark) td {
-  border-bottom-color: #334155;
+  border-bottom-color: var(--gs-table-border);
 }
 
 :host-context(.my-app-dark) th {
-  color: #f8fafc;
+  color: var(--gs-page-text);
 }
 
 :host-context(.my-app-dark) .mobile-team-row {
-  border-color: #334155;
-  background: #111827;
+  border-color: var(--gs-card-border);
+  background: var(--gs-card-bg);
 }
 
 :host-context(.my-app-dark) .mobile-team-row.qualified-near {

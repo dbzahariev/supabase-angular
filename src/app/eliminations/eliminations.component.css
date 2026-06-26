@@ -1,4 +1,33 @@
 .eliminations {
+  --el-header-text: var(--t-el-header-text);
+  --el-subtle-text: var(--t-el-subtle-text);
+  --el-muted-text: var(--t-el-muted-text);
+  --el-body-text: var(--t-el-body-text);
+  --el-label-text: var(--t-el-label-text);
+  --el-action-text: var(--t-el-action-text);
+  --el-danger-text: var(--t-el-danger-text);
+
+  --el-surface-border: var(--t-el-surface-border);
+  --el-control-border: var(--t-el-control-border);
+  --el-input-border: var(--t-el-input-border);
+  --el-label-border: var(--t-el-label-border);
+  --el-match-border: var(--t-el-match-border);
+  --el-line-color: var(--t-el-line-color);
+
+  --el-control-bg: var(--t-el-control-bg);
+  --el-input-bg: var(--t-el-input-bg);
+  --el-label-bg: var(--t-el-label-bg);
+  --el-match-bg: var(--t-el-match-bg);
+  --el-control-hover-bg: var(--t-el-control-hover-bg);
+  --el-loading-bg: var(--t-el-loading-bg);
+  --el-loading-text: var(--t-el-loading-text);
+  --el-danger-bg: var(--t-el-danger-bg);
+  --el-danger-border: var(--t-el-danger-border);
+
+  --el-surface-grad-start: var(--t-el-surface-grad-start);
+  --el-surface-grad-mid: var(--t-el-surface-grad-mid);
+  --el-surface-grad-end: var(--t-el-surface-grad-end);
+
   padding: 1rem;
   box-sizing: border-box;
   height: var(--eliminations-available-height, calc(100dvh - 110px));
@@ -16,12 +45,12 @@
 .eliminations__header h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: #23324a;
+  color: var(--el-header-text);
 }
 
 .eliminations__header p {
   margin: 0.25rem 0 0;
-  color: #4f6585;
+  color: var(--el-subtle-text);
   font-size: 0.9rem;
 }
 
@@ -35,9 +64,9 @@
 }
 
 .eliminations__editor {
-  border: 1px solid #d5deeb;
+  border: 1px solid var(--el-surface-border);
   border-radius: 12px;
-  background: #f8fbff;
+  background: var(--el-control-bg);
   padding: 0.7rem;
 }
 
@@ -48,10 +77,10 @@
 }
 
 .eliminations__editor-actions button {
-  border: 1px solid #bfd0ea;
+  border: 1px solid var(--el-control-border);
   border-radius: 8px;
-  background: #ffffff;
-  color: #355173;
+  background: var(--el-control-bg);
+  color: var(--el-action-text);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 0.35rem 0.55rem;
@@ -67,7 +96,7 @@
 }
 
 .eliminations__table-head {
-  color: #617896;
+  color: color-mix(in srgb, var(--el-subtle-text), #6b7f9c 42%);
   font-size: 0.72rem;
   font-weight: 700;
   margin-bottom: 0.3rem;
@@ -87,20 +116,20 @@
 .eliminations__row select {
   width: 100%;
   min-width: 0;
-  border: 1px solid #c7d5e9;
+  border: 1px solid var(--el-input-border);
   border-radius: 7px;
-  background: #fff;
-  color: #2f4462;
+  background: var(--el-input-bg);
+  color: var(--el-body-text);
   font-size: 0.75rem;
   padding: 0.3rem 0.35rem;
   box-sizing: border-box;
 }
 
 .eliminations__row button.danger {
-  border: 1px solid #f2c1ca;
+  border: 1px solid var(--el-danger-border);
   border-radius: 7px;
-  background: #fff7f8;
-  color: #c93b56;
+  background: var(--el-danger-bg);
+  color: var(--el-danger-text);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -109,10 +138,10 @@
 
 .eliminations__surface {
   position: relative;
-  border: 1px solid #d5deeb;
+  border: 1px solid var(--el-surface-border);
   border-radius: 12px;
   background:
-    radial-gradient(circle at top left, #f7faff 0%, #eef3fa 42%, #e9eff7 100%);
+    radial-gradient(circle at top left, var(--el-surface-grad-start) 0%, var(--el-surface-grad-mid) 42%, var(--el-surface-grad-end) 100%);
   min-height: 0;
   height: 100%;
   max-height: 100%;
@@ -128,9 +157,9 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: #e8f2ff;
-  color: #3a5577;
-  border: 1px solid #bfd0ea;
+  background: var(--el-loading-bg);
+  color: var(--el-loading-text);
+  border: 1px solid var(--el-control-border);
 }
 
 .eliminations__board {
@@ -181,10 +210,10 @@
 
 .eliminations__toggle-reset {
   height: 30px;
-  border: 1px solid #bfd0ea;
+  border: 1px solid var(--el-control-border);
   border-radius: 8px;
-  background: #ffffff;
-  color: #355173;
+  background: var(--el-control-bg);
+  color: var(--el-action-text);
   font-size: 0.76rem;
   font-weight: 700;
   padding: 0 0.65rem;
@@ -206,10 +235,10 @@
 
 .eliminations__toggle-chip {
   height: 30px;
-  border: 1px solid #bfd0ea;
+  border: 1px solid var(--el-control-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: #4b6385;
+  background: var(--el-control-bg);
+  color: var(--el-label-text);
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -226,10 +255,10 @@
 .eliminations__zoom-controls button {
   width: 34px;
   height: 30px;
-  border: 1px solid #bfd0ea;
+  border: 1px solid var(--el-control-border);
   border-radius: 8px;
-  background: #ffffff;
-  color: #355173;
+  background: var(--el-control-bg);
+  color: var(--el-action-text);
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -241,7 +270,7 @@
 }
 
 .eliminations__zoom-controls button:hover {
-  background: #eef5ff;
+  background: var(--el-control-hover-bg);
 }
 
 .eliminations__lines {
@@ -258,9 +287,9 @@
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #4b6385;
-  background: #eff4fb;
-  border: 1px solid #d2deef;
+  color: var(--el-label-text);
+  background: var(--el-label-bg);
+  border: 1px solid var(--el-label-border);
   border-radius: 999px;
   padding: 0.2rem 0.5rem;
   white-space: nowrap;
@@ -275,7 +304,7 @@
 
 .eliminations__lines path {
   fill: none;
-  stroke: #8da1bf;
+  stroke: var(--el-line-color);
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -286,9 +315,9 @@
   z-index: 2;
   width: 220px;
   min-height: 92px;
-  border: 2px solid #b8c6dd;
+  border: 2px solid var(--el-match-border);
   border-radius: 9px;
-  background: #ffffff;
+  background: var(--el-match-bg);
   box-sizing: border-box;
   padding: 10px;
   user-select: none;
@@ -298,14 +327,14 @@
   margin: 0 0 6px;
   font-size: 13px;
   font-weight: 500;
-  color: #5d708d;
+  color: var(--el-subtle-text);
 }
 
 .eliminations__team {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  color: #223149;
+  color: var(--el-header-text);
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -315,8 +344,10 @@
 .eliminations__meta {
   margin: 0.35rem 0 0;
   font-size: 0.68rem;
-  color: #6d819e;
+  color: var(--el-muted-text);
 }
+
+
 
 @media (max-width: 900px) {
   .eliminations {

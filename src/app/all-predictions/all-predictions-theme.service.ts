@@ -45,7 +45,7 @@ export class AllPredictionsThemeService {
     }
 
     private isDarkModeActive(storage: Pick<Storage, 'getItem'>): boolean {
-        const mode = storage.getItem('dark-mode') ?? 'disabled';
+        const mode = storage.getItem('dark-mode') ?? 'auto';
         if (mode === 'enabled') {
             return true;
         }

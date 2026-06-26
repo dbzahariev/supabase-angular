@@ -75,28 +75,6 @@
     background: color-mix(in srgb, var(--theme-color, #16a34a), var(--theme-background-color, #ffffff) 78%);
 }
 
-html.my-app-dark .features-notice {
-    border-color: color-mix(in srgb, var(--theme-color, #22c55e), #7f9bc9 68%);
-    background: color-mix(in srgb, var(--theme-color, #22c55e), #0f172a 78%);
-}
-
-html.my-app-dark .features-notice-content {
-    color: #ffffff;
-}
-
-html.my-app-dark .features-notice-content .pi {
-    color: color-mix(in srgb, var(--theme-color, #22c55e), #e2e8f0 35%);
-}
-
-html.my-app-dark .features-notice-close {
-    border-color: color-mix(in srgb, var(--theme-color, #22c55e), #88a6d8 72%);
-    color: #ffffff;
-}
-
-html.my-app-dark .features-notice-close:hover {
-    background: color-mix(in srgb, var(--theme-color, #22c55e), #111827 68%);
-}
-
 :host-context(.my-app-dark) .features-notice-content,
 :host-context(.my-app-dark) .features-notice-content span,
 :host-context(.my-app-dark) .features-notice-content .pi,
@@ -116,6 +94,43 @@ html.my-app-dark .features-notice-close:hover {
     overflow: hidden;
     --theme-border-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 85%));
     --player-separator-color: color-mix(in srgb, var(--theme-color), var(--mix-color) var(--mix-percent, 55%));
+}
+
+:host-context(.my-app-dark) .table-container {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+:host-context(.my-app-dark) .stats-container .stat-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+    color: #ffffff;
+}
+
+:host-context(.my-app-dark) .stats-container .stat-label,
+:host-context(.my-app-dark) .stats-container .stat-value {
+    color: #ffffff;
+}
+
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable,
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable-table-container,
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable-thead > tr > th,
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable-tbody > tr > td {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable-thead > tr > th,
+:host-context(.my-app-dark) ::ng-deep .table-container .p-datatable-tbody > tr > td {
+    border-color: #334155 !important;
+}
+
+:host-context(.my-app-dark) .caption-action-btn {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+:host-context(.my-app-dark) .caption-title {
+    color: #ffffff;
 }
 
 .caption-bar {

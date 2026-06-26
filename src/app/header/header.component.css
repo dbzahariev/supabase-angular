@@ -187,8 +187,8 @@ p-select {
     color: inherit !important;
 }
 
-html.my-app-dark :host ::ng-deep .header-container .theme-toggle-btn .p-button,
-html.my-app-dark :host ::ng-deep .header-container .install-btn .p-button {
+:host-context(.my-app-dark) ::ng-deep .header-container .theme-toggle-btn .p-button,
+:host-context(.my-app-dark) ::ng-deep .header-container .install-btn .p-button {
     color: #ffffff !important;
     border-color: var(--theme-border-color) !important;
 }

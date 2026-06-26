@@ -1,5 +1,53 @@
-* {
-  background-color: var(--p-content-background) !important;
+.foo2 {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.foo {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a;
+}
+
+.foo .bg-slate-800,
+.foo .bg-slate-900 {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+.foo .text-slate-500 {
+  color: #475569 !important;
+}
+
+:host-context(.my-app-dark) .foo2 {
+  background: #0b1220;
+  color: #ffffff;
+}
+
+:host-context(.my-app-dark) .foo {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #ffffff;
+}
+
+:host-context(.my-app-dark) .foo .bg-slate-800,
+:host-context(.my-app-dark) .foo .bg-slate-900 {
+  background: #111827 !important;
+  border-color: #334155 !important;
+}
+
+:host-context(.my-app-dark) .foo p,
+:host-context(.my-app-dark) .foo li,
+:host-context(.my-app-dark) .foo td,
+:host-context(.my-app-dark) .foo th,
+:host-context(.my-app-dark) .foo span,
+:host-context(.my-app-dark) .foo h2,
+:host-context(.my-app-dark) .foo h3 {
+  color: #ffffff !important;
+}
+
+:host-context(.my-app-dark) .foo .text-slate-500 {
+  color: #cbd5e1 !important;
 }
 
 .foo {
