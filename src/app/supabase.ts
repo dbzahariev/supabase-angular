@@ -35,7 +35,6 @@ export class SupabaseService {
   _session: AuthSession | null = null
   private readonly remoteProxyBaseUrl = 'https://simple-node-proxy.onrender.com'
   private readonly isLocalHost = this.resolveIsLocalHost()
-  private readonly proxyBaseUrl = this.resolveProxyBaseUrl()
   private readonly liveMatchesFullArchiveLegacyStorageKey = 'liveMatchesFullArchive'
   private readonly liveMatchesFullArchiveStorageKey = 'live-matches-full-archive'
   private readonly liveMatchesFullArchiveMaxEntries = 8
@@ -155,10 +154,8 @@ export class SupabaseService {
   }
 
   private getWithRemoteFallback<T>(path: string, options?: { params?: Record<string, string> }): Observable<T> {
-    const localOrPrimaryUrl = `${this.proxyBaseUrl}${path}`
-    const primaryRequest = this.httpClient.get<T>(localOrPrimaryUrl, options)
+    const primaryRequest = this.httpClient.get<T>(`${this.remoteProxyBaseUrl}${path}`, options)
 
-    console.log('[FE] IsLocalhost', this.isLocalHost)
     if (!this.isLocalHost) {
       return primaryRequest
     }
@@ -175,18 +172,8 @@ export class SupabaseService {
     )
   }
 
-  private resolveProxyBaseUrl(): string {
-    if (this.isLocalHost) {
-      // During local development we use Angular's proxy (/api -> localhost:3000).
-      return ''
-    }
-
-    return this.remoteProxyBaseUrl
-  }
-
   private resolveIsLocalHost(): boolean {
     const hostname = globalThis.location?.hostname?.toLowerCase()
-    console.log('[FE]: Hostname', hostname)
     return hostname === 'localhost' || hostname === '127.0.0.1'
   }
 
