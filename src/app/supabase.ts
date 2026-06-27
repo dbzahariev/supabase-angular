@@ -185,6 +185,7 @@ export class SupabaseService {
 
   private resolveIsLocalHost(): boolean {
     const hostname = globalThis.location?.hostname?.toLowerCase()
+    console.log('[FE]: Hostname', hostname)
     return hostname === 'localhost' || hostname === '127.0.0.1'
   }
 
