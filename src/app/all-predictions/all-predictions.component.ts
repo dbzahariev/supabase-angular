@@ -24,6 +24,7 @@ import { ThemeService } from '../services/theme.service';
 import { SelectedUserService } from '../services/selected-user.service';
 import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
+import { FifaCalendarService } from '../services/fifa-calendar.service';
 
 @Component({
     selector: 'app-all-predictions',
@@ -48,6 +49,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     allUsersNames: User[] = [];
     allPredictions: Prediction[] = [];
     allMatches: Match[] = [];
+    fifaMatches: any[] = [];
     allTeams: Team[] = [];
     themeColor = '#ffffff';
     themeBackground = '#ffffff';
@@ -84,6 +86,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private adminService = inject(AdminService);
     private globalThemeService = inject(ThemeService);
     private selectedUserService = inject(SelectedUserService);
+    private fifaCalendarService = inject(FifaCalendarService);
     private uiPreferencesService = inject(UiPreferencesService);
     private predictionsChannel: RealtimeChannel | null = null;
     private matchesPollingInterval: ReturnType<typeof setInterval> | null = null;
@@ -504,9 +507,97 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     private getAllMatches(): void {
-        this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
-            this.refreshMatchesWithLiveOverlay(data);
-        });
+        this.fifaCalendarService.getSeasonMatchesResult()
+            .subscribe((responseFromFifa) => {
+                this.fifaMatches = responseFromFifa;
+
+                this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
+                    let newDate = [...data]
+                    // newDate.map((match) => this.fixScoreFromToZero(match))
+                    newDate.map((match) => this.fixScoreFromFifa(match))
+                    this.refreshMatchesWithLiveOverlay(newDate);
+                });
+            })
+    }
+
+    getNewName(oldName = '') {
+        let newName = oldName
+        newName = newName.replace("Bosnia and Herzegovina", "Bosnia-Herzegovina")
+        newName = newName.replace("Korea Republic", "South Korea")
+        newName = newName.replace("Curaçao", "Curaçao")
+        newName = newName.replace("Côte d'Ivoire", "Ivory Coast")
+        newName = newName.replace("Türkiye", "Turkey")
+        newName = newName.replace("USA", "United States")
+        newName = newName.replace("Cabo Verde", "Cape Verde Islands")
+        newName = newName.replace("IR Iran", "Iran")
+
+        return newName
+    }
+
+    fixScoreFromToZero(oldMatch: Match) {
+        let newMatch = { ...oldMatch }
+
+        newMatch.score.fullTime.home = 0
+        newMatch.score.fullTime.away = 0
+
+        return oldMatch
+    }
+
+    fixScoreFromFifa(oldMatch: Match) {
+        let newMatch = { ...oldMatch }
+        let fifaMatchArr = this.fifaMatches.filter((match) => match.Date === oldMatch.utcDate)
+            .map((match) => {
+                let newMatch = { ...match }
+
+                if (newMatch.Home?.TeamName[0].Description) {
+                    newMatch.Home.TeamName[0].Description = this.getNewName(match.Home.TeamName[0].Description)
+                }
+                if (newMatch.Away?.TeamName[0].Description) {
+                    newMatch.Away.TeamName[0].Description = this.getNewName(match.Away.TeamName[0].Description)
+                }
+
+                return newMatch
+            })
+
+        let fifaMatch = undefined
+
+        if (!fifaMatch && fifaMatchArr.length === 1) {
+            fifaMatch = fifaMatchArr[0]
+        }
+        if (fifaMatch === undefined && fifaMatchArr.length > 1) {
+            fifaMatch = fifaMatchArr.find((match) => {
+                let fifaHome = match.Home.TeamName[0].Description
+                let matchHome = newMatch.homeTeam.name
+                let eqalHome = fifaHome === matchHome
+                if (!eqalHome) return false
+
+
+
+                let fifaAway = match.Away.TeamName[0].Description
+                let matchAway = newMatch.awayTeam.name
+                let eqalAway = fifaAway === matchAway
+                if (!eqalAway) return false
+
+                return eqalHome && eqalAway
+            })
+        }
+
+        if (fifaMatch === undefined) {
+            console.log('[FE]', fifaMatch, newMatch)
+        }
+
+        if (newMatch.score.fullTime.home !== fifaMatch.HomeTeamScore) {
+            console.log('[FE] Различни резултатни точки за домакин')
+        }
+        
+        if (newMatch.score.fullTime.away !== fifaMatch.AwayTeamScore) {
+            console.log('[FE] Различни резултатни точки за гост')
+        }
+
+        newMatch.score.fullTime.home = fifaMatch.HomeTeamScore
+        newMatch.score.fullTime.away = fifaMatch.AwayTeamScore
+
+        return oldMatch
     }
 
     private fixAllMatches(data: MatchesApiResponse): void {

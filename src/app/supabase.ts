@@ -10,6 +10,7 @@ import { Observable, catchError, of, tap, throwError } from 'rxjs'
 import {
   JsonObject,
   Match,
+  MatchesApiResponse,
   Prediction,
   PredictionBackupEventInsert,
   PredictionBackupEventRow,
@@ -100,8 +101,8 @@ export class SupabaseService {
     return this.supabase.auth.signInWithOtp({ email })
   }
 
-  getLiveMatchesFromBE(): Observable<Match[]> {
-    return this.getWithRemoteFallback<Match[]>('/api/matches/live', {
+  getLiveMatchesFromBE(): Observable<MatchesApiResponse> {
+    return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live', {
         params: {
           t: Date.now().toString(),
         },
@@ -119,8 +120,8 @@ export class SupabaseService {
       )
   }
 
-  getLiveMatchesFullFromBE(): Observable<Match[]> {
-    return this.getWithRemoteFallback<Match[]>('/api/matches/live/full', {
+  getLiveMatchesFullFromBE(): Observable<MatchesApiResponse> {
+    return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live/full', {
         params: {
           t: Date.now().toString(),
         },
@@ -370,7 +371,7 @@ export class SupabaseService {
     }
   }
 
-  private readLatestLiveMatchesFullArchive(): Match[] | null {
+  private readLatestLiveMatchesFullArchive(): MatchesApiResponse | null {
     const entries = this
       .getLiveMatchesFullArchiveEntries()
       .filter((entry) => this.isArchiveEntryFresh(entry.ts))
@@ -385,7 +386,7 @@ export class SupabaseService {
     return Date.now() - timestamp <= this.liveMatchesFullArchiveTtlMs
   }
 
-  private getLiveMatchesFullArchiveEntries(): { ts: number; data: Match[] }[] {
+  private getLiveMatchesFullArchiveEntries(): { ts: number; data: MatchesApiResponse }[] {
     try {
       const raw = localStorage.getItem(this.liveMatchesFullArchiveStorageKey)
       if (!raw) {
@@ -403,7 +404,7 @@ export class SupabaseService {
           const safeEntry = entry as { ts?: unknown; data?: unknown }
           return {
             ts: typeof safeEntry.ts === 'number' ? safeEntry.ts : 0,
-            data: Array.isArray(safeEntry.data) ? (safeEntry.data as Match[]) : [],
+            data:( Array.isArray(safeEntry.data) ? (safeEntry.data as Match[]) : []) as MatchesApiResponse,
           }
         })
         .filter((entry) => entry.ts > 0 && entry.data.length > 0)
