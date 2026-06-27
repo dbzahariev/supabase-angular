@@ -534,6 +534,24 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         return newName
     }
 
+    getFifaMatch(match: Match) {
+        const fifaMatches = this.fifaMatches.filter(item => item.Date === match.utcDate);
+
+        if (fifaMatches.length === 1) {
+            return fifaMatches[0];
+        }
+
+        return fifaMatches.find(item => {
+            const home = this.getNewName(item.Home?.TeamName[0]?.Description ?? '');
+            const away = this.getNewName(item.Away?.TeamName[0]?.Description ?? '');
+
+            return (
+                home === match.homeTeam.name &&
+                away === match.awayTeam.name
+            );
+        });
+    }
+
     fixScoreFromToZero(oldMatch: Match) {
         let newMatch = { ...oldMatch }
 
@@ -545,42 +563,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
     fixScoreFromFifa(oldMatch: Match) {
         let newMatch = { ...oldMatch }
-        let fifaMatchArr = this.fifaMatches.filter((match) => match.Date === oldMatch.utcDate)
-            .map((match) => {
-                let newMatch = { ...match }
-
-                if (newMatch.Home?.TeamName[0].Description) {
-                    newMatch.Home.TeamName[0].Description = this.getNewName(match.Home.TeamName[0].Description)
-                }
-                if (newMatch.Away?.TeamName[0].Description) {
-                    newMatch.Away.TeamName[0].Description = this.getNewName(match.Away.TeamName[0].Description)
-                }
-
-                return newMatch
-            })
-
-        let fifaMatch = undefined
-
-        if (!fifaMatch && fifaMatchArr.length === 1) {
-            fifaMatch = fifaMatchArr[0]
-        }
-        if (fifaMatch === undefined && fifaMatchArr.length > 1) {
-            fifaMatch = fifaMatchArr.find((match) => {
-                let fifaHome = match.Home.TeamName[0].Description
-                let matchHome = newMatch.homeTeam.name
-                let eqalHome = fifaHome === matchHome
-                if (!eqalHome) return false
-
-
-
-                let fifaAway = match.Away.TeamName[0].Description
-                let matchAway = newMatch.awayTeam.name
-                let eqalAway = fifaAway === matchAway
-                if (!eqalAway) return false
-
-                return eqalHome && eqalAway
-            })
-        }
+        let fifaMatch = this.getFifaMatch(newMatch)
 
         if (fifaMatch === undefined) {
             console.log('[FE]', fifaMatch, newMatch)
@@ -589,7 +572,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         if (newMatch.score.fullTime.home !== fifaMatch.HomeTeamScore) {
             console.log('[FE] Различни резултатни точки за домакин')
         }
-        
+
         if (newMatch.score.fullTime.away !== fifaMatch.AwayTeamScore) {
             console.log('[FE] Различни резултатни точки за гост')
         }
