@@ -158,6 +158,7 @@ export class SupabaseService {
     const localOrPrimaryUrl = `${this.proxyBaseUrl}${path}`
     const primaryRequest = this.httpClient.get<T>(localOrPrimaryUrl, options)
 
+    console.log('[FE] IsLocalhost', this.isLocalHost)
     if (!this.isLocalHost) {
       return primaryRequest
     }
