@@ -20,6 +20,7 @@ import {
   Team,
   User
 } from './all-predictions/all-predictions.models'
+import { MatchImportService } from './services/match-import.service'
 
 export interface Profile {
   id?: string
@@ -28,10 +29,24 @@ export interface Profile {
   avatar_url: string
 }
 
+export interface OneMatchToInsert {
+  id: number
+  home_team_id: number
+  away_team_id: number
+  utc_date: string
+  group_name: string
+  home_ft?: number | undefined
+  away_ft?: number | undefined
+  home_pt?: number | undefined
+  away_pt?: number | undefined
+  winner?: string | undefined
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
+
   private supabase: SupabaseClient
   _session: AuthSession | null = null
   private readonly remoteProxyBaseUrl = 'https://simple-node-proxy.onrender.com'
@@ -103,10 +118,10 @@ export class SupabaseService {
 
   getLiveMatchesFromBE(): Observable<MatchesApiResponse> {
     return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live', {
-        params: {
-          t: Date.now().toString(),
-        },
-      })
+      params: {
+        t: Date.now().toString(),
+      },
+    })
       .pipe(
         catchError((error: HttpErrorResponse) => {
           const archivedMatches = this.readLatestLiveMatchesFullArchive()
@@ -122,10 +137,10 @@ export class SupabaseService {
 
   getLiveMatchesFullFromBE(): Observable<MatchesApiResponse> {
     return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live/full', {
-        params: {
-          t: Date.now().toString(),
-        },
-      })
+      params: {
+        t: Date.now().toString(),
+      },
+    })
       .pipe(
         tap((matches) => {
           this.saveLiveMatchesFullArchive(matches)
@@ -273,6 +288,13 @@ export class SupabaseService {
     }
   }
 
+  addMatchs(matchesData: OneMatchToInsert[]) {
+    return this.client
+      .from('matches')
+      .insert(matchesData)
+      .select();
+  }
+
   async addPredictionBackupEvent(backupEvent: PredictionBackupEventInsert): Promise<SupabaseResponse<PredictionBackupEventRow>> {
     const { data, error } = await this.supabase
       .from('prediction_backup_events')
@@ -404,7 +426,7 @@ export class SupabaseService {
           const safeEntry = entry as { ts?: unknown; data?: unknown }
           return {
             ts: typeof safeEntry.ts === 'number' ? safeEntry.ts : 0,
-            data:( Array.isArray(safeEntry.data) ? (safeEntry.data as Match[]) : []) as MatchesApiResponse,
+            data: (Array.isArray(safeEntry.data) ? (safeEntry.data as Match[]) : []) as MatchesApiResponse,
           }
         })
         .filter((entry) => entry.ts > 0 && entry.data.length > 0)

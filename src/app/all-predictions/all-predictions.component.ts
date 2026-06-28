@@ -18,7 +18,7 @@ import { AllPredictionsPredictionFlowService } from './all-predictions-predictio
 import { AllPredictionsMapperService } from './all-predictions-mapper.service';
 import { getDeepObjectDifferences } from './deep-object-diff.util';
 import { Bet, Match, MatchesApiResponse, Prediction, PredictionBackupEntry, Team, User } from './all-predictions.models';
-import { SupabaseService } from '../supabase';
+import { OneMatchToInsert, SupabaseService } from '../supabase';
 import { AdminService } from '../services/admin.service';
 import { ThemeService } from '../services/theme.service';
 import { SelectedUserService } from '../services/selected-user.service';
@@ -105,6 +105,49 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         const thead = this.el.nativeElement.querySelector('.p-datatable-thead');
         if (thead) {
             this.el.nativeElement.style.setProperty('--group-header-top', `${thead.offsetHeight}px`);
+        }
+    }
+
+    async insertMisingMatches() {
+        let foo = []
+        let newMatch: OneMatchToInsert | undefined = undefined
+        let kk = this.supabaseService
+
+        let kgh = ((await this.supabaseService.getMatches()).data)?.filter((val) => val.id > 202600)
+        let matchToInsert: OneMatchToInsert[] = []
+        this.allMatches.forEach(val => {
+            let foo = kgh?.find(predict => predict.id === val.myId)
+            if (foo === undefined) {
+                let utcDate = new Date(val.utcDate)
+                let fooo = {
+                    mm: utcDate.getMonth() + 1, dd: utcDate.getDate(), year: utcDate.getFullYear(),
+                    hour: utcDate.getHours(), minute: utcDate.getMinutes(), second: utcDate.getSeconds()
+                }
+
+
+                let id = val.myId
+                let home_team_id = this.allTeams.find(team => team.name_en === val.homeTeam.name)?.id;
+                let away_team_id = this.allTeams.find(team => team.name_en === val.awayTeam.name)?.id;
+                let kkkk = fooo.mm + '/' + fooo.dd + '/' + fooo.year + ' ' + fooo.hour + ':' + fooo.minute + ':' + fooo.second
+                let groupName = val.stage
+                if (home_team_id && away_team_id) {
+                    newMatch = {
+                        id: id,
+                        home_team_id: home_team_id,
+                        away_team_id: away_team_id,
+                        utc_date: val.utcDate,
+                        group_name: groupName
+                    }
+                    matchToInsert.push(newMatch)
+                }
+            }
+            return false
+        })
+
+        if (this.allMatches.length > 0) {
+            this.supabaseService.addMatchs(matchToInsert).then((val) => {
+                console.log(val)
+            })
         }
     }
 
@@ -375,7 +418,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
         // Disallow editing winner for non-admins
         if (j === 2 && !this.isAdmin()) {
-            result = !(product.group.split('.')[1].split('_')[0] === 'GROUP');
+            const newLocal = product.group.split('.')[1]
+            let kkk = newLocal.split('_')[0]
+
+            if (kkk !== "GROUP" && (newLocal === 'LAST_32' || newLocal === 'LAST_16' || newLocal === 'QUARTER_FINALS' || newLocal === 'SEMI_FINALS' || newLocal === 'THIRD_PLACE' || newLocal === 'FINAL')) {
+                // result = true
+            } else {
+                result = !(product.group.split('.')[1].split('_')[0] === 'GROUP');
+            }
         }
 
         // Disallow editing points points for non-admins
@@ -388,8 +438,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             result = false;
         }
 
-        if (product.stage === 'TABLE.LAST_32' || product.stage === 'TABLE.QUARTER_FINALS' || product.stage === 'TABLE.LAST_16' || product.stage === 'TABLE.SEMI_FINALS' || product.stage === 'TABLE.THIRD_PLACE' || product.stage === 'TABLE.FINAL') {
-            result = false;
+        if (result) {
+            let homeTeamName = this.allMatches.find((item) => item.myId === product.id)?.homeTeam.name
+            let awayTeamName = this.allMatches.find((item) => item.myId === product.id)?.awayTeam.name
+            let toResFalse = homeTeamName === null || awayTeamName === null
+            result = toResFalse ? false : true
+        }
+        if (result) {
+            console.log(this.selectedPlayerId, user.id)
         }
 
         return result;
@@ -512,10 +568,12 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 this.fifaMatches = responseFromFifa;
 
                 this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
-                    let newDate = [...data]
-                    // newDate.map((match) => this.fixScoreFromToZero(match))
-                    newDate.map((match) => this.fixScoreFromFifa(match))
-                    this.refreshMatchesWithLiveOverlay(newDate);
+                    this.insertMisingMatches().then(() => {
+                        let newDate = [...data]
+                        // newDate.map((match) => this.fixScoreFromToZero(match))
+                        newDate.map((match) => this.fixScoreFromFifa(match))
+                        this.refreshMatchesWithLiveOverlay(newDate);
+                    })
                 });
             })
     }
@@ -611,6 +669,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     myGroup: myGroup,
                 }
             });
+            this.insertMisingMatches().then(() => { })
         }
 
         this.fixPredictions();
