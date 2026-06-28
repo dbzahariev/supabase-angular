@@ -71,29 +71,4 @@ export class SupabaseChatService {
             )
             .subscribe();
     }
-
-    /**
-     * Calculate points from match and prediction
-     */
-    getPointFromMatch(bet: MatchPointInput, prediction: PredictionPointInput): number {
-        const actualHome = bet.score.fullTime.home;
-        const actualAway = bet.score.fullTime.away;
-        const actualWinner = bet.score.winner;
-        const predictedHome = prediction.home_ft;
-        const predictedAway = prediction.away_ft;
-        const predictedWinner = prediction.winner;
-
-        if (actualHome === predictedHome && actualAway === predictedAway) {
-            return 3;
-        }
-        const actualAbs = Math.abs(actualHome - actualAway);
-        const predictAbs = Math.abs(predictedHome - predictedAway);
-        if (actualAbs === predictAbs && actualWinner === predictedWinner) {
-            return 2;
-        }
-        if (actualWinner === predictedWinner) {
-            return 1;
-        }
-        return 0;
-    }
 }

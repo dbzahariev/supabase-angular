@@ -163,7 +163,6 @@ export class AllPredictionsMapperService {
         }
         if (columnIndex === 2) {
             let translatedWinner = this.returnTranslateFromWin(selectedPredict.winner);
-            console.log(translatedWinner, selectedPredict.winner)
             if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
                 translatedWinner = '?';
             }
