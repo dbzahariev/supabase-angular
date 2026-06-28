@@ -3,8 +3,20 @@ import { Match, Prediction, User } from './all-predictions.models';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsPointsService {
-    calculatePredictionPoints(match: Match | undefined, prediction: Prediction): number {
+    calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
         let result = -1
+        let match: Match | undefined = { ...match2 } as Match | undefined
+
+        // if (match?.score?.fullTime?.home !== undefined) {
+        //     match.score.fullTime.home = 1
+        // }
+        // if (match?.score?.fullTime?.away !== undefined) {
+        //     match.score.fullTime.away = 2
+        // }
+        // if (match?.score?.winner !== undefined) {
+        //     match.score.winner = 'AWAY_TEAM'
+        // }
+
 
         if (!match) {
             return -2;
@@ -42,6 +54,11 @@ export class AllPredictionsPointsService {
                 if (result === -1) {
                     result = 0;
                 }
+            }
+
+            let isGroup = match.myGroup.toLowerCase().includes("group")
+            if (!isGroup && prediction.winner === match.score.winner) {
+                result += 1
             }
 
             // if (match.status === 'IN_PLAY') {
