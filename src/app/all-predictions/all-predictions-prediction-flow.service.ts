@@ -31,7 +31,7 @@ export class AllPredictionsPredictionFlowService {
         const selectedMatch = allMatches.find(match => match.myId === bet.id);
         const prediction = allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id);
 
-        if (columnIndex > 1) {
+        if (columnIndex > 1 && columnIndex!==2) {
             return {
                 backupEntry: {
                     event_id: eventId,
@@ -47,7 +47,7 @@ export class AllPredictionsPredictionFlowService {
                         away_ft: prediction ? prediction.away_ft : -1,
                         home_pt: prediction ? prediction.home_pt : -1,
                         away_pt: prediction ? prediction.away_pt : -1,
-                        winner: prediction ? prediction.winner : 'DRAW',
+                        winner: prediction ? prediction.winner : 'DRAW_EQUAL',
                         match_group: selectedMatch?.group ?? null,
                     },
                 },
@@ -59,6 +59,7 @@ export class AllPredictionsPredictionFlowService {
         }
 
         const payload = this.buildMutationPayload(user, bet, selectedMatch, prediction, columnIndex, newValue);
+        
         const isNew = !prediction;
         const hasInvalidScore = payload.home_ft < 0 && payload.away_ft < 0;
         const shouldDelete = hasInvalidScore && !isNew;
@@ -120,7 +121,7 @@ export class AllPredictionsPredictionFlowService {
             away_ft: prediction ? prediction.away_ft : -1,
             home_pt: prediction ? prediction.home_pt : -1,
             away_pt: prediction ? prediction.away_pt : -1,
-            winner: prediction ? prediction.winner : 'DRAW',
+            winner: prediction ? prediction.winner : 'DRAW_1',
         };
 
         if (columnIndex === 0) payload.home_ft = score;
@@ -128,10 +129,10 @@ export class AllPredictionsPredictionFlowService {
 
         if (payload.home_ft > payload.away_ft) payload.winner = 'HOME_TEAM';
         else if (payload.away_ft > payload.home_ft) payload.winner = 'AWAY_TEAM';
-        else payload.winner = 'DRAW';
+        else payload.winner = prediction ? prediction.winner : '';
 
         if (payload.home_ft === -1 || payload.away_ft === -1) {
-            payload.winner = '';
+            payload.winner = prediction ? prediction.winner : '';
         }
 
         return payload;

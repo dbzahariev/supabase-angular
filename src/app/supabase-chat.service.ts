@@ -72,20 +72,6 @@ export class SupabaseChatService {
             .subscribe();
     }
 
-    getWinner(score: { away: number, home: number }): "HOME_TEAM" | "AWAY_TEAM" | "DRAW" {
-        let result: "HOME_TEAM" | "AWAY_TEAM" | "DRAW";
-        if (score.away > score.home) {
-            result = "AWAY_TEAM";
-        } else if (score.home > score.away) {
-            result = "HOME_TEAM";
-        } else if (score.home < score.away) {
-            result = "AWAY_TEAM";
-        } else {
-            result = "DRAW";
-        }
-        return result;
-    }
-
     /**
      * Calculate points from match and prediction
      */

@@ -116,18 +116,18 @@ export class AllPredictionsMapperService {
         return '';
     }
 
-    getProductResultRow(bet: Bet, index: number): string {
-        if (index === 0) {
-            return bet.score?.fullTime.home?.toString() || '';
-        }
-        if (index === 1) {
-            return bet.score?.fullTime.away?.toString() || '';
-        }
-        if (index === 2) {
-            return bet.score?.winner === null ? '' : this.returnTranslateFromWin(bet.score?.winner);
-        }
-        return '';
-    }
+    // getProductResultRow(bet: Bet, index: number): string {
+    //     if (index === 0) {
+    //         return bet.score?.fullTime.home?.toString() || '';
+    //     }
+    //     if (index === 1) {
+    //         return bet.score?.fullTime.away?.toString() || '';
+    //     }
+    //     if (index === 2) {
+    //         return bet.score?.winner === null ? '' : this.returnTranslateFromWin(bet.score?.winner);
+    //     }
+    //     return '';
+    // }
 
     returnTranslateFromWin(winner: string | null | undefined): string {
         if (winner === undefined || winner === '') return '';
@@ -163,6 +163,7 @@ export class AllPredictionsMapperService {
         }
         if (columnIndex === 2) {
             let translatedWinner = this.returnTranslateFromWin(selectedPredict.winner);
+            console.log(translatedWinner, selectedPredict.winner)
             if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
                 translatedWinner = '?';
             }

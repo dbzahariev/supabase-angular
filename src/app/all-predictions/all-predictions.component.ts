@@ -144,7 +144,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             return false
         })
 
-        if (this.allMatches.length > 0 && matchToInsert.length>0) {
+        if (this.allMatches.length > 0 && matchToInsert.length > 0) {
             this.supabaseService.addMatchs(matchToInsert).then((val) => {
                 console.log(val)
             })
@@ -422,10 +422,27 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             let kkk = newLocal.split('_')[0]
 
             if (kkk !== "GROUP" && (newLocal === 'LAST_32' || newLocal === 'LAST_16' || newLocal === 'QUARTER_FINALS' || newLocal === 'SEMI_FINALS' || newLocal === 'THIRD_PLACE' || newLocal === 'FINAL')) {
-                // result = true
+                let slectedPredict = this.allPredictions
+                    .filter((item) => item.matches.id === product.id)
+                    .find((item) => item.users.id === user.id)
+                if (slectedPredict) {
+                    if (slectedPredict?.home_ft === slectedPredict?.away_ft) {
+                        // Now I have predict with DRAW predict
+                        result = true
+                    }
+                    else {
+                        // Now I have predict with NOT DRAW predict
+                        result = false
+                    }
+                }
+                else {
+                    result = false
+                    // User not Give predict
+                }
             } else {
                 result = !(product.group.split('.')[1].split('_')[0] === 'GROUP');
             }
+
         }
 
         // Disallow editing points points for non-admins
@@ -761,7 +778,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         let oldHome: number | undefined;
         let oldAway: number | undefined;
         let oldWinner: string | undefined;
-
         if (prediction && columnIndex < 2) {
             // Save current state for rollback
             oldHome = prediction.home_ft;
@@ -787,10 +803,41 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             } else if (prediction.home_ft === -1 || prediction.away_ft === -1) {
                 prediction.winner = '';
             } else {
-                prediction.winner = 'DRAW';
+                let myGroupForMatch = this.allMatches.find((item) => item.myId === prediction.matches.id)?.myGroup
+                if (myGroupForMatch === "TABLE.LAST_32") {
+                    prediction.winner = ''
+                }
+                else {
+                    prediction.winner = 'DRAW';
+                }
             }
 
             // Trigger immediate UI update
+            this.cdr.markForCheck();
+        }
+        else if (prediction) {
+            if (columnIndex === 2) {
+                let foo = newValue
+                if (foo !== '') {
+                    foo = foo.toLowerCase()
+                    if (foo.length !== 0) {
+                        if (foo === '1' || foo === 'h' || foo === 'д') {
+                            foo = "HOME_TEAM"
+                        }
+                        else if (foo === '2' || foo === 'a' || foo === 'а') {
+                            foo = "AWAY_TEAM"
+                        } else {
+                            foo = ''
+                        }
+                    }
+                    else {
+                        foo = ''
+                    }
+                }
+                newValue = foo
+                prediction.winner = newValue
+            }
+
             this.cdr.markForCheck();
         }
 

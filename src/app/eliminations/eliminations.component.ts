@@ -516,20 +516,6 @@ export class EliminationsComponent implements AfterViewInit {
     this.setZoom(this.zoomScale + delta, true);
   }
 
-  // private loadFifaMatchNumbers(): void {
-  //   // this.fifaCalendarService.getSeasonMatchesResult().subscribe({
-  //   //   next: (response) => {
-  //   const proxyMatch = this.allMatches[0]
-
-  //   this.fifaCalendarService.getSeasonMatchesFilteredByDate(proxyMatch.utcDate).subscribe({
-  //     next: (fifaMatch) => {
-  //       debugger
-  //     },
-  //   });
-  //   // },
-  //   // });
-  // }
-
   onViewportPointerDown(event: PointerEvent): void {
     if ((event.pointerType === 'mouse' && event.button !== 0) || this.isInteractiveTarget(event.target)) {
       return;
