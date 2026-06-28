@@ -144,7 +144,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             return false
         })
 
-        if (this.allMatches.length > 0) {
+        if (this.allMatches.length > 0 && matchToInsert.length>0) {
             this.supabaseService.addMatchs(matchToInsert).then((val) => {
                 console.log(val)
             })
@@ -443,9 +443,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             let awayTeamName = this.allMatches.find((item) => item.myId === product.id)?.awayTeam.name
             let toResFalse = homeTeamName === null || awayTeamName === null
             result = toResFalse ? false : true
-        }
-        if (result) {
-            console.log(this.selectedPlayerId, user.id)
         }
 
         return result;
