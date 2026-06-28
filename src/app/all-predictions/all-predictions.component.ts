@@ -236,8 +236,8 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // Return color class based on points
-        if (points === 3) {
-            return 'points-3'; // Green for 3 points
+        if (points >= 3) {
+            return 'points-3'; // Green for 3 points or great then 3
         } else if (points === 2) {
             return 'points-2'; // Yellow for 2 points
         } else if (points === 1) {
