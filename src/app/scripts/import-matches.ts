@@ -19,7 +19,7 @@ import backup2022 from '../../../backup_2022.json';
 import backup2024 from '../../../backup_2024.json';
 
 export async function importAllMatches(
-  supabaseService: SupabaseService,
+  _supabaseService: SupabaseService,
   importService: MatchImportService
 ) {
   console.log('🚀 Стартиране на импортиране на мачове...\n');

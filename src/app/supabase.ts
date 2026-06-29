@@ -20,7 +20,6 @@ import {
   Team,
   User
 } from './all-predictions/all-predictions.models'
-import { MatchImportService } from './services/match-import.service'
 
 export interface Profile {
   id?: string
@@ -288,7 +287,7 @@ export class SupabaseService {
     }
   }
 
-  addMatchs(matchesData: OneMatchToInsert[]) {
+  addMatchesToDatabase(matchesData: OneMatchToInsert[]) {
     return this.client
       .from('matches')
       .insert(matchesData)

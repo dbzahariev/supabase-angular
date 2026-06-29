@@ -30,7 +30,7 @@ export interface BackupMatch {
 export interface ImportMatchResult {
   success: boolean;
   count: number;
-  errors: Array<Error | { message?: string; details?: string; code?: string }>;
+  errors: (Error | { message?: string; details?: string; code?: string })[];
 }
 
 type ImportMatchError = ImportMatchResult['errors'][number];

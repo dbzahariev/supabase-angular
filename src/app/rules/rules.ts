@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -9,8 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./rules.css'],
 })
 export class RulesComponent {
-  private translate = inject(TranslateModule);
-
   readonly themeColors400: Record<string, string> = {
     yellow: 'text-yellow-400',
     green: 'text-green-400',

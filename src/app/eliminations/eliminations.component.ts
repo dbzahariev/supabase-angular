@@ -59,7 +59,6 @@ interface GroupToggleItem {
 })
 export class EliminationsComponent implements AfterViewInit {
   @ViewChild('zoomViewport', { static: true }) private readonly zoomViewport!: ElementRef<HTMLDivElement>;
-  @ViewChild('zoomContent', { static: true }) private readonly zoomContent!: ElementRef<HTMLDivElement>;
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
@@ -491,55 +490,6 @@ export class EliminationsComponent implements AfterViewInit {
   formatTimeToHHmm(date: Date | null, locale = 'en-GB', timeZone?: string): string {
     if (!date) return '00:00';
     return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone });
-  }
-
-  private formatDateTime(value: string): string {
-    if (!value || value.trim().length === 0) {
-      return '--.-- - --:--';
-    }
-
-    const lang = this.translateService.currentLang || localStorage.getItem('lang') || 'bg';
-    const isBg = lang === 'bg';
-    const locale = isBg ? 'bg-BG' : 'en-GB';
-    const timeZone = isBg ? 'Europe/Sofia' : 'Europe/Brussels';
-
-    const parsed = this.parseDateTime(value);
-    if (!parsed) {
-      return value;
-    }
-
-    const dateLabel = parsed.toLocaleDateString(locale, {
-      day: '2-digit',
-      month: '2-digit',
-      timeZone,
-    });
-    const timeLabel = parsed.toLocaleTimeString(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone,
-    });
-
-    return `${dateLabel} - ${timeLabel}`;
-  }
-
-  private parseDateTime(value: string): Date | null {
-    const trimmed = value.trim();
-    const usFormat = /^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/;
-    const usMatch = trimmed.match(usFormat);
-
-    if (usMatch) {
-      const month = Number(usMatch[1]);
-      const day = Number(usMatch[2]);
-      const year = Number(usMatch[3]);
-      const hours = Number(usMatch[4]);
-      const minutes = Number(usMatch[5]);
-      const utcDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
-      return Number.isNaN(utcDate.getTime()) ? null : utcDate;
-    }
-
-    const parsed = new Date(trimmed);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   getParentOptions(currentId: number): EditableMatch[] {

@@ -24,7 +24,7 @@ import { ThemeService } from '../services/theme.service';
 import { SelectedUserService } from '../services/selected-user.service';
 import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
-import { FifaCalendarService } from '../services/fifa-calendar.service';
+import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
 
 @Component({
     selector: 'app-all-predictions',
@@ -49,7 +49,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     allUsersNames: User[] = [];
     allPredictions: Prediction[] = [];
     allMatches: Match[] = [];
-    fifaMatches: any[] = [];
+    fifaMatches: FifaCalendarMatch[] = [];
     allTeams: Team[] = [];
     themeColor = '#ffffff';
     themeBackground = '#ffffff';
@@ -108,30 +108,18 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    async insertMisingMatches() {
-        let foo = []
-        let newMatch: OneMatchToInsert | undefined = undefined
-        let kk = this.supabaseService
-
-        let kgh = ((await this.supabaseService.getMatches()).data)?.filter((val) => val.id > 202600)
-        let matchToInsert: OneMatchToInsert[] = []
+    async insertMissingMatchEntries() {
+        const kgh = ((await this.supabaseService.getMatches()).data)?.filter((val) => val.id > 202600)
+        const matchToInsert: OneMatchToInsert[] = []
         this.allMatches.forEach(val => {
-            let foo = kgh?.find(predict => predict.id === val.myId)
+            const foo = kgh?.find(predict => predict.id === val.myId)
             if (foo === undefined) {
-                let utcDate = new Date(val.utcDate)
-                let fooo = {
-                    mm: utcDate.getMonth() + 1, dd: utcDate.getDate(), year: utcDate.getFullYear(),
-                    hour: utcDate.getHours(), minute: utcDate.getMinutes(), second: utcDate.getSeconds()
-                }
-
-
-                let id = val.myId
-                let home_team_id = this.allTeams.find(team => team.name_en === val.homeTeam.name)?.id;
-                let away_team_id = this.allTeams.find(team => team.name_en === val.awayTeam.name)?.id;
-                let kkkk = fooo.mm + '/' + fooo.dd + '/' + fooo.year + ' ' + fooo.hour + ':' + fooo.minute + ':' + fooo.second
-                let groupName = val.stage
+                const id = val.myId
+                const home_team_id = this.allTeams.find(team => team.name_en === val.homeTeam.name)?.id;
+                const away_team_id = this.allTeams.find(team => team.name_en === val.awayTeam.name)?.id;
+                const groupName = val.stage
                 if (home_team_id && away_team_id) {
-                    newMatch = {
+                    const newMatch: OneMatchToInsert = {
                         id: id,
                         home_team_id: home_team_id,
                         away_team_id: away_team_id,
@@ -145,7 +133,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         })
 
         if (this.allMatches.length > 0 && matchToInsert.length > 0) {
-            this.supabaseService.addMatchs(matchToInsert).then((val) => {
+            this.supabaseService.addMatchesToDatabase(matchToInsert).then((val) => {
                 console.log(val)
             })
         }
@@ -201,19 +189,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
     private isFinishedMatchStatus(status: string | null | undefined): boolean {
         return String(status ?? '').toUpperCase() === 'FINISHED';
-    }
-
-    // Normalize prediction values for comparison
-    private normalizeValue(value: string | undefined | null): string {
-        if (!value) return '';
-        const str = String(value).toUpperCase().trim();
-        if (str === 'HOME_TEAM') return 'H';
-        if (str === 'AWAY_TEAM') return 'A';
-        if (str === 'DRAW') return 'D';
-        if (str === 'H' || str === 'Д') return 'H';
-        if (str === 'A' || str === 'Г') return 'A';
-        if (str === 'D' || str === 'П' || str === 'DRAW') return 'D';
-        return str;
     }
 
     // Method to determine cell background color
@@ -419,14 +394,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         // Disallow editing winner for non-admins
         if (j === 2 && !this.isAdmin()) {
             const newLocal = product.group.split('.')[1]
-            let kkk = newLocal.split('_')[0]
+            const kkk = newLocal.split('_')[0]
 
             if (kkk !== "GROUP" && (newLocal === 'LAST_32' || newLocal === 'LAST_16' || newLocal === 'QUARTER_FINALS' || newLocal === 'SEMI_FINALS' || newLocal === 'THIRD_PLACE' || newLocal === 'FINAL')) {
-                let slectedPredict = this.allPredictions
+                const selectedPrediction = this.allPredictions
                     .filter((item) => item.matches.id === product.id)
                     .find((item) => item.users.id === user.id)
-                if (slectedPredict) {
-                    if (slectedPredict?.home_ft === slectedPredict?.away_ft) {
+                if (selectedPrediction) {
+                    if (selectedPrediction?.home_ft === selectedPrediction?.away_ft) {
                         // Now I have predict with DRAW predict
                         result = true
                     }
@@ -456,9 +431,9 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         if (result) {
-            let homeTeamName = this.allMatches.find((item) => item.myId === product.id)?.homeTeam.name
-            let awayTeamName = this.allMatches.find((item) => item.myId === product.id)?.awayTeam.name
-            let toResFalse = homeTeamName === null || awayTeamName === null
+            const homeTeamName = this.allMatches.find((item) => item.myId === product.id)?.homeTeam.name
+            const awayTeamName = this.allMatches.find((item) => item.myId === product.id)?.awayTeam.name
+            const toResFalse = homeTeamName === null || awayTeamName === null
             result = toResFalse ? false : true
         }
 
@@ -582,8 +557,8 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 this.fifaMatches = responseFromFifa;
 
                 this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
-                    this.insertMisingMatches().then(() => {
-                        let newDate = [...data]
+                    this.insertMissingMatchEntries().then(() => {
+                        const newDate = [...data]
                         // newDate.map((match) => this.fixScoreFromToZero(match))
                         newDate.map((match) => this.fixScoreFromFifa(match))
                         this.refreshMatchesWithLiveOverlay(newDate);
@@ -614,8 +589,8 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         return fifaMatches.find(item => {
-            const home = this.getNewName(item.Home?.TeamName[0]?.Description ?? '');
-            const away = this.getNewName(item.Away?.TeamName[0]?.Description ?? '');
+            const home = this.getNewName(item.Home?.TeamName?.[0]?.Description ?? '');
+            const away = this.getNewName(item.Away?.TeamName?.[0]?.Description ?? '');
 
             return (
                 home === match.homeTeam.name &&
@@ -624,8 +599,23 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         });
     }
 
+    private getFifaScore(match: FifaCalendarMatch, key: 'HomeTeamScore' | 'AwayTeamScore'): number | null {
+        const rawScore = match[key];
+
+        if (typeof rawScore === 'number' && Number.isFinite(rawScore)) {
+            return rawScore;
+        }
+
+        if (typeof rawScore === 'string') {
+            const parsedScore = Number(rawScore);
+            return Number.isFinite(parsedScore) ? parsedScore : null;
+        }
+
+        return null;
+    }
+
     fixScoreFromToZero(oldMatch: Match) {
-        let newMatch = { ...oldMatch }
+        const newMatch = { ...oldMatch }
 
         newMatch.score.fullTime.home = 0
         newMatch.score.fullTime.away = 0
@@ -634,23 +624,31 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     fixScoreFromFifa(oldMatch: Match) {
-        let newMatch = { ...oldMatch }
-        let fifaMatch = this.getFifaMatch(newMatch)
+        const newMatch = { ...oldMatch }
+        const fifaMatch = this.getFifaMatch(newMatch)
 
         if (fifaMatch === undefined) {
             console.log('[FE]', fifaMatch, newMatch)
+            return oldMatch
         }
 
-        if (newMatch.score.fullTime.home !== fifaMatch.HomeTeamScore) {
+        const homeTeamScore = this.getFifaScore(fifaMatch, 'HomeTeamScore');
+        const awayTeamScore = this.getFifaScore(fifaMatch, 'AwayTeamScore');
+
+        if (homeTeamScore === null || awayTeamScore === null) {
+            return oldMatch;
+        }
+
+        if (newMatch.score.fullTime.home !== homeTeamScore) {
             console.log('[FE] Различни резултатни точки за домакин')
         }
 
-        if (newMatch.score.fullTime.away !== fifaMatch.AwayTeamScore) {
+        if (newMatch.score.fullTime.away !== awayTeamScore) {
             console.log('[FE] Различни резултатни точки за гост')
         }
 
-        newMatch.score.fullTime.home = fifaMatch.HomeTeamScore
-        newMatch.score.fullTime.away = fifaMatch.AwayTeamScore
+        newMatch.score.fullTime.home = homeTeamScore
+        newMatch.score.fullTime.away = awayTeamScore
 
         return oldMatch
     }
@@ -683,7 +681,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     myGroup: myGroup,
                 }
             });
-            this.insertMisingMatches().then(() => { })
+            void this.insertMissingMatchEntries();
         }
 
         this.fixPredictions();
@@ -803,7 +801,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             } else if (prediction.home_ft === -1 || prediction.away_ft === -1) {
                 prediction.winner = '';
             } else {
-                let myGroupForMatch = this.allMatches.find((item) => item.myId === prediction.matches.id)?.myGroup
+                const myGroupForMatch = this.allMatches.find((item) => item.myId === prediction.matches.id)?.myGroup
                 if (myGroupForMatch === "TABLE.LAST_32") {
                     prediction.winner = ''
                 }

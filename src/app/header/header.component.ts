@@ -43,8 +43,6 @@ export class HeaderComponent implements OnInit {
   currentRoute = '';
   canInstall = false;
   private installPrompt: BeforeInstallPromptEvent | null = null;
-  private readonly IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches
-    || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
   colorOptions: ColorOption[] = [
     { en: 'Green', bg: 'Зелено', code: 'green' },
     { en: 'Red', bg: 'Червено', code: 'red' },

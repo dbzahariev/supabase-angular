@@ -15,22 +15,6 @@ interface MessageRow extends Message {
     users?: { name?: string };
 }
 
-interface MatchPointInput {
-    score: {
-        fullTime: {
-            home: number;
-            away: number;
-        };
-        winner: string;
-    };
-}
-
-interface PredictionPointInput {
-    home_ft: number;
-    away_ft: number;
-    winner: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class SupabaseChatService {
     private readonly supabaseService = inject(SupabaseService);

@@ -6,7 +6,7 @@ export class AllPredictionsPointsService {
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
 
         let result = -1
-        let match: Match | undefined = { ...match2 } as Match | undefined
+        const match: Match | undefined = { ...match2 } as Match | undefined
 
         // if (match?.score?.fullTime?.home !== undefined) {
         //     match.score.fullTime.home = 1
@@ -64,7 +64,7 @@ export class AllPredictionsPointsService {
                 }
             }
 
-            let isGroup = match.myGroup.toLowerCase().includes("group")
+            const isGroup = match.myGroup.toLowerCase().includes("group")
             if (!isGroup && prediction.winner === match.score.winner && (actualAbs === predictAbs)) {
                 result += 1
             }
