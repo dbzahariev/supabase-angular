@@ -39,6 +39,8 @@ export interface OneMatchToInsert {
   winner?: string | undefined
 }
 
+type SupabaseRowPayload = object | object[]
+
 @Injectable({
   providedIn: 'root',
 })
@@ -113,7 +115,7 @@ export class SupabaseService {
     return this.toSupabaseResponse<T>(data, error)
   }
 
-  private async insertRows<T>(table: string, payload: unknown): Promise<SupabaseResponse<T>> {
+  private async insertRows<T>(table: string, payload: SupabaseRowPayload): Promise<SupabaseResponse<T>> {
     const { data, error } = await this.supabase
       .from(table)
       .insert(payload)
@@ -122,7 +124,7 @@ export class SupabaseService {
     return this.toSupabaseResponse<T>(data, error)
   }
 
-  private async upsertRows<T>(table: string, payload: unknown, onConflict: string): Promise<SupabaseResponse<T>> {
+  private async upsertRows<T>(table: string, payload: SupabaseRowPayload, onConflict: string): Promise<SupabaseResponse<T>> {
     const { data, error } = await this.supabase
       .from(table)
       .upsert(payload, { onConflict })
@@ -131,7 +133,7 @@ export class SupabaseService {
     return this.toSupabaseResponse<T>(data, error)
   }
 
-  private async updateRowsById<T>(table: string, id: number, payload: unknown): Promise<SupabaseResponse<T>> {
+  private async updateRowsById<T>(table: string, id: number, payload: object): Promise<SupabaseResponse<T>> {
     const { data, error } = await this.supabase
       .from(table)
       .update(payload)
@@ -168,7 +170,7 @@ export class SupabaseService {
   mutateRows<T>(mutation: {
     table: string
     action: 'insert' | 'upsert' | 'update' | 'delete'
-    payload?: unknown
+    payload?: SupabaseRowPayload
     id?: number
     onConflict?: string
     select?: string
@@ -177,10 +179,24 @@ export class SupabaseService {
     const { table, action, payload, id, onConflict, select, single } = mutation
 
     if (action === 'insert') {
+      if (!payload) {
+        return Promise.resolve({
+          data: null,
+          error: { message: 'Mutation payload is required for insert action' },
+        })
+      }
+
       return this.insertRowsWithOptions<T>(table, payload, { select, single })
     }
 
     if (action === 'upsert') {
+      if (!payload) {
+        return Promise.resolve({
+          data: null,
+          error: { message: 'Mutation payload is required for upsert action' },
+        })
+      }
+
       return this.upsertRowsWithOptions<T>(table, payload, onConflict ?? '', { select, single })
     }
 
@@ -189,6 +205,13 @@ export class SupabaseService {
         return Promise.resolve({
           data: null,
           error: { message: 'Mutation id is required for update action' },
+        })
+      }
+
+      if (!payload || Array.isArray(payload)) {
+        return Promise.resolve({
+          data: null,
+          error: { message: 'Mutation payload object is required for update action' },
         })
       }
 
@@ -207,7 +230,7 @@ export class SupabaseService {
 
   private async insertRowsWithOptions<T>(
     table: string,
-    payload: unknown,
+    payload: SupabaseRowPayload,
     options?: { select?: string; single?: boolean }
   ): Promise<SupabaseResponse<T>> {
     const query = this.supabase
@@ -226,7 +249,7 @@ export class SupabaseService {
 
   private async upsertRowsWithOptions<T>(
     table: string,
-    payload: unknown,
+    payload: SupabaseRowPayload,
     onConflict: string,
     options?: { select?: string; single?: boolean }
   ): Promise<SupabaseResponse<T>> {
@@ -247,7 +270,7 @@ export class SupabaseService {
   private async updateRowsByIdWithOptions<T>(
     table: string,
     id: number,
-    payload: unknown,
+    payload: object,
     options?: { select?: string; single?: boolean }
   ): Promise<SupabaseResponse<T>> {
     const query = this.supabase
