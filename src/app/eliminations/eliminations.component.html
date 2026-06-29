@@ -2,19 +2,46 @@
   <div class="eliminations__surface">
     <div class="eliminations__group-toggles">
       <div class="eliminations__mobile-group-controls">
-        <select
-          class="eliminations__mobile-group-select"
-          [ngModel]="mobileSelectedGroupKey"
-          (ngModelChange)="onMobileGroupSelectChange($event)"
+        <button
+          type="button"
+          class="eliminations__mobile-group-trigger"
           aria-label="Select elimination group"
+          [attr.aria-expanded]="isMobileDropdownOpen"
+          (click)="toggleMobileDropdown()"
         >
-          <option value="all">{{ mobileAllOptionLabel }}</option>
-          @for (item of groupToggleItems; track item.key) {
-            <option [value]="item.key">
-              {{ getMobileGroupOptionLabel(item) }}
-            </option>
-          }
-        </select>
+          {{ mobileCurrentSelectionLabel }}
+        </button>
+
+        @if (isMobileDropdownOpen) {
+          <button
+            type="button"
+            class="eliminations__mobile-group-backdrop"
+            (click)="closeMobileDropdown()"
+            aria-label="Close group selector"
+          ></button>
+
+          <div class="eliminations__mobile-group-menu" role="listbox" aria-label="Elimination groups">
+            <button
+              type="button"
+              class="eliminations__mobile-group-option"
+              [class.is-active]="mobileSelectedGroupKey === 'all'"
+              (click)="onMobileGroupOptionClick('all')"
+            >
+              <span>{{ mobileAllOptionLabel }}</span>
+            </button>
+
+            @for (item of groupToggleItems; track item.key) {
+              <button
+                type="button"
+                class="eliminations__mobile-group-option"
+                [class.is-active]="mobileSelectedGroupKey === item.key"
+                (click)="onMobileGroupOptionClick(item.key)"
+              >
+                <span>{{ getMobileGroupOptionLabel(item) }}</span>
+              </button>
+            }
+          </div>
+        }
       </div>
 
       <button

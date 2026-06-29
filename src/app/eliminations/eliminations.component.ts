@@ -92,6 +92,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly collapsedLabelKeys = new Set<string>();
   private readonly collapsedLabelsStorageKey = 'eliminations-collapsed-labels';
   mobileSelectedGroupKey = 'all';
+  isMobileDropdownOpen = false;
 
 
   private readonly desktopNodeWidth = 220;
@@ -249,6 +250,28 @@ export class EliminationsComponent implements AfterViewInit {
     }
 
     this.toggleGroupVisibility(selectedItem.labelKeys);
+  }
+
+  toggleMobileDropdown(): void {
+    this.isMobileDropdownOpen = !this.isMobileDropdownOpen;
+  }
+
+  closeMobileDropdown(): void {
+    this.isMobileDropdownOpen = false;
+  }
+
+  onMobileGroupOptionClick(groupKey: string): void {
+    this.onMobileGroupSelectChange(groupKey);
+    this.closeMobileDropdown();
+  }
+
+  get mobileCurrentSelectionLabel(): string {
+    if (this.mobileSelectedGroupKey === 'all') {
+      return this.mobileAllOptionLabel;
+    }
+
+    const selectedItem = this.groupToggleItems.find((item) => item.key === this.mobileSelectedGroupKey);
+    return selectedItem ? this.getMobileGroupOptionLabel(selectedItem) : this.mobileAllOptionLabel;
   }
 
   get mobileAllOptionLabel(): string {
