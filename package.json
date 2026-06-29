@@ -2,7 +2,7 @@
   "name": "supabase-angular",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
+    "ng": "node ./node_modules/@angular/cli/bin/ng.js",
     "ng:local": "node ./node_modules/@angular/cli/bin/ng.js",
     "start": "ng serve",
     "start:local": "npm run ng:local -- serve",
@@ -11,6 +11,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
+  },
+  "engines": {
+    "node": "22.x"
   },
   "private": true,
   "dependencies": {
