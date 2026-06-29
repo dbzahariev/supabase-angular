@@ -210,6 +210,11 @@
   },
   "ELIMINATIONS": {
     "SHOW_ALL": "Покажи всички",
+    "SHOW_ALL_GROUPS": "Всички фази",
+    "STATUS_SHOWING_ALL": "Показани са всички фази",
+    "STATUS_SOME_HIDDEN": "Някои фази са скрити",
+    "STATUS_SELECTED_VISIBLE": "Избраната фаза е показана",
+    "STATUS_SELECTED_HIDDEN": "Избраната фаза е скрита",
     "GROUP_SIDE_LEFT": "Лява група",
     "GROUP_SIDE_CENTER": "Централна група",
     "GROUP_SIDE_RIGHT": "Дясна група",

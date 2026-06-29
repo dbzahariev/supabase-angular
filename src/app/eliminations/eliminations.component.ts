@@ -91,6 +91,7 @@ export class EliminationsComponent implements AfterViewInit {
   groupLabels: GroupLabel[] = [];
   private readonly collapsedLabelKeys = new Set<string>();
   private readonly collapsedLabelsStorageKey = 'eliminations-collapsed-labels';
+  mobileSelectedGroupKey = 'all';
 
 
   private readonly desktopNodeWidth = 220;
@@ -118,6 +119,11 @@ export class EliminationsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
     this.loadCollapsedGroups();
+
+    if (window.innerWidth <= this.mobileBreakpoint && this.mobileSelectedGroupKey === 'all' && this.isAnyGroupCollapsed) {
+      this.clearCollapsedGroups();
+    }
+
     this.fifaCalendarService.getSeasonMatchesResult()
       .subscribe((responseFromFifa) => {
         this.responseFromFifa = responseFromFifa;
@@ -226,6 +232,36 @@ export class EliminationsComponent implements AfterViewInit {
 
   onToggleItemClick(item: GroupToggleItem): void {
     this.toggleGroupVisibility(item.labelKeys);
+  }
+
+  onMobileGroupSelectChange(groupKey: string): void {
+    this.mobileSelectedGroupKey = groupKey;
+
+    if (groupKey === 'all') {
+      this.clearCollapsedGroups();
+      return;
+    }
+
+    const selectedItem = this.groupToggleItems.find((item) => item.key === groupKey);
+    if (!selectedItem) {
+      this.mobileSelectedGroupKey = 'all';
+      return;
+    }
+
+    this.toggleGroupVisibility(selectedItem.labelKeys);
+  }
+
+  get mobileAllOptionLabel(): string {
+    const icon = this.isAnyGroupCollapsed ? '📂' : '📚';
+    return `${icon} ${this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS')}`;
+  }
+
+  getMobileGroupOptionLabel(item: GroupToggleItem): string {
+    const icon = this.isToggleItemCollapsed(item) ? '🙈' : '👁️';
+    const row1 = this.translateService.instant(item.row1);
+    const row2 = item.row2 ? ` · ${this.translateService.instant(item.row2)}` : '';
+
+    return `${icon} ${row1}${row2}`;
   }
 
   isToggleItemCollapsed(item: GroupToggleItem): boolean {

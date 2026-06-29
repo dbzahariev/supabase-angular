@@ -210,6 +210,11 @@
   },
   "ELIMINATIONS": {
     "SHOW_ALL": "Show all",
+    "SHOW_ALL_GROUPS": "All phases",
+    "STATUS_SHOWING_ALL": "All phases are visible",
+    "STATUS_SOME_HIDDEN": "Some phases are hidden",
+    "STATUS_SELECTED_VISIBLE": "Selected phase is visible",
+    "STATUS_SELECTED_HIDDEN": "Selected phase is hidden",
     "GROUP_SIDE_LEFT": "Left Group",
     "GROUP_SIDE_CENTER": "Center Group",
     "GROUP_SIDE_RIGHT": "Right Group",

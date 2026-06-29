@@ -1,6 +1,22 @@
 <section class="eliminations">
   <div class="eliminations__surface">
     <div class="eliminations__group-toggles">
+      <div class="eliminations__mobile-group-controls">
+        <select
+          class="eliminations__mobile-group-select"
+          [ngModel]="mobileSelectedGroupKey"
+          (ngModelChange)="onMobileGroupSelectChange($event)"
+          aria-label="Select elimination group"
+        >
+          <option value="all">{{ mobileAllOptionLabel }}</option>
+          @for (item of groupToggleItems; track item.key) {
+            <option [value]="item.key">
+              {{ getMobileGroupOptionLabel(item) }}
+            </option>
+          }
+        </select>
+      </div>
+
       <button
         type="button"
         class="eliminations__toggle-reset"
