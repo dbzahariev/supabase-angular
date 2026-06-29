@@ -437,11 +437,11 @@ export class EliminationsComponent implements AfterViewInit {
     const teamAbbreviation = teamNameArr[1]
     const matchGroup = this.groupedStandings.find((group => group.group === `Group ${teamAbbreviation}`))
     const matchGroupRows = matchGroup?.rows || []
-    const kkk = matchGroupRows.find((row => row.position === teamGroupPosition && (row.points >= 6 || row.playedGames === 3)))
-    if (kkk === undefined) {
+    const matchingRow = matchGroupRows.find((row => row.position === teamGroupPosition && (row.points >= 6 || row.playedGames === 3)))
+    if (matchingRow === undefined) {
       return teamName
     }
-    const selectedTeamRow = kkk?.team.name || teamName
+    const selectedTeamRow = matchingRow?.team.name || teamName
     return selectedTeamRow
   }
 
@@ -467,12 +467,12 @@ export class EliminationsComponent implements AfterViewInit {
     }
 
     const isLngBg = this.getLng() === 'bg-BG';
-    const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
+    const currentLocale = isLngBg ? 'bg-BG' : 'nl-BE';
     const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
 
     const utcDateFormat = new Date(utcDate);
-    const match_day = this.formatDateToStandard(utcDateFormat, curLng, timeZone);
-    const match_time = this.formatTimeToHHmm(utcDateFormat, curLng, timeZone);
+    const match_day = this.formatDateToStandard(utcDateFormat, currentLocale, timeZone);
+    const match_time = this.formatTimeToHHmm(utcDateFormat, currentLocale, timeZone);
 
     return `${match_day} - ${match_time}`;
   }

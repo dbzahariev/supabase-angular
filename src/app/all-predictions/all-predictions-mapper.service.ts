@@ -45,7 +45,7 @@ export class AllPredictionsMapperService {
         return `TABLE.${groupKey || stage}`;
     }
 
-    getCycleLabelByDate(targetDate: Date | string): string | undefined {
+    getCycleLabelByDate(targetDate: string): string | undefined {
         const t = new Date(targetDate).getTime();
 
         const cycle = this.cycles.find(c => {
@@ -67,40 +67,44 @@ export class AllPredictionsMapperService {
         return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone });
     }
 
+    getTeam(allTeams: Team[], match: Match, isLngBg: boolean) {
+        const newLocal = {
+            name_bg: 'Ще се реши',
+            name_en: 'Will be decided',
+        };
+        const teamHome = allTeams.find((team: Team) => team.name_en === match.homeTeam.name) ?? newLocal;
+        const teamAway = allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? newLocal;
+        
+        const homeTeamName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || '';
+        
+        const awayTeamName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || '';
+
+        return {homeTeamName, awayTeamName};
+    }
+
     buildBetsToShow(matches: Match[], allTeams: Team[]): Bet[] {
         if (!matches || matches.length === 0) {
             return [];
         }
 
-        const matchesToSort = [...matches];
-        matchesToSort.sort((a, b) => (a.utcDate || '').localeCompare(b.utcDate || ''));
+        const isLngBg = this.getLng() === 'bg-BG';
+        const currentLocale = isLngBg ? 'bg-BG' : 'nl-BE';
+        const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
 
-        return matchesToSort.map((match: Match, index: number) => {
-            const teamHome = allTeams.find((team: Team) => team.name_en === match.homeTeam.name) ?? {
-                name_bg: 'Ще се реши',
-                name_en: 'Will be decided',
-            };
-            const teamAway = allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? {
-                name_bg: 'Ще се реши',
-                name_en: 'Will be decided',
-            };
-
+        return [...matches].sort((a, b) => (a.utcDate || '').localeCompare(b.utcDate || '')).map((match: Match, index: number) => {
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
-            const isLngBg = this.getLng() === 'bg-BG';
-            const curLng = isLngBg ? 'bg-BG' : 'nl-BE';
-            const timeZone = isLngBg ? 'Europe/Sofia' : 'Europe/Brussels';
-            const cycleLabel = this.getCycleLabelByDate(new Date(match.utcDate));
+            const cycleLabel = this.getCycleLabelByDate(match.utcDate);
 
             return {
                 row_index: index + 1,
-                match_day: this.formatDateToStandard(utcDate, curLng, timeZone),
-                match_time: this.formatTimeToHHmm(utcDate, curLng, timeZone),
+                match_day: this.formatDateToStandard(utcDate, currentLocale, timeZone),
+                match_time: this.formatTimeToHHmm(utcDate, currentLocale, timeZone),
                 group: this.getPhase(match.stage, match.group),
                 stage: cycleLabel ? `TABLE.${match.stage}.${cycleLabel}` : `TABLE.${match.stage}`,
                 phase: this.getPhaseMap(false, cycleLabel)[match.stage],
                 id: match.myId,
-                home_team: (isLngBg ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || '',
-                away_team: (isLngBg ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || '',
+                home_team: this.getTeam(allTeams, match, isLngBg).homeTeamName,
+                away_team: this.getTeam(allTeams, match, isLngBg).awayTeamName,
                 score: match.score,
                 matchUtcDate: match.utcDate,
                 matchStatus: match.status,

@@ -109,31 +109,31 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     async insertMissingMatchEntries() {
-        const kgh = ((await this.supabaseService.getMatches()).data)?.filter((val) => val.id > 202600)
-        const matchToInsert: OneMatchToInsert[] = []
-        this.allMatches.forEach(val => {
-            const foo = kgh?.find(predict => predict.id === val.myId)
-            if (foo === undefined) {
-                const id = val.myId
-                const home_team_id = this.allTeams.find(team => team.name_en === val.homeTeam.name)?.id;
-                const away_team_id = this.allTeams.find(team => team.name_en === val.awayTeam.name)?.id;
-                const groupName = val.stage
+        const existingMatches = ((await this.supabaseService.getMatches()).data)?.filter((val) => val.id > 202600)
+        const matchesToInsert: OneMatchToInsert[] = []
+        this.allMatches.forEach((match) => {
+            const existingMatch = existingMatches?.find((prediction) => prediction.id === match.myId)
+            if (existingMatch === undefined) {
+                const id = match.myId
+                const home_team_id = this.allTeams.find(team => team.name_en === match.homeTeam.name)?.id;
+                const away_team_id = this.allTeams.find(team => team.name_en === match.awayTeam.name)?.id;
+                const groupName = match.stage
                 if (home_team_id && away_team_id) {
                     const newMatch: OneMatchToInsert = {
                         id: id,
                         home_team_id: home_team_id,
                         away_team_id: away_team_id,
-                        utc_date: val.utcDate,
+                        utc_date: match.utcDate,
                         group_name: groupName
                     }
-                    matchToInsert.push(newMatch)
+                    matchesToInsert.push(newMatch)
                 }
             }
             return false
         })
 
-        if (this.allMatches.length > 0 && matchToInsert.length > 0) {
-            this.supabaseService.addMatchesToDatabase(matchToInsert).then((val) => {
+        if (this.allMatches.length > 0 && matchesToInsert.length > 0) {
+            this.supabaseService.addMatchesToDatabase(matchesToInsert).then((val) => {
                 console.log(val)
             })
         }
@@ -393,10 +393,10 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
         // Disallow editing winner for non-admins
         if (j === 2 && !this.isAdmin()) {
-            const newLocal = product.group.split('.')[1]
-            const kkk = newLocal.split('_')[0]
+            const roundKey = product.group.split('.')[1]
+            const roundPrefix = roundKey.split('_')[0]
 
-            if (kkk !== "GROUP" && (newLocal === 'LAST_32' || newLocal === 'LAST_16' || newLocal === 'QUARTER_FINALS' || newLocal === 'SEMI_FINALS' || newLocal === 'THIRD_PLACE' || newLocal === 'FINAL')) {
+            if (roundPrefix !== "GROUP" && (roundKey === 'LAST_32' || roundKey === 'LAST_16' || roundKey === 'QUARTER_FINALS' || roundKey === 'SEMI_FINALS' || roundKey === 'THIRD_PLACE' || roundKey === 'FINAL')) {
                 const selectedPrediction = this.allPredictions
                     .filter((item) => item.matches.id === product.id)
                     .find((item) => item.users.id === user.id)
