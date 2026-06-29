@@ -69,6 +69,216 @@
   }
 }
 
+.coefficients-showcase {
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  padding: 14px;
+  background: linear-gradient(145deg, #f8fafc 0%, #eef2ff 55%, #fdf2f8 100%);
+}
+
+.coeff-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.coeff-list {
+  display: grid;
+  gap: 10px;
+}
+
+.coeff-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(2px);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coeff-row:hover {
+  transform: translateY(-1px);
+  border-color: rgba(236, 72, 153, 0.6);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+}
+
+.coeff-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.coeff-step {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: #a16207;
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  background: rgba(254, 240, 138, 0.52);
+}
+
+.coeff-badge {
+  min-width: 56px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 99, 235, 0.45);
+  background: rgba(219, 234, 254, 0.8);
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.coeff-badge-accent {
+  border-color: rgba(22, 163, 74, 0.45);
+  background: rgba(220, 252, 231, 0.8);
+  color: #15803d;
+}
+
+.coeff-row-final {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: linear-gradient(90deg, rgba(254, 240, 138, 0.45), rgba(219, 234, 254, 0.72));
+}
+
+.coeff-step-final {
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(253, 230, 138, 0.65);
+}
+
+.coeff-badge-final {
+  border-color: rgba(245, 158, 11, 0.65);
+  background: rgba(254, 243, 199, 0.95);
+  color: #92400e;
+}
+
+@media screen and (max-width: 768px) {
+  .coefficients-showcase {
+    padding: 12px;
+  }
+
+  .coeff-head {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .coeff-row {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .coeff-stage {
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .coeff-step {
+    min-width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .coeff-badge {
+    min-width: 50px;
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .coefficients-showcase {
+    border-radius: 14px;
+    padding: 8px;
+  }
+
+  .coeff-head {
+    font-size: 10px;
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+    padding: 0 2px;
+  }
+
+  .coeff-list {
+    gap: 7px;
+  }
+
+  .coeff-row {
+    padding: 7px 8px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+
+  .coeff-stage {
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.2;
+    min-width: 0;
+  }
+
+  .coeff-stage span:last-child {
+    word-break: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .coeff-step {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+
+  .coeff-badge {
+    min-width: 44px;
+    padding: 4px 6px;
+    font-size: 12px;
+    line-height: 1;
+  }
+}
+
+:host-context(.my-app-dark) .coefficients-showcase {
+  border-color: #475569;
+  background: linear-gradient(140deg, #0f172a 0%, #111827 55%, #312e81 100%);
+}
+
+:host-context(.my-app-dark) .coeff-head {
+  color: #94a3b8 !important;
+}
+
+:host-context(.my-app-dark) .coeff-stage {
+  color: #f8fafc !important;
+}
+
+:host-context(.my-app-dark) .coeff-row {
+  border-color: rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.72);
+}
+
+:host-context(.my-app-dark) .coeff-row-final {
+  border-color: rgba(250, 204, 21, 0.66);
+}
+
 /* =========================
    WRAPPER
 ========================= */

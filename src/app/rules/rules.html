@@ -165,104 +165,61 @@
                 📈 {{ 'RULES.COEFFICIENTS_TITLE' | translate }}
             </h3>
 
-            <div class="rounded-2xl border border-slate-700">
+            <div class="coefficients-showcase">
+                <div class="coeff-head">
+                    <span>{{ 'RULES.STAGE' | translate }}</span>
+                    <span>{{ 'RULES.MULTIPLIER' | translate }}</span>
+                </div>
 
-                <table class="text-sm">
+                <div class="coeff-list">
+                    <div class="coeff-row">
+                        <div class="coeff-stage">
+                            <span class="coeff-step">01</span>
+                            <span>{{ 'RULES.GROUP_STAGE' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge">x1</span>
+                    </div>
 
-                    <thead class="bg-slate-900">
+                    <div class="coeff-row">
+                        <div class="coeff-stage">
+                            <span class="coeff-step">02</span>
+                            <span>{{ 'RULES.ROUND_OF_32' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge">x1</span>
+                    </div>
 
-                        <tr>
+                    <div class="coeff-row">
+                        <div class="coeff-stage">
+                            <span class="coeff-step">03</span>
+                            <span>{{ 'RULES.ROUND_OF_16' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge coeff-badge-accent">x1.5</span>
+                    </div>
 
-                            <th class="p-2 text-left font-bold">
-                                {{ 'RULES.STAGE' | translate }}
-                            </th>
+                    <div class="coeff-row">
+                        <div class="coeff-stage">
+                            <span class="coeff-step">04</span>
+                            <span>{{ 'RULES.QUARTER_FINALS' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge coeff-badge-accent">x2</span>
+                    </div>
 
-                            <th class="p-2 text-center font-bold">
-                                {{ 'RULES.MULTIPLIER' | translate }}
-                            </th>
+                    <div class="coeff-row">
+                        <div class="coeff-stage">
+                            <span class="coeff-step">05</span>
+                            <span>{{ 'RULES.SEMI_FINALS' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge coeff-badge-accent">x2.5</span>
+                    </div>
 
-                        </tr>
-
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-700">
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-slate-500">
-                                {{ 'RULES.GROUP_STAGE' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold">
-                                x1
-                            </td>
-
-                        </tr>
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-slate-500">
-                                {{ 'RULES.ROUND_OF_32' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold">
-                                x1
-                            </td>
-
-                        </tr>
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-slate-500">
-                                {{ 'RULES.ROUND_OF_16' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold">
-                                x1.5
-                            </td>
-
-                        </tr>
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-slate-500">
-                                {{ 'RULES.QUARTER_FINALS' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold">
-                                x2
-                            </td>
-
-                        </tr>
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-slate-500">
-                                {{ 'RULES.SEMI_FINALS' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold">
-                                x2.5
-                            </td>
-
-                        </tr>
-
-                        <tr class="hover:bg-slate-700/40 transition">
-
-                            <td class="p-2 text-green-500">
-                                {{ 'RULES.FINAL' | translate }}
-                            </td>
-
-                            <td class="p-2 text-center font-bold text-yellow-400 text-lg font-extrabold">
-                                x3
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
+                    <div class="coeff-row coeff-row-final">
+                        <div class="coeff-stage">
+                            <span class="coeff-step coeff-step-final">06</span>
+                            <span>{{ 'RULES.FINAL' | translate }}</span>
+                        </div>
+                        <span class="coeff-badge coeff-badge-final">x3</span>
+                    </div>
+                </div>
             </div>
 
         </div>
