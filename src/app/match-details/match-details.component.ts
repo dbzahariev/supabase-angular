@@ -148,20 +148,12 @@ export class MatchDetailsComponent implements AfterViewInit, OnDestroy {
 
   loadMatch(): void {
     if (this.loading || this.isLoadDisabled) {
-      this.errorMessage = MatchDetailsComponent.ERROR_42_MESSAGE;
-      this.matchDetails = null;
-      if (this.viewInitialized) {
-        this.cdr.detectChanges();
-      }
+      this.setError(MatchDetailsComponent.ERROR_42_MESSAGE);
       return;
     }
 
     if (!Number.isFinite(this.matchId) || this.matchId <= 0) {
-      this.errorMessage = 'Invalid match id.';
-      this.matchDetails = null;
-      if (this.viewInitialized) {
-        this.cdr.detectChanges();
-      }
+      this.setError('Invalid match id.');
       return;
     }
 
@@ -169,56 +161,20 @@ export class MatchDetailsComponent implements AfterViewInit, OnDestroy {
     this.errorMessage = '';
     this.shouldAutoRetryAfterCooldown = false;
     this.setLoadCooldown(MatchDetailsComponent.CLICK_GUARD_SECONDS);
-    if (this.viewInitialized) {
-      this.cdr.detectChanges();
-    }
+    this.detectIfReady();
 
     this.supabaseService
       .getMatchDetailsFromBE(this.matchId)
       .pipe(
         timeout(30000),
         catchError((error) => {
-          this.ngZone.run(() => {
-            if (error?.status === 429) {
-              this.errorMessage = MatchDetailsComponent.ERROR_42_RATE_LIMIT_MESSAGE;
-              this.matchDetails = null;
-              this.shouldAutoRetryAfterCooldown = true;
-              this.setLoadCooldown(MatchDetailsComponent.RATE_LIMIT_GUARD_SECONDS);
-              return;
-            }
-
-            if (error?.name === 'TimeoutError') {
-              this.errorMessage = 'Заявката изтече. Опитай отново след малко.';
-              this.matchDetails = null;
-              return;
-            }
-
-            const backendMessage = error?.error?.error;
-            if (typeof backendMessage === 'string' && backendMessage.toLowerCase() === 'fetch failed') {
-              this.errorMessage = 'Временен проблем с връзката към източника на данни. Опитай отново след малко.';
-              this.matchDetails = null;
-              return;
-            }
-
-            if (error?.status === 0) {
-              this.errorMessage = 'Няма връзка към сървъра. Провери интернет и опитай отново.';
-              this.matchDetails = null;
-              return;
-            }
-
-            this.errorMessage = typeof backendMessage === 'string' && backendMessage.length > 0
-              ? backendMessage
-              : 'Failed to load match details.';
-            this.matchDetails = null;
-          });
+          this.ngZone.run(() => this.handleLoadError(error));
           return of(null);
         }),
         finalize(() => {
           this.ngZone.run(() => {
             this.loading = false;
-            if (this.viewInitialized) {
-              this.cdr.detectChanges();
-            }
+            this.detectIfReady();
           });
         })
       )
@@ -230,11 +186,53 @@ export class MatchDetailsComponent implements AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           this.matchDetails = data as unknown as MatchDetailsApiResponse;
           this.errorMessage = '';
-          if (this.viewInitialized) {
-            this.cdr.detectChanges();
-          }
+          this.detectIfReady();
         });
       });
+  }
+
+  private handleLoadError(error: unknown): void {
+    const status = (error as { status?: number } | null)?.status;
+    const errorName = (error as { name?: string } | null)?.name;
+    const backendMessage = (error as { error?: { error?: unknown } } | null)?.error?.error;
+
+    if (status === 429) {
+      this.shouldAutoRetryAfterCooldown = true;
+      this.setError(MatchDetailsComponent.ERROR_42_RATE_LIMIT_MESSAGE);
+      this.setLoadCooldown(MatchDetailsComponent.RATE_LIMIT_GUARD_SECONDS);
+      return;
+    }
+
+    if (errorName === 'TimeoutError') {
+      this.setError('Заявката изтече. Опитай отново след малко.');
+      return;
+    }
+
+    if (typeof backendMessage === 'string' && backendMessage.toLowerCase() === 'fetch failed') {
+      this.setError('Временен проблем с връзката към източника на данни. Опитай отново след малко.');
+      return;
+    }
+
+    if (status === 0) {
+      this.setError('Няма връзка към сървъра. Провери интернет и опитай отново.');
+      return;
+    }
+
+    this.setError(typeof backendMessage === 'string' && backendMessage.length > 0
+      ? backendMessage
+      : 'Failed to load match details.');
+  }
+
+  private setError(message: string): void {
+    this.errorMessage = message;
+    this.matchDetails = null;
+    this.detectIfReady();
+  }
+
+  private detectIfReady(): void {
+    if (this.viewInitialized) {
+      this.cdr.detectChanges();
+    }
   }
 
   formatDate(dateValue: string | null | undefined): string {
@@ -295,15 +293,11 @@ export class MatchDetailsComponent implements AfterViewInit, OnDestroy {
           return;
         }
 
-        if (this.viewInitialized) {
-          this.cdr.detectChanges();
-        }
+        this.detectIfReady();
       });
     }, 1000);
 
-    if (this.viewInitialized) {
-      this.cdr.detectChanges();
-    }
+    this.detectIfReady();
   }
 
   private clearLoadCooldown(): void {
@@ -318,9 +312,7 @@ export class MatchDetailsComponent implements AfterViewInit, OnDestroy {
     const shouldAutoRetry = this.shouldAutoRetryAfterCooldown;
     this.shouldAutoRetryAfterCooldown = false;
 
-    if (this.viewInitialized) {
-      this.cdr.detectChanges();
-    }
+    this.detectIfReady();
 
     if (shouldAutoRetry) {
       setTimeout(() => {

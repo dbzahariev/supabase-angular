@@ -68,9 +68,18 @@ export class AllPredictionsPredictionFlowService {
 
         let error: PredictionMutationError = null;
         if (shouldDelete) {
-            ({ error } = await supabaseService.deletePrediction(prediction.id));
+            ({ error } = await supabaseService.mutateRows<Prediction>({
+                table: 'predictions',
+                action: 'delete',
+                id: prediction.id,
+            }));
         } else if (shouldUpsert) {
-            ({ error } = await supabaseService.upsertPrediction(payload));
+            ({ error } = await supabaseService.mutateRows<Prediction>({
+                table: 'predictions',
+                action: 'upsert',
+                payload,
+                onConflict: 'user_id,match_id',
+            }));
         }
 
         return {

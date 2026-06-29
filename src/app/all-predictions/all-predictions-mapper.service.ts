@@ -7,11 +7,22 @@ import { SelectedUserService } from '../services/selected-user.service';
 export class AllPredictionsMapperService {
     private translate = inject(TranslateService);
     private selectedUserService = inject(SelectedUserService);
-    private cycles = [
+    private readonly cycles = [
         { label: 'cycle_1', dateFrom: new Date('2026-06-11T19:00:00Z'), dateTo: new Date('2026-06-18T10:59:59Z') },
         { label: 'cycle_2', dateFrom: new Date('2026-06-18T11:00:00Z'), dateTo: new Date('2026-06-24T06:59:59Z') },
         { label: 'cycle_3', dateFrom: new Date('2026-06-24T07:00:00Z'), dateTo: new Date('2026-06-28T02:00:00Z') },
     ];
+
+    private readonly cycleLabels = {
+        CYCLE_1: { bg: 'Кръг 1', en: 'Round 1' },
+        CYCLE_2: { bg: 'Кръг 2', en: 'Round 2' },
+        CYCLE_3: { bg: 'Кръг 3', en: 'Round 3' },
+    } as const;
+
+    private readonly undecidedTeam = {
+        name_bg: 'Ще се реши',
+        name_en: 'Will be decided',
+    };
 
     getLng(): 'bg-BG' | 'en-US' {
         const lang = this.translate.currentLang || localStorage.getItem('lang') || 'bg';
@@ -19,10 +30,15 @@ export class AllPredictionsMapperService {
     }
 
     getCycleLabelFromBet(bet: Bet): string {
-        const isLngBg = this.getLng() === 'bg-BG';
-        if (bet.stage?.includes('CYCLE_1')) return isLngBg ? 'Кръг 1' : 'Round 1';
-        if (bet.stage?.includes('CYCLE_2')) return isLngBg ? 'Кръг 2' : 'Round 2';
-        if (bet.stage?.includes('CYCLE_3')) return isLngBg ? 'Кръг 3' : 'Round 3';
+        const languageKey = this.getLng() === 'bg-BG' ? 'bg' : 'en';
+        const cycleKey = (Object.keys(this.cycleLabels) as (keyof typeof this.cycleLabels)[]).find((key) =>
+            bet.stage?.includes(key)
+        );
+
+        if (cycleKey) {
+            return this.cycleLabels[cycleKey][languageKey];
+        }
+
         return '';
     }
 
@@ -67,19 +83,14 @@ export class AllPredictionsMapperService {
         return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone });
     }
 
-    getTeam(allTeams: Team[], match: Match, isLngBg: boolean) {
-        const newLocal = {
-            name_bg: 'Ще се реши',
-            name_en: 'Will be decided',
-        };
-        const teamHome = allTeams.find((team: Team) => team.name_en === match.homeTeam.name) ?? newLocal;
-        const teamAway = allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? newLocal;
-        
-        const homeTeamName = (isLngBg ? teamHome?.name_bg ?? match.homeTeam.name : teamHome?.name_en) || '';
-        
-        const awayTeamName = (isLngBg ? teamAway?.name_bg ?? match.awayTeam.name : teamAway?.name_en) || '';
+    getTeam(allTeams: Team[], match: Match, isLngBg: boolean): { homeTeamName: string; awayTeamName: string } {
+        const teamHome = allTeams.find((team: Team) => team.name_en === match.homeTeam.name) ?? this.undecidedTeam;
+        const teamAway = allTeams.find((team: Team) => team.name_en === match.awayTeam.name) ?? this.undecidedTeam;
 
-        return {homeTeamName, awayTeamName};
+        return {
+            homeTeamName: (isLngBg ? teamHome.name_bg ?? match.homeTeam.name : teamHome.name_en) || '',
+            awayTeamName: (isLngBg ? teamAway.name_bg ?? match.awayTeam.name : teamAway.name_en) || '',
+        };
     }
 
     buildBetsToShow(matches: Match[], allTeams: Team[]): Bet[] {
@@ -94,6 +105,7 @@ export class AllPredictionsMapperService {
         return [...matches].sort((a, b) => (a.utcDate || '').localeCompare(b.utcDate || '')).map((match: Match, index: number) => {
             const utcDate = match.utcDate ? new Date(match.utcDate) : null;
             const cycleLabel = this.getCycleLabelByDate(match.utcDate);
+            const teamNames = this.getTeam(allTeams, match, isLngBg);
 
             return {
                 row_index: index + 1,
@@ -103,8 +115,8 @@ export class AllPredictionsMapperService {
                 stage: cycleLabel ? `TABLE.${match.stage}.${cycleLabel}` : `TABLE.${match.stage}`,
                 phase: this.getPhaseMap(false, cycleLabel)[match.stage],
                 id: match.myId,
-                home_team: this.getTeam(allTeams, match, isLngBg).homeTeamName,
-                away_team: this.getTeam(allTeams, match, isLngBg).awayTeamName,
+                home_team: teamNames.homeTeamName,
+                away_team: teamNames.awayTeamName,
                 score: match.score,
                 matchUtcDate: match.utcDate,
                 matchStatus: match.status,
@@ -120,83 +132,64 @@ export class AllPredictionsMapperService {
         return '';
     }
 
-    // getProductResultRow(bet: Bet, index: number): string {
-    //     if (index === 0) {
-    //         return bet.score?.fullTime.home?.toString() || '';
-    //     }
-    //     if (index === 1) {
-    //         return bet.score?.fullTime.away?.toString() || '';
-    //     }
-    //     if (index === 2) {
-    //         return bet.score?.winner === null ? '' : this.returnTranslateFromWin(bet.score?.winner);
-    //     }
-    //     return '';
-    // }
-
     returnTranslateFromWin(winner: string | null | undefined): string {
-        if (winner === undefined || winner === '') return '';
+        if (!winner) return '';
         return this.translate.instant('TABLE.' + (winner || '')).slice(0, 1);
+    }
+
+    private shouldHidePrediction(hidden: boolean, bet: Bet, userId: number, selectedUserId: number): boolean {
+        return hidden && bet.matchStatus === 'TIMED' && userId !== selectedUserId && userId !== 1;
+    }
+
+    private getPredictionByColumn(prediction: Prediction, columnIndex: number): string {
+        if (columnIndex === 0) {
+            return prediction.home_ft === -1 ? '' : prediction.home_ft.toString();
+        }
+
+        if (columnIndex === 1) {
+            return prediction.away_ft === -1 ? '' : prediction.away_ft.toString();
+        }
+
+        if (columnIndex === 2) {
+            return this.returnTranslateFromWin(prediction.winner);
+        }
+
+        return '';
+    }
+
+    private getPointsValue(prediction: Prediction, bet: Bet): string {
+        if (bet.matchStatus === 'TIMED') {
+            return '';
+        }
+
+        const result = prediction.points?.toString() || '';
+        return result === '-1' ? '' : result;
     }
 
     getUserPredictionValue(user: User, bet: Bet, columnIndex: number, predictions: Prediction[], hidden: boolean): string {
         const selectedPredict = predictions.find(pred => pred.matches.id === bet.id && pred.users.id === user.id);
         const selectedUserId = this.selectedUserService.getSelectedUserId() ?? -1;
+        const shouldHide = this.shouldHidePrediction(hidden, bet, user.id, selectedUserId);
 
         // Finish match without predict
-        if (selectedPredict === undefined && columnIndex === 3 && bet.matchStatus === "FINISHED") {
-            return "0"
+        if (selectedPredict === undefined && columnIndex === 3 && bet.matchStatus === 'FINISHED') {
+            return '0';
         }
 
         if (selectedPredict === undefined) {
             return '';
         }
-        if (columnIndex === 0) {
-            let homeMatchPredictionValue = selectedPredict.home_ft === -1 ? '' : selectedPredict.home_ft.toString();
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
-                homeMatchPredictionValue = '?';
-            }
-            return homeMatchPredictionValue;
-        }
-        if (columnIndex === 1) {
-            let awayMatchPredictionValue = selectedPredict.away_ft === -1 ? '' : selectedPredict.away_ft.toString();
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
-                awayMatchPredictionValue = '?';
-            }
 
-            return awayMatchPredictionValue;
+        if (columnIndex >= 0 && columnIndex <= 2) {
+            return shouldHide ? '?' : this.getPredictionByColumn(selectedPredict, columnIndex);
         }
-        if (columnIndex === 2) {
-            let translatedWinner = this.returnTranslateFromWin(selectedPredict.winner);
-            if (hidden && bet.matchStatus === 'TIMED' && user.id !== selectedUserId && user.id !== 1) {
-                translatedWinner = '?';
-            }
-            return translatedWinner;
-        }
+
         if (columnIndex === 3) {
-            const result = selectedPredict.points?.toString() || '';
-            let newResult = result === '-1' ? '' : result;
-
-            if (hidden && bet.matchStatus === 'TIMED') {
-                if (user.id === 1) {
-                    newResult = result === '-1' ? '0' : result;
-                } else {
-                    if (user.id === selectedUserId) {
-                        newResult = result === '-1' ? '0' : result;
-                    } else {
-                        newResult = "?";
-                    }
-                }
-            }
-
-            if (bet.matchStatus === 'TIMED') {
-                newResult = ""
-            }
-
-            return newResult;
+            return this.getPointsValue(selectedPredict, bet);
         }
 
         // Default value out of range
-        return "";
+        return '';
     }
 
     getNameFromUser(user: User): string {

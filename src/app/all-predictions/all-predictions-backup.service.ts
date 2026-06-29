@@ -48,7 +48,12 @@ export class AllPredictionsBackupService {
 
     async persistPredictionBackupRemotely(supabaseService: SupabaseService, entry: PredictionBackupEntry): Promise<{ warnOnce: boolean }> {
         try {
-            const { error } = await supabaseService.addPredictionBackupEvent({
+            const { error } = await supabaseService.mutateRows<PredictionBackupEventRow>({
+                table: 'prediction_backup_events',
+                action: 'insert',
+                select: '*',
+                single: true,
+                payload: {
                 event_id: entry.event_id,
                 event_timestamp: entry.timestamp,
                 action: entry.action,
@@ -60,6 +65,7 @@ export class AllPredictionsBackupService {
                 payload: entry.payload,
                 error_message: entry.error_message,
                 source: 'all-predictions',
+                },
             });
 
             if (error && !this.remoteBackupWarningShown) {

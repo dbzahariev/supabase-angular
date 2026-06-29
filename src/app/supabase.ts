@@ -12,9 +12,7 @@ import {
   Match,
   MatchesApiResponse,
   Prediction,
-  PredictionBackupEventInsert,
   PredictionBackupEventRow,
-  PredictionWritePayload,
   SupabaseMatch,
   SupabaseResponse,
   Team,
@@ -45,7 +43,6 @@ export interface OneMatchToInsert {
   providedIn: 'root',
 })
 export class SupabaseService {
-
   private supabase: SupabaseClient
   _session: AuthSession | null = null
   private readonly remoteProxyBaseUrl = 'https://simple-node-proxy.onrender.com'
@@ -84,6 +81,190 @@ export class SupabaseService {
     )
   `
 
+  private createCacheBustParams(): { t: string } {
+    return {
+      t: Date.now().toString(),
+    }
+  }
+
+  private toSupabaseResponse<T>(
+    data: unknown,
+    error: { message: string; details?: string | null } | null
+  ): SupabaseResponse<T> {
+    return {
+      data: data as T[] | null,
+      error: this.normalizeError(error),
+    }
+  }
+
+  private async selectRows<T>(
+    table: string,
+    options?: { select?: string; orderBy?: string; ascending?: boolean }
+  ): Promise<SupabaseResponse<T>> {
+    let query = this.supabase
+      .from(table)
+      .select(options?.select ?? '*')
+
+    if (options?.orderBy) {
+      query = query.order(options.orderBy, { ascending: options.ascending ?? true })
+    }
+
+    const { data, error } = await query
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async insertRows<T>(table: string, payload: unknown): Promise<SupabaseResponse<T>> {
+    const { data, error } = await this.supabase
+      .from(table)
+      .insert(payload)
+      .select()
+
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async upsertRows<T>(table: string, payload: unknown, onConflict: string): Promise<SupabaseResponse<T>> {
+    const { data, error } = await this.supabase
+      .from(table)
+      .upsert(payload, { onConflict })
+      .select()
+
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async updateRowsById<T>(table: string, id: number, payload: unknown): Promise<SupabaseResponse<T>> {
+    const { data, error } = await this.supabase
+      .from(table)
+      .update(payload)
+      .eq('id', id)
+      .select()
+
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async deleteRowsById<T>(table: string, id: number): Promise<SupabaseResponse<T>> {
+    const { data, error } = await this.supabase
+      .from(table)
+      .delete()
+      .eq('id', id)
+
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  /**
+   * Unified write API for Supabase tables.
+   *
+   * Supported actions:
+   * - insert: requires `payload`
+   * - upsert: requires `payload` and `onConflict`
+   * - update: requires `id` and `payload`
+   * - delete: requires `id`
+   *
+   * Optional options:
+   * - select: override selected columns after mutation (default `*` for insert/upsert/update)
+   * - single: when true, uses `.single()` and wraps result in a single-item array response
+   *
+   * Returns `SupabaseResponse<T>` with normalized `error` shape.
+   */
+  mutateRows<T>(mutation: {
+    table: string
+    action: 'insert' | 'upsert' | 'update' | 'delete'
+    payload?: unknown
+    id?: number
+    onConflict?: string
+    select?: string
+    single?: boolean
+  }): Promise<SupabaseResponse<T>> {
+    const { table, action, payload, id, onConflict, select, single } = mutation
+
+    if (action === 'insert') {
+      return this.insertRowsWithOptions<T>(table, payload, { select, single })
+    }
+
+    if (action === 'upsert') {
+      return this.upsertRowsWithOptions<T>(table, payload, onConflict ?? '', { select, single })
+    }
+
+    if (action === 'update') {
+      if (typeof id !== 'number') {
+        return Promise.resolve({
+          data: null,
+          error: { message: 'Mutation id is required for update action' },
+        })
+      }
+
+      return this.updateRowsByIdWithOptions<T>(table, id, payload, { select, single })
+    }
+
+    if (typeof id !== 'number') {
+      return Promise.resolve({
+        data: null,
+        error: { message: 'Mutation id is required for delete action' },
+      })
+    }
+
+    return this.deleteRowsById<T>(table, id)
+  }
+
+  private async insertRowsWithOptions<T>(
+    table: string,
+    payload: unknown,
+    options?: { select?: string; single?: boolean }
+  ): Promise<SupabaseResponse<T>> {
+    const query = this.supabase
+      .from(table)
+      .insert(payload)
+      .select(options?.select ?? '*')
+
+    if (options?.single) {
+      const { data, error } = await query.single()
+      return this.toSupabaseResponse<T>(data ? [data] : null, error)
+    }
+
+    const { data, error } = await query
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async upsertRowsWithOptions<T>(
+    table: string,
+    payload: unknown,
+    onConflict: string,
+    options?: { select?: string; single?: boolean }
+  ): Promise<SupabaseResponse<T>> {
+    const query = this.supabase
+      .from(table)
+      .upsert(payload, { onConflict })
+      .select(options?.select ?? '*')
+
+    if (options?.single) {
+      const { data, error } = await query.single()
+      return this.toSupabaseResponse<T>(data ? [data] : null, error)
+    }
+
+    const { data, error } = await query
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
+  private async updateRowsByIdWithOptions<T>(
+    table: string,
+    id: number,
+    payload: unknown,
+    options?: { select?: string; single?: boolean }
+  ): Promise<SupabaseResponse<T>> {
+    const query = this.supabase
+      .from(table)
+      .update(payload)
+      .eq('id', id)
+      .select(options?.select ?? '*')
+
+    if (options?.single) {
+      const { data, error } = await query.single()
+      return this.toSupabaseResponse<T>(data ? [data] : null, error)
+    }
+
+    const { data, error } = await query
+    return this.toSupabaseResponse<T>(data, error)
+  }
+
   private httpClient = inject(HttpClient);
 
   constructor() {
@@ -117,9 +298,7 @@ export class SupabaseService {
 
   getLiveMatchesFromBE(): Observable<MatchesApiResponse> {
     return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live', {
-      params: {
-        t: Date.now().toString(),
-      },
+      params: this.createCacheBustParams(),
     })
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -136,9 +315,7 @@ export class SupabaseService {
 
   getLiveMatchesFullFromBE(): Observable<MatchesApiResponse> {
     return this.getWithRemoteFallback<MatchesApiResponse>('/api/matches/live/full', {
-      params: {
-        t: Date.now().toString(),
-      },
+      params: this.createCacheBustParams(),
     })
       .pipe(
         tap((matches) => {
@@ -162,9 +339,7 @@ export class SupabaseService {
 
   getCompetitionStandingsFromBE(): Observable<Record<string, unknown>> {
     return this.getWithRemoteFallback<Record<string, unknown>>('/api/standings', {
-      params: {
-        t: Date.now().toString(),
-      },
+      params: this.createCacheBustParams(),
     })
   }
 
@@ -204,119 +379,29 @@ export class SupabaseService {
   }
 
   async getAllTeams(): Promise<SupabaseResponse<Team>> {
-    const { data, error } = await this.supabase
-      .from('teams')
-      .select('*')
-
-    return {
-      data: data as Team[] | null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<Team>('teams')
   }
 
   async getPredictions(): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .select('*')
-      .order('utc_date', { ascending: false })
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<Prediction>('predictions', {
+      orderBy: 'utc_date',
+      ascending: false,
+    })
   }
 
   async getPredictionsWithUsers(): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .select(this.predictionsWithUsersSelect)
-      .order('utc_date', { ascending: false })
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  async addPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .insert(prediction)
-      .select()
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  async upsertPrediction(prediction: PredictionWritePayload | PredictionWritePayload[]): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .upsert(prediction, { onConflict: 'user_id,match_id' })
-      .select()
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  async updatePrediction(id: number, prediction: PredictionWritePayload): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .update(prediction)
-      .eq('id', id)
-      .select()
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  async deletePrediction(id: number): Promise<SupabaseResponse<Prediction>> {
-    const { data, error } = await this.supabase
-      .from('predictions')
-      .delete()
-      .eq('id', id)
-
-    return {
-      data: data as Prediction[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  addMatchesToDatabase(matchesData: OneMatchToInsert[]) {
-    return this.client
-      .from('matches')
-      .insert(matchesData)
-      .select();
-  }
-
-  async addPredictionBackupEvent(backupEvent: PredictionBackupEventInsert): Promise<SupabaseResponse<PredictionBackupEventRow>> {
-    const { data, error } = await this.supabase
-      .from('prediction_backup_events')
-      .insert(backupEvent)
-      .select('*')
-      .single()
-
-    return {
-      data: data ? [data as PredictionBackupEventRow] : null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<Prediction>('predictions', {
+      select: this.predictionsWithUsersSelect,
+      orderBy: 'utc_date',
+      ascending: false,
+    })
   }
 
   async getPredictionBackupEvents(): Promise<SupabaseResponse<PredictionBackupEventRow>> {
-    const { data, error } = await this.supabase
-      .from('prediction_backup_events')
-      .select('*')
-      .order('event_timestamp', { ascending: true })
-
-    return {
-      data: data as PredictionBackupEventRow[] | null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<PredictionBackupEventRow>('prediction_backup_events', {
+      orderBy: 'event_timestamp',
+      ascending: true,
+    })
   }
 
   subscribeToTable(table: string, callback: (payload: JsonObject) => void) {
@@ -340,38 +425,14 @@ export class SupabaseService {
   }
 
   async getMatches(): Promise<SupabaseResponse<SupabaseMatch>> {
-    const { data, error } = await this.supabase
-      .from('matches')
-      .select('*')
-      .order('utc_date', { ascending: true })
-
-    return {
-      data: data as SupabaseMatch[] | null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<SupabaseMatch>('matches', {
+      orderBy: 'utc_date',
+      ascending: true,
+    })
   }
 
   async getUsers(): Promise<SupabaseResponse<User>> {
-    const { data, error } = await this.supabase
-      .from('users')
-      .select('*')
-
-    return {
-      data: data as User[] | null,
-      error: this.normalizeError(error),
-    }
-  }
-
-  async deleteMatch(id: number): Promise<SupabaseResponse<SupabaseMatch>> {
-    const { data, error } = await this.supabase
-      .from('matches')
-      .delete()
-      .eq('id', id)
-
-    return {
-      data: data as SupabaseMatch[] | null,
-      error: this.normalizeError(error),
-    }
+    return this.selectRows<User>('users')
   }
 
   private saveLiveMatchesFullArchive(matches: Match[]): void {
@@ -379,9 +440,7 @@ export class SupabaseService {
       return
     }
 
-    const storedEntries = this
-      .getLiveMatchesFullArchiveEntries()
-      .filter((entry) => this.isArchiveEntryFresh(entry.ts))
+    const storedEntries = this.getFreshLiveMatchesFullArchiveEntries()
     const nextEntries = [...storedEntries, { ts: Date.now(), data: matches }]
       .slice(-this.liveMatchesFullArchiveMaxEntries)
 
@@ -393,9 +452,7 @@ export class SupabaseService {
   }
 
   private readLatestLiveMatchesFullArchive(): MatchesApiResponse | null {
-    const entries = this
-      .getLiveMatchesFullArchiveEntries()
-      .filter((entry) => this.isArchiveEntryFresh(entry.ts))
+    const entries = this.getFreshLiveMatchesFullArchiveEntries()
     if (entries.length === 0) {
       return null
     }
@@ -405,6 +462,12 @@ export class SupabaseService {
 
   private isArchiveEntryFresh(timestamp: number): boolean {
     return Date.now() - timestamp <= this.liveMatchesFullArchiveTtlMs
+  }
+
+  private getFreshLiveMatchesFullArchiveEntries(): { ts: number; data: MatchesApiResponse }[] {
+    return this
+      .getLiveMatchesFullArchiveEntries()
+      .filter((entry) => this.isArchiveEntryFresh(entry.ts))
   }
 
   private getLiveMatchesFullArchiveEntries(): { ts: number; data: MatchesApiResponse }[] {

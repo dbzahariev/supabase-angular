@@ -132,10 +132,11 @@ export class MatchImportService {
       console.log('Примерен мач от JSON:', backupData.matches[0]);
       console.log('Примерен мач преобразуван:', matchesData[0]);
 
-      const { data, error } = await this.supabase.client
-        .from('matches')
-        .insert(matchesData)
-        .select();
+      const { data, error } = await this.supabase.mutateRows<BackupMatch>({
+        table: 'matches',
+        action: 'insert',
+        payload: matchesData,
+      });
 
       if (error) {
         console.error('❌ Грешка при импортиране:', error);
@@ -178,7 +179,11 @@ export class MatchImportService {
       console.log(`🗑️ Изтриване на ${matches.length} мача...`);
 
       for (const match of matches) {
-        await this.supabase.deleteMatch(match.id);
+        await this.supabase.mutateRows({
+          table: 'matches',
+          action: 'delete',
+          id: match.id,
+        });
       }
 
       console.log('✅ Всички мачове са изтрити');

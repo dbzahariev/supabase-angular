@@ -2,6 +2,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { from } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 import { SupabaseService } from '../supabase';
 import { Match, Team } from '../all-predictions/all-predictions.models';
 import { CompetitionStandingsResponse, StandingRow } from '../group-standings/group-standings.component';
@@ -113,6 +115,10 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
   private readonly groupLabelOffsetFromFirstRow = 34;
+  private readonly countryNameReplacements: Record<string, string> = {
+    USA: 'United States',
+    'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
+  };
 
 
   private supabaseService = inject(SupabaseService);
@@ -124,44 +130,50 @@ export class EliminationsComponent implements AfterViewInit {
       this.clearCollapsedGroups();
     }
 
+    this.loadInitialData();
+  }
+
+  private loadInitialData(): void {
     this.fifaCalendarService.getSeasonMatchesResult()
-      .subscribe((responseFromFifa) => {
-        this.responseFromFifa = responseFromFifa;
-
-        this.supabaseService.getAllTeams().then((response) => {
+      .pipe(
+        tap((responseFromFifa) => {
+          this.responseFromFifa = responseFromFifa;
+        }),
+        switchMap(() => from(this.supabaseService.getAllTeams())),
+        tap((response) => {
           this.allTeams = response.data || [];
-          this.supabaseService.getLiveMatchesFullFromBE().subscribe((data) => {
-            this.allMatches = data as Match[]
-
-            this.allMatches.map((dbMatch, index) => {
-              const newMatch = dbMatch
-              const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
-              newMatch.myId = myId
-              newMatch.lastUpdated = ''
-              return newMatch
-            })
-
-
-            this.supabaseService
-              .getCompetitionStandingsFromBE()
-              .subscribe((response) => {
-                const data = response as CompetitionStandingsResponse;
-                const standings = Array.isArray(data.standings) ? data.standings : [];
-
-                this.groupedStandings = standings
-                  .filter((standing) => (standing.group ?? '').length > 0)
-                  .map((standing) => ({
-                    group: standing.group ?? '',
-                    rows: standing.table ?? [],
-                  }))
-                  .sort((left, right) => left.group.localeCompare(right.group));
-
-                this.loadDummyMatches();
-              });
-
-          });
+        }),
+        switchMap(() => this.supabaseService.getLiveMatchesFullFromBE()),
+        tap((data) => {
+          this.allMatches = this.withComputedMatchIds(data as Match[]);
+        }),
+        switchMap(() => this.supabaseService.getCompetitionStandingsFromBE()),
+        tap((response) => {
+          this.groupedStandings = this.mapGroupedStandings(response as CompetitionStandingsResponse);
+          this.loadDummyMatches();
         })
-      });
+      )
+      .subscribe();
+  }
+
+  private withComputedMatchIds(matches: Match[]): Match[] {
+    return matches.map((dbMatch, index) => ({
+      ...dbMatch,
+      myId: Number(`2026${String(index + 1).padStart(2, '0')}`),
+      lastUpdated: '',
+    }));
+  }
+
+  private mapGroupedStandings(response: CompetitionStandingsResponse): { group: string; rows: StandingRow[] }[] {
+    const standings = Array.isArray(response.standings) ? response.standings : [];
+
+    return standings
+      .filter((standing) => (standing.group ?? '').length > 0)
+      .map((standing) => ({
+        group: standing.group ?? '',
+        rows: standing.table ?? [],
+      }))
+      .sort((left, right) => left.group.localeCompare(right.group));
   }
 
   trackByEditable(_: number, match: EditableMatch): number {
@@ -373,30 +385,16 @@ export class EliminationsComponent implements AfterViewInit {
     const fifaMatch = this.responseFromFifa.find((fifaMatch) => Number(fifaMatch.MatchNumber) === newMatch.fifaId);
     const parentMatchChildrenIds = this.getChildFromParent(editableMatches, newMatch);
 
-    let result = ''
-    if (type === 'home') {
-      result = fifaMatch?.Home?.TeamName
-        ? fifaMatch.Home.TeamName[0].Description
-        : parentMatchChildrenIds.home || fifaMatch?.PlaceHolderA || ''
-    } else {
-      result = fifaMatch?.Away?.TeamName
-        ? fifaMatch.Away.TeamName[0].Description
-        : parentMatchChildrenIds.away || fifaMatch?.PlaceHolderB || ''
-    }
+    const nameFromFifa = type === 'home'
+      ? fifaMatch?.Home?.TeamName?.[0]?.Description
+      : fifaMatch?.Away?.TeamName?.[0]?.Description;
 
-    const selectedTeam = this.replaceNameAndGetTeam(result)
-    const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
-    result = (isLngBg ? selectedTeam?.name_bg ?? result : selectedTeam?.name_en) || ''
+    const placeholder = type === 'home'
+      ? (parentMatchChildrenIds.home || fifaMatch?.PlaceHolderA || '')
+      : (parentMatchChildrenIds.away || fifaMatch?.PlaceHolderB || '');
 
-    if (result === '') {
-      if (type === 'home') {
-        result = newMatch.homeTeam
-      } else {
-        result = newMatch.awayTeam
-      }
-    }
-
-    return result
+    const fallbackName = type === 'home' ? newMatch.homeTeam : newMatch.awayTeam;
+    return this.getLocalizedTeamValue(nameFromFifa || placeholder, fallbackName);
   }
 
   getChildFromParent(editableMatches: EditableMatch[], newMatch:EditableMatch): { home: string | undefined; away: string | undefined } {
@@ -422,10 +420,8 @@ export class EliminationsComponent implements AfterViewInit {
   getTeamByStand(newMatch: EditableMatch) {
     const homeTeamDetails = this.getTeamFromMatch(newMatch.homeTeam)
     const awayTeamDetails = this.getTeamFromMatch(newMatch.awayTeam)
-
-    const homeTeamDetails2 = this.getTeamName({ homeTeam: homeTeamDetails, awayTeam: awayTeamDetails }).home
-    const awayTeamDetails2 = this.getTeamName({ homeTeam: homeTeamDetails, awayTeam: awayTeamDetails }).away
-    return { homeTeam: homeTeamDetails2, awayTeam: awayTeamDetails2 }
+    const teamNames = this.getTeamName({ homeTeam: homeTeamDetails, awayTeam: awayTeamDetails });
+    return { homeTeam: teamNames.home, awayTeam: teamNames.away };
   }
 
   getTeamFromMatch(teamName: string) {
@@ -446,18 +442,26 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   getTeamName(match: { homeTeam: string; awayTeam: string }): { home: string; away: string } {
-    const homeTeam = match?.homeTeam ? this.replaceNameAndGetTeam(match.homeTeam) : { name_bg: '', name_en: '' };
-    const awayTeam = match?.awayTeam ? this.replaceNameAndGetTeam(match.awayTeam) : { name_bg: '', name_en: '' };
+    return {
+      home: this.getLocalizedTeamValue(match.homeTeam, match.homeTeam),
+      away: this.getLocalizedTeamValue(match.awayTeam, match.awayTeam),
+    };
+  }
 
-    const isLngBg = (this.translateService.currentLang || localStorage.getItem('lang') || 'bg') === 'bg';
-    const teamHomeName = (isLngBg ? homeTeam?.name_bg ?? match.homeTeam : homeTeam?.name_en) || ''
-    const teamAwayName = (isLngBg ? awayTeam?.name_bg ?? match.awayTeam : awayTeam?.name_en) || ''
-    return { home: teamHomeName, away: teamAwayName };
+  private getLocalizedTeamValue(sourceName: string, fallbackName: string): string {
+    if (!sourceName) {
+      return fallbackName || '';
+    }
+
+    const selectedTeam = this.replaceNameAndGetTeam(sourceName);
+    const isLngBg = this.getLng() === 'bg-BG';
+    const localized = isLngBg ? selectedTeam?.name_bg ?? sourceName : selectedTeam?.name_en ?? sourceName;
+    return localized || fallbackName || '';
   }
 
   replaceNameAndGetTeam(string: string): Team | undefined {
-    const countryName = string.replace('USA', 'United States').replace('Bosnia and Herzegovina', 'Bosnia-Herzegovina');
-    const team =  this.allTeams.find((team: Team) => team.name_en === countryName)
+    const countryName = this.countryNameReplacements[string] ?? string;
+    const team = this.allTeams.find((team: Team) => team.name_en === countryName)
     return team;
   }
 
@@ -478,7 +482,7 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   getLng(): 'bg-BG' | 'en-US' {
-    const lang = localStorage.getItem('lang') || 'bg';
+    const lang = this.translateService.currentLang || localStorage.getItem('lang') || 'bg';
     return lang === 'bg' ? 'bg-BG' : 'en-US';
   }
 
@@ -886,8 +890,7 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   getLabelFullName(label: GroupLabel): { row1: string; row2?: string; } {
-    const side: 'left' | 'right' | 'center' = label.key.split('-')[0] as 'left' | 'right' | 'center';
-    const round = Number(label.key.split('-')[1]);
+    const [side, round] = this.parseLabelKey(label.key);
 
     if (side === 'center') {
       return {
@@ -908,6 +911,12 @@ export class EliminationsComponent implements AfterViewInit {
       default:
         return { row1: label.sideLabelKey };
     }
+  }
+
+  private parseLabelKey(labelKey: string): ['left' | 'right' | 'center', number] {
+    const [sideRaw, roundRaw] = labelKey.split('-');
+    const side = sideRaw as 'left' | 'right' | 'center';
+    return [side, Number(roundRaw)];
   }
 
   private getSideLabelKey(side: EditableMatch['side']): string {

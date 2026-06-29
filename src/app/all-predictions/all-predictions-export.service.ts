@@ -29,6 +29,8 @@ export interface ExportPredictionsInput {
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsExportService {
+    private readonly PREDICTION_COLUMN_COUNT = 4;
+
     exportToExcel(input: ExportPredictionsInput): ExportWorksheetData {
         const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
         const wsData = this.buildWorksheetData(input);
@@ -49,21 +51,22 @@ export class AllPredictionsExportService {
     }
 
     private buildWorksheetData(input: ExportPredictionsInput): WorksheetData {
+        const t = input.translate;
         const visibleBets = input.betsToShow.filter(input.isShowRow);
         const includeDateTimeAndGroup = input.includeDateTimeAndGroup ?? true;
         const includePhaseRows = input.includePhaseRows ?? true;
-        const rowIndexLabel = input.translate('TABLE.ROW_INDEX');
-        const dateLabel = input.translate('TABLE.DATE');
-        const timeLabel = input.translate('TABLE.TIME');
-        const groupLabel = input.translate('TABLE.GROUP');
-        const homeTeamLabel = input.translate('TABLE.HOME_TEAM');
-        const awayTeamLabel = input.translate('TABLE.AWAY_TEAM');
-        const resultLabel = input.translate('TABLE.RESULT');
-        const homeShortLabel = input.translate('TABLE.HOME_TEAM_SHORT');
-        const awayShortLabel = input.translate('TABLE.AWAY_TEAM_SHORT');
-        const winnerShortLabel = input.translate('TABLE.WINNER_SHORT');
-        const pointsShortLabel = input.translate('TABLE.POINTS_SHORT');
-        const groupsPhaseLabel = input.translate('TABLE.GROUPS_PHASE');
+        const rowIndexLabel = t('TABLE.ROW_INDEX');
+        const dateLabel = t('TABLE.DATE');
+        const timeLabel = t('TABLE.TIME');
+        const groupLabel = t('TABLE.GROUP');
+        const homeTeamLabel = t('TABLE.HOME_TEAM');
+        const awayTeamLabel = t('TABLE.AWAY_TEAM');
+        const resultLabel = t('TABLE.RESULT');
+        const homeShortLabel = t('TABLE.HOME_TEAM_SHORT');
+        const awayShortLabel = t('TABLE.AWAY_TEAM_SHORT');
+        const winnerShortLabel = t('TABLE.WINNER_SHORT');
+        const pointsShortLabel = t('TABLE.POINTS_SHORT');
+        const groupsPhaseLabel = t('TABLE.GROUPS_PHASE');
 
         const baseHeaders = includeDateTimeAndGroup
             ? [
@@ -139,40 +142,60 @@ export class AllPredictionsExportService {
                 groupedRows.push(phaseRow);
             }
 
-            const row: WorksheetRow = includeDateTimeAndGroup
-                ? [
-                    bet.row_index,
-                    bet.match_day,
-                    bet.match_time,
-                    input.translateGroup(bet.group),
-                    bet.home_team,
-                    bet.away_team,
-                    bet.score?.fullTime.home ?? '',
-                    bet.score?.fullTime.away ?? '',
-                    bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
-                ]
-                : [
-                    bet.row_index,
-                    bet.home_team,
-                    bet.away_team,
-                    bet.score?.fullTime.home ?? '',
-                    bet.score?.fullTime.away ?? '',
-                    bet.score?.winner ? input.translateWinnerShort(bet.score.winner) : '',
-                ];
-
-            for (const user of input.allUsersNames) {
-                row.push(
-                    input.getUserPredictionValue(user, bet, 0),
-                    input.getUserPredictionValue(user, bet, 1),
-                    input.getUserPredictionValue(user, bet, 2),
-                    input.getUserPredictionValue(user, bet, 3),
-                );
-            }
+            const row = this.buildBetBaseRow(bet, includeDateTimeAndGroup, input.translateGroup, input.translateWinnerShort);
+            this.appendUserPredictions(row, input.allUsersNames, bet, input.getUserPredictionValue);
 
             groupedRows.push(row);
         }
 
         return [mainHeaders, subHeaders, ...groupedRows];
+    }
+
+    private buildBetBaseRow(
+        bet: Bet,
+        includeDateTimeAndGroup: boolean,
+        translateGroup: (groupKey: string) => string,
+        translateWinnerShort: (winner: string) => string
+    ): WorksheetRow {
+        const winnerShort = bet.score?.winner ? translateWinnerShort(bet.score.winner) : '';
+        const scoreHome = bet.score?.fullTime.home ?? '';
+        const scoreAway = bet.score?.fullTime.away ?? '';
+
+        if (includeDateTimeAndGroup) {
+            return [
+                bet.row_index,
+                bet.match_day,
+                bet.match_time,
+                translateGroup(bet.group),
+                bet.home_team,
+                bet.away_team,
+                scoreHome,
+                scoreAway,
+                winnerShort,
+            ];
+        }
+
+        return [
+            bet.row_index,
+            bet.home_team,
+            bet.away_team,
+            scoreHome,
+            scoreAway,
+            winnerShort,
+        ];
+    }
+
+    private appendUserPredictions(
+        row: WorksheetRow,
+        users: User[],
+        bet: Bet,
+        getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => string
+    ): void {
+        for (const user of users) {
+            for (let columnIndex = 0; columnIndex < this.PREDICTION_COLUMN_COUNT; columnIndex += 1) {
+                row.push(getUserPredictionValue(user, bet, columnIndex));
+            }
+        }
     }
 
     private buildMerges(wsData: WorksheetData, usersCount: number, hasDateColumn: boolean, groupsPhaseLabel: string): XLSX.Range[] {

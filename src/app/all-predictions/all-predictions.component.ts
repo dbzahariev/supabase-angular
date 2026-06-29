@@ -26,6 +26,12 @@ import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
 import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
 
+interface PredictionRollbackState {
+    home: number;
+    away: number;
+    winner: string;
+}
+
 @Component({
     selector: 'app-all-predictions',
     templateUrl: './all-predictions.component.html',
@@ -42,6 +48,18 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly FEATURES_NOTICE_PHASE_STORAGE_KEY = 'all_predictions.features_notice.phase.v1.dismissed';
     private readonly FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY = 'all_predictions.features_notice.groups_tab.v1.dismissed';
     private readonly FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY = 'all_predictions.features_notice.eliminations_tab.v1.dismissed';
+    private readonly HIDDEN_GROUPS_STORAGE_KEY = 'hiddenGroups';
+    private readonly BACKUP_DOWNLOAD_USER_ID = 1;
+    private readonly BACKUP_DOWNLOAD_MATCH_ID = 202601;
+    private readonly fifaTeamNameReplacements: Record<string, string> = {
+        'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
+        'Korea Republic': 'South Korea',
+        "Côte d'Ivoire": 'Ivory Coast',
+        'Türkiye': 'Turkey',
+        'USA': 'United States',
+        'Cabo Verde': 'Cape Verde Islands',
+        'IR Iran': 'Iran',
+    };
     private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -133,7 +151,11 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         })
 
         if (this.allMatches.length > 0 && matchesToInsert.length > 0) {
-            this.supabaseService.addMatchesToDatabase(matchesToInsert).then((val) => {
+            this.supabaseService.mutateRows({
+                table: 'matches',
+                action: 'insert',
+                payload: matchesToInsert,
+            }).then((val) => {
                 console.log(val)
             })
         }
@@ -373,7 +395,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     isShowRow(product: Bet): boolean {
-        return !JSON.parse(localStorage.getItem('hiddenGroups') ?? '[]').includes(product.phase)
+        return !this.getHiddenGroups().includes(product.phase);
     }
 
     isAllowedToEdit(user: User, product: Bet, j: number): boolean {
@@ -463,27 +485,23 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     onPlayerSelect(playerId: number | string | null): void {
-        if (playerId === null || playerId === '') {
-            this.selectedPlayerId = null;
-            this.selectedUserService.clearSelectedUserId();
-            this.calculateStats();
-            this.fixPredictions();
-            this.cdr.markForCheck();
-            return;
-        }
+        const parsedPlayerId = playerId === null || playerId === '' ? Number.NaN : Number(playerId);
 
-        const parsedPlayerId = Number(playerId);
         if (!Number.isFinite(parsedPlayerId)) {
-            this.selectedPlayerId = null;
-            this.selectedUserService.clearSelectedUserId();
-            this.calculateStats();
-            this.fixPredictions();
-            this.cdr.markForCheck();
+            this.resetSelectedPlayer();
             return;
         }
 
         this.selectedPlayerId = parsedPlayerId;
         this.selectedUserService.setSelectedUserId(parsedPlayerId);
+        this.calculateStats();
+        this.fixPredictions();
+        this.cdr.markForCheck();
+    }
+
+    private resetSelectedPlayer(): void {
+        this.selectedPlayerId = null;
+        this.selectedUserService.clearSelectedUserId();
         this.calculateStats();
         this.fixPredictions();
         this.cdr.markForCheck();
@@ -498,12 +516,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.showFeaturesNoticeGroupsTab = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY);
         this.showFeaturesNoticeEliminationsTab = this.loadShouldShowFeaturesNotice(this.FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY);
 
-        const themeState = this.themeService.buildThemeState();
-        this.themeColor = themeState.themeColor;
-        this.themeTextColor = themeState.themeTextColor;
-        this.themeBackground = themeState.themeBackground;
-        this.mixColor = themeState.mixColor;
-        this.mixPercent = themeState.mixPercent;
+        this.applyThemeState();
         this.selectedPlayerId = this.selectedUserService.getSelectedUserId();
         this.fixUsers();
         this.fixTeams();
@@ -520,24 +533,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.globalThemeService.themeColor$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                const themeState = this.themeService.buildThemeState();
-                this.themeColor = themeState.themeColor;
-                this.themeTextColor = themeState.themeTextColor;
-                this.themeBackground = themeState.themeBackground;
-                this.mixColor = themeState.mixColor;
-                this.mixPercent = themeState.mixPercent;
+                this.applyThemeState();
                 this.cdr.markForCheck();
             });
 
         this.globalThemeService.darkModeActive$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                const themeState = this.themeService.buildThemeState();
-                this.themeColor = themeState.themeColor;
-                this.themeTextColor = themeState.themeTextColor;
-                this.themeBackground = themeState.themeBackground;
-                this.mixColor = themeState.mixColor;
-                this.mixPercent = themeState.mixPercent;
+                this.applyThemeState();
                 this.cdr.markForCheck();
             });
 
@@ -567,18 +570,17 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             })
     }
 
-    getNewName(oldName = '') {
-        let newName = oldName
-        newName = newName.replace("Bosnia and Herzegovina", "Bosnia-Herzegovina")
-        newName = newName.replace("Korea Republic", "South Korea")
-        newName = newName.replace("Curaçao", "Curaçao")
-        newName = newName.replace("Côte d'Ivoire", "Ivory Coast")
-        newName = newName.replace("Türkiye", "Turkey")
-        newName = newName.replace("USA", "United States")
-        newName = newName.replace("Cabo Verde", "Cape Verde Islands")
-        newName = newName.replace("IR Iran", "Iran")
+    private applyThemeState(): void {
+        const themeState = this.themeService.buildThemeState();
+        this.themeColor = themeState.themeColor;
+        this.themeTextColor = themeState.themeTextColor;
+        this.themeBackground = themeState.themeBackground;
+        this.mixColor = themeState.mixColor;
+        this.mixPercent = themeState.mixPercent;
+    }
 
-        return newName
+    getNewName(oldName = '') {
+        return this.fifaTeamNameReplacements[oldName] ?? oldName;
     }
 
     getFifaMatch(match: Match) {
@@ -658,7 +660,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             this.allMatches = [];
         } else {
             this.allMatches = data.map((match: Match, index: number) => {
-                const myId = Number("2026" + (index < 9 ? "0" + (index + 1) : (index + 1).toString()));
+                const myId = this.buildSeasonMatchId(index);
                 const myGroup = this.mapperService.getPhase(match.stage, match.group);
 
                 if (match.id === 537333) {
@@ -685,6 +687,10 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         this.fixPredictions();
+    }
+
+    private buildSeasonMatchId(index: number): number {
+        return Number(`2026${String(index + 1).padStart(2, '0')}`);
     }
 
     private refreshMatchesWithLiveOverlay(baseMatches: MatchesApiResponse): void {
@@ -766,95 +772,21 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     async changePrediction(user: User, bet: Bet, columnIndex: number, newValue: string) {
-        // OPTIMISTIC UPDATE: Update local state immediately for instant UI feedback
         const prediction = this.allPredictions.find(p => p.matches.id === bet.id && p.users.id === user.id);
         const cellKey = this.getCellWriteKey(user.id, bet.id, columnIndex);
         const writeVersion = (this.cellWriteVersions.get(cellKey) ?? 0) + 1;
         this.cellWriteVersions.set(cellKey, writeVersion);
+        const optimisticUpdate = this.applyOptimisticPredictionUpdate(prediction, bet, columnIndex, newValue);
+        newValue = optimisticUpdate.normalizedValue;
 
-        // Store old values for rollback if needed
-        let oldHome: number | undefined;
-        let oldAway: number | undefined;
-        let oldWinner: string | undefined;
-        if (prediction && columnIndex < 2) {
-            // Save current state for rollback
-            oldHome = prediction.home_ft;
-            oldAway = prediction.away_ft;
-            oldWinner = prediction.winner;
-
-            // Parse the new value
-            const score = parseInt(newValue, 10);
-            const scoreToSet = isNaN(score) ? -1 : score;
-
-            // Update the prediction field
-            if (columnIndex === 0) {
-                prediction.home_ft = scoreToSet;
-            } else if (columnIndex === 1) {
-                prediction.away_ft = scoreToSet;
-            }
-
-            // Recalculate winner based on new values
-            if (prediction.home_ft > prediction.away_ft) {
-                prediction.winner = 'HOME_TEAM';
-            } else if (prediction.away_ft > prediction.home_ft) {
-                prediction.winner = 'AWAY_TEAM';
-            } else if (prediction.home_ft === -1 || prediction.away_ft === -1) {
-                prediction.winner = '';
-            } else {
-                const myGroupForMatch = this.allMatches.find((item) => item.myId === prediction.matches.id)?.myGroup
-                if (myGroupForMatch === "TABLE.LAST_32") {
-                    prediction.winner = ''
-                }
-                else {
-                    prediction.winner = 'DRAW';
-                }
-            }
-
-            // Trigger immediate UI update
-            this.cdr.markForCheck();
-        }
-        else if (prediction) {
-            if (columnIndex === 2) {
-                let foo = newValue
-                if (foo !== '') {
-                    foo = foo.toLowerCase()
-                    if (foo.length !== 0) {
-                        if (foo === '1' || foo === 'h' || foo === 'д') {
-                            foo = "HOME_TEAM"
-                        }
-                        else if (foo === '2' || foo === 'a' || foo === 'а') {
-                            foo = "AWAY_TEAM"
-                        } else {
-                            foo = ''
-                        }
-                    }
-                    else {
-                        foo = ''
-                    }
-                }
-                newValue = foo
-                prediction.winner = newValue
-            }
-
-            this.cdr.markForCheck();
-        }
-
-        // NOW do the async database operation in the background
         await this.delay(this.cellWriteDebounceMs);
-        if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+        if (!this.isWriteVersionCurrent(cellKey, writeVersion)) {
             return;
         }
 
-        while (this.activeCellWrites.has(cellKey)) {
-            await this.delay(30);
-            if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
-                return;
-            }
+        if (!(await this.acquireCellWriteTurn(cellKey, writeVersion))) {
+            return;
         }
-
-        this.activeCellWrites.add(cellKey);
-        this.cdr.markForCheck();
-        await this.delay(30);
 
         try {
             const timestamp = new Date().toISOString();
@@ -878,32 +810,13 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 return;
             }
 
-            if (this.cellWriteVersions.get(cellKey) !== writeVersion) {
+            if (!this.isWriteVersionCurrent(cellKey, writeVersion)) {
                 return;
             }
 
             if (!result.error && result.shouldRefresh) {
-                if (result.isDelete) {
-                    this.messageService.add({
-                        severity: 'info',
-                        summary: this.translate.instant('TOAST.PREDICTION_DELETED_TITLE'),
-                        detail: this.translate.instant('TOAST.PREDICTION_DELETED_MESSAGE'),
-                        life: 3000,
-                    });
-                }
-                else {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: this.translate.instant('TOAST.PREDICTION_SAVED_TITLE'),
-                        detail: this.translate.instant('TOAST.PREDICTION_SAVED_MESSAGE'),
-                        life: 3000
-                    });
-                }
-                this.recentlySavedCells.add(cellKey);
-                setTimeout(() => {
-                    this.recentlySavedCells.delete(cellKey);
-                    this.cdr.markForCheck();
-                }, 1500);
+                this.showPredictionSaveToast(result.isDelete);
+                this.markCellAsRecentlySaved(cellKey);
                 this.fixPredictions();
             } else {
                 if (this.isConflictLikeError(result.error)) {
@@ -911,25 +824,156 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     return;
                 }
 
-                // ROLLBACK: Restore old values on error
-                if (prediction && oldHome !== undefined && oldAway !== undefined && oldWinner !== undefined) {
-                    prediction.home_ft = oldHome;
-                    prediction.away_ft = oldAway;
-                    prediction.winner = oldWinner;
-                    this.cdr.markForCheck();
-                }
-
-                this.messageService.add({
-                    severity: 'error',
-                    summary: this.translate.instant('TOAST.ERROR_TITLE'),
-                    detail: this.translate.instant('TOAST.ERROR_MESSAGE'),
-                    life: 3000
-                });
+                this.rollbackOptimisticPrediction(prediction, optimisticUpdate.rollback);
+                this.showPredictionErrorToast();
             }
         } finally {
             this.activeCellWrites.delete(cellKey);
             this.cdr.markForCheck();
         }
+    }
+
+    private applyOptimisticPredictionUpdate(
+        prediction: Prediction | undefined,
+        bet: Bet,
+        columnIndex: number,
+        rawValue: string
+    ): { normalizedValue: string; rollback?: PredictionRollbackState } {
+        if (!prediction) {
+            return { normalizedValue: rawValue };
+        }
+
+        if (columnIndex < 2) {
+            const rollback: PredictionRollbackState = {
+                home: prediction.home_ft,
+                away: prediction.away_ft,
+                winner: prediction.winner,
+            };
+
+            const score = Number.parseInt(rawValue, 10);
+            const scoreToSet = Number.isNaN(score) ? -1 : score;
+
+            if (columnIndex === 0) {
+                prediction.home_ft = scoreToSet;
+            } else {
+                prediction.away_ft = scoreToSet;
+            }
+
+            prediction.winner = this.resolveWinnerFromScore(prediction, bet.id);
+            this.cdr.markForCheck();
+            return { normalizedValue: rawValue, rollback };
+        }
+
+        if (columnIndex === 2) {
+            const normalizedWinner = this.normalizeWinnerInput(rawValue);
+            prediction.winner = normalizedWinner;
+            this.cdr.markForCheck();
+            return { normalizedValue: normalizedWinner };
+        }
+
+        return { normalizedValue: rawValue };
+    }
+
+    private resolveWinnerFromScore(prediction: Prediction, matchId: number): string {
+        if (prediction.home_ft > prediction.away_ft) {
+            return 'HOME_TEAM';
+        }
+
+        if (prediction.away_ft > prediction.home_ft) {
+            return 'AWAY_TEAM';
+        }
+
+        if (prediction.home_ft === -1 || prediction.away_ft === -1) {
+            return '';
+        }
+
+        const myGroupForMatch = this.allMatches.find((item) => item.myId === matchId)?.myGroup;
+        return myGroupForMatch === 'TABLE.LAST_32' ? '' : 'DRAW';
+    }
+
+    private normalizeWinnerInput(value: string): string {
+        if (!value) {
+            return '';
+        }
+
+        const normalized = value.toLowerCase();
+        if (normalized === '1' || normalized === 'h' || normalized === 'д') {
+            return 'HOME_TEAM';
+        }
+
+        if (normalized === '2' || normalized === 'a' || normalized === 'а') {
+            return 'AWAY_TEAM';
+        }
+
+        return '';
+    }
+
+    private rollbackOptimisticPrediction(
+        prediction: Prediction | undefined,
+        rollbackState: PredictionRollbackState | undefined
+    ): void {
+        if (!prediction || !rollbackState) {
+            return;
+        }
+
+        prediction.home_ft = rollbackState.home;
+        prediction.away_ft = rollbackState.away;
+        prediction.winner = rollbackState.winner;
+        this.cdr.markForCheck();
+    }
+
+    private isWriteVersionCurrent(cellKey: string, writeVersion: number): boolean {
+        return this.cellWriteVersions.get(cellKey) === writeVersion;
+    }
+
+    private async acquireCellWriteTurn(cellKey: string, writeVersion: number): Promise<boolean> {
+        while (this.activeCellWrites.has(cellKey)) {
+            await this.delay(30);
+            if (!this.isWriteVersionCurrent(cellKey, writeVersion)) {
+                return false;
+            }
+        }
+
+        this.activeCellWrites.add(cellKey);
+        this.cdr.markForCheck();
+        await this.delay(30);
+        return true;
+    }
+
+    private showPredictionSaveToast(isDelete: boolean): void {
+        if (isDelete) {
+            this.showToast('info', 'TOAST.PREDICTION_DELETED_TITLE', 'TOAST.PREDICTION_DELETED_MESSAGE', 3000);
+            return;
+        }
+
+        this.showToast('success', 'TOAST.PREDICTION_SAVED_TITLE', 'TOAST.PREDICTION_SAVED_MESSAGE', 3000);
+    }
+
+    private showPredictionErrorToast(): void {
+        this.showToast('error', 'TOAST.ERROR_TITLE', 'TOAST.ERROR_MESSAGE', 3000);
+    }
+
+    private showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summaryKey: string,
+        detailKey: string,
+        life: number,
+        detailParams?: Record<string, unknown>
+    ): void {
+        this.messageService.add({
+            severity,
+            summary: this.translate.instant(summaryKey),
+            detail: this.translate.instant(detailKey, detailParams),
+            life,
+        });
+    }
+
+    private markCellAsRecentlySaved(cellKey: string): void {
+        this.recentlySavedCells.add(cellKey);
+        setTimeout(() => {
+            this.recentlySavedCells.delete(cellKey);
+            this.cdr.markForCheck();
+        }, 1500);
     }
 
     private getCellWriteKey(userId: number, betId: number, columnIndex: number): string {
@@ -953,50 +997,32 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     downloadTableAsExcel() {
-        const exportResult = this.exportService.exportToExcel({
-            allUsersNames: this.allUsersNames,
-            betsToShow: this.betsToShow,
-            isShowRow: (bet: Bet) => this.isShowRow(bet),
-            getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
-            getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, true),
-            translate: (key: string) => this.translate.instant(key),
-            translateGroup: (groupKey: string) => this.translate.instant(groupKey),
-            translateWinnerShort: (winner: string) => this.mapperService.returnTranslateFromWin(winner),
-            getCycleLabelFromBet: (bet: Bet) => this.mapperService.getCycleLabelFromBet(bet),
-            formatLocalDateTime: (date: Date, mode: 'display' | 'filename') => this.backupService.formatLocalDateTime(date, mode),
-            getSheetName: () => this.translate.instant('TABLE.SHEET_NAME'),
-        });
-
-        void this.persistPredictionBackupRemotely({
-            event_id: this.backupService.generateBackupEventId(),
-            timestamp: new Date().toISOString(),
-            action: 'download',
-            user_id: 1,
-            match_id: 202601,
-            prediction_id: null,
-            column_index: -1,
-            input_value: 'excel_export',
-            payload: { table_snapshot: JSON.stringify(exportResult.wsData) },
-        });
-
-        this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('TOAST.EXCEL_DOWNLOADED_TITLE'),
-            detail: this.translate.instant('TOAST.EXCEL_DOWNLOADED_MESSAGE'),
-            life: 2500,
+        this.exportPredictionsToExcel(this.betsToShow, {
+            includeDateTimeAndGroup: true,
+            includePhaseRows: true,
         });
     }
 
     downloadTableAsExcelMini() {
         const timedBetsToShow = this.betsToShow.filter((bet: Bet) =>
-            String(bet.matchStatus).toUpperCase() === "FINISHED"
+            String(bet.matchStatus).toUpperCase() === 'FINISHED'
         );
 
-        const exportResult = this.exportService.exportToExcel({
-            allUsersNames: this.allUsersNames,
-            betsToShow: timedBetsToShow,
+        this.exportPredictionsToExcel(timedBetsToShow, {
             includeDateTimeAndGroup: false,
             includePhaseRows: false,
+        });
+    }
+
+    private exportPredictionsToExcel(
+        betsToShow: Bet[],
+        options: { includeDateTimeAndGroup: boolean; includePhaseRows: boolean }
+    ): void {
+        const exportResult = this.exportService.exportToExcel({
+            allUsersNames: this.allUsersNames,
+            betsToShow,
+            includeDateTimeAndGroup: options.includeDateTimeAndGroup,
+            includePhaseRows: options.includePhaseRows,
             isShowRow: (bet: Bet) => this.isShowRow(bet),
             getNameFromUser: (user: User) => this.mapperService.getNameFromUser(user),
             getUserPredictionValue: (user: User, bet: Bet, columnIndex: number) => this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, true),
@@ -1008,49 +1034,43 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             getSheetName: () => this.translate.instant('TABLE.SHEET_NAME'),
         });
 
-        void this.persistPredictionBackupRemotely({
-            event_id: this.backupService.generateBackupEventId(),
-            timestamp: new Date().toISOString(),
-            action: 'download',
-            user_id: 1,
-            match_id: 202601,
-            prediction_id: null,
-            column_index: -1,
-            input_value: 'excel_export',
-            payload: { table_snapshot: JSON.stringify(exportResult.wsData) },
-        });
+        void this.persistPredictionBackupRemotely(
+            this.buildDownloadBackupEntry('excel_export', { table_snapshot: JSON.stringify(exportResult.wsData) })
+        );
 
-        this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('TOAST.EXCEL_DOWNLOADED_TITLE'),
-            detail: this.translate.instant('TOAST.EXCEL_DOWNLOADED_MESSAGE'),
-            life: 2500,
-        });
+        this.showToast('success', 'TOAST.EXCEL_DOWNLOADED_TITLE', 'TOAST.EXCEL_DOWNLOADED_MESSAGE', 2500);
     }
 
     async downloadPredictionBackup() {
         const entries = await this.backupService.getPredictionBackupEntries(this.supabaseService);
         this.backupService.downloadEntriesAsJson(entries);
 
-        this.messageService.add({
-            severity: 'success',
-            summary: this.translate.instant('TOAST.BACKUP_DOWNLOADED_TITLE'),
-            detail: entries.length === 0
-                ? this.translate.instant('TOAST.BACKUP_DOWNLOADED_EMPTY_MESSAGE')
-                : this.translate.instant('TOAST.BACKUP_DOWNLOADED_MESSAGE', { count: entries.length }),
-            life: 2500,
-        });
+        if (entries.length === 0) {
+            this.showToast('success', 'TOAST.BACKUP_DOWNLOADED_TITLE', 'TOAST.BACKUP_DOWNLOADED_EMPTY_MESSAGE', 2500);
+            return;
+        }
+
+        this.showToast('success', 'TOAST.BACKUP_DOWNLOADED_TITLE', 'TOAST.BACKUP_DOWNLOADED_MESSAGE', 2500, { count: entries.length });
+    }
+
+    private buildDownloadBackupEntry(inputValue: string, payload: Record<string, string>): PredictionBackupEntry {
+        return {
+            event_id: this.backupService.generateBackupEventId(),
+            timestamp: new Date().toISOString(),
+            action: 'download',
+            user_id: this.BACKUP_DOWNLOAD_USER_ID,
+            match_id: this.BACKUP_DOWNLOAD_MATCH_ID,
+            prediction_id: null,
+            column_index: -1,
+            input_value: inputValue,
+            payload,
+        };
     }
 
     private async persistPredictionBackupRemotely(entry: PredictionBackupEntry): Promise<void> {
         const backupResult = await this.backupService.persistPredictionBackupRemotely(this.supabaseService, entry);
         if (backupResult.warnOnce) {
-            this.messageService.add({
-                severity: 'warn',
-                summary: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_TITLE'),
-                detail: this.translate.instant('TOAST.BACKUP_REMOTE_WARN_MESSAGE'),
-                life: 4500,
-            });
+            this.showToast('warn', 'TOAST.BACKUP_REMOTE_WARN_TITLE', 'TOAST.BACKUP_REMOTE_WARN_MESSAGE', 4500);
         }
     }
 
@@ -1096,12 +1116,30 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    private bindGroupHeaderScrollSync(): void {
+    private getGroupHeaderSyncElements(): { host: HTMLElement; container: HTMLElement } | null {
         const host = document.querySelector('.table-container') as HTMLElement | null;
         const container = document.querySelector('.sticky_top .p-datatable-table-container') as HTMLElement | null;
+
         if (!host || !container) {
+            return null;
+        }
+
+        return { host, container };
+    }
+
+    private runGroupHeaderSync(host: HTMLElement, container: HTMLElement): void {
+        this.syncGroupHeaderTopOffset(host);
+        host.style.setProperty('--group-scroll-x', `${container.scrollLeft}px`);
+        this.updateGroupHeaderTops(container, host);
+    }
+
+    private bindGroupHeaderScrollSync(): void {
+        const syncElements = this.getGroupHeaderSyncElements();
+        if (!syncElements) {
             return;
         }
+
+        const { host, container } = syncElements;
 
         if (this.groupHeaderScrollContainer === container && this.groupHeaderScrollListener) {
             this.groupHeaderScrollListener();
@@ -1110,11 +1148,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
         this.unbindGroupHeaderScrollSync();
 
-        this.groupHeaderScrollListener = () => {
-            this.syncGroupHeaderTopOffset(host);
-            host.style.setProperty('--group-scroll-x', `${container.scrollLeft}px`);
-            this.updateGroupHeaderTops(container, host);
-        };
+        this.groupHeaderScrollListener = () => this.runGroupHeaderSync(host, container);
 
         container.addEventListener('scroll', this.groupHeaderScrollListener, { passive: true });
         this.groupHeaderScrollContainer = container;
@@ -1131,110 +1165,118 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     toggleGroup(pro: Bet): void {
-        const hiddenGroups = JSON.parse(localStorage.getItem('hiddenGroups') ?? '[]') as string[];
+        const hiddenGroups = this.getHiddenGroups();
         const updated = hiddenGroups.includes(pro.phase)
             ? hiddenGroups.filter((x: string) => x !== pro.phase)
             : [...hiddenGroups, pro.phase];
-        localStorage.setItem('hiddenGroups', JSON.stringify(updated));
+        localStorage.setItem(this.HIDDEN_GROUPS_STORAGE_KEY, JSON.stringify(updated));
         this.cdr.markForCheck();
     }
 
     onGroupClick(groupKey: string | null | undefined): void {
         if (!groupKey) {
-            this.selectedGroupFilter = null;
-            this.persistSelectedGroupFilter();
-            this.cdr.markForCheck();
+            this.setSelectedGroupFilter(null);
             return;
         }
 
-        this.selectedGroupFilter = this.selectedGroupFilter === groupKey ? null : groupKey;
-        this.persistSelectedGroupFilter();
-        this.cdr.markForCheck();
+        this.setSelectedGroupFilter(this.selectedGroupFilter === groupKey ? null : groupKey);
     }
 
     clearGroupFilter(): void {
-        if (this.selectedGroupFilter === null) {
-            return;
-        }
-
-        this.selectedGroupFilter = null;
-        this.persistSelectedGroupFilter();
-        this.cdr.markForCheck();
+        this.setSelectedGroupFilter(null);
     }
 
     onTeamClick(teamName: string | null | undefined): void {
         if (!teamName) {
-            this.selectedTeamFilter = null;
-            this.persistSelectedTeamFilter();
-            this.cdr.markForCheck();
+            this.setSelectedTeamFilter(null);
             return;
         }
 
-        this.selectedTeamFilter = this.selectedTeamFilter === teamName ? null : teamName;
-        this.persistSelectedTeamFilter();
-        this.cdr.markForCheck();
+        this.setSelectedTeamFilter(this.selectedTeamFilter === teamName ? null : teamName);
     }
 
     clearTeamFilter(): void {
-        if (this.selectedTeamFilter === null) {
-            return;
-        }
-
-        this.selectedTeamFilter = null;
-        this.persistSelectedTeamFilter();
-        this.cdr.markForCheck();
+        this.setSelectedTeamFilter(null);
     }
 
     dismissFeaturesNoticeMain(): void {
-        this.showFeaturesNoticeMain = false;
-        localStorage.setItem(this.FEATURES_NOTICE_MAIN_STORAGE_KEY, '1');
-        this.cdr.markForCheck();
+        this.dismissFeaturesNotice(this.FEATURES_NOTICE_MAIN_STORAGE_KEY, 'main');
     }
 
     dismissFeaturesNoticePhase(): void {
-        this.showFeaturesNoticePhase = false;
-        localStorage.setItem(this.FEATURES_NOTICE_PHASE_STORAGE_KEY, '1');
-        this.cdr.markForCheck();
+        this.dismissFeaturesNotice(this.FEATURES_NOTICE_PHASE_STORAGE_KEY, 'phase');
     }
 
     dismissFeaturesNoticeGroupsTab(): void {
-        this.showFeaturesNoticeGroupsTab = false;
-        localStorage.setItem(this.FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY, '1');
-        this.cdr.markForCheck();
+        this.dismissFeaturesNotice(this.FEATURES_NOTICE_GROUPS_TAB_STORAGE_KEY, 'groups');
     }
 
     dismissFeaturesNoticeEliminationsTab(): void {
-        this.showFeaturesNoticeEliminationsTab = false;
-        localStorage.setItem(this.FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY, '1');
+        this.dismissFeaturesNotice(this.FEATURES_NOTICE_ELIMINATIONS_TAB_STORAGE_KEY, 'eliminations');
+    }
+
+    private dismissFeaturesNotice(
+        storageKey: string,
+        type: 'main' | 'phase' | 'groups' | 'eliminations'
+    ): void {
+        if (type === 'main') {
+            this.showFeaturesNoticeMain = false;
+        } else if (type === 'phase') {
+            this.showFeaturesNoticePhase = false;
+        } else if (type === 'groups') {
+            this.showFeaturesNoticeGroupsTab = false;
+        } else {
+            this.showFeaturesNoticeEliminationsTab = false;
+        }
+
+        localStorage.setItem(storageKey, '1');
         this.cdr.markForCheck();
     }
 
-    private loadSelectedGroupFilter(): string | null {
-        const storedValue = localStorage.getItem(this.GROUP_FILTER_STORAGE_KEY);
-        return storedValue ? storedValue : null;
+    private getHiddenGroups(): string[] {
+        return JSON.parse(localStorage.getItem(this.HIDDEN_GROUPS_STORAGE_KEY) ?? '[]') as string[];
     }
 
-    private persistSelectedGroupFilter(): void {
-        if (!this.selectedGroupFilter) {
-            localStorage.removeItem(this.GROUP_FILTER_STORAGE_KEY);
+    private loadSelectedGroupFilter(): string | null {
+        return this.loadStoredFilter(this.GROUP_FILTER_STORAGE_KEY);
+    }
+
+    private setSelectedGroupFilter(value: string | null): void {
+        if (this.selectedGroupFilter === value) {
             return;
         }
 
-        localStorage.setItem(this.GROUP_FILTER_STORAGE_KEY, this.selectedGroupFilter);
+        this.selectedGroupFilter = value;
+        this.persistStoredFilter(this.GROUP_FILTER_STORAGE_KEY, value);
+        this.cdr.markForCheck();
     }
 
     private loadSelectedTeamFilter(): string | null {
-        const storedValue = localStorage.getItem(this.TEAM_FILTER_STORAGE_KEY);
-        return storedValue ? storedValue : null;
+        return this.loadStoredFilter(this.TEAM_FILTER_STORAGE_KEY);
     }
 
-    private persistSelectedTeamFilter(): void {
-        if (!this.selectedTeamFilter) {
-            localStorage.removeItem(this.TEAM_FILTER_STORAGE_KEY);
+    private setSelectedTeamFilter(value: string | null): void {
+        if (this.selectedTeamFilter === value) {
             return;
         }
 
-        localStorage.setItem(this.TEAM_FILTER_STORAGE_KEY, this.selectedTeamFilter);
+        this.selectedTeamFilter = value;
+        this.persistStoredFilter(this.TEAM_FILTER_STORAGE_KEY, value);
+        this.cdr.markForCheck();
+    }
+
+    private loadStoredFilter(storageKey: string): string | null {
+        const storedValue = localStorage.getItem(storageKey);
+        return storedValue || null;
+    }
+
+    private persistStoredFilter(storageKey: string, value: string | null): void {
+        if (!value) {
+            localStorage.removeItem(storageKey);
+            return;
+        }
+
+        localStorage.setItem(storageKey, value);
     }
 
     private loadShouldShowFeaturesNotice(storageKey: string): boolean {
