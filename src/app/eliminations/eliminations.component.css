@@ -521,3 +521,45 @@
     font-size: 16px;
   }
 }
+
+@media (max-width: 430px) {
+  .eliminations__group-toggles {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .eliminations__mobile-group-controls {
+    width: 100%;
+  }
+
+  .eliminations__mobile-group-trigger {
+    width: 100%;
+    height: 34px;
+    font-size: 0.72rem;
+    padding: 0 0.42rem;
+    padding-right: 1.7rem;
+  }
+
+  .eliminations__mobile-group-controls::after {
+    right: 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  .eliminations__zoom-controls {
+    top: 48px;
+    right: 8px;
+    gap: 0.25rem;
+  }
+
+  .eliminations__zoom-controls button {
+    width: 38px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+
+  .eliminations__zoom-controls button:nth-child(2) {
+    width: 56px;
+    font-size: 0.74rem;
+  }
+}
