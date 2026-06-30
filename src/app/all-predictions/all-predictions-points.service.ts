@@ -3,7 +3,59 @@ import { Match, Prediction, User } from './all-predictions.models';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsPointsService {
+
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
+        let result = 0
+        const match: Match | undefined = { ...match2 } as Match | undefined
+
+        if (!match) {
+            return -2;
+        }
+        else {
+            if (match.score.fullTime.home === null || match.score.fullTime.away === null) {
+                result = -1;
+            }
+
+            const actualHome = match.score.fullTime.home;
+            const actualAway = match.score.fullTime.away;
+            const actualWinner = match.score.winner;
+            const predictedHome = prediction.home_ft;
+            const predictedAway = prediction.away_ft;
+            const predictedWinner = prediction.winner;
+            const isPredictDraw = prediction.home_ft === prediction.away_ft;
+
+            const actualAbs = Math.abs(actualHome - actualAway);
+            const predictAbs = Math.abs(predictedHome - predictedAway);
+
+            const isGroup = match.myGroup.toLowerCase().includes("group")
+
+            if (actualHome === predictedHome && actualAway === predictedAway) {
+                result = 3;
+            } else if (actualAbs === predictAbs) {
+                result = 2;
+            } else if (
+                (predictedHome > predictedAway && actualHome > actualAway) ||
+                (predictedHome === predictedAway && actualHome === actualAway) ||
+                (predictedHome < predictedAway && actualHome < actualAway)
+            ) {
+                result = 1;
+            }
+
+            if (!isGroup && actualWinner === predictedWinner) {
+                result += 1;
+            }
+
+            if (result === -1 && match.status !== 'TIMED') {
+                if (prediction.users.id === 8) {
+                    console.log(match, prediction, prediction.users)
+                }
+            }
+
+            return result;
+        }
+    }
+
+    calculatePredictionPoints2(match2: Match | undefined, prediction: Prediction): number {
         let result = -1
         const match: Match | undefined = { ...match2 } as Match | undefined
 
@@ -48,6 +100,12 @@ export class AllPredictionsPointsService {
 
             const isGroup = match.myGroup.toLowerCase().includes("group")
             if (!isGroup && prediction.winner === match.score.winner) {
+                console.log('abs', actualAbs, predictAbs)
+                // if (actualAbs === predictAbs){
+                //     debugger
+                // } else {
+                //     debugger
+                // }
                 result += 1
             }
 
