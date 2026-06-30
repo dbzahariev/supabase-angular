@@ -104,6 +104,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly canvasPadding = 90;
   private readonly roundGap = 280;
   private readonly yGap = 160;
+  private readonly centerYGap = 320;
   private readonly minScale = 0.35;
   private readonly maxScale = 2.8;
   private readonly zoomStep = 0.03;
@@ -638,7 +639,7 @@ export class EliminationsComponent implements AfterViewInit {
     this.placeSideRounds(rightRounds, 'right', rightMaxRound, positioned);
 
     if (centerMatches.length > 0) {
-      const fallback = this.spreadY(centerMatches.length);
+      const fallback = this.spreadY(centerMatches.length, this.centerYGap);
       centerMatches.forEach((match, index) => {
         const childYs = matches
           .filter((child) => child.parentId === match.id)
@@ -956,8 +957,8 @@ export class EliminationsComponent implements AfterViewInit {
     return window.innerWidth <= this.mobileBreakpoint ? this.mobileNodeHeight : this.desktopNodeHeight;
   }
 
-  private spreadY(count: number): number[] {
-    return Array.from({ length: count }, (_, index) => (index - (count - 1) / 2) * this.yGap);
+  private spreadY(count: number, gap = this.yGap): number[] {
+    return Array.from({ length: count }, (_, index) => (index - (count - 1) / 2) * gap);
   }
 
   private avg(values: number[]): number {
