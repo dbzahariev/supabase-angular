@@ -9,7 +9,8 @@
     "start:open": "npm run ng:local -- serve --open",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:watch": "ng test",
     "lint": "ng lint"
   },
   "engines": {

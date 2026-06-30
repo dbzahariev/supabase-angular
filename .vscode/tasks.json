@@ -23,6 +23,11 @@
     {
       "type": "npm",
       "script": "test",
+      "isBackground": false
+    },
+    {
+      "type": "npm",
+      "script": "test:watch",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
