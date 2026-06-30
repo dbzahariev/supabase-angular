@@ -676,6 +676,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                 if (match.id === 537352) {
                     match.status = 'FINISHED';
                 }
+                if (match.score.winner === null) {
+                    const fifaMatch = this.getFifaMatch(match)
+                    if (fifaMatch?.Home?.IdTeam === fifaMatch?.Winner) {
+                        match.score.winner = 'HOME_TEAM'
+                    } else if (fifaMatch?.Away?.IdTeam === fifaMatch?.Winner) {
+                        match.score.winner = 'AWAY_TEAM'
+                    }
+                }
 
                 return {
                     ...match,

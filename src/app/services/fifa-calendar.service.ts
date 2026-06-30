@@ -17,6 +17,7 @@ export interface FifaWeather {
 
 export interface FifaCalendarSide {
     TeamName?: FifaLocalizedText[] | null;
+    IdTeam: string;
 }
 
 export interface FifaCalendarMatch {
@@ -39,6 +40,7 @@ export interface FifaCalendarMatch {
     SeasonName: FifaLocalizedText[];
     SeasonShortName: FifaLocalizedText[];
     Weather: FifaWeather;
+    Winner: string;
     [key: string]: unknown;
 }
 
@@ -70,9 +72,9 @@ export class FifaCalendarService {
         );
     }
 
-    getSeasonMatchesFilteredByDate(filterByDate: string) {
-        return this.getSeasonMatches().pipe(
-            map(response => response.Results?.find(match => match.Date === filterByDate) ?? undefined)
-        );
-    }
+    // getSeasonMatchesFilteredByDate(filterByDate: string) {
+    //     return this.getSeasonMatches().pipe(
+    //         map(response => response.Results?.find(match => match.Date === filterByDate) ?? undefined)
+    //     );
+    // }
 }
