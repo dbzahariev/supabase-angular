@@ -5,54 +5,46 @@ import { Match, Prediction, User } from './all-predictions.models';
 export class AllPredictionsPointsService {
 
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
-        let result = 0
-        const match: Match | undefined = { ...match2 } as Match | undefined
-
-        if (!match) {
+        if (!match2) {
             return -2;
         }
-        else {
-            if (match.score.fullTime.home === null || match.score.fullTime.away === null) {
-                result = -1;
-            }
 
-            const actualHome = match.score.fullTime.home;
-            const actualAway = match.score.fullTime.away;
-            const actualWinner = match.score.winner;
-            const predictedHome = prediction.home_ft;
-            const predictedAway = prediction.away_ft;
-            const predictedWinner = prediction.winner;
-            const isPredictDraw = prediction.home_ft === prediction.away_ft;
+        const match = { ...match2 };
 
-            const actualAbs = Math.abs(actualHome - actualAway);
-            const predictAbs = Math.abs(predictedHome - predictedAway);
+        const actualHome = match.score.fullTime.home;
+        const actualAway = match.score.fullTime.away;
 
-            const isGroup = match.myGroup.toLowerCase().includes("group")
-
-            if (actualHome === predictedHome && actualAway === predictedAway) {
-                result = 3;
-            } else if (actualAbs === predictAbs) {
-                result = 2;
-            } else if (
-                (predictedHome > predictedAway && actualHome > actualAway) ||
-                (predictedHome === predictedAway && actualHome === actualAway) ||
-                (predictedHome < predictedAway && actualHome < actualAway)
-            ) {
-                result = 1;
-            }
-
-            if (!isGroup && actualWinner === predictedWinner) {
-                result += 1;
-            }
-
-            if (result === -1 && match.status !== 'TIMED') {
-                if (prediction.users.id === 8) {
-                    console.log(match, prediction, prediction.users)
-                }
-            }
-
-            return result;
+        if (actualHome === null || actualAway === null || typeof actualHome !== 'number' || typeof actualAway !== 'number') {
+            return -1;
         }
+
+        const actualWinner = match.score.winner;
+        const predictedHome = prediction.home_ft;
+        const predictedAway = prediction.away_ft;
+        const predictedWinner = prediction.winner;
+
+        let points = 0;
+
+        const actualDiff = actualHome - actualAway;
+        const predictedDiff = predictedHome - predictedAway;
+        // 3 точки за точен резултат
+        if (actualHome === predictedHome && actualAway === predictedAway) {
+            points = 3;
+            // 2 точки за позната голова разлика (но не и при равенство)
+        } else if (actualHome !== actualAway && actualDiff === predictedDiff) {
+            points = 2;
+            // 1 точка за познат изход (победител или равен)
+        } else if (Math.sign(actualDiff) === Math.sign(predictedDiff)) {
+            points = 1;
+        }
+
+        // Бонус точка за елиминационна фаза
+        const isKnockout = !match.myGroup.toLowerCase().includes("group");
+        if (isKnockout && actualWinner === predictedWinner) {
+            points += 1;
+        }
+
+        return points;
     }
 
     calculatePredictionPoints2(match2: Match | undefined, prediction: Prediction): number {
