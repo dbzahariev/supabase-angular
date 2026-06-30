@@ -102,6 +102,7 @@
     "DOWNLOAD_BACKUP": "Изтегли бекъп",
     "DOWNLOAD_EXCEL": "Изтегли Ексел",
     "DOWNLOAD_EXCEL_FULL": "Изтегли пълен Ексел",
+    "DOWNLOAD_EXCEL_GOAL_AFTER_90":"Свали ексел 90 мин",
     "SEARCH_KEYWORD": "Търсене",
     "SHEET_NAME": "Бекъп",
     "EXPORT_FILE_PREFIX": "backup",

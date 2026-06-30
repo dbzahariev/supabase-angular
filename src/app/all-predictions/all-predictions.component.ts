@@ -25,6 +25,7 @@ import { SelectedUserService } from '../services/selected-user.service';
 import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
 import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
+import { firstValueFrom } from 'rxjs';
 
 interface PredictionRollbackState {
     home: number;
@@ -1015,6 +1016,93 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         const timedBetsToShow = this.betsToShow.filter((bet: Bet) =>
             String(bet.matchStatus).toUpperCase() === 'FINISHED'
         );
+
+        this.exportPredictionsToExcel(timedBetsToShow, {
+            includeDateTimeAndGroup: false,
+            includePhaseRows: false,
+        });
+    }
+
+    async downloadTableAsExcel90() {
+        const allLineups = [];
+        const allMatchesWithLineups: Match[] = []
+        const timedBetsToShow = []
+        for (const fifaMatchitem of this.fifaMatches) {
+            const { IdCompetition, IdSeason, IdStage, IdMatch } = fifaMatchitem;
+            try {
+                // Използваме await, за да изчакаме резултата от всяка заявка
+                let lineupData = await firstValueFrom(
+                    this.fifaCalendarService.getMatchTimeline(IdCompetition, IdSeason, IdStage, IdMatch)
+                );
+                lineupData.Event = lineupData.Event
+                    // .filter((item) => {
+                    //     const isScores = item.EventDescription[0]?.Description.includes('scores');
+                    //     let dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
+                    //         .map(item => {
+                    //             let kkkkk = item.split('+').filter(item => item.length > 0)
+                    //             if (kkkkk.length === 1) {
+                    //                 return kkkkk[0]
+                    //             }
+                    //             return ''
+                    //         })
+                    //         .map(Number)
+
+                    //     let minutes = 0
+                    //     dddddd.forEach(item => {
+                    //         minutes += item
+                    //     })
+
+
+                    //     if (fifaMatchitem.MatchNumber === 63 && minutes>93) {
+                    //         debugger
+                    //     }
+                    //     return isScores
+                    // })
+                    .filter((item) =>
+                        item.EventDescription[0]?.Description.includes('scores') ||
+                        item.EventDescription[0]?.Description.includes('Goal disallowed')
+                    )
+                    .filter((item) => {
+                        let dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
+                            .map(item => {
+                                let kkkkk = item.split('+').filter(item => item.length > 0)
+                                if (kkkkk.length === 1) {
+                                    return kkkkk[0]
+                                }
+                                return ''
+                            })
+                            .map(Number)
+
+                        let minutes = 0
+                        dddddd.forEach(item => {
+                            minutes += item
+                        })
+
+                        return minutes >= 90
+                    })
+
+                if (lineupData.Event.length === 0) {
+                } else {
+                    let normalMatch = this.allMatches.filter((match) => match.utcDate === fifaMatchitem.Date)
+                        .find(el => this.getFifaMatch(el)?.IdMatch === fifaMatchitem.IdMatch)
+
+                    if (normalMatch) {
+                        allLineups.push({ match: normalMatch, events: lineupData.Event });
+                        allMatchesWithLineups.push(normalMatch)
+                        let fff = this.betsToShow.find((el) => el.id === normalMatch.myId)
+                        if (fff) {
+                            console.log(timedBetsToShow)
+                            timedBetsToShow.push(fff)
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error(`Failed to get timeline for match ${IdMatch}:`, error);
+            }
+        }
+
+        const sortedUsers = [...this.allUsersNames].sort((a, b) => a.name_bg.localeCompare(b.name_bg));
+        this.allUsersNames = sortedUsers
 
         this.exportPredictionsToExcel(timedBetsToShow, {
             includeDateTimeAndGroup: false,

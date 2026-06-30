@@ -186,6 +186,16 @@
                             <i class="pi pi-file-excel"></i>
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL' | translate }}</span>
                         </button>
+                        @if (isAdmin() || selectedPlayerId === 6) {
+                        <button
+                            type="button"
+                            class="caption-action-btn"
+                            [title]="'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate"
+                            [attr.aria-label]="'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate"
+                            (click)="downloadTableAsExcel90()">
+                            <i class="pi pi-file-excel"></i>
+                            <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate }}</span>
+                        </button>}
                         @if (isAdmin() || selectedPlayerId === 1) {
                         <button
                             type="button"
