@@ -168,7 +168,18 @@ export class GroupStandingsComponent implements OnInit {
   }
 
   isGuaranteedQualified(rows: StandingRow[], row: StandingRow): boolean {
+    if (row.position > 2) {
+      return false;
+    }
+
     const totalMatchesPerTeam = this.getTotalMatchesPerTeam(rows);
+    const groupFinished = rows.every((item) => item.playedGames >= totalMatchesPerTeam);
+
+    // When the group is complete, FIFA API standings already include tie-breakers.
+    if (groupFinished) {
+      return true;
+    }
+
     const contendersCount = rows.filter((item) => this.getMaxPossiblePoints(item, totalMatchesPerTeam) >= row.points).length;
     return contendersCount <= 2;
   }

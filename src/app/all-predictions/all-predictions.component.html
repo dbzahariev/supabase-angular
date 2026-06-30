@@ -232,7 +232,7 @@
                 <th rowspan="2" colspan="1" class="re_away_team" [ngClass]="IS_SMALL_SCREEN ? '': 'sticky'">{{ 'TABLE.AWAY_TEAM' | translate }}</th>
                 <th rowspan="1" colspan="3" class="re_result user-separator">{{ 'TABLE.RESULT' | translate }}</th>
                 @for (user of allUsersNames; track user.id) {
-                <th rowspan="1" colspan="4" class="user-separator">{{ getNameFromUser(user) }} ({{ user.total_points }})
+                <th rowspan="1" colspan="4" class="user-separator">{{ mapperService.getNameFromUser(user) }} ({{ user.total_points }})
                 </th>
                 }
                 <!-- <th rowspan="1" colspan="4" *ngFor="let user of allUsersNames">{{ user.name }} ({{ user.total_points }})
@@ -241,13 +241,13 @@
             <tr>
                 @for (col of [0,1,2]; track col; let idx = $index) {
                 <th [class.user-separator]="idx === 0" [class.user-separator-right]="idx === 2">
-                        {{ getColName(idx) | translate}}
+                        {{ mapperService.getColName(idx) | translate}}
                 </th>
                 }
                 @for (user of allUsersNames; track user.id) {
                     @for (col of [0,1,2,3]; track col; let idx = $index) {
                     <th [class.user-separator]="idx === 0" [class.user-separator-right]="idx === 3">
-                        {{ getColName(idx) | translate}}
+                        {{ mapperService.getColName(idx) | translate}}
                     </th>
                     }
                 }
@@ -302,16 +302,14 @@
                     (keydown.enter)="onTeamClick(product?.away_team)"
                     (keydown.space)="onTeamClick(product?.away_team)"
                     tabindex="0"
-                    role="button"
-                    [attr.aria-label]="'Филтрирай по отбор ' + product?.away_team">
+                    role="button">
                     <span class="team-with-flag">
                         {{ product?.away_team }}
                     </span>
                 </td>
-                <td class="score-cell user-separator" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.home}}</td>
-                <td class="score-cell" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.fullTime.away}}</td>
-                <td class="score-cell user-separator-right" [class.live-result-cell]="isMatchInProgress(product)">{{product?.score?.winner ? ( ('TABLE.'+ product?.score?.winner ) | translate).slice(0,1):''}}
-                </td>
+                <td class="score-cell user-separator" [class.live-result-cell]="isMatchInProgress(product)">{{mapperService.getFinalScore(product, 0)}}</td>
+                <td class="score-cell" [class.live-result-cell]="isMatchInProgress(product)">{{mapperService.getFinalScore(product, 1)}}</td>
+                <td class="score-cell user-separator-right" [class.live-result-cell]="isMatchInProgress(product)">{{mapperService.getFinalScore(product, 2)}}</td>
                 <!-- @for (j of [2]; track j) {
                 <td>{{getProductResultRow(product, j)}}</td>
                 } -->
@@ -327,7 +325,7 @@
                     [ngClass]="getCellColorClass(user, product, j)"
                     [attr.style]="IS_SMALL_SCREEN ? 'min-width: 31px;': 'min-width: 31px;'">
                     @if (product['edit_' + user.id + '_' + j]) {
-                    <input pInputText type="text" [ngModel]="getUserPredictionValue(user, product, j, false)"
+                    <input pInputText type="text" [ngModel]="mapperService.getUserPredictionValue(user, product, j, allPredictions, false)"
                         (ngModelChange)="changePrediction(user, product, j, $event)"
                         (keydown.enter)="product['edit_' + user.id + '_' + j] = false"
                         (keydown.escape)="product['edit_' + user.id + '_' + j] = false"
@@ -335,7 +333,7 @@
                         [attr.data-edit-key]="user.id + '_' + j"
                         class="w-full" />
                     } @else {
-                    {{ getUserPredictionValue(user, product, j, true) }}
+                    {{ mapperService.getUserPredictionValue(user, product, j, allPredictions, true) }}
                     }
                 </td>
                 <!-- <td [pEditableColumn]="product.code" pEditableColumnField="code">{{ getUserPredictionValue(user, product, j) }}</td> -->

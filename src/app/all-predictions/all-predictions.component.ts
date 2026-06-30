@@ -101,7 +101,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private exportService = inject(AllPredictionsExportService);
     private backupService = inject(AllPredictionsBackupService);
     private predictionFlowService = inject(AllPredictionsPredictionFlowService);
-    private mapperService = inject(AllPredictionsMapperService);
+    public mapperService = inject(AllPredictionsMapperService);
     private adminService = inject(AdminService);
     private globalThemeService = inject(ThemeService);
     private selectedUserService = inject(SelectedUserService);
@@ -222,7 +222,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // Get the predicted value (points)
-        const prediction = this.getUserPredictionValue(user, bet, j, false);
+        const prediction = this.mapperService.getUserPredictionValue(user, bet, j, this.allPredictions, false);
         if (!prediction) {
             return '';
         }
@@ -325,7 +325,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             ...this.allUsersNames
                 // .filter((user) => user.id !== 1) // Aiko
                 .map((user) => ({
-                    label: this.getNameFromUser(user),
+                    label: this.mapperService.getNameFromUser(user),
                     value: user.id,
                 })),
         ];
@@ -523,7 +523,9 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.fixTeams();
         this.getAllMatches();
         this.startMatchesPolling();
-        this.subscribeToTestPredictions();
+        if (!this.predictionsChannel) {
+            this.predictionsChannel = this.realtimeService.subscribeToPredictions(this.supabaseService, () => this.fixPredictions());
+        }
 
         this.translate.onLangChange
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -565,7 +567,9 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                         const newDate = [...data]
                         // newDate.map((match) => this.fixScoreFromToZero(match))
                         newDate.map((match) => this.fixScoreFromFifa(match))
-                        this.refreshMatchesWithLiveOverlay(newDate);
+                        if (this.isDataChanged(newDate)) {
+                            this.fixAllMatches(newDate);
+                        }
                     })
                 });
             })
@@ -661,9 +665,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             this.allMatches = [];
         } else {
             this.allMatches = data.map((match: Match, index: number) => {
-                const myId = this.buildSeasonMatchId(index);
-                const myGroup = this.mapperService.getPhase(match.stage, match.group);
-
                 if (match.id === 537333) {
                     match.status = 'FINISHED';
                     match.score.fullTime.home = 1;
@@ -688,24 +689,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
                 return {
                     ...match,
-                    myId: myId,
-                    myGroup: myGroup,
+                    myId: Number(`2026${String(index + 1).padStart(2, '0')}`),
+                    myGroup: this.mapperService.getPhase(match.stage, match.group),
                 }
             });
             void this.insertMissingMatchEntries();
         }
 
         this.fixPredictions();
-    }
-
-    private buildSeasonMatchId(index: number): number {
-        return Number(`2026${String(index + 1).padStart(2, '0')}`);
-    }
-
-    private refreshMatchesWithLiveOverlay(baseMatches: MatchesApiResponse): void {
-        if (this.isDataChanged(baseMatches)) {
-            this.fixAllMatches(baseMatches);
-        }
     }
 
     ngOnDestroy(): void {
@@ -720,13 +711,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    private subscribeToTestPredictions(): void {
-        if (this.predictionsChannel) {
-            return;
-        }
-        this.predictionsChannel = this.realtimeService.subscribeToPredictions(this.supabaseService, () => this.fixPredictions());
-    }
-
     private startMatchesPolling(): void {
         if (this.matchesPollingInterval) {
             return;
@@ -735,18 +719,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.matchesPollingInterval = setInterval(() => {
             this.getAllMatches();
         }, this.MATCHES_POLLING_INTERVAL_MS);
-    }
-
-    public getNameFromUser(user: User): string {
-        return this.mapperService.getNameFromUser(user);
-    }
-
-    public getUserPredictionValue(user: User, bet: Bet, columnIndex: number, hidden: boolean): string {
-        return this.mapperService.getUserPredictionValue(user, bet, columnIndex, this.allPredictions, hidden);
-    }
-
-    public getColName(idx: number): string {
-        return this.mapperService.getColName(idx);
     }
 
     fixPredictions(): void {
@@ -884,20 +856,18 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     private resolveWinnerFromScore(prediction: Prediction, matchId: number): string {
-        if (prediction.home_ft > prediction.away_ft) {
-            return 'HOME_TEAM';
-        }
-
-        if (prediction.away_ft > prediction.home_ft) {
-            return 'AWAY_TEAM';
-        }
-
         if (prediction.home_ft === -1 || prediction.away_ft === -1) {
             return '';
+        } else if (prediction.home_ft > prediction.away_ft) {
+            return 'HOME_TEAM';
+        } else if (prediction.away_ft > prediction.home_ft) {
+            return 'AWAY_TEAM';
+        } else if (prediction.home_ft === prediction.away_ft) {
+            const isGroup = this.allMatches.find((item) => item.myId === matchId)?.myGroup?.toLowerCase().includes("group");
+            return !isGroup ? '' : 'DRAW';
+        } else {
+            return '';
         }
-
-        const myGroupForMatch = this.allMatches.find((item) => item.myId === matchId)?.myGroup;
-        return myGroupForMatch === 'TABLE.LAST_32' ? '' : 'DRAW';
     }
 
     private normalizeWinnerInput(value: string): string {

@@ -80,11 +80,13 @@
       (pointerdown)="onViewportPointerDown($event)" (pointermove)="onViewportPointerMove($event)"
       (pointerup)="onViewportPointerUp($event)" (pointercancel)="onViewportPointerUp($event)">
       <div #zoomContent class="eliminations__board" [style.width.px]="canvasWidth" [style.height.px]="canvasHeight"
+        [class.has-hover-focus]="hoveredNodeId !== null"
         [style.transform]="boardTransform">
         @for (label of groupLabels; track trackByGroupLabel($index, label)) {
           @if (!isGroupLabelCollapsed(label)) {
             <div
               class="eliminations__group-label"
+              [class.is-center-group]="label.key.startsWith('center-')"
               [style.left.px]="label.left"
               [style.top.px]="label.top"
               role="button"
@@ -95,8 +97,7 @@
                 <p>
                   <span>{{ fullName.row1 | translate }}</span>
                   @if (fullName.row2) {
-                    <br>
-                    <span>{{ fullName.row2 | translate }}</span>
+                    <span> · {{ fullName.row2 | translate }}</span>
                   }
                 </p>
               }
@@ -108,15 +109,61 @@
           [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight" preserveAspectRatio="xMinYMin meet"
           aria-hidden="true">
           @for (path of paths; track trackByPath($index, path)) {
-          <path [attr.d]="path.d"></path>
+          <path
+            [attr.d]="path.d"
+            [attr.class]="path.className || null"
+            [class.is-active-trail]="activeTrailPathKeys.has(path.key)"
+          ></path>
           }
         </svg>
 
         @for (node of nodes; track trackByNode($index, node)) {
-        <article class="eliminations__match" [style.left.px]="node.left" [style.top.px]="node.top">
+        <article
+          class="eliminations__match"
+          [class.is-center-match]="node.side === 'center'"
+          [class.is-grand-final]="node.side === 'center' && node.order === 1"
+          [class.is-active-trail]="activeTrailNodeIds.has(node.id)"
+          (mouseenter)="onMatchHover(node.id)"
+          (mouseleave)="onMatchHoverEnd()"
+          [style.left.px]="node.left"
+          [style.top.px]="node.top"
+        >
           <p class="eliminations__datetime">{{ node.dateTime }}</p>
-          <p class="eliminations__team">{{ node.homeTeam }}</p>
-          <p class="eliminations__team">{{ node.awayTeam }}</p>
+          <p
+            class="eliminations__team"
+            [class.is-winner]="node.homeIsWinner"
+            [class.is-loser]="node.awayIsWinner"
+          >
+            <span class="eliminations__team-name">{{ node.homeTeam }}</span>
+            <span
+              class="eliminations__team-divider"
+              [class.is-winner]="node.homeIsWinner"
+              [class.is-loser]="node.awayIsWinner"
+              [class.is-pending]="!node.homeIsWinner && !node.awayIsWinner"
+              aria-hidden="true"
+            ></span>
+            <span class="eliminations__team-score">{{ node.homeScoreText }}</span>
+          </p>
+          <div
+            class="eliminations__teams-separator"
+            [style.width.%]="node.hasPenalties ? 70 : 83"
+            aria-hidden="true"
+          ></div>
+          <p
+            class="eliminations__team"
+            [class.is-winner]="node.awayIsWinner"
+            [class.is-loser]="node.homeIsWinner"
+          >
+            <span class="eliminations__team-name">{{ node.awayTeam }}</span>
+            <span
+              class="eliminations__team-divider"
+              [class.is-winner]="node.awayIsWinner"
+              [class.is-loser]="node.homeIsWinner"
+              [class.is-pending]="!node.homeIsWinner && !node.awayIsWinner"
+              aria-hidden="true"
+            ></span>
+            <span class="eliminations__team-score">{{ node.awayScoreText }}</span>
+          </p>
           <p class="eliminations__meta">M{{ node.mId }}</p>
         </article>
         }

@@ -13,6 +13,34 @@ export class AllPredictionsMapperService {
         { label: 'cycle_3', dateFrom: new Date('2026-06-24T07:00:00Z'), dateTo: new Date('2026-06-28T02:00:00Z') },
     ];
 
+    getFinalScore(product: Bet, columnIndex: 0 | 1 | 2): string {
+        if (product.id === 202675)
+        console.log('getFinalScore called with product:', product, 'and columnIndex:', columnIndex);
+        const score = product.score;
+
+        if (columnIndex === 2) {
+            return score?.winner ? this.translate.instant('TABLE.' + score.winner).slice(0, 1) : '';
+        }
+
+        return this.formatTeamFinalScore(score, columnIndex === 0 ? 'home' : 'away');
+    }
+
+    private formatTeamFinalScore(score: Bet['score'], side: 'home' | 'away'): string {
+        const fullTime = score?.fullTime?.[side];
+        const extraTime = score?.extraTime?.[side];
+        const penalties = score?.penalties?.[side];
+
+        if (penalties != null) {
+            return `${fullTime ?? ''} (${penalties})`;
+        }
+
+        if (extraTime != null) {
+            return `${fullTime ?? ''} (${extraTime})`;
+        }
+
+        return (fullTime ?? '').toString();
+    }
+
     private readonly cycleLabels = {
         CYCLE_1: { bg: 'Кръг 1', en: 'Round 1' },
         CYCLE_2: { bg: 'Кръг 2', en: 'Round 2' },
