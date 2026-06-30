@@ -4,7 +4,6 @@ import { Match, Prediction, User } from './all-predictions.models';
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsPointsService {
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
-
         let result = -1
         const match: Match | undefined = { ...match2 } as Match | undefined
 
@@ -48,7 +47,7 @@ export class AllPredictionsPointsService {
             }
 
             const isGroup = match.myGroup.toLowerCase().includes("group")
-            if (!isGroup && prediction.winner === match.score.winner && (actualAbs === predictAbs)) {
+            if (!isGroup && prediction.winner === match.score.winner) {
                 result += 1
             }
 

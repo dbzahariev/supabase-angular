@@ -14,8 +14,6 @@ export class AllPredictionsMapperService {
     ];
 
     getFinalScore(product: Bet, columnIndex: 0 | 1 | 2): string {
-        if (product.id === 202675)
-        console.log('getFinalScore called with product:', product, 'and columnIndex:', columnIndex);
         const score = product.score;
 
         if (columnIndex === 2) {
