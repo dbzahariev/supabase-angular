@@ -39,7 +39,12 @@ export class AllPredictionsPointsService {
         }
 
         // Бонус точка за елиминационна фаза
-        const isKnockout = !match.myGroup.toLowerCase().includes("group");
+
+        const isKnockout =
+            typeof match.myGroup === 'string' &&
+            match.myGroup.length > 0 &&
+            !match.myGroup.toLowerCase().includes('group');
+
         if (isKnockout && actualWinner === predictedWinner) {
             points += 1;
         }

@@ -13,12 +13,12 @@ describe('AllPredictionsPointsService', () => {
     });
 
     // Helper function to create a mock Match object
-    const createMockMatch = (home: number, away: number, winner: string, group: string): Match => ({
+    const createMockMatch = (home: number, away: number, winner: string, group?: string): Match => ({
         id: 1,
         myId: 1,
         utcDate: '2026-01-01T12:00:00Z',
-        status: 'FINISHED',
-        myGroup: group,
+        status: 'FINISHED', // Ensure status is a string
+        myGroup: group || '', // Ensure myGroup is a string
         score: {
             fullTime: { home, away },
             halfTime: { home: 0, away: 0 }, // Added halfTime to satisfy the Match interface
@@ -194,17 +194,6 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
         });
 
-        it('should return -2 if match is undefined', () => {
-            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
-            expect(service.calculatePredictionPoints(undefined, prediction)).toBe(-2);
-        });
-
-        it('should return -1 if match score is null', () => {
-            const match = createMockMatch(null as any, null as any, 'HOME_TEAM', 'GROUP_A');
-            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
-            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
-        });
-
         it('should handle zero scores correctly (exact match)', () => {
             const match = createMockMatch(0, 0, 'DRAW', 'GROUP_A');
             const prediction = createMockPrediction(0, 0, 'DRAW');
@@ -214,7 +203,7 @@ describe('AllPredictionsPointsService', () => {
         it('should handle zero scores correctly (correct outcome)', () => {
             const match = createMockMatch(0, 0, 'DRAW', 'GROUP_A');
             const prediction = createMockPrediction(1, 1, 'DRAW');
-            expect(service.calculatePredictionPoints(match, prediction)).toBe(1); // Was 2, now correctly 1
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
         });
 
         it('should return 0 for completely wrong prediction', () => {
@@ -223,4 +212,370 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
         });
     });
+
+    describe('Edge Cases (AI)', () => {
+        it('should return 2 points for a correct goal difference of +2', () => {
+            const match = createMockMatch(4, 2, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(3, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should return 2 points for a correct goal difference of -3', () => {
+            const match = createMockMatch(1, 4, 'AWAY_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(0, 3, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should return 1 point when only the outcome is correct', () => {
+            const match = createMockMatch(4, 2, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should return 0 points when goal difference has opposite sign', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(1, 2, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
+        });
+
+        it('should return 1 point for a non-exact draw', () => {
+            const match = createMockMatch(3, 3, 'DRAW', 'GROUP_A');
+            const prediction = createMockPrediction(1, 1, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should return only 1 bonus point when only the winner is correct', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(0, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should not award bonus when winner is incorrect', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(1, 0, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should not add bonus points for group stage matches', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_B');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should return 2 points for the same goal difference regardless of the score', () => {
+            const match = createMockMatch(7, 5, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(3, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should return -1 when home score is undefined', () => {
+            const match = createMockMatch(undefined as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when away score is undefined', () => {
+            const match = createMockMatch(1, undefined as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when home score is not a number', () => {
+            const match = createMockMatch('2' as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when away score is not a number', () => {
+            const match = createMockMatch(2, '1' as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when home score is not a number', () => {
+            const match = createMockMatch('2' as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should add bonus point for ROUND_OF_16', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'ROUND_OF_16');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
+        });
+
+        it('should add bonus point for ROUND_OF_16', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'ROUND_OF_16');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
+        });
+
+        it('should detect group stage regardless of casing', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'gRoUp_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should return 4 points for exact 0:0 draw and correct winner', () => {
+            const match = createMockMatch(0, 0, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(0, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
+        });
+
+        it('should return only bonus point when prediction is completely wrong but winner is correct', () => {
+            const match = createMockMatch(4, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(0, 3, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should return 0 when neither score, difference nor outcome matches', () => {
+            const match = createMockMatch(5, 0, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(0, 5, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
+        });
+
+        it('should return 3 points for exact score regardless of winner in group stage', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should return 1 point for draw outcome when both are 0:0 style', () => {
+            const match = createMockMatch(0, 0, 'DRAW', 'GROUP_A');
+            const prediction = createMockPrediction(1, 1, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should return -1 when away score is invalid type', () => {
+            const match = createMockMatch(2, '1' as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when home score is invalid type', () => {
+            const match = createMockMatch('2' as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should NOT add bonus when myGroup is empty string', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', '');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should NOT add bonus when myGroup is undefined', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', undefined as any);
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should not add bonus when winner is incorrect in knockout', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(2, 1, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should add bonus even when score is not exact but outcome is correct', () => {
+            const match = createMockMatch(3, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(2, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+            // 2 (diff) + 1 (bonus)
+        });
+
+        it('should return 1 point for correct draw outcome', () => {
+            const match = createMockMatch(1, 1, 'DRAW', 'GROUP_A');
+            const prediction = createMockPrediction(2, 2, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+
+
+
+
+        // -------------------------
+        // CORE SCORING RULES
+        // -------------------------
+
+        it('EXACT SCORE should return 3 points', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('SAME GOAL DIFFERENCE should return 2 points', () => {
+            const match = createMockMatch(4, 2, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(3, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should return 1 point for correct outcome only (no exact, no diff match)', () => {
+            const match = createMockMatch(4, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should return 1 point when only outcome matches (no exact score, no diff match)', () => {
+            const match = createMockMatch(4, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('COMPLETELY WRONG should return 0 points', () => {
+            const match = createMockMatch(3, 0, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(0, 3, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
+        });
+
+        // -------------------------
+        // DRAW LOGIC
+        // -------------------------
+
+        it('DRAW exact match should return 3 points', () => {
+            const match = createMockMatch(1, 1, 'DRAW', 'GROUP_A');
+            const prediction = createMockPrediction(1, 1, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('DRAW outcome only should return 1 point', () => {
+            const match = createMockMatch(2, 2, 'DRAW', 'GROUP_A');
+            const prediction = createMockPrediction(0, 0, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        // -------------------------
+        // SIGN EDGE CASES
+        // -------------------------
+
+        it('WIN vs DRAW should return 0 points', () => {
+            const match = createMockMatch(2, 0, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(1, 1, 'DRAW');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
+        });
+
+        it('LOSS vs WIN should return 0 points', () => {
+            const match = createMockMatch(0, 2, 'AWAY_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(0);
+        });
+
+        // -------------------------
+        // NULL / INVALID INPUT
+        // -------------------------
+
+        it('should return -2 when match is undefined', () => {
+            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(undefined, prediction)).toBe(-2);
+        });
+
+        it('should return -1 when score is invalid', () => {
+            const match = createMockMatch(null as any, null as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(1, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when home is invalid type', () => {
+            const match = createMockMatch('2' as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when away is invalid type', () => {
+            const match = createMockMatch(2, '1' as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        // -------------------------
+        // KNOCKOUT BONUS LOGIC
+        // -------------------------
+
+        it('should add +1 bonus in knockout for correct winner', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
+        });
+
+        it('should NOT add bonus in knockout for wrong winner', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(2, 1, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should NOT treat empty group as knockout', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', '');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should NOT treat undefined group as knockout', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', undefined);
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        // -------------------------
+        // HIGH VARIANCE TESTS
+        // -------------------------
+
+        it('should correctly handle large score differences', () => {
+            const match = createMockMatch(10, 2, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(8, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+
+        it('should correctly handle reversed large score differences', () => {
+            const match = createMockMatch(1, 5, 'AWAY_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(0, 4, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
+        });
+    })
 });
