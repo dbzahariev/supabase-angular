@@ -104,10 +104,13 @@ export interface Match {
         crest: string;
     };
     score: {
-        winner: string | null;
-        duration: string;
-        fullTime: { home: number | null; away: number | null };
-        halfTime: { home: number | null; away: number | null };
+        duration?: string,
+        extraTime?: { home: number; away: number };
+        fullTime: { home: number; away: number };
+        halfTime: { home: number; away: number };
+        penalties?: { home: number; away: number };
+        regularTime?: { home: number; away: number };
+        winner?: string;
     };
     myId: number;
 }

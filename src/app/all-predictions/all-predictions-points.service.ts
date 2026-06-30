@@ -33,9 +33,6 @@ export class AllPredictionsPointsService {
             const predictedHome = prediction.home_ft;
             const predictedAway = prediction.away_ft;
             const isPredictDraw = prediction.home_ft === prediction.away_ft;
-            // if (prediction.users.id === 6 && match2?.awayTeam.name?.toLowerCase() === 'canada') {
-            //     debugger
-            // }
             const predictedWinner = prediction.winner;
 
             if (actualHome === null || actualAway === null || predictedHome === null || predictedAway === null) {
@@ -49,9 +46,6 @@ export class AllPredictionsPointsService {
 
             const actualAbs = Math.abs(actualHome - actualAway);
             const predictAbs = Math.abs(predictedHome - predictedAway);
-            if (prediction.users.id === 7) {
-                // debugger
-            }
             if (result === -1 && (actualAbs === predictAbs && (actualWinner === predictedWinner || isPredictDraw))) {
                 result = 2;
             }
@@ -68,10 +62,6 @@ export class AllPredictionsPointsService {
             if (!isGroup && prediction.winner === match.score.winner && (actualAbs === predictAbs)) {
                 result += 1
             }
-
-            // if (match.status === 'IN_PLAY') {
-            //     result = 0;
-            // }
 
             return result;
         }

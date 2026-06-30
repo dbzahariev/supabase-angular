@@ -171,6 +171,8 @@ export class AllPredictionsMapperService {
         const selectedUserId = this.selectedUserService.getSelectedUserId() ?? -1;
         const shouldHide = this.shouldHidePrediction(hidden, bet, user.id, selectedUserId);
 
+        debugger
+
         // Finish match without predict
         if (selectedPredict === undefined && columnIndex === 3 && bet.matchStatus === 'FINISHED') {
             return '0';
