@@ -8,17 +8,6 @@ export class AllPredictionsPointsService {
         let result = -1
         const match: Match | undefined = { ...match2 } as Match | undefined
 
-        // if (match?.score?.fullTime?.home !== undefined) {
-        //     match.score.fullTime.home = 1
-        // }
-        // if (match?.score?.fullTime?.away !== undefined) {
-        //     match.score.fullTime.away = 2
-        // }
-        // if (match?.score?.winner !== undefined) {
-        //     match.score.winner = 'AWAY_TEAM'
-        // }
-
-
         if (!match) {
             return -2;
         }

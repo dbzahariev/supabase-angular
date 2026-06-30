@@ -1,13 +1,15 @@
-﻿import { CommonModule } from '@angular/common';
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { from } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SupabaseService } from '../supabase';
-import { Match, Team } from '../all-predictions/all-predictions.models';
+import { Bet, Match, Team } from '../all-predictions/all-predictions.models';
 import { CompetitionStandingsResponse, StandingRow } from '../group-standings/group-standings.component';
 import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
+import { AllPredictionsMapperService } from '../all-predictions/all-predictions-mapper.service';
 
 interface EditableMatch {
   utcDate: string;
@@ -20,6 +22,8 @@ interface EditableMatch {
   dateTime: string;
   homeTeam: string;
   awayTeam: string;
+  homeScoreText: string;
+  awayScoreText: string;
   parentId: number | null;
 }
 
@@ -36,6 +40,9 @@ interface RenderNode extends EditableMatch {
 interface RenderPath {
   key: string;
   d: string;
+  fromId: number;
+  toId: number;
+  className?: string;
 }
 
 interface GroupLabel {
@@ -66,6 +73,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly translateService = inject(TranslateService);
   private readonly fifaCalendarService = inject(FifaCalendarService);
+  public mapperService = inject(AllPredictionsMapperService);
 
   canvasWidth = 1400;
   canvasHeight = 760;
@@ -77,6 +85,9 @@ export class EliminationsComponent implements AfterViewInit {
   editableMatches: EditableMatch[] = [];
   nodes: RenderNode[] = [];
   paths: RenderPath[] = [];
+  hoveredNodeId: number | null = null;
+  activeTrailNodeIds = new Set<number>();
+  activeTrailPathKeys = new Set<string>();
 
   allTeams: Team[] = [];
   allMatches: Match[] = [];
@@ -111,7 +122,7 @@ export class EliminationsComponent implements AfterViewInit {
   private readonly zoomAnimationDurationMs = 140;
   private readonly desktopDefaultScale = 0.53;
   private readonly desktopFirstMatchLeftPadding = 80;
-  private readonly desktopViewportPaddingTop = 65;
+  private readonly desktopViewportPaddingTop = 85;
   private readonly mobileDefaultScale = 0.91;
   private readonly mobileViewportPaddingLeft = 26;
   private readonly mobileViewportPaddingTop = 118;
@@ -195,6 +206,102 @@ export class EliminationsComponent implements AfterViewInit {
 
   onGroupLabelClick(label: GroupLabel): void {
     this.toggleGroupVisibility(this.getLinkedLabelKeys(label.key));
+  }
+
+  onMatchHover(nodeId: number): void {
+    if (this.hoveredNodeId === nodeId) {
+      return;
+    }
+
+    const trailNodeIds = new Set<number>();
+    const matchById = new Map<number, EditableMatch>(this.editableMatches.map((match) => [match.id, match]));
+    const parentById = new Map<number, number | null>(this.editableMatches.map((match) => [match.id, match.parentId]));
+    const childrenByParent = new Map<number, number[]>();
+
+    this.editableMatches.forEach((match) => {
+      if (match.parentId === null) {
+        return;
+      }
+
+      if (!childrenByParent.has(match.parentId)) {
+        childrenByParent.set(match.parentId, []);
+      }
+
+      childrenByParent.get(match.parentId)?.push(match.id);
+    });
+
+    const hoveredNode = matchById.get(nodeId);
+
+    // Always trace upwards (winner path).
+    let cursor: number | null = nodeId;
+    let upGuard = 0;
+    while (cursor !== null && upGuard < 128) {
+      trailNodeIds.add(cursor);
+      cursor = parentById.get(cursor) ?? null;
+      upGuard += 1;
+    }
+
+    // Also trace downwards (source path) for stronger reverse-highlight visibility.
+    const collectDescendants = (startId: number): void => {
+      const stack = [startId];
+      const visitedDown = new Set<number>();
+      let downGuard = 0;
+
+      while (stack.length > 0 && downGuard < 512) {
+        const current = stack.pop() as number;
+        if (visitedDown.has(current)) {
+          downGuard += 1;
+          continue;
+        }
+
+        visitedDown.add(current);
+        trailNodeIds.add(current);
+        const children = childrenByParent.get(current) ?? [];
+        children.forEach((childId) => stack.push(childId));
+        downGuard += 1;
+      }
+    };
+
+    collectDescendants(nodeId);
+
+    const directParentId = parentById.get(nodeId) ?? null;
+    if (directParentId !== null) {
+      const siblingIds = (childrenByParent.get(directParentId) ?? []).filter((id) => id !== nodeId);
+      siblingIds.forEach((siblingId) => collectDescendants(siblingId));
+    }
+
+    // Third-place match has no explicit source links in current dataset.
+    // Fallback: mirror the center branch with children so hover still reveals both sides.
+    if (hoveredNode?.side === 'center' && (childrenByParent.get(nodeId)?.length ?? 0) === 0) {
+      const linkedCenterNode = this.editableMatches
+        .filter((match) => match.side === 'center' && match.id !== nodeId)
+        .find((match) => (childrenByParent.get(match.id)?.length ?? 0) > 0);
+
+      if (linkedCenterNode) {
+        collectDescendants(linkedCenterNode.id);
+      }
+    }
+
+    const trailPathKeys = new Set<string>();
+    this.paths.forEach((path) => {
+      if (trailNodeIds.has(path.fromId) && trailNodeIds.has(path.toId)) {
+        trailPathKeys.add(path.key);
+      }
+    });
+
+    this.hoveredNodeId = nodeId;
+    this.activeTrailNodeIds = trailNodeIds;
+    this.activeTrailPathKeys = trailPathKeys;
+  }
+
+  onMatchHoverEnd(): void {
+    if (this.hoveredNodeId === null) {
+      return;
+    }
+
+    this.hoveredNodeId = null;
+    this.activeTrailNodeIds.clear();
+    this.activeTrailPathKeys.clear();
   }
 
   isGroupLabelCollapsed(label: GroupLabel): boolean {
@@ -287,16 +394,14 @@ export class EliminationsComponent implements AfterViewInit {
   }
 
   get mobileAllOptionLabel(): string {
-    const icon = this.isAnyGroupCollapsed ? '📂' : '📚';
-    return `${icon} ${this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS')}`;
+    return this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS');
   }
 
   getMobileGroupOptionLabel(item: GroupToggleItem): string {
-    const icon = this.isToggleItemCollapsed(item) ? '🙈' : '👁️';
     const row1 = this.translateService.instant(item.row1);
     const row2 = item.row2 ? ` · ${this.translateService.instant(item.row2)}` : '';
 
-    return `${icon} ${row1}${row2}`;
+    return `${row1}${row2}`;
   }
 
   isToggleItemCollapsed(item: GroupToggleItem): boolean {
@@ -370,6 +475,8 @@ export class EliminationsComponent implements AfterViewInit {
         const matchFromDb = matchFromDb1
         newMatch.dateTime = this.formatDateTimeFromUtc(matchFromDb?.utcDate)
         newMatch.utcDate = matchFromDb?.utcDate || ''
+        newMatch.homeScoreText = this.getTeamScoreText(matchFromDb, 'home');
+        newMatch.awayScoreText = this.getTeamScoreText(matchFromDb, 'away');
 
         newMatch.fifaId = Number(this.getMatchFromFifaByDate(newMatch.utcDate)?.MatchNumber ?? newMatch.mId);
 
@@ -380,6 +487,23 @@ export class EliminationsComponent implements AfterViewInit {
       })
 
     this.rebuildBracket();
+  }
+
+  private getTeamScoreText(match: Match | undefined, side: 'home' | 'away'): string {
+    const regularTimeScore = side === 'home' ? match?.score?.regularTime?.home : match?.score?.regularTime?.away;
+    const fullTimeScore = side === 'home' ? match?.score?.fullTime?.home : match?.score?.fullTime?.away;
+    const penaltyScore = side === 'home' ? match?.score?.penalties?.home : match?.score?.penalties?.away;
+
+    const baseValue = typeof regularTimeScore === 'number' && Number.isFinite(regularTimeScore)
+      ? regularTimeScore
+      : fullTimeScore;
+
+    const baseScore = typeof baseValue === 'number' && Number.isFinite(baseValue) ? String(baseValue) : '-';
+    if (typeof penaltyScore === 'number' && Number.isFinite(penaltyScore)) {
+      return `${baseScore} (${penaltyScore})`;
+    }
+
+    return baseScore;
   }
 
   getHomeName(type: 'home' | 'away', newMatch: EditableMatch, editableMatches: EditableMatch[]) {
@@ -776,6 +900,12 @@ export class EliminationsComponent implements AfterViewInit {
 
     this.groupLabels = this.buildGroupLabels(positionedNodes, offsetX);
 
+    const centerMatchIds = new Set(
+      this.editableMatches
+        .filter((match) => match.side === 'center')
+        .map((match) => match.id)
+    );
+
     this.paths = this.editableMatches
       .filter((match) => match.parentId !== null && !hiddenMatchIds.has(match.id) && !hiddenMatchIds.has(match.parentId as number))
       .map((match, index) => {
@@ -793,6 +923,9 @@ export class EliminationsComponent implements AfterViewInit {
         return {
           key: `path-${match.id}-${match.parentId}-${index}`,
           d: this.buildOrthogonalPath(fromX, from.y, toX, to.y),
+          fromId: match.id,
+          toId: match.parentId as number,
+          className: centerMatchIds.has(match.parentId as number) ? 'is-final-link' : undefined,
         } as RenderPath;
       })
       .filter((item): item is RenderPath => item !== null);
