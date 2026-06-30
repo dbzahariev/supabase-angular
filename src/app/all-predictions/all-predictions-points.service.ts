@@ -14,38 +14,56 @@ export class AllPredictionsPointsService {
         const actualHome = match.score.fullTime.home;
         const actualAway = match.score.fullTime.away;
 
-        if (actualHome === null || actualAway === null || typeof actualHome !== 'number' || typeof actualAway !== 'number') {
+        if (
+            actualHome === null ||
+            actualAway === null ||
+            typeof actualHome !== 'number' ||
+            typeof actualAway !== 'number'
+        ) {
             return -1;
         }
 
-        const actualWinner = match.score.winner;
         const predictedHome = prediction.home_ft;
         const predictedAway = prediction.away_ft;
-        const predictedWinner = prediction.winner;
-
-        let points = 0;
 
         const actualDiff = actualHome - actualAway;
         const predictedDiff = predictedHome - predictedAway;
-        // 3 точки за точен резултат
+
+        let points = 0;
+
+        // 3 pts - exact score
         if (actualHome === predictedHome && actualAway === predictedAway) {
             points = 3;
-            // 2 точки за позната голова разлика (но не и при равенство)
+
+            // 2 pts - same goal difference (but not draw rule conflict)
         } else if (actualHome !== actualAway && actualDiff === predictedDiff) {
             points = 2;
-            // 1 точка за познат изход (победител или равен)
+
+            // 1 pt - same outcome
         } else if (Math.sign(actualDiff) === Math.sign(predictedDiff)) {
             points = 1;
         }
 
-        // Бонус точка за елиминационна фаза
+        // -------------------------
+        // KNOCKOUT BONUS (SAFE)
+        // -------------------------
 
         const isKnockout =
             typeof match.myGroup === 'string' &&
-            match.myGroup.length > 0 &&
+            match.myGroup.trim().length > 0 &&
             !match.myGroup.toLowerCase().includes('group');
 
-        if (isKnockout && actualWinner === predictedWinner) {
+        const actualWinner =
+            typeof match.score.winner === 'string'
+                ? match.score.winner.trim()
+                : null;
+
+        const predictedWinner =
+            typeof prediction.winner === 'string'
+                ? prediction.winner.trim()
+                : null;
+
+        if (isKnockout && actualWinner && predictedWinner && actualWinner === predictedWinner) {
             points += 1;
         }
 

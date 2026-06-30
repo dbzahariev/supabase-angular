@@ -578,4 +578,154 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
         });
     })
+
+    describe('Group Stage - scoring matrix', () => {
+
+        const cases = [
+            {
+                name: 'exact score = 3 points',
+                match: [2, 1],
+                pred: [2, 1],
+                expected: 3
+            },
+            {
+                name: 'same goal difference = 2 points',
+                match: [4, 1],
+                pred: [3, 0],
+                expected: 2
+            },
+            {
+                name: 'only outcome match = 1 point',
+                match: [4, 1],
+                pred: [2, 0],
+                expected: 1
+            },
+            {
+                name: 'completely wrong = 0 points',
+                match: [3, 0],
+                pred: [0, 3],
+                expected: 0
+            },
+            {
+                name: 'draw exact = 3 points',
+                match: [1, 1],
+                pred: [1, 1],
+                expected: 3
+            },
+            {
+                name: 'draw only outcome = 1 point',
+                match: [2, 2],
+                pred: [0, 0],
+                expected: 1
+            }
+        ];
+
+        cases.forEach(c => {
+            it(c.name, () => {
+                const match = createMockMatch(c.match[0], c.match[1], 'HOME_TEAM', 'GROUP_A');
+                const prediction = createMockPrediction(c.pred[0], c.pred[1], 'HOME_TEAM');
+
+                expect(service.calculatePredictionPoints(match, prediction))
+                    .toBe(c.expected);
+            });
+        });
+
+    });
+
+    describe('Knockout scoring matrix', () => {
+
+        const cases = [
+            {
+                name: 'exact score + correct winner = 4',
+                match: [2, 1],
+                pred: [2, 1],
+                winner: 'HOME_TEAM',
+                expected: 4
+            },
+            {
+                name: 'diff + correct winner = 3',
+                match: [3, 1],
+                pred: [2, 0],
+                winner: 'HOME_TEAM',
+                expected: 3
+            },
+            {
+                name: 'only bonus = 1',
+                match: [3, 1],
+                pred: [0, 2],
+                winner: 'HOME_TEAM',
+                expected: 1
+            }
+        ];
+
+        cases.forEach(c => {
+            it(c.name, () => {
+                const match = createMockMatch(c.match[0], c.match[1], c.winner, 'FINAL');
+                const prediction = createMockPrediction(c.pred[0], c.pred[1], c.winner);
+
+                expect(service.calculatePredictionPoints(match, prediction))
+                    .toBe(c.expected);
+            });
+        });
+
+    });
+
+    describe('Knockout scoring matrix', () => {
+
+        const cases = [
+            {
+                name: 'exact score + correct winner = 4',
+                match: [2, 1],
+                pred: [2, 1],
+                winner: 'HOME_TEAM',
+                expected: 4
+            },
+            {
+                name: 'diff + correct winner = 3',
+                match: [3, 1],
+                pred: [2, 0],
+                winner: 'HOME_TEAM',
+                expected: 3
+            },
+            {
+                name: 'only bonus = 1',
+                match: [3, 1],
+                pred: [0, 2],
+                winner: 'HOME_TEAM',
+                expected: 1
+            }
+        ];
+
+        cases.forEach(c => {
+            it(c.name, () => {
+                const match = createMockMatch(c.match[0], c.match[1], c.winner, 'FINAL');
+                const prediction = createMockPrediction(c.pred[0], c.pred[1], c.winner);
+
+                expect(service.calculatePredictionPoints(match, prediction))
+                    .toBe(c.expected);
+            });
+        });
+
+    });
+
+    describe('Edge cases', () => {
+        it('should return -2 when match is undefined', () => {
+            const p = createMockPrediction(1, 0, 'HOME_TEAM');
+            expect(service.calculatePredictionPoints(undefined, p)).toBe(-2);
+        });
+
+        it('should return -1 for invalid score types', () => {
+            const m = createMockMatch('a' as any, 1, 'HOME_TEAM', 'GROUP_A');
+            const p = createMockPrediction(1, 0, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(m, p)).toBe(-1);
+        });
+
+        it('should NOT treat empty group as knockout', () => {
+            const m = createMockMatch(2, 1, 'HOME_TEAM', '');
+            const p = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(m, p)).toBe(3);
+        });
+    });
 });
