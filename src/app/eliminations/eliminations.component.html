@@ -129,8 +129,41 @@
           [style.top.px]="node.top"
         >
           <p class="eliminations__datetime">{{ node.dateTime }}</p>
-          <p class="eliminations__team">{{ node.homeTeam }}: {{ node.homeScoreText }}</p>
-          <p class="eliminations__team">{{ node.awayTeam }}: {{ node.awayScoreText }}</p>
+          <p
+            class="eliminations__team"
+            [class.is-winner]="node.homeIsWinner"
+            [class.is-loser]="node.awayIsWinner"
+          >
+            <span class="eliminations__team-name">{{ node.homeTeam }}</span>
+            <span
+              class="eliminations__team-divider"
+              [class.is-winner]="node.homeIsWinner"
+              [class.is-loser]="node.awayIsWinner"
+              [class.is-pending]="!node.homeIsWinner && !node.awayIsWinner"
+              aria-hidden="true"
+            ></span>
+            <span class="eliminations__team-score">{{ node.homeScoreText }}</span>
+          </p>
+          <div
+            class="eliminations__teams-separator"
+            [style.width.%]="node.hasPenalties ? 70 : 83"
+            aria-hidden="true"
+          ></div>
+          <p
+            class="eliminations__team"
+            [class.is-winner]="node.awayIsWinner"
+            [class.is-loser]="node.homeIsWinner"
+          >
+            <span class="eliminations__team-name">{{ node.awayTeam }}</span>
+            <span
+              class="eliminations__team-divider"
+              [class.is-winner]="node.awayIsWinner"
+              [class.is-loser]="node.homeIsWinner"
+              [class.is-pending]="!node.homeIsWinner && !node.awayIsWinner"
+              aria-hidden="true"
+            ></span>
+            <span class="eliminations__team-score">{{ node.awayScoreText }}</span>
+          </p>
           <p class="eliminations__meta">M{{ node.mId }}</p>
         </article>
         }

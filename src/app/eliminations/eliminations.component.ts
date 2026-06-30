@@ -1,9 +1,10 @@
 ﻿/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { from } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SupabaseService } from '../supabase';
 import { Bet, Match, Team } from '../all-predictions/all-predictions.models';
@@ -24,6 +25,9 @@ interface EditableMatch {
   awayTeam: string;
   homeScoreText: string;
   awayScoreText: string;
+  homeIsWinner: boolean;
+  awayIsWinner: boolean;
+  hasPenalties: boolean;
   parentId: number | null;
 }
 
@@ -66,7 +70,7 @@ interface GroupToggleItem {
   templateUrl: './eliminations.component.html',
   styleUrls: ['./eliminations.component.css']
 })
-export class EliminationsComponent implements AfterViewInit {
+export class EliminationsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('zoomViewport', { static: true }) private readonly zoomViewport!: ElementRef<HTMLDivElement>;
 
   private readonly cdr = inject(ChangeDetectorRef);
@@ -109,8 +113,10 @@ export class EliminationsComponent implements AfterViewInit {
 
   private readonly desktopNodeWidth = 220;
   private readonly desktopNodeHeight = 92;
+  private readonly desktopConnectorYOffset = 9;
   private readonly mobileNodeWidth = 200;
   private readonly mobileNodeHeight = 88;
+  private readonly mobileConnectorYOffset = 10;
   private readonly mobileBreakpoint = 900;
   private readonly canvasPadding = 90;
   private readonly roundGap = 280;
@@ -131,18 +137,41 @@ export class EliminationsComponent implements AfterViewInit {
     USA: 'United States',
     'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
   };
+  private langChangeSubscription: Subscription | null = null;
 
 
   private supabaseService = inject(SupabaseService);
   ngAfterViewInit(): void {
     this.syncAvailableHeight();
     this.loadCollapsedGroups();
+    this.subscribeToLanguageChanges();
 
     if (window.innerWidth <= this.mobileBreakpoint && this.mobileSelectedGroupKey === 'all' && this.isAnyGroupCollapsed) {
       this.clearCollapsedGroups();
     }
 
     this.loadInitialData();
+  }
+
+  ngOnDestroy(): void {
+    this.langChangeSubscription?.unsubscribe();
+    this.langChangeSubscription = null;
+
+    if (this.zoomAnimationFrameId !== null) {
+      cancelAnimationFrame(this.zoomAnimationFrameId);
+      this.zoomAnimationFrameId = null;
+    }
+  }
+
+  private subscribeToLanguageChanges(): void {
+    this.langChangeSubscription?.unsubscribe();
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => {
+      if (this.allMatches.length === 0) {
+        return;
+      }
+
+      this.loadDummyMatches();
+    });
   }
 
   private loadInitialData(): void {
@@ -477,6 +506,10 @@ export class EliminationsComponent implements AfterViewInit {
         newMatch.utcDate = matchFromDb?.utcDate || ''
         newMatch.homeScoreText = this.getTeamScoreText(matchFromDb, 'home');
         newMatch.awayScoreText = this.getTeamScoreText(matchFromDb, 'away');
+        const winnerSide = this.getWinnerSide(matchFromDb);
+        newMatch.homeIsWinner = winnerSide === 'home';
+        newMatch.awayIsWinner = winnerSide === 'away';
+        newMatch.hasPenalties = this.hasPenaltyShootout(matchFromDb);
 
         newMatch.fifaId = Number(this.getMatchFromFifaByDate(newMatch.utcDate)?.MatchNumber ?? newMatch.mId);
 
@@ -504,6 +537,26 @@ export class EliminationsComponent implements AfterViewInit {
     }
 
     return baseScore;
+  }
+
+  private getWinnerSide(match: Match | undefined): 'home' | 'away' | null {
+    const winner = match?.score?.winner;
+    if (winner === 'HOME_TEAM') {
+      return 'home';
+    }
+
+    if (winner === 'AWAY_TEAM') {
+      return 'away';
+    }
+
+    return null;
+  }
+
+  private hasPenaltyShootout(match: Match | undefined): boolean {
+    const homePen = match?.score?.penalties?.home;
+    const awayPen = match?.score?.penalties?.away;
+    return typeof homePen === 'number' && Number.isFinite(homePen)
+      && typeof awayPen === 'number' && Number.isFinite(awayPen);
   }
 
   getHomeName(type: 'home' | 'away', newMatch: EditableMatch, editableMatches: EditableMatch[]) {
@@ -884,12 +937,13 @@ export class EliminationsComponent implements AfterViewInit {
     const offsetY = this.canvasPadding - minY;
 
     const centerMap = new Map<number, { x: number; y: number }>();
+    const connectorYOffset = this.getConnectorYOffset();
 
     this.nodes = visiblePositionedNodes
       .map((node) => {
         const cx = node.x + offsetX;
         const cy = node.y + offsetY;
-        centerMap.set(node.id, { x: cx, y: cy });
+        centerMap.set(node.id, { x: cx, y: cy + connectorYOffset });
 
         return {
           ...node,
@@ -1088,6 +1142,10 @@ export class EliminationsComponent implements AfterViewInit {
 
   private getNodeHeight(): number {
     return window.innerWidth <= this.mobileBreakpoint ? this.mobileNodeHeight : this.desktopNodeHeight;
+  }
+
+  private getConnectorYOffset(): number {
+    return window.innerWidth <= this.mobileBreakpoint ? this.mobileConnectorYOffset : this.desktopConnectorYOffset;
   }
 
   private spreadY(count: number, gap = this.yGap): number[] {

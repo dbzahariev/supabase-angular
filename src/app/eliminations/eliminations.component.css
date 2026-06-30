@@ -30,6 +30,10 @@
   --el-accent-gold: #d4a84f;
   --el-accent-gold-strong: #b38328;
   --el-control-shadow: 0 10px 28px rgba(9, 22, 39, 0.12);
+  --el-team-gap: 5px;
+  --el-team-divider-width: 3px;
+  --el-team-score-width: 0px;
+  --el-separator-gap-before-divider: 4px;
 
   padding: 1rem;
   box-sizing: border-box;
@@ -315,6 +319,7 @@
   font-weight: 700;
   padding: 0 0.72rem;
   white-space: nowrap;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -417,7 +422,7 @@
 .eliminations__lines path {
   fill: none;
   stroke: color-mix(in srgb, var(--el-line-color), transparent 26%);
-  stroke-width: 1.5;
+  stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
   transition: stroke 0.22s ease, stroke-width 0.22s ease, opacity 0.2s ease;
@@ -425,7 +430,7 @@
 
 .eliminations__lines path.is-final-link {
   stroke: color-mix(in srgb, var(--el-line-color), var(--el-accent-gold-strong) 42%);
-  stroke-width: 2.45;
+  stroke-width: 2.8;
 }
 
 .eliminations__board.has-hover-focus .eliminations__lines path {
@@ -434,7 +439,7 @@
 
 .eliminations__board.has-hover-focus .eliminations__lines path.is-active-trail {
   opacity: 1;
-  stroke-width: 2.7;
+  stroke-width: 3;
   stroke: color-mix(in srgb, var(--el-line-color), var(--el-accent-gold-strong) 55%);
 }
 
@@ -497,10 +502,73 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--el-header-text);
+  display: flex;
+  align-items: center;
+  gap: var(--el-team-gap);
   line-height: 1.2;
+  transition: opacity 0.18s ease, color 0.18s ease, filter 0.18s ease;
+}
+
+.eliminations__team-name {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.eliminations__team-divider {
+  width: var(--el-team-divider-width);
+  height: 1.05em;
+  background: color-mix(in srgb, var(--el-control-border), var(--el-header-text) 18%);
+  border-radius: 999px;
+  opacity: 0.95;
+}
+
+.eliminations__team-divider.is-winner {
+  background: #1a9b43;
+  opacity: 1;
+}
+
+.eliminations__team-divider.is-loser {
+  background: #d62d20;
+  opacity: 1;
+}
+
+.eliminations__team-divider.is-pending {
+  background: #000000;
+  opacity: 1;
+}
+
+.eliminations__team-score {
+  flex: 0 0 auto;
+  min-width: var(--el-team-score-width);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.eliminations__teams-separator {
+  position: absolute;
+  left: 0;
+  width: 50%;
+  top: 54.5px;
+  height: 2px;
+  background: #000000;
+  opacity: 1;
+}
+
+.eliminations__teams-separator + .eliminations__team {
+  margin-top: 5px;
+}
+
+.eliminations__team.is-winner {
+  color: color-mix(in srgb, var(--el-header-text), #ffffff 8%);
+}
+
+.eliminations__team.is-loser {
+  opacity: 0.56;
+  filter: saturate(0.82);
 }
 
 .eliminations__meta {
@@ -607,6 +675,10 @@
     width: 200px;
     min-height: 88px;
     padding: 9px 10px 24px;
+  }
+
+  .eliminations__teams-separator {
+    top: 53.5px;
   }
 
   .eliminations__team {
