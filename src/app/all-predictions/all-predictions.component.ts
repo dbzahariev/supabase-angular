@@ -646,14 +646,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
             return oldMatch;
         }
 
-        if (newMatch.score.fullTime.home !== homeTeamScore) {
-            console.log('[FE] Различни резултатни точки за домакин')
-        }
-
-        if (newMatch.score.fullTime.away !== awayTeamScore) {
-            console.log('[FE] Различни резултатни точки за гост')
-        }
-
         newMatch.score.fullTime.home = homeTeamScore
         newMatch.score.fullTime.away = awayTeamScore
 
