@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Match } from '../all-predictions/all-predictions.models';
 
 export interface FifaLocalizedText {
     Locale: string;
@@ -113,6 +114,15 @@ export class FifaCalendarService {
     private readonly httpClient = inject(HttpClient);
     private readonly calendarBaseUrl = 'https://api.fifa.com/api/v3/calendar/matches';
     private readonly timelinesBaseUrl = 'https://api.fifa.com/api/v3/timelines';
+    private readonly teamNameReplacements: Record<string, string> = {
+        'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
+        'Korea Republic': 'South Korea',
+        "Côte d'Ivoire": 'Ivory Coast',
+        'Türkiye': 'Turkey',
+        'USA': 'United States',
+        'Cabo Verde': 'Cape Verde Islands',
+        'IR Iran': 'Iran',
+    };
 
     getSeasonMatches(): Observable<FifaCalendarMatchesResponse> {
         const params = new HttpParams()
@@ -140,10 +150,82 @@ export class FifaCalendarService {
         return this.httpClient.get<FifaTimelineResponse>(url, { params });
     }
 
-    getSeasonMatchesResult() {
-        return this.getSeasonMatches().pipe(
-            map(response => response.Results ?? [])
-        );
+    normalizeTeamName(rawName: string | null | undefined): string {
+        const safeName = (rawName ?? '').trim();
+        return this.teamNameReplacements[safeName] ?? safeName;
+    }
+
+    findMatchByDate(
+        fifaMatches: FifaCalendarMatch[],
+        utcDate: string,
+        homeTeamName?: string | null,
+        awayTeamName?: string | null,
+    ): FifaCalendarMatch | undefined {
+        const candidates = fifaMatches.filter((match) => match.Date === utcDate);
+        if (candidates.length <= 1) {
+            return candidates[0];
+        }
+
+        const normalizedHome = this.normalizeTeamName(homeTeamName).toUpperCase();
+        const normalizedAway = this.normalizeTeamName(awayTeamName).toUpperCase();
+
+        const hasHome = normalizedHome.length > 0;
+        const hasAway = normalizedAway.length > 0;
+
+        if (!hasHome && !hasAway) {
+            return candidates[0];
+        }
+
+        const byTeams = candidates.find((match) => {
+            const fifaHome = this.normalizeTeamName(match.Home?.TeamName?.[0]?.Description).toUpperCase();
+            const fifaAway = this.normalizeTeamName(match.Away?.TeamName?.[0]?.Description).toUpperCase();
+
+            const homeMatches = !hasHome || fifaHome === normalizedHome;
+            const awayMatches = !hasAway || fifaAway === normalizedAway;
+
+            return homeMatches && awayMatches;
+        });
+
+        return byTeams ?? candidates[0];
+    }
+
+    findMatchByMatchNumber(
+        fifaMatches: FifaCalendarMatch[],
+        matchNumber: number | string | null | undefined,
+    ): FifaCalendarMatch | undefined {
+        const numericMatchNumber = Number(matchNumber);
+        if (!Number.isFinite(numericMatchNumber)) {
+            return undefined;
+        }
+
+        return fifaMatches.find((match) => Number(match.MatchNumber) === numericMatchNumber);
+    }
+
+    getMatchScore(match: FifaCalendarMatch, key: 'HomeTeamScore' | 'AwayTeamScore'): number | null {
+        const rawScore = match[key];
+
+        if (typeof rawScore === 'number' && Number.isFinite(rawScore)) {
+            return rawScore;
+        }
+
+        if (typeof rawScore === 'string') {
+            const parsedScore = Number(rawScore);
+            return Number.isFinite(parsedScore) ? parsedScore : null;
+        }
+
+        return null;
+    }
+
+    getWinnerSide(match: FifaCalendarMatch): 'HOME_TEAM' | 'AWAY_TEAM' | null {
+        if (match.Home?.IdTeam === match.Winner) {
+            return 'HOME_TEAM';
+        }
+
+        if (match.Away?.IdTeam === match.Winner) {
+            return 'AWAY_TEAM';
+        }
+
+        return null;
     }
 
     // getSeasonMatchesFilteredByDate(filterByDate: string) {

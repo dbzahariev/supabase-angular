@@ -27,7 +27,7 @@
               [class.is-active]="mobileSelectedGroupKey === 'all'"
               (click)="onMobileGroupOptionClick('all')"
             >
-              <span>{{ mobileAllOptionLabel }}</span>
+              <span>{{ 'ELIMINATIONS.SHOW_ALL_GROUPS' | translate }}</span>
             </button>
 
             @for (item of groupToggleItems; track item.key) {

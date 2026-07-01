@@ -57,15 +57,11 @@ export class HeaderComponent implements OnInit {
   private translateService = inject(TranslateService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
-  private adminService = inject(AdminService);
+  protected readonly adminService = inject(AdminService);
   private uiPreferencesService = inject(UiPreferencesService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
-
-  get visibleTabs() {
-    return this.tabs.filter(tab => !tab.adminOnly || this.adminService.isAdmin());
-  }
 
   constructor() {
     this.router.events.subscribe(event => {

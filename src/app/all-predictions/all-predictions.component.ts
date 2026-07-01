@@ -25,7 +25,7 @@ import { SelectedUserService } from '../services/selected-user.service';
 import { UiPreferencesService } from '../services/ui-preferences.service';
 import { environment } from '../../../environments/environment';
 import { FifaCalendarMatch, FifaCalendarService } from '../services/fifa-calendar.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
 interface PredictionRollbackState {
     home: number;
@@ -53,15 +53,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly BACKUP_DOWNLOAD_USER_ID = 1;
     private readonly BACKUP_DOWNLOAD_MATCH_ID = 202601;
     private readonly fifaGoalEventTypes = new Set([0, 34]);
-    private readonly fifaTeamNameReplacements: Record<string, string> = {
-        'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
-        'Korea Republic': 'South Korea',
-        "Côte d'Ivoire": 'Ivory Coast',
-        'Türkiye': 'Turkey',
-        'USA': 'United States',
-        'Cabo Verde': 'Cape Verde Islands',
-        'IR Iran': 'Iran',
-    };
     private readonly cellWriteDebounceMs = 180;
     betsToShow: Bet[] = [];
     selectedPlayerId: number | null = null;
@@ -104,7 +95,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private backupService = inject(AllPredictionsBackupService);
     private predictionFlowService = inject(AllPredictionsPredictionFlowService);
     public mapperService = inject(AllPredictionsMapperService);
-    private adminService = inject(AdminService);
+    protected readonly adminService = inject(AdminService);
     private globalThemeService = inject(ThemeService);
     private selectedUserService = inject(SelectedUserService);
     private fifaCalendarService = inject(FifaCalendarService);
@@ -393,10 +384,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.cdr.markForCheck();
     }
 
-    isAdmin(): boolean {
-        return this.adminService.isAdmin();
-    }
-
     isShowRow(product: Bet): boolean {
         return !this.getHiddenGroups().includes(product.phase);
     }
@@ -417,7 +404,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // Disallow editing winner for non-admins
-        if (j === 2 && !this.isAdmin()) {
+        if (j === 2 && !this.adminService.isAdmin()) {
             const roundKey = product.group.split('.')[1]
             const roundPrefix = roundKey.split('_')[0]
 
@@ -446,12 +433,12 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // Disallow editing points points for non-admins
-        if (j === 3 && !this.isAdmin()) {
+        if (j === 3 && !this.adminService.isAdmin()) {
             result = false;
         }
 
         //matchStatus: "FINISHED"
-        if (product.matchStatus === 'FINISHED' && !this.isAdmin()) {
+        if (product.matchStatus === 'FINISHED' && !this.adminService.isAdmin()) {
             result = false;
         }
 
@@ -560,7 +547,8 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     private getAllMatches(): void {
-        this.fifaCalendarService.getSeasonMatchesResult()
+        this.fifaCalendarService.getSeasonMatches()
+            .pipe(map((response) => response.Results ?? []))
             .subscribe((responseFromFifa) => {
                 this.fifaMatches = responseFromFifa;
 
@@ -586,43 +574,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         this.mixPercent = themeState.mixPercent;
     }
 
-    getNewName(oldName = '') {
-        return this.fifaTeamNameReplacements[oldName] ?? oldName;
-    }
-
-    getFifaMatch(match: Match) {
-        const fifaMatches = this.fifaMatches.filter(item => item.Date === match.utcDate);
-
-        if (fifaMatches.length === 1) {
-            return fifaMatches[0];
-        }
-
-        return fifaMatches.find(item => {
-            const home = this.getNewName(item.Home?.TeamName?.[0]?.Description ?? '');
-            const away = this.getNewName(item.Away?.TeamName?.[0]?.Description ?? '');
-
-            return (
-                home === match.homeTeam.name &&
-                away === match.awayTeam.name
-            );
-        });
-    }
-
-    private getFifaScore(match: FifaCalendarMatch, key: 'HomeTeamScore' | 'AwayTeamScore'): number | null {
-        const rawScore = match[key];
-
-        if (typeof rawScore === 'number' && Number.isFinite(rawScore)) {
-            return rawScore;
-        }
-
-        if (typeof rawScore === 'string') {
-            const parsedScore = Number(rawScore);
-            return Number.isFinite(parsedScore) ? parsedScore : null;
-        }
-
-        return null;
-    }
-
     fixScoreFromToZero(oldMatch: Match) {
         const newMatch = { ...oldMatch }
 
@@ -634,14 +585,19 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
 
     fixScoreFromFifa(oldMatch: Match) {
         const newMatch = { ...oldMatch }
-        const fifaMatch = this.getFifaMatch(newMatch)
+        const fifaMatch = this.fifaCalendarService.findMatchByDate(
+            this.fifaMatches,
+            newMatch.utcDate,
+            newMatch.homeTeam.name,
+            newMatch.awayTeam.name,
+        )
 
         if (fifaMatch === undefined) {
             return oldMatch
         }
 
-        const homeTeamScore = this.getFifaScore(fifaMatch, 'HomeTeamScore');
-        const awayTeamScore = this.getFifaScore(fifaMatch, 'AwayTeamScore');
+        const homeTeamScore = this.fifaCalendarService.getMatchScore(fifaMatch, 'HomeTeamScore');
+        const awayTeamScore = this.fifaCalendarService.getMatchScore(fifaMatch, 'AwayTeamScore');
 
         if (homeTeamScore === null || awayTeamScore === null) {
             return oldMatch;
@@ -672,11 +628,17 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     match.status = 'FINISHED';
                 }
                 if (match.score.winner === null) {
-                    const fifaMatch = this.getFifaMatch(match)
-                    if (fifaMatch?.Home?.IdTeam === fifaMatch?.Winner) {
-                        match.score.winner = 'HOME_TEAM'
-                    } else if (fifaMatch?.Away?.IdTeam === fifaMatch?.Winner) {
-                        match.score.winner = 'AWAY_TEAM'
+                    const fifaMatch = this.fifaCalendarService.findMatchByDate(
+                        this.fifaMatches,
+                        match.utcDate,
+                        match.homeTeam.name,
+                        match.awayTeam.name,
+                    )
+                    if (fifaMatch) {
+                        const winnerSide = this.fifaCalendarService.getWinnerSide(fifaMatch);
+                        if (winnerSide) {
+                            match.score.winner = winnerSide;
+                        }
                     }
                 }
 
@@ -1059,7 +1021,12 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private findNormalMatchFromFifa(fifaMatchItem: FifaCalendarMatch): Match | undefined {
         return this.allMatches
             .filter((match) => match.utcDate === fifaMatchItem.Date)
-            .find((match) => this.getFifaMatch(match)?.IdMatch === fifaMatchItem.IdMatch);
+            .find((match) => this.fifaCalendarService.findMatchByDate(
+                this.fifaMatches,
+                match.utcDate,
+                match.homeTeam.name,
+                match.awayTeam.name,
+            )?.IdMatch === fifaMatchItem.IdMatch);
     }
 
     private exportPredictionsToExcel(

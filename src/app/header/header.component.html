@@ -62,7 +62,8 @@
 
     <p-tabs [value]="currentRoute">
         <p-tablist>
-            @for(tab of visibleTabs; track tab.route){
+            @for(tab of tabs; track tab.route){
+                @if (!tab.adminOnly || adminService.isAdmin()) {
                 <p-tab
                     [value]="tab.route"
                     [routerLink]="tab.route"
@@ -71,6 +72,7 @@
                     <i [class]="tab.icon"></i>
                     <span>{{ 'ROUTE.' + tab.key | translate }}</span>
                 </p-tab>
+                }
             }
         </p-tablist>
     </p-tabs>

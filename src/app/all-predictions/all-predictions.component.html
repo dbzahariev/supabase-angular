@@ -186,7 +186,7 @@
                             <i class="pi pi-file-excel"></i>
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL' | translate }}</span>
                         </button>
-                        @if (isAdmin() || selectedPlayerId === 6) {
+                        @if (adminService.isAdmin() || selectedPlayerId === 6) {
                         <button
                             type="button"
                             class="caption-action-btn"
@@ -198,7 +198,7 @@
                             <i class="pi" [ngClass]="isDownloadingExcel90 ? 'pi-spinner pi-spin' : 'pi-file-excel'"></i>
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate }}</span>
                         </button>}
-                        @if (isAdmin() || selectedPlayerId === 1) {
+                        @if (adminService.isAdmin() || selectedPlayerId === 1) {
                         <button
                             type="button"
                             class="caption-action-btn"
@@ -209,7 +209,7 @@
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL_FULL' | translate }}</span>
                         </button>
                         }
-                        @if (isAdmin()) {
+                        @if (adminService.isAdmin()) {
                         <button
                             type="button"
                             class="caption-action-btn"

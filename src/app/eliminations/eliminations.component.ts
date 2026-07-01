@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { from } from 'rxjs';
 import { Subscription } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { SupabaseService } from '../supabase';
 import { Bet, Match, Team } from '../all-predictions/all-predictions.models';
 import { CompetitionStandingsResponse, StandingRow } from '../group-standings/group-standings.component';
@@ -175,8 +175,9 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
   }
 
   private loadInitialData(): void {
-    this.fifaCalendarService.getSeasonMatchesResult()
+    this.fifaCalendarService.getSeasonMatches()
       .pipe(
+        map((response) => response.Results ?? []),
         tap((responseFromFifa) => {
           this.responseFromFifa = responseFromFifa;
         }),
@@ -415,15 +416,11 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
 
   get mobileCurrentSelectionLabel(): string {
     if (this.mobileSelectedGroupKey === 'all') {
-      return this.mobileAllOptionLabel;
+      return this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS');
     }
 
     const selectedItem = this.groupToggleItems.find((item) => item.key === this.mobileSelectedGroupKey);
-    return selectedItem ? this.getMobileGroupOptionLabel(selectedItem) : this.mobileAllOptionLabel;
-  }
-
-  get mobileAllOptionLabel(): string {
-    return this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS');
+    return selectedItem ? this.getMobileGroupOptionLabel(selectedItem) : this.translateService.instant('ELIMINATIONS.SHOW_ALL_GROUPS');
   }
 
   getMobileGroupOptionLabel(item: GroupToggleItem): string {
@@ -511,7 +508,14 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
         newMatch.awayIsWinner = winnerSide === 'away';
         newMatch.hasPenalties = this.hasPenaltyShootout(matchFromDb);
 
-        newMatch.fifaId = Number(this.getMatchFromFifaByDate(newMatch.utcDate)?.MatchNumber ?? newMatch.mId);
+        newMatch.fifaId = Number(
+          this.fifaCalendarService.findMatchByDate(
+            this.responseFromFifa,
+            newMatch.utcDate,
+            matchFromDb?.homeTeam?.name,
+            matchFromDb?.awayTeam?.name,
+          )?.MatchNumber ?? newMatch.mId
+        );
 
         newMatch.homeTeam = this.getHomeName('home', newMatch, editableMatches2 as EditableMatch[]);
         newMatch.awayTeam = this.getHomeName('away', newMatch, editableMatches2 as EditableMatch[]);
@@ -560,7 +564,7 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
   }
 
   getHomeName(type: 'home' | 'away', newMatch: EditableMatch, editableMatches: EditableMatch[]) {
-    const fifaMatch = this.responseFromFifa.find((fifaMatch) => Number(fifaMatch.MatchNumber) === newMatch.fifaId);
+    const fifaMatch = this.fifaCalendarService.findMatchByMatchNumber(this.responseFromFifa, newMatch.fifaId);
     const parentMatchChildrenIds = this.getChildFromParent(editableMatches, newMatch);
 
     const nameFromFifa = type === 'home'
@@ -579,7 +583,7 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
     const parentIdParam = newMatch.parentId
 
     const parentId = newMatch.id
-    const fifaMatch = this.responseFromFifa.find((fifaMatch) => Number(fifaMatch.MatchNumber) === newMatch.fifaId)
+    const fifaMatch = this.fifaCalendarService.findMatchByMatchNumber(this.responseFromFifa, newMatch.fifaId)
 
     const prefixFromFifaHome = fifaMatch?.PlaceHolderA?.slice(0, 1)
     const prefixFromFifaAway = fifaMatch?.PlaceHolderB?.slice(0, 1)
@@ -589,10 +593,6 @@ export class EliminationsComponent implements AfterViewInit, OnDestroy {
     }
     
     return { home: `${prefixFromFifaHome}${String(filteredMatchIds[0])}` || undefined, away: `${prefixFromFifaAway}${String(filteredMatchIds[1])}` || undefined };
-  }
-
-  getMatchFromFifaByDate(date: string) {
-    return this.responseFromFifa.find(match => match.Date === date)
   }
 
   getTeamByStand(newMatch: EditableMatch) {
