@@ -25,15 +25,21 @@ export class AllPredictionsMapperService {
 
     private formatTeamFinalScore(score: Bet['score'], side: 'home' | 'away'): string {
         const fullTime = score?.fullTime?.[side];
+        const regularTime = score?.regularTime?.[side];
         const extraTime = score?.extraTime?.[side];
         const penalties = score?.penalties?.[side];
 
         if (penalties != null) {
-            return `${fullTime ?? ''} (${penalties})`;
+            return `${regularTime ?? ''} (${penalties})`;
         }
 
         if (extraTime != null) {
-            return `${fullTime ?? ''} (${extraTime})`;
+            let result1 = ''
+            if (fullTime != null) {
+                result1 = ((fullTime ?? 0) - (extraTime ?? 0)).toString()
+            }
+
+            return `${result1} (${fullTime})`;
         }
 
         return (fullTime ?? '').toString();
