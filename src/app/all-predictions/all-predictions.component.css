@@ -178,6 +178,11 @@
     white-space: nowrap;
 }
 
+.caption-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .my-table{
     width: 100% !important;
 }

@@ -192,8 +192,10 @@
                             class="caption-action-btn"
                             [title]="'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate"
                             [attr.aria-label]="'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate"
+                            [attr.aria-busy]="isDownloadingExcel90"
+                            [disabled]="isDownloadingExcel90"
                             (click)="downloadTableAsExcel90()">
-                            <i class="pi pi-file-excel"></i>
+                            <i class="pi" [ngClass]="isDownloadingExcel90 ? 'pi-spinner pi-spin' : 'pi-file-excel'"></i>
                             <span class="btn-label">{{ 'TABLE.DOWNLOAD_EXCEL_GOAL_AFTER_90' | translate }}</span>
                         </button>}
                         @if (isAdmin() || selectedPlayerId === 1) {

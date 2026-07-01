@@ -52,6 +52,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly HIDDEN_GROUPS_STORAGE_KEY = 'hiddenGroups';
     private readonly BACKUP_DOWNLOAD_USER_ID = 1;
     private readonly BACKUP_DOWNLOAD_MATCH_ID = 202601;
+    private readonly fifaGoalEventTypes = new Set([0, 34]);
     private readonly fifaTeamNameReplacements: Record<string, string> = {
         'Bosnia and Herzegovina': 'Bosnia-Herzegovina',
         'Korea Republic': 'South Korea',
@@ -89,6 +90,7 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
     showFeaturesNoticePhase = false;
     showFeaturesNoticeGroupsTab = false;
     showFeaturesNoticeEliminationsTab = false;
+    isDownloadingExcel90 = false;
 
     private supabaseService = inject(SupabaseService);
     private cdr = inject(ChangeDetectorRef);
@@ -985,87 +987,80 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         });
     }
 
-    async downloadTableAsExcel90() {
-        const allLineups = [];
-        const allMatchesWithLineups: Match[] = []
-        const timedBetsToShow = []
-        for (const fifaMatchItem of this.fifaMatches) {
-            const { IdCompetition, IdSeason, IdStage, IdMatch } = fifaMatchItem;
-            try {
-                // Използваме await, за да изчакаме резултата от всяка заявка
-                const lineupData = await firstValueFrom(
-                    this.fifaCalendarService.getMatchTimeline(IdCompetition, IdSeason, IdStage, IdMatch)
-                );
-                lineupData.Event = lineupData.Event
-                    // .filter((item) => {
-                    //     const isScores = item.EventDescription[0]?.Description.includes('scores');
-                    //     let dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
-                    //         .map(item => {
-                    //             let kkkkk = item.split('+').filter(item => item.length > 0)
-                    //             if (kkkkk.length === 1) {
-                    //                 return kkkkk[0]
-                    //             }
-                    //             return ''
-                    //         })
-                    //         .map(Number)
-
-                    //     let minutes = 0
-                    //     dddddd.forEach(item => {
-                    //         minutes += item
-                    //     })
-
-
-                    //     return isScores
-                    // })
-                    .filter((item) =>
-                        item.EventDescription[0]?.Description.includes('scores') 
-                        // || item.EventDescription[0]?.Description.includes('Goal disallowed')
-                    )
-                    .filter((item) => {
-                        const dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
-                            .map(item => {
-                                const kkkkk = item.split('+').filter(item => item.length > 0)
-                                if (kkkkk.length === 1) {
-                                    return kkkkk[0]
-                                }
-                                return ''
-                            })
-                            .map(Number)
-
-                        let minutes = 0
-                        dddddd.forEach(item => {
-                            minutes += item
-                        })
-
-                        return minutes >= 90
-                    })
-
-                if (lineupData.Event.length !== 0) {
-                    const normalMatch = this.allMatches.filter((match) => match.utcDate === fifaMatchItem.Date)
-                        .find(el => this.getFifaMatch(el)?.IdMatch === fifaMatchItem.IdMatch)
-
-                    if (normalMatch) {
-                        allLineups.push({ match: normalMatch, events: lineupData.Event });
-                        allMatchesWithLineups.push(normalMatch)
-                        const fff = this.betsToShow.find((el) => el.id === normalMatch.myId)
-                        if (fff) {
-                            console.log(timedBetsToShow)
-                            timedBetsToShow.push(fff)
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error(`Failed to get timeline for match ${IdMatch}:`, error);
-            }
+    downloadTableAsExcel90(): void {
+        if (this.isDownloadingExcel90) {
+            return;
         }
 
-        const sortedUsers = [...this.allUsersNames].sort((a, b) => a.name_bg.localeCompare(b.name_bg));
-        this.allUsersNames = sortedUsers
+        this.isDownloadingExcel90 = true;
+        const timelineRequests: Promise<Bet | null>[] = this.fifaMatches.map((fifaMatchItem) => {
+            const { IdCompetition, IdSeason, IdStage, IdMatch } = fifaMatchItem;
 
-        this.exportPredictionsToExcel(timedBetsToShow, {
-            includeDateTimeAndGroup: false,
-            includePhaseRows: false,
+            return firstValueFrom(
+                this.fifaCalendarService.getMatchTimeline(IdCompetition, IdSeason, IdStage, IdMatch))
+                .then((lineupData) => {
+                    const hasLateScoringEvent = (lineupData.Event ?? []).some((event) =>
+                        this.isScoringEventAtOrAfter90(event)
+                    );
+
+                    if (!hasLateScoringEvent) {
+                        return null;
+                    }
+
+                    const normalMatch = this.findNormalMatchFromFifa(fifaMatchItem);
+                    if (!normalMatch) {
+                        return null;
+                    }
+
+                    return this.betsToShow.find((item) => item.id === normalMatch.myId) ?? null;
+                })
+                .catch((error) => {
+                    console.error(`Failed to get timeline for match ${IdMatch}:`, error);
+                    return null;
+                });
         });
+
+        Promise.all(timelineRequests)
+            .then((bets) => {
+                const timedBetsToShow = bets.filter((bet): bet is Bet => bet !== null);
+
+                this.allUsersNames = [...this.allUsersNames].sort((a, b) => a.name_bg.localeCompare(b.name_bg));
+
+                this.exportPredictionsToExcel(timedBetsToShow, {
+                    includeDateTimeAndGroup: false,
+                    includePhaseRows: false,
+                });
+            })
+            .finally(() => {
+                this.isDownloadingExcel90 = false;
+            });
+    }
+
+    private isScoringEventAtOrAfter90(event: { Type?: number; MatchMinute?: string }): boolean {
+        if (typeof event.Type !== 'number' || !this.fifaGoalEventTypes.has(event.Type)) {
+            return false;
+        }
+
+        return this.parseTimelineMinute(event.MatchMinute) >= 90;
+    }
+
+    private parseTimelineMinute(matchMinute?: string): number {
+        if (!matchMinute) {
+            return 0;
+        }
+
+        const numberParts = matchMinute.match(/\d+/g);
+        if (!numberParts) {
+            return 0;
+        }
+
+        return numberParts.reduce((sum, part) => sum + Number(part), 0);
+    }
+
+    private findNormalMatchFromFifa(fifaMatchItem: FifaCalendarMatch): Match | undefined {
+        return this.allMatches
+            .filter((match) => match.utcDate === fifaMatchItem.Date)
+            .find((match) => this.getFifaMatch(match)?.IdMatch === fifaMatchItem.IdMatch);
     }
 
     private exportPredictionsToExcel(
