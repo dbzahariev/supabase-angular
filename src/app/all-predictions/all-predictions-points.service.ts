@@ -129,8 +129,14 @@ export class AllPredictionsPointsService {
 
         const match = { ...match2 };
 
-        const actualHome = match.score.fullTime.home;
-        const actualAway = match.score.fullTime.away;
+
+        let actualHome = match.score.fullTime.home;
+        let actualAway = match.score.fullTime.away;
+
+        if (match.score.extraTime) {
+            actualHome -= match.score.extraTime.home
+            actualAway -= match.score.extraTime.away
+        }
 
         if (
             actualHome === null ||
@@ -174,6 +180,17 @@ export class AllPredictionsPointsService {
 
         const actualWinner = this.normalizeWinner(match.score.winner);
         const predictedWinner = this.normalizeWinner(prediction.winner);
+
+        let isActualDraw = actualHome === actualAway
+        let isPredictDraw = actualHome === actualAway
+
+        if (isKnockout
+            && actualDiff === predictedDiff
+            && (isActualDraw && isPredictDraw)
+            && !(actualHome === predictedHome && actualAway === predictedAway)
+        ) {
+            points += 1
+        }
 
         if (isKnockout && actualWinner && predictedWinner && actualWinner === predictedWinner) {
             points += 1;

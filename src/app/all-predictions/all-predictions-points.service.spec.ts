@@ -69,13 +69,6 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
         });
 
-        it('should return 2 points', () => {
-            const match = createMockMatch(2, 2, 'DRAW', 'FINAL');
-            const prediction = createMockPrediction(1, 1, 'HOME_TEAM');
-
-            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
-        });
-
         it('should return 2 points for the correct goal difference (away win)', () => {
             const match = createMockMatch(1, 3, 'AWAY_TEAM', 'GROUP_A');
             const prediction = createMockPrediction(0, 2, 'AWAY_TEAM');
@@ -150,19 +143,18 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
         });
 
-
-        it('Diff + incorect winner should return 2 points', () => {
-            const match = createMockMatch(2, 2, 'HOME_TEAM', 'FINAL');
-            const prediction = createMockPrediction(1, 1, 'AWAY_TEAM');
-
-            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
-        });
-
-        it('Diff + coorect winner should return 2 points', () => {
-            const match = createMockMatch(2, 2, 'AWAY_TEAM', 'FINAL');
-            const prediction = createMockPrediction(1, 1, 'AWAY_TEAM');
+        it('should return 3 points for the correct draw outcome and correct winner', () => {
+            const match = createMockMatch(1, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(0, 0, 'HOME_TEAM');
 
             expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should return 2 point for the correct draw outcome but wrong winner', () => {
+            const match = createMockMatch(1, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(0, 0, 'AWAY_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(2);
         });
 
         it('should return 3 points for an exact score but wrong winner', () => {
@@ -792,6 +784,17 @@ describe('AllPredictionsPointsService', () => {
 
             const normalizedActualWinner = normalizeWinner(actualWinner);
             const normalizedPredictedWinner = normalizeWinner(predictedWinner);
+
+            let isActualDraw = actualHome === actualAway
+            let isPredictDraw = actualHome === actualAway
+
+            if (isKnockout
+                && actualDiff === predictedDiff
+                && (isActualDraw && isPredictDraw)
+                && !(actualHome === predictedHome && actualAway === predictedAway)
+            ) {
+                points += 1
+            }
 
             if (
                 isKnockout &&
