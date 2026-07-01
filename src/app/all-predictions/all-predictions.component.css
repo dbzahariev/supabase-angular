@@ -238,6 +238,11 @@
     transform: translateX(var(--group-scroll-x));
 }
 
+.group-label-coefficient {
+    opacity: 0.62;
+    font-weight: 500;
+}
+
 :host ::ng-deep .sticky_top .p-datatable-table-container {
     height: 100%;
     max-height: 100%;

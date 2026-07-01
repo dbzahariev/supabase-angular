@@ -240,6 +240,22 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         return '';
     }
 
+    getGroupHeaderStageTitle(product: Bet): string {
+        return this.translate.instant(`${product.stage}_TITLE`);
+    }
+
+    getGroupHeaderCoefficientLabel(product: Bet): string {
+        const matchPhaseKey = this.allMatches.find((match) => match.myId === product.id)?.myGroup;
+        const multiplier = this.pointsService.getPhasePointMultiplier(matchPhaseKey ?? product.group ?? product.stage);
+        const coefficientLabel = this.translate.instant('TABLE.PHASE_COEFFICIENT');
+
+        return `${coefficientLabel} ${this.formatDisplayNumber(multiplier)}`;
+    }
+
+    private formatDisplayNumber(value: number): string {
+        return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, '');
+    }
+
     // Calculates weighted accuracy for the selected player based on earned points (0..3 per finished match).
     private getSelectedPlayerAccuracy(): number {
         if (this.selectedPlayerId === null) {

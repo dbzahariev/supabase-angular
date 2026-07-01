@@ -262,7 +262,8 @@
                     <div (click)="toggleGroup(product)" (keydown.enter)="toggleGroup(product)"
                         (keydown.space)="toggleGroup(product)" class="group-label font-bold cursor-pointer"
                         [pRowToggler]="product" tabindex="0" role="button">
-                        {{ (product.stage + '_TITLE') | translate }}
+                        <span>{{ getGroupHeaderStageTitle(product) }}</span>
+                        <span class="group-label-coefficient">: {{ getGroupHeaderCoefficientLabel(product) }}</span>
                     </div>
                 </td>
             </tr>

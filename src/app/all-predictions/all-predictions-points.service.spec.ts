@@ -897,4 +897,68 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(m, p)).toBe(-1);
         });
     });
+
+    describe('Phase coefficients in applyPointsAndRankings', () => {
+        const createMatchForPhase = (id: number, myGroup: string): Match => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', myGroup);
+            return { ...match, myId: id };
+        };
+
+        const createPredictionForMatch = (matchId: number, winner = 'HOME_TEAM'): Prediction => {
+            const prediction = createMockPrediction(2, 1, winner);
+            return {
+                ...prediction,
+                id: matchId,
+                matches: { ...prediction.matches, id: matchId },
+            };
+        };
+
+        it('should apply the configured multiplier by phase key', () => {
+            const phases: { myGroup: string; expected: number }[] = [
+                { myGroup: 'GROUP_A', expected: 3 },
+                { myGroup: 'LAST_32', expected: 4 },
+                { myGroup: 'LAST_16', expected: 6 },
+                { myGroup: 'ROUND_OF_16', expected: 6 },
+                { myGroup: 'QUARTER_FINALS', expected: 8 },
+                { myGroup: 'SEMI_FINALS', expected: 10 },
+                { myGroup: 'THIRD_PLACE', expected: 10 },
+                { myGroup: 'FINAL', expected: 12 },
+                { myGroup: 'TABLE.FINAL', expected: 12 },
+            ];
+
+            phases.forEach((entry, index) => {
+                const matchId = 1000 + index;
+                const users = [{ id: 1, name_bg: 'User', name_en: 'User' }];
+                const matches = [createMatchForPhase(matchId, entry.myGroup)];
+                const predictions = [createPredictionForMatch(matchId)];
+
+                const result = service.applyPointsAndRankings(predictions, matches, users, null);
+                expect(result.predictions[0].points).withContext(entry.myGroup).toBe(entry.expected);
+                expect(result.users[0].total_points).withContext(entry.myGroup).toBe(entry.expected);
+            });
+        });
+
+        it('should support fractional phase coefficients (1.5)', () => {
+            const users = [{ id: 1, name_bg: 'User', name_en: 'User' }];
+            const matches = [createMatchForPhase(2001, 'LAST_16')];
+            const predictions = [createPredictionForMatch(2001, 'AWAY_TEAM')];
+
+            const result = service.applyPointsAndRankings(predictions, matches, users, null);
+
+            // Base score is 3 (exact score, no winner bonus), multiplied by 1.5.
+            expect(result.predictions[0].points).toBe(4.5);
+            expect(result.users[0].total_points).toBe(4.5);
+        });
+
+        it('should keep negative scores unchanged (invalid/unmatched cases)', () => {
+            const users = [{ id: 1, name_bg: 'User', name_en: 'User' }];
+            const matches = [createMatchForPhase(3001, 'FINAL')];
+            const invalidPrediction = createPredictionForMatch(9999);
+
+            const result = service.applyPointsAndRankings([invalidPrediction], matches, users, null);
+
+            expect(result.predictions[0].points).toBe(-2);
+            expect(result.users[0].total_points).toBe(0);
+        });
+    });
 });

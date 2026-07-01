@@ -14,6 +14,17 @@ export class AllPredictionsPointsService {
         'THIRD_PLACE',
         'FINAL',
     ]);
+    private readonly phasePointMultipliers: Record<string, number> = {
+        GROUP_STAGE: 1,
+        GROUPS_PHASE: 1,
+        LAST_32: 1,
+        LAST_16: 1.5,
+        ROUND_OF_16: 1.5,
+        QUARTER_FINALS: 2,
+        SEMI_FINALS: 2.5,
+        THIRD_PLACE: 2.5,
+        FINAL: 3,
+    };
 
     private isValidScore(value: unknown): value is number {
         return typeof value === 'number' && Number.isFinite(value);
@@ -83,6 +94,32 @@ export class AllPredictionsPointsService {
 
         // Fallback for unforeseen keys while preserving legacy behavior.
         return !phaseKey.includes('GROUP');
+    }
+
+    private resolvePhasePointMultiplier(groupOrPhase: unknown): number {
+        const phaseKey = this.normalizePhaseKey(groupOrPhase);
+        if (!phaseKey) {
+            return 1;
+        }
+
+        if (phaseKey.startsWith('GROUP_')) {
+            return 1;
+        }
+
+        return this.phasePointMultipliers[phaseKey] ?? 1;
+    }
+
+    getPhasePointMultiplier(groupOrPhase: unknown): number {
+        return this.resolvePhasePointMultiplier(groupOrPhase);
+    }
+
+    private applyPhasePointMultiplier(points: number, groupOrPhase: unknown): number {
+        if (points < 0) {
+            return points;
+        }
+
+        const multiplier = this.resolvePhasePointMultiplier(groupOrPhase);
+        return points * multiplier;
     }
 
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
@@ -216,7 +253,8 @@ export class AllPredictionsPointsService {
 
         const predictionsWithPoints = predictions.map((prediction: Prediction) => {
             const selectedMatch = matches.find(match => match.myId === prediction.matches.id);
-            const points = this.calculatePredictionPoints(selectedMatch, prediction);
+            const basePoints = this.calculatePredictionPoints(selectedMatch, prediction);
+            const points = this.applyPhasePointMultiplier(basePoints, selectedMatch?.myGroup);
             const nextPrediction = { ...prediction, points };
 
             const userIndex = users.findIndex(user => user.id === prediction.users.id);
