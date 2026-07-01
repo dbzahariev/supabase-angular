@@ -989,11 +989,11 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         const allLineups = [];
         const allMatchesWithLineups: Match[] = []
         const timedBetsToShow = []
-        for (const fifaMatchitem of this.fifaMatches) {
-            const { IdCompetition, IdSeason, IdStage, IdMatch } = fifaMatchitem;
+        for (const fifaMatchItem of this.fifaMatches) {
+            const { IdCompetition, IdSeason, IdStage, IdMatch } = fifaMatchItem;
             try {
                 // Използваме await, за да изчакаме резултата от всяка заявка
-                let lineupData = await firstValueFrom(
+                const lineupData = await firstValueFrom(
                     this.fifaCalendarService.getMatchTimeline(IdCompetition, IdSeason, IdStage, IdMatch)
                 );
                 lineupData.Event = lineupData.Event
@@ -1015,19 +1015,16 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                     //     })
 
 
-                    //     if (fifaMatchitem.MatchNumber === 63 && minutes>93) {
-                    //         debugger
-                    //     }
                     //     return isScores
                     // })
                     .filter((item) =>
-                        item.EventDescription[0]?.Description.includes('scores') ||
-                        item.EventDescription[0]?.Description.includes('Goal disallowed')
+                        item.EventDescription[0]?.Description.includes('scores') 
+                        // || item.EventDescription[0]?.Description.includes('Goal disallowed')
                     )
                     .filter((item) => {
-                        let dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
+                        const dddddd = (item['MatchMinute'] as string).split("'").filter(item => item.length > 0)
                             .map(item => {
-                                let kkkkk = item.split('+').filter(item => item.length > 0)
+                                const kkkkk = item.split('+').filter(item => item.length > 0)
                                 if (kkkkk.length === 1) {
                                     return kkkkk[0]
                                 }
@@ -1043,15 +1040,14 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
                         return minutes >= 90
                     })
 
-                if (lineupData.Event.length === 0) {
-                } else {
-                    let normalMatch = this.allMatches.filter((match) => match.utcDate === fifaMatchitem.Date)
-                        .find(el => this.getFifaMatch(el)?.IdMatch === fifaMatchitem.IdMatch)
+                if (lineupData.Event.length !== 0) {
+                    const normalMatch = this.allMatches.filter((match) => match.utcDate === fifaMatchItem.Date)
+                        .find(el => this.getFifaMatch(el)?.IdMatch === fifaMatchItem.IdMatch)
 
                     if (normalMatch) {
                         allLineups.push({ match: normalMatch, events: lineupData.Event });
                         allMatchesWithLineups.push(normalMatch)
-                        let fff = this.betsToShow.find((el) => el.id === normalMatch.myId)
+                        const fff = this.betsToShow.find((el) => el.id === normalMatch.myId)
                         if (fff) {
                             console.log(timedBetsToShow)
                             timedBetsToShow.push(fff)
