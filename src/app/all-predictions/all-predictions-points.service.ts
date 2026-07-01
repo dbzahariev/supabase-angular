@@ -3,6 +3,17 @@ import { Match, Prediction, User } from './all-predictions.models';
 
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsPointsService {
+    private readonly monitorStorageKey = 'prediction_points_monitor';
+    private readonly warnedUnknownPhaseKeys = new Set<string>();
+    private readonly knockoutPhaseKeys = new Set([
+        'LAST_32',
+        'LAST_16',
+        'ROUND_OF_16',
+        'QUARTER_FINALS',
+        'SEMI_FINALS',
+        'THIRD_PLACE',
+        'FINAL',
+    ]);
 
     private isValidScore(value: unknown): value is number {
         return typeof value === 'number' && Number.isFinite(value);
@@ -15,6 +26,63 @@ export class AllPredictionsPointsService {
 
         const trimmed = value.trim();
         return trimmed.length > 0 ? trimmed.toUpperCase() : null;
+    }
+
+    private isMonitoringEnabled(): boolean {
+        try {
+            return globalThis.localStorage?.getItem(this.monitorStorageKey) === '1';
+        } catch {
+            return false;
+        }
+    }
+
+    private normalizePhaseKey(groupOrPhase: unknown): string {
+        if (typeof groupOrPhase !== 'string') {
+            return '';
+        }
+
+        const normalized = groupOrPhase.trim().toUpperCase();
+        if (!normalized) {
+            return '';
+        }
+
+        return normalized.startsWith('TABLE.') ? normalized.slice('TABLE.'.length) : normalized;
+    }
+
+    private isKnownPhaseKey(phaseKey: string): boolean {
+        if (!phaseKey) {
+            return true;
+        }
+
+        return (
+            phaseKey === 'GROUP_STAGE' ||
+            phaseKey === 'GROUPS_PHASE' ||
+            phaseKey.startsWith('GROUP_') ||
+            this.knockoutPhaseKeys.has(phaseKey)
+        );
+    }
+
+    private isKnockoutPhase(groupOrPhase: unknown): boolean {
+        const phaseKey = this.normalizePhaseKey(groupOrPhase);
+        if (!phaseKey) {
+            return false;
+        }
+
+        if (phaseKey === 'GROUP_STAGE' || phaseKey === 'GROUPS_PHASE' || phaseKey.startsWith('GROUP_')) {
+            return false;
+        }
+
+        if (this.knockoutPhaseKeys.has(phaseKey)) {
+            return true;
+        }
+
+        if (this.isMonitoringEnabled() && !this.warnedUnknownPhaseKeys.has(phaseKey) && !this.isKnownPhaseKey(phaseKey)) {
+            this.warnedUnknownPhaseKeys.add(phaseKey);
+            console.warn('[calculatePredictionPoints] Unknown phase key detected:', phaseKey);
+        }
+
+        // Fallback for unforeseen keys while preserving legacy behavior.
+        return !phaseKey.includes('GROUP');
     }
 
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
@@ -65,16 +133,27 @@ export class AllPredictionsPointsService {
         // KNOCKOUT BONUS (SAFE)
         // -------------------------
 
-        const isKnockout =
-            typeof match.myGroup === 'string' &&
-            match.myGroup.trim().length > 0 &&
-            !match.myGroup.toLowerCase().includes('group');
+        const isKnockout = this.isKnockoutPhase(match.myGroup);
 
         const actualWinner = this.normalizeWinner(match.score.winner);
         const predictedWinner = this.normalizeWinner(prediction.winner);
 
         if (isKnockout && actualWinner && predictedWinner && actualWinner === predictedWinner) {
             points += 1;
+        }
+
+        if (this.isMonitoringEnabled()) {
+            console.log('[calculatePredictionPoints]', {
+                matchId: match.myId,
+                phase: match.myGroup,
+                phaseKey: this.normalizePhaseKey(match.myGroup),
+                actual: `${actualHome}:${actualAway}`,
+                predicted: `${predictedHome}:${predictedAway}`,
+                isKnockout,
+                actualWinner,
+                predictedWinner,
+                points,
+            });
         }
 
         return points;

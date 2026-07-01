@@ -637,7 +637,6 @@ export class AllPredictionsComponent implements OnInit, AfterViewInit, OnDestroy
         const fifaMatch = this.getFifaMatch(newMatch)
 
         if (fifaMatch === undefined) {
-            console.log('[FE]', fifaMatch, newMatch)
             return oldMatch
         }
 

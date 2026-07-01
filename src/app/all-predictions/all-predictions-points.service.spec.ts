@@ -720,6 +720,16 @@ describe('AllPredictionsPointsService', () => {
     });
 
     describe('Exhaustive scoring validation', () => {
+        const knockoutPhaseKeys = new Set([
+            'LAST_32',
+            'LAST_16',
+            'ROUND_OF_16',
+            'QUARTER_FINALS',
+            'SEMI_FINALS',
+            'THIRD_PLACE',
+            'FINAL',
+        ]);
+
         const normalizeWinner = (value: string | null | undefined): string | null => {
             if (typeof value !== 'string') {
                 return null;
@@ -727,6 +737,25 @@ describe('AllPredictionsPointsService', () => {
 
             const trimmed = value.trim();
             return trimmed.length > 0 ? trimmed.toUpperCase() : null;
+        };
+
+        const isKnockoutPhase = (groupOrPhase: string): boolean => {
+            const normalized = groupOrPhase.trim().toUpperCase();
+            if (!normalized) {
+                return false;
+            }
+
+            const phaseKey = normalized.startsWith('TABLE.') ? normalized.slice('TABLE.'.length) : normalized;
+
+            if (phaseKey === 'GROUP_STAGE' || phaseKey === 'GROUPS_PHASE' || phaseKey.startsWith('GROUP_')) {
+                return false;
+            }
+
+            if (knockoutPhaseKeys.has(phaseKey)) {
+                return true;
+            }
+
+            return !phaseKey.includes('GROUP');
         };
 
         const expectedPoints = (
@@ -751,10 +780,7 @@ describe('AllPredictionsPointsService', () => {
                 points = 1;
             }
 
-            const isKnockout =
-                typeof stageGroup === 'string' &&
-                stageGroup.trim().length > 0 &&
-                !stageGroup.toLowerCase().includes('group');
+            const isKnockout = isKnockoutPhase(stageGroup);
 
             const normalizedActualWinner = normalizeWinner(actualWinner);
             const normalizedPredictedWinner = normalizeWinner(predictedWinner);
@@ -815,6 +841,51 @@ describe('AllPredictionsPointsService', () => {
                     }
                 }
             }
+        });
+
+        it('should classify all discovered groups and phases correctly', () => {
+            const discoveredGroupStageKeys = [
+                'GROUP_A',
+                'GROUP_B',
+                'GROUP_C',
+                'GROUP_D',
+                'GROUP_E',
+                'GROUP_F',
+                'GROUP_G',
+                'GROUP_H',
+                'GROUP_I',
+                'GROUP_J',
+                'GROUP_K',
+                'GROUP_L',
+            ];
+
+            const discoveredKnockoutKeys = [
+                'LAST_16',
+                'QUARTER_FINALS',
+                'SEMI_FINALS',
+                'THIRD_PLACE',
+                'FINAL',
+            ];
+
+            const knownButNotInBackup = ['LAST_32', 'ROUND_OF_16'];
+
+            discoveredGroupStageKeys.forEach((groupKey) => {
+                const match = createMockMatch(2, 1, 'HOME_TEAM', groupKey);
+                const prediction = createMockPrediction(0, 3, 'HOME_TEAM');
+
+                expect(service.calculatePredictionPoints(match, prediction)).withContext(groupKey).toBe(0);
+            });
+
+            [...discoveredKnockoutKeys, ...knownButNotInBackup].forEach((phaseKey) => {
+                const match = createMockMatch(2, 1, 'HOME_TEAM', phaseKey);
+                const prediction = createMockPrediction(0, 3, 'HOME_TEAM');
+
+                expect(service.calculatePredictionPoints(match, prediction)).withContext(phaseKey).toBe(1);
+            });
+
+            const tableKeyMatch = createMockMatch(2, 1, 'HOME_TEAM', 'TABLE.FINAL');
+            const tableKeyPrediction = createMockPrediction(0, 3, 'HOME_TEAM');
+            expect(service.calculatePredictionPoints(tableKeyMatch, tableKeyPrediction)).toBe(1);
         });
     });
 

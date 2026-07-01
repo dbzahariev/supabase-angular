@@ -16,6 +16,7 @@ import { ThemeService } from './services/theme.service'
   providers: [SupabaseService],
 })
 export class App implements OnInit {
+  private readonly predictionMonitorStorageKey = 'prediction_points_monitor';
   private translateService = inject(TranslateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -39,14 +40,52 @@ export class App implements OnInit {
 
     // Toggle admin mode with query params:
     // /?set-admin=<key> to unlock, /?remove-admin to lock.
+    // Toggle prediction monitor with query params:
+    // /?set-monitor=1 (or true/on/debug) to enable, /?remove-monitor to disable.
     this.route.queryParams.subscribe(params => {
+      let shouldCleanQueryParams = false;
+
       if (params['remove-admin'] !== undefined) {
         this.adminService.lock();
-        return;
+        shouldCleanQueryParams = true;
       }
+
+      if (params['remove-monitor'] !== undefined) {
+        localStorage.removeItem(this.predictionMonitorStorageKey);
+        shouldCleanQueryParams = true;
+      }
+
       const key = params['set-admin'];
       if (key) {
         this.adminService.tryUnlock(key);
+        shouldCleanQueryParams = true;
+      }
+
+      const monitorValue = params['set-monitor'];
+      if (monitorValue !== undefined) {
+        const normalized = String(monitorValue).trim().toLowerCase();
+        const shouldEnable = normalized.length === 0 || ['1', 'true', 'on', 'yes', 'debug'].includes(normalized);
+
+        if (shouldEnable) {
+          localStorage.setItem(this.predictionMonitorStorageKey, '1');
+        }
+
+        shouldCleanQueryParams = true;
+      }
+
+      if (shouldCleanQueryParams) {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            ...params,
+            'set-admin': null,
+            'remove-admin': null,
+            'set-monitor': null,
+            'remove-monitor': null,
+          },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
       }
     });
   }
