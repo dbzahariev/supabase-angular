@@ -4,6 +4,19 @@ import { Match, Prediction, User } from './all-predictions.models';
 @Injectable({ providedIn: 'root' })
 export class AllPredictionsPointsService {
 
+    private isValidScore(value: unknown): value is number {
+        return typeof value === 'number' && Number.isFinite(value);
+    }
+
+    private normalizeWinner(value: unknown): string | null {
+        if (typeof value !== 'string') {
+            return null;
+        }
+
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? trimmed.toUpperCase() : null;
+    }
+
     calculatePredictionPoints(match2: Match | undefined, prediction: Prediction): number {
         if (!match2) {
             return -2;
@@ -17,14 +30,18 @@ export class AllPredictionsPointsService {
         if (
             actualHome === null ||
             actualAway === null ||
-            typeof actualHome !== 'number' ||
-            typeof actualAway !== 'number'
+            !this.isValidScore(actualHome) ||
+            !this.isValidScore(actualAway)
         ) {
             return -1;
         }
 
         const predictedHome = prediction.home_ft;
         const predictedAway = prediction.away_ft;
+
+        if (!this.isValidScore(predictedHome) || !this.isValidScore(predictedAway)) {
+            return -1;
+        }
 
         const actualDiff = actualHome - actualAway;
         const predictedDiff = predictedHome - predictedAway;
@@ -53,15 +70,8 @@ export class AllPredictionsPointsService {
             match.myGroup.trim().length > 0 &&
             !match.myGroup.toLowerCase().includes('group');
 
-        const actualWinner =
-            typeof match.score.winner === 'string'
-                ? match.score.winner.trim()
-                : null;
-
-        const predictedWinner =
-            typeof prediction.winner === 'string'
-                ? prediction.winner.trim()
-                : null;
+        const actualWinner = this.normalizeWinner(match.score.winner);
+        const predictedWinner = this.normalizeWinner(prediction.winner);
 
         if (isKnockout && actualWinner && predictedWinner && actualWinner === predictedWinner) {
             points += 1;
@@ -115,12 +125,6 @@ export class AllPredictionsPointsService {
 
             const isGroup = match.myGroup.toLowerCase().includes("group")
             if (!isGroup && prediction.winner === match.score.winner) {
-                console.log('abs', actualAbs, predictAbs)
-                // if (actualAbs === predictAbs){
-                //     debugger
-                // } else {
-                //     debugger
-                // }
                 result += 1
             }
 

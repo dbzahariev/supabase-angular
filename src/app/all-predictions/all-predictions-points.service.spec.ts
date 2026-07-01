@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { AllPredictionsPointsService } from './all-predictions-points.service';
 import { Match, Prediction } from './all-predictions.models';
@@ -305,9 +306,30 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
         });
 
-        it('should return -1 when home score is not a number', () => {
-            const match = createMockMatch('2' as any, 1, 'HOME_TEAM', 'GROUP_A');
+        it('should return -1 when home score is NaN', () => {
+            const match = createMockMatch(Number.NaN as any, 1, 'HOME_TEAM', 'GROUP_A');
             const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when away score is Infinity', () => {
+            const match = createMockMatch(2, Number.POSITIVE_INFINITY as any, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when predicted home score is NaN', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(Number.NaN as any, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
+        });
+
+        it('should return -1 when predicted away score is Infinity', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'GROUP_A');
+            const prediction = createMockPrediction(2, Number.NEGATIVE_INFINITY as any, 'HOME_TEAM');
 
             expect(service.calculatePredictionPoints(match, prediction)).toBe(-1);
         });
@@ -319,15 +341,43 @@ describe('AllPredictionsPointsService', () => {
             expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
         });
 
-        it('should add bonus point for ROUND_OF_16', () => {
-            const match = createMockMatch(2, 1, 'HOME_TEAM', 'ROUND_OF_16');
-            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
-
-            expect(service.calculatePredictionPoints(match, prediction)).toBe(4);
-        });
-
         it('should detect group stage regardless of casing', () => {
             const match = createMockMatch(2, 1, 'HOME_TEAM', 'gRoUp_A');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should add bonus when winner values match after trimming', () => {
+            const match = createMockMatch(2, 1, ' HOME_TEAM ', 'FINAL');
+            const prediction = createMockPrediction(0, 3, 'HOME_TEAM  ');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should add bonus when winner values match case-insensitively', () => {
+            const match = createMockMatch(2, 1, 'home_team', 'FINAL');
+            const prediction = createMockPrediction(0, 3, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(1);
+        });
+
+        it('should not add bonus when actual winner is whitespace only', () => {
+            const match = createMockMatch(2, 1, '   ', 'FINAL');
+            const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should not add bonus when predicted winner is whitespace only', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', 'FINAL');
+            const prediction = createMockPrediction(2, 1, '   ');
+
+            expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
+        });
+
+        it('should not treat whitespace-only myGroup as knockout', () => {
+            const match = createMockMatch(2, 1, 'HOME_TEAM', '   ');
             const prediction = createMockPrediction(2, 1, 'HOME_TEAM');
 
             expect(service.calculatePredictionPoints(match, prediction)).toBe(3);
@@ -633,7 +683,6 @@ describe('AllPredictionsPointsService', () => {
     });
 
     describe('Knockout scoring matrix', () => {
-
         const cases = [
             {
                 name: 'exact score + correct winner = 4',
@@ -670,62 +719,111 @@ describe('AllPredictionsPointsService', () => {
 
     });
 
-    describe('Knockout scoring matrix', () => {
-
-        const cases = [
-            {
-                name: 'exact score + correct winner = 4',
-                match: [2, 1],
-                pred: [2, 1],
-                winner: 'HOME_TEAM',
-                expected: 4
-            },
-            {
-                name: 'diff + correct winner = 3',
-                match: [3, 1],
-                pred: [2, 0],
-                winner: 'HOME_TEAM',
-                expected: 3
-            },
-            {
-                name: 'only bonus = 1',
-                match: [3, 1],
-                pred: [0, 2],
-                winner: 'HOME_TEAM',
-                expected: 1
+    describe('Exhaustive scoring validation', () => {
+        const normalizeWinner = (value: string | null | undefined): string | null => {
+            if (typeof value !== 'string') {
+                return null;
             }
-        ];
 
-        cases.forEach(c => {
-            it(c.name, () => {
-                const match = createMockMatch(c.match[0], c.match[1], c.winner, 'FINAL');
-                const prediction = createMockPrediction(c.pred[0], c.pred[1], c.winner);
+            const trimmed = value.trim();
+            return trimmed.length > 0 ? trimmed.toUpperCase() : null;
+        };
 
-                expect(service.calculatePredictionPoints(match, prediction))
-                    .toBe(c.expected);
-            });
+        const expectedPoints = (
+            actualHome: number,
+            actualAway: number,
+            predictedHome: number,
+            predictedAway: number,
+            stageGroup: string,
+            actualWinner: string,
+            predictedWinner: string,
+        ): number => {
+            const actualDiff = actualHome - actualAway;
+            const predictedDiff = predictedHome - predictedAway;
+
+            let points = 0;
+
+            if (actualHome === predictedHome && actualAway === predictedAway) {
+                points = 3;
+            } else if (actualHome !== actualAway && actualDiff === predictedDiff) {
+                points = 2;
+            } else if (Math.sign(actualDiff) === Math.sign(predictedDiff)) {
+                points = 1;
+            }
+
+            const isKnockout =
+                typeof stageGroup === 'string' &&
+                stageGroup.trim().length > 0 &&
+                !stageGroup.toLowerCase().includes('group');
+
+            const normalizedActualWinner = normalizeWinner(actualWinner);
+            const normalizedPredictedWinner = normalizeWinner(predictedWinner);
+
+            if (
+                isKnockout &&
+                normalizedActualWinner &&
+                normalizedPredictedWinner &&
+                normalizedActualWinner === normalizedPredictedWinner
+            ) {
+                points += 1;
+            }
+
+            return points;
+        };
+
+        it('should match the scoring rules for a large deterministic matrix', () => {
+            const groups = ['GROUP_A', 'FINAL'];
+            const winnerModes = ['same', 'different', 'blank'] as const;
+
+            for (const group of groups) {
+                for (let actualHome = 0; actualHome <= 4; actualHome += 1) {
+                    for (let actualAway = 0; actualAway <= 4; actualAway += 1) {
+                        const actualWinner = actualHome >= actualAway ? 'HOME_TEAM' : 'AWAY_TEAM';
+
+                        for (let predictedHome = 0; predictedHome <= 4; predictedHome += 1) {
+                            for (let predictedAway = 0; predictedAway <= 4; predictedAway += 1) {
+                                for (const mode of winnerModes) {
+                                    const predictedWinner =
+                                        mode === 'same'
+                                            ? ' home_team '
+                                            : mode === 'different'
+                                                ? 'AWAY_TEAM'
+                                                : '   ';
+
+                                    const match = createMockMatch(actualHome, actualAway, actualWinner, group);
+                                    const prediction = createMockPrediction(predictedHome, predictedAway, predictedWinner);
+
+                                    const actual = service.calculatePredictionPoints(match, prediction);
+                                    const expected = expectedPoints(
+                                        actualHome,
+                                        actualAway,
+                                        predictedHome,
+                                        predictedAway,
+                                        group,
+                                        actualWinner,
+                                        predictedWinner,
+                                    );
+
+                                    expect(actual).withContext(
+                                        `group=${group}, actual=${actualHome}:${actualAway}, predicted=${predictedHome}:${predictedAway}, mode=${mode}`,
+                                    ).toBe(expected);
+                                    expect(actual).toBeGreaterThanOrEqual(0);
+                                    expect(actual).toBeLessThanOrEqual(4);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         });
-
     });
 
     describe('Edge cases', () => {
-        it('should return -2 when match is undefined', () => {
-            const p = createMockPrediction(1, 0, 'HOME_TEAM');
-            expect(service.calculatePredictionPoints(undefined, p)).toBe(-2);
-        });
-
         it('should return -1 for invalid score types', () => {
             const m = createMockMatch('a' as any, 1, 'HOME_TEAM', 'GROUP_A');
             const p = createMockPrediction(1, 0, 'HOME_TEAM');
 
             expect(service.calculatePredictionPoints(m, p)).toBe(-1);
-        });
-
-        it('should NOT treat empty group as knockout', () => {
-            const m = createMockMatch(2, 1, 'HOME_TEAM', '');
-            const p = createMockPrediction(2, 1, 'HOME_TEAM');
-
-            expect(service.calculatePredictionPoints(m, p)).toBe(3);
         });
     });
 });
