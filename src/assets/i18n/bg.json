@@ -75,6 +75,11 @@
     "GOALS": "ГР",
     "GD": "+/-",
     "POINTS": "Т",
+    "BADGE_GUARANTEED": "Гарантиран",
+    "BADGE_NEAR": "Почти сигурен",
+    "NEAR_INFO_SHOW": "Защо?",
+    "NEAR_INFO_HIDE": "Скрий",
+    "NEAR_INFO_TOGGLE_ARIA": "Покажи или скрий обяснение за почти сигурно класиране",
     "LEGEND": {
       "GUARANTEED": "Гарантирано класиран",
       "NEAR": "Почти сигурен",

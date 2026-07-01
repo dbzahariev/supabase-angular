@@ -70,14 +70,29 @@
                   @for (row of group.rows; track row.team.id) {
                     <tr
                       [class.qualified-guaranteed]="isGuaranteedQualified(group.rows, row)"
-                      [class.qualified-near]="isNearlyQualified(group.rows, row)"
-                      [attr.title]="isNearlyQualified(group.rows, row) ? getNearQualificationTooltip(group.rows, row) : null">
+                      [class.qualified-near]="isNearlyQualified(group.rows, row)">
                       <td>{{ row.position }}</td>
                       <td class="team-cell">
                         @if (row.team.crest) {
                           <img [src]="row.team.crest" [alt]="getDisplayTeamName(row.team)" loading="lazy" />
                         }
-                        <span>{{ getDisplayTeamName(row.team) }}</span>
+                        @if (hasQualificationInfo(group.rows, row)) {
+                          <app-info-popover
+                            [message]="getQualificationInfoMessage(group.rows, row)"
+                            [ariaLabel]="'GROUP_STANDINGS.NEAR_INFO_TOGGLE_ARIA' | translate"
+                            panelClass="qualification-tooltip-panel"
+                            triggerClass="team-name-trigger"
+                          >
+                            <span popover-trigger>{{ getDisplayTeamName(row.team) }}</span>
+                          </app-info-popover>
+                        } @else {
+                          <span>{{ getDisplayTeamName(row.team) }}</span>
+                        }
+                        @if (getQualificationState(group.rows, row) === 'near') {
+                          <span class="qualification-badge" [class.near]="getQualificationState(group.rows, row) === 'near'">
+                            {{ getQualificationBadgeLabel(group.rows, row) }}
+                          </span>
+                        }
                       </td>
                       <td>{{ row.playedGames }}</td>
                       <td>{{ row.won }}</td>
@@ -87,6 +102,7 @@
                       <td [class.positive]="row.goalDifference > 0" [class.negative]="row.goalDifference < 0">{{ row.goalDifference }}</td>
                       <td><span class="points-pill">{{ row.points }}</span></td>
                     </tr>
+
                   }
                 </tbody>
               </table>
@@ -97,18 +113,35 @@
                 <article
                   class="mobile-team-row"
                   [class.qualified-guaranteed]="isGuaranteedQualified(group.rows, row)"
-                  [class.qualified-near]="isNearlyQualified(group.rows, row)"
-                  [attr.title]="isNearlyQualified(group.rows, row) ? getNearQualificationTooltip(group.rows, row) : null">
+                  [class.qualified-near]="isNearlyQualified(group.rows, row)">
                   <div class="mobile-row-top">
                     <div class="mobile-rank">#{{ row.position }}</div>
                     <div class="mobile-team">
                       @if (row.team.crest) {
                         <img [src]="row.team.crest" [alt]="getDisplayTeamName(row.team)" loading="lazy" />
                       }
-                      <span>{{ getDisplayTeamName(row.team) }}</span>
+                      @if (hasQualificationInfo(group.rows, row)) {
+                        <app-info-popover
+                          [message]="getQualificationInfoMessage(group.rows, row)"
+                          [ariaLabel]="'GROUP_STANDINGS.NEAR_INFO_TOGGLE_ARIA' | translate"
+                          panelClass="qualification-tooltip-panel"
+                          triggerClass="team-name-trigger"
+                        >
+                          <span popover-trigger>{{ getDisplayTeamName(row.team) }}</span>
+                        </app-info-popover>
+                      } @else {
+                        <span>{{ getDisplayTeamName(row.team) }}</span>
+                      }
                     </div>
                     <span class="points-pill">{{ row.points }} {{ 'GROUP_STANDINGS.POINTS' | translate }}</span>
                   </div>
+
+                  @if (getQualificationState(group.rows, row) === 'near') {
+                    <span class="qualification-badge mobile-badge" [class.near]="getQualificationState(group.rows, row) === 'near'">
+                      {{ getQualificationBadgeLabel(group.rows, row) }}
+                    </span>
+                  }
+
                   <div class="mobile-row-stats">
                     <span>M {{ row.playedGames }}</span>
                     <span>П {{ row.won }}</span>
@@ -117,6 +150,7 @@
                     <span>ГР {{ row.goalsFor }}:{{ row.goalsAgainst }}</span>
                     <span [class.positive]="row.goalDifference > 0" [class.negative]="row.goalDifference < 0">+/- {{ row.goalDifference }}</span>
                   </div>
+
                 </article>
               }
             </div>

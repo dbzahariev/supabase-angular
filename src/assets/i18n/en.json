@@ -75,6 +75,11 @@
     "GOALS": "G",
     "GD": "GD",
     "POINTS": "P",
+    "BADGE_GUARANTEED": "Guaranteed",
+    "BADGE_NEAR": "Nearly qualified",
+    "NEAR_INFO_SHOW": "Why?",
+    "NEAR_INFO_HIDE": "Hide",
+    "NEAR_INFO_TOGGLE_ARIA": "Show or hide near-qualification explanation",
     "LEGEND": {
       "GUARANTEED": "Guaranteed qualified",
       "NEAR": "Nearly qualified",

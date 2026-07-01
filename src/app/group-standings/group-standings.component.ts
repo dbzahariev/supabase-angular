@@ -9,6 +9,7 @@ import { DestroyRef } from '@angular/core';
 import { SupabaseService } from '../supabase';
 import { Team } from '../all-predictions/all-predictions.models';
 import { ThemeService } from '../services/theme.service';
+import { InfoPopoverComponent } from '../components/info-popover/info-popover.component';
 
 interface StandingTeam {
   id: number;
@@ -52,7 +53,7 @@ export interface CompetitionStandingsResponse {
 
 @Component({
   selector: 'app-group-standings',
-  imports: [CommonModule, FormsModule, TranslateModule, ButtonModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ButtonModule, InfoPopoverComponent],
   templateUrl: './group-standings.component.html',
   styleUrls: ['./group-standings.component.css']
 })
@@ -232,6 +233,39 @@ export class GroupStandingsComponent implements OnInit {
     }
 
     return `Nearly qualified: +${pointsGap} pts and +${goalDiffGap} goal-difference vs 3rd place (${this.getDisplayTeamName(thirdPlace.team)}), but not mathematically guaranteed yet.`;
+  }
+
+  hasQualificationInfo(rows: StandingRow[], row: StandingRow): boolean {
+    return this.isGuaranteedQualified(rows, row) || this.isNearlyQualified(rows, row);
+  }
+
+  getQualificationState(rows: StandingRow[], row: StandingRow): 'guaranteed' | 'near' | null {
+    if (this.isGuaranteedQualified(rows, row)) {
+      return 'guaranteed';
+    }
+
+    if (this.isNearlyQualified(rows, row)) {
+      return 'near';
+    }
+
+    return null;
+  }
+
+  getQualificationBadgeLabel(rows: StandingRow[], row: StandingRow): string {
+    const state = this.getQualificationState(rows, row);
+    if (state === 'near') {
+      return this.translate.instant('GROUP_STANDINGS.BADGE_NEAR');
+    }
+
+    return '';
+  }
+
+  getQualificationInfoMessage(rows: StandingRow[], row: StandingRow): string {
+    if (this.isGuaranteedQualified(rows, row)) {
+      return this.translate.instant('GROUP_STANDINGS.LEGEND.GUARANTEED');
+    }
+
+    return this.getNearQualificationTooltip(rows, row);
   }
 
   private getTotalMatchesPerTeam(rows: StandingRow[]): number {

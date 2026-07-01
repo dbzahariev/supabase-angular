@@ -189,6 +189,59 @@ th {
   gap: 0.45rem;
 }
 
+.team-name-trigger {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.team-name-trigger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--theme-color, #22c55e), #ffffff 28%);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.qualification-badge {
+  margin-left: 0.25rem;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.14);
+  color: #166534;
+  border-radius: 999px;
+  padding: 0.08rem 0.48rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.qualification-badge.near {
+  border-color: rgba(245, 158, 11, 0.52);
+  background: rgba(245, 158, 11, 0.16);
+  color: #92400e;
+}
+
+.mobile-badge {
+  align-self: flex-start;
+  margin: 0.24rem 0 0;
+}
+
+.near-info-panel {
+  font-size: 0.8rem;
+  color: var(--gs-subtle-text);
+  background: color-mix(in srgb, var(--theme-color, #22c55e), #ffffff 94%);
+  border: 1px solid color-mix(in srgb, var(--theme-color, #22c55e), #ffffff 76%);
+  border-radius: 8px;
+  padding: 0.4rem 0.55rem;
+  line-height: 1.45;
+}
+
+.near-info-panel-mobile {
+  margin-top: 0.28rem;
+}
+
+:host ::ng-deep .qualification-tooltip-panel .p-popover-content {
+  padding: 0.2rem;
+}
+
 .team-cell img {
   width: 20px;
   height: 20px;
@@ -285,6 +338,24 @@ th {
 :host-context(.my-app-dark) .mobile-team-row.qualified-near {
   border-color: #8a6a32;
   background: rgba(245, 158, 11, 0.17);
+}
+
+:host-context(.my-app-dark) .qualification-badge {
+  border-color: rgba(74, 222, 128, 0.46);
+  background: rgba(34, 197, 94, 0.2);
+  color: #dcfce7;
+}
+
+:host-context(.my-app-dark) .qualification-badge.near {
+  border-color: rgba(251, 191, 36, 0.6);
+  background: rgba(245, 158, 11, 0.24);
+  color: #fde68a;
+}
+
+:host-context(.my-app-dark) .near-info-panel {
+  color: #cbd5e1;
+  background: color-mix(in srgb, var(--theme-color, #22c55e), #0f172a 84%);
+  border-color: color-mix(in srgb, var(--theme-color, #22c55e), #1e293b 72%);
 }
 
 :host-context(.my-app-dark) .points-pill {
