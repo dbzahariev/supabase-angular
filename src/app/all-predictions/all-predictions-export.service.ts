@@ -138,7 +138,10 @@ export class AllPredictionsExportService {
                 lastPhase = bet.phase;
                 const cycleLabel = input.getCycleLabelFromBet(bet);
                 const phaseRow: WorksheetRow = new Array(mainHeaders.length).fill('');
-                phaseRow[0] = cycleLabel ? `${groupsPhaseLabel} - ${cycleLabel}` : groupsPhaseLabel;
+
+                const stageTitleLng = t(`${bet.stage}_TITLE`);;
+
+                phaseRow[0] = stageTitleLng ? stageTitleLng : cycleLabel ? `${groupsPhaseLabel} - ${cycleLabel}` : groupsPhaseLabel;
                 groupedRows.push(phaseRow);
             }
 
