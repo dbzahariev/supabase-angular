@@ -11,6 +11,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test:watch": "ng test",
+    "test:backup:2026": "node scripts/run-backup-2026-tests.cjs",
     "lint": "ng lint"
   },
   "engines": {
